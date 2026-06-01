@@ -708,6 +708,18 @@ select.form-input{cursor:pointer;color-scheme:dark}
 <body>
 
 <!-- TOPBAR -->
+
+<!-- LOADING OVERLAY — shown while fetching from Supabase -->
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+  <div style="font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:-0.3px">Loading your data…</div>
+  <div style="font-size:12px;color:var(--text3)" id="loading-status">Connecting to Supabase</div>
+  <div style="display:flex;gap:6px;margin-top:4px">
+    <div style="width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 1.2s ease-in-out infinite"></div>
+    <div style="width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 1.2s ease-in-out .2s infinite"></div>
+    <div style="width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 1.2s ease-in-out .4s infinite"></div>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="logo">
     <div class="logo-mark">B</div>
@@ -726,9 +738,9 @@ select.form-input{cursor:pointer;color-scheme:dark}
   </div>
   <div class="topbar-spacer"></div>
   <div class="topbar-date" id="live-date"></div>
-  <div id="sync-indicator" style="display:flex;align-items:center;gap:6px;font-size:10px;font-family:var(--mono);white-space:nowrap;padding:4px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);cursor:pointer" onclick="showPage('settings')" title="Supabase sync status">
-    <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0"></span>
-    <span id="sync-label" style="color:var(--text3)">No DB</span>
+  <div id="sync-indicator" style="display:flex;align-items:center;gap:6px;font-size:10px;font-family:var(--mono);white-space:nowrap;padding:4px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;transition:all .2s" onclick="showPage('settings')" title="Supabase sync status">
+    <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .2s"></span>
+    <span id="sync-label" style="color:var(--text3);max-width:160px;overflow:hidden;text-overflow:ellipsis">Connecting…</span>
   </div>
   <div id="save-indicator" style="font-size:10px;color:var(--green);font-family:var(--mono);white-space:nowrap;opacity:0;transition:opacity .3s">✓ saved</div>
 </div>
@@ -1108,7 +1120,7 @@ select.form-input{cursor:pointer;color-scheme:dark}
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn-sm" onclick="sbSaveCredentials()" style="color:var(--blue);border-color:rgba(91,157,255,0.3)">Save &amp; Connect</button>
-          <button class="btn-sm" onclick="sbFullSync(true)">Force full sync</button>
+          <button class="btn-sm" onclick="sbFullSync(true);" >Force full sync</button>
         </div>
       </div>
 
@@ -1652,10 +1664,8 @@ let _sbConnected=false;
 let _sbSyncing=false;
 
 function sbLoadCreds(){
-  try{
-    const raw=localStorage.getItem(SB_CREDS_KEY);
-    return raw?JSON.parse(raw):null;
-  }catch(e){return null;}
+  // Credentials hardcoded — no setup needed on any device
+  return {url:'https://ffbdazepqrsyurhouxif.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmYmRhemVwcXJzeXVyaG91eGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTM5MjIsImV4cCI6MjA5MDQ2OTkyMn0.BAuodLUDGzO9A7IfoRRn0HZ1MgWOXNPeYKPDBNaNWeg'};
 }
 async function sbSaveCredentials(){
   const url=(document.getElementById('sb-url')||{value:''}).value.trim();
@@ -1668,7 +1678,7 @@ async function sbSaveCredentials(){
   if(!key.startsWith('eyJ')){
     if(!confirm('The anon key does not look right (it should start with eyJ...). Continue anyway?'))return;
   }
-  localStorage.setItem(SB_CREDS_KEY,JSON.stringify({url,key}));
+  // Creds hardcoded — no localStorage save needed
   sbInit(url,key);
   await sbTestConnection();
 }
@@ -1699,7 +1709,7 @@ function sbUpdateStatus(state,detail){
   if(state==='connected'){if(label)label.textContent='Synced';if(pill){pill.textContent='Connected';pill.style.background='var(--green-bg)';pill.style.color='var(--green)';}}
   else if(state==='syncing'){if(label)label.textContent='Syncing…';if(pill){pill.textContent='Syncing…';pill.style.background='var(--blue-bg)';pill.style.color='var(--blue)';}}
   else if(state==='error'){if(label)label.textContent='Error';if(pill){pill.textContent='Error';pill.style.background='var(--red-bg)';pill.style.color='var(--red)';}}
-  else{if(label)label.textContent='No DB';if(pill){pill.textContent='Disconnected';pill.style.background='var(--bg4)';pill.style.color='var(--text3)';}}
+  else{if(label)label.textContent='No DB';if(pill){pill.textContent='Disconnected';pill.style.background='var(--bg4)';pill.style.color='var(--text3)';pill.title='Click to configure Supabase';}}
   if(detail&&text)text.textContent=detail;
   _sbConnected=(state==='connected');
 }
@@ -1728,72 +1738,105 @@ function sbUpdateLastSync(){
 
 async function sbUpsertCampaign(c){
   if(!_sb||!_sbConnected)return;
+  if(!c.uuid)c.uuid=genUUID();
   try{
-    await _sb.from('campaigns').upsert({
-      id:c.uuid||c.id, numeric_id:c.id, name:c.name, alias:c.alias||'',
+    const {error}=await _sb.from('campaigns').upsert({
+      id:c.uuid, numeric_id:c.id||null,
+      name:c.name, alias:c.alias||'',
       product:c.product||'', asin:c.asin||'', sku:c.sku||'',
       camp_type:c.campType||'', status:c.status||'active',
       rag:c.rag||'none', color:c.color||'#4a9eff',
       profit_per_unit:c.profitPerUnit||0,
-      created_by:c.createdBy||'manual', created_at:c.createdAt||new Date().toISOString(),
+      created_by:c.createdBy||'manual',
+      created_at:c.createdAt||new Date().toISOString(),
       updated_at:new Date().toISOString()
     },{onConflict:'id'});
+    if(error)throw error;
   }catch(e){console.warn('sbUpsertCampaign failed:',e);}
 }
 
+
 async function sbUpsertSnapshot(c,s,snapIdx){
   if(!_sb||!_sbConnected)return;
-  const snapId=(c.uuid||c.id)+'_snap_'+snapIdx;
+  if(!c.uuid)c.uuid=genUUID();
+  // Stamp a stable UUID on the snapshot itself
+  if(!s.uuid)s.uuid=genUUID();
   try{
-    await _sb.from('snapshots').upsert({
-      id:snapId, campaign_id:c.uuid||c.id, campaign_numeric_id:c.id,
-      period:s.date, spend:s.spend||0, sales:s.sales||0,
+    const {error}=await _sb.from('snapshots').upsert({
+      id:s.uuid,
+      campaign_id:c.uuid,
+      campaign_numeric_id:c.id||null,
+      period:s.date||'',
+      spend:s.spend||0, sales:s.sales||0,
       purchases:s.purchases||0, acos:s.acos||0, roas:s.roas||0,
       impressions:s.impressions||0, clicks:s.clicks||0,
       ctr:s.ctr||0, cpc:s.cpc||0, note:s.note||'',
       updated_at:new Date().toISOString()
     },{onConflict:'id'});
+    if(error)throw error;
     // Upsert targeting rows
     if(s.targeting&&s.targeting.length){
-      const rows=s.targeting.map((t,ti)=>({
-        id:snapId+'_t_'+ti, snapshot_id:snapId, campaign_id:c.uuid||c.id,
-        kw:t.kw, match_type:t.match, bid:t.bid||0,
-        impressions:t.imp||0, spend:t.spend||0, sales:t.sales||0,
-        purchases:t.purch||0, acos:t.acos||0, roas:t.roas||0, ctr:t.ctr||0
-      }));
-      await _sb.from('targeting_rows').upsert(rows,{onConflict:'id'});
+      const rows=s.targeting.map(t=>{
+        if(!t.uuid)t.uuid=genUUID();
+        return{
+          id:t.uuid, snapshot_id:s.uuid, campaign_id:c.uuid,
+          kw:t.kw||'', match_type:t.match||'',
+          bid:t.bid||0, impressions:t.imp||0,
+          spend:t.spend||0, sales:t.sales||0,
+          purchases:t.purch||0, acos:t.acos||0, roas:t.roas||0, ctr:t.ctr||0
+        };
+      });
+      const {error:te}=await _sb.from('targeting_rows').upsert(rows,{onConflict:'id'});
+      if(te)console.warn('targeting upsert error:',te);
     }
   }catch(e){console.warn('sbUpsertSnapshot failed:',e);}
 }
 
+
 async function sbUpsertChange(ch,campaignUuid){
   if(!_sb||!_sbConnected)return;
-  if(!ch.uuid&&!ch.id)return;
+  if(!ch.uuid)ch.uuid=genUUID();
+  // Resolve campaign UUID from name if not passed
+  if(!campaignUuid&&ch.campaign){
+    const mc=campaigns.find(c=>c.name===ch.campaign||c.alias===ch.campaign);
+    if(mc){if(!mc.uuid)mc.uuid=genUUID();campaignUuid=mc.uuid;}
+  }
   try{
-    await _sb.from('changes').upsert({
-      id:ch.uuid||String(ch.id), numeric_id:ch.id||null,
-      campaign_id:campaignUuid||null, campaign_name:ch.campaign||'',
-      type:ch.type||'Other', entry_date:ch.rawDate||null,
-      date_label:ch.date||'', what:ch.what||'', why:ch.why||'',
+    const {error}=await _sb.from('changes').upsert({
+      id:ch.uuid, numeric_id:ch.id||null,
+      campaign_id:campaignUuid||null,
+      campaign_name:ch.campaign||'',
+      type:ch.type||'Other',
+      entry_date:ch.rawDate||null,
+      date_label:ch.date||'',
+      what:ch.what||'', why:ch.why||'',
       goal:ch.goal||'', outcome:ch.outcome||'',
-      outcome_notes:ch.outcomeNotes||'', review_date:ch.review||null,
-      created_by:ch.createdBy||'manual', created_at:ch.createdAt||new Date().toISOString(),
+      outcome_notes:ch.outcomeNotes||'',
+      review_date:ch.review||null,
+      created_by:ch.createdBy||'manual',
+      created_at:ch.createdAt||new Date().toISOString(),
       updated_at:new Date().toISOString()
     },{onConflict:'id'});
+    if(error)throw error;
   }catch(e){console.warn('sbUpsertChange failed:',e);}
 }
 
+
 async function sbUpsertProduct(p){
   if(!_sb||!_sbConnected)return;
+  if(!p.uuid)p.uuid=genUUID();
   try{
-    await _sb.from('products').upsert({
-      id:p.uuid||genUUID(), name:p.name, asin:p.asin||'',
+    const {error}=await _sb.from('products').upsert({
+      id:p.uuid, name:p.name, asin:p.asin||'',
       sku:p.sku||'', profit_per_unit:p.profitPerUnit||0,
-      category:p.category||'', status:p.status||'Active', color:p.color||'#4a9eff',
+      category:p.category||'', status:p.status||'Active',
+      color:p.color||'#4a9eff',
       updated_at:new Date().toISOString()
     },{onConflict:'id'});
+    if(error)throw error;
   }catch(e){console.warn('sbUpsertProduct failed:',e);}
 }
+
 
 async function sbUpsertSettings(){
   if(!_sb||!_sbConnected)return;
@@ -1824,10 +1867,12 @@ async function sbFullSync(showAlert){
     // Settings
     await sbUpsertSettings();
     sbUpdateStatus('connected','All data synced');
+    setSyncStatus('ok','Full sync complete');
     sbUpdateLastSync();
     if(showAlert)alert('✓ All data synced to Supabase successfully.');
   }catch(e){
     sbUpdateStatus('error','Sync failed: '+e.message);
+    setSyncStatus('error','Sync failed: '+e.message);
     if(showAlert)alert('Sync error: '+e.message);
   }finally{_sbSyncing=false;}
 }
@@ -1838,91 +1883,92 @@ async function sbFullSync(showAlert){
 async function sbLoadAll(){
   if(!_sb)return false;
   sbUpdateStatus('syncing','Loading from Supabase…');
+  const setLoadMsg=msg=>{const el=document.getElementById('loading-status');if(el)el.textContent=msg;};
   try{
-    // Load campaigns
+    setLoadMsg('Loading campaigns…');
     const {data:campData,error:campErr}=await _sb.from('campaigns').select('*').order('name');
     if(campErr)throw campErr;
-    // Load snapshots
-    const {data:snapData,error:snapErr}=await _sb.from('snapshots').select('*').order('campaign_id');
+    setLoadMsg('Loading snapshots…');
+    const {data:snapData,error:snapErr}=await _sb.from('snapshots').select('*');
     if(snapErr)throw snapErr;
-    // Load targeting
+    setLoadMsg('Loading targeting data…');
     const {data:tgtData,error:tgtErr}=await _sb.from('targeting_rows').select('*');
     if(tgtErr)throw tgtErr;
-    // Load changes
+    setLoadMsg('Loading activity log…');
     const {data:chData,error:chErr}=await _sb.from('changes').select('*').order('created_at',{ascending:false});
     if(chErr)throw chErr;
-    // Load products
     const {data:prodData,error:prodErr}=await _sb.from('products').select('*');
     if(prodErr)throw prodErr;
-    // Load settings
-    const {data:setData}=await _sb.from('settings').select('*').eq('key','thresholds').single();
+    const {data:setData}=await _sb.from('settings').select('*').eq('key','thresholds').maybeSingle();
 
-    // Reconstruct in-memory data model
     campaigns.length=0;
     (campData||[]).forEach(row=>{
-      const campSnaps=(snapData||[]).filter(s=>s.campaign_id===row.id).map(s=>{
-        const tgts=(tgtData||[]).filter(t=>t.snapshot_id===s.id).map(t=>({
-          kw:t.kw, match:t.match_type, bid:t.bid||0,
-          imp:t.impressions||0, spend:t.spend||0, sales:t.sales||0,
-          purch:t.purchases||0, acos:t.acos||0, roas:t.roas||0, ctr:t.ctr||0
-        }));
-        return{
-          date:s.period, spend:s.spend||0, sales:s.sales||0, purchases:s.purchases||0,
-          acos:s.acos||0, roas:s.roas||0, impressions:s.impressions||0,
-          clicks:s.clicks||0, ctr:s.ctr||0, cpc:s.cpc||0, note:s.note||'',
-          targeting:tgts.length?tgts:null
-        };
-      });
+      const campSnaps=(snapData||[])
+        .filter(s=>s.campaign_id===row.id)
+        .map(s=>{
+          const tgts=(tgtData||[]).filter(t=>t.snapshot_id===s.id).map(t=>({
+            uuid:t.id, kw:t.kw, match:t.match_type, bid:t.bid||0,
+            imp:t.impressions||0, spend:t.spend||0, sales:t.sales||0,
+            purch:t.purchases||0, acos:t.acos||0, roas:t.roas||0, ctr:t.ctr||0
+          }));
+          return{
+            uuid:s.id,
+            date:s.period||'', spend:s.spend||0, sales:s.sales||0,
+            purchases:s.purchases||0, acos:s.acos||0, roas:s.roas||0,
+            impressions:s.impressions||0, clicks:s.clicks||0,
+            ctr:s.ctr||0, cpc:s.cpc||0, note:s.note||'',
+            targeting:tgts.length?tgts:null
+          };
+        });
       const campChanges=(chData||[]).filter(ch=>ch.campaign_id===row.id).map(ch=>({
-        id:ch.numeric_id||Date.now(), uuid:ch.id, type:ch.type||'Other',
-        rawDate:ch.entry_date||'', date:ch.date_label||'', what:ch.what||'',
-        why:ch.why||'', goal:ch.goal||'', outcome:ch.outcome||'',
+        uuid:ch.id, id:ch.numeric_id||Date.now(),
+        type:ch.type||'Other', rawDate:ch.entry_date||'',
+        date:ch.date_label||'', what:ch.what||'', why:ch.why||'',
+        goal:ch.goal||'', outcome:ch.outcome||'',
         outcomeNotes:ch.outcome_notes||'', review:ch.review_date||'',
         createdBy:ch.created_by||'manual', createdAt:ch.created_at||'',
         campaign:row.name
       }));
+      const lastSnap=campSnaps.length?campSnaps[campSnaps.length-1]:null;
       campaigns.push({
-        id:row.numeric_id||Date.now(), uuid:row.id,
+        uuid:row.id, id:row.numeric_id||Date.now(),
         name:row.name, alias:row.alias||'', product:row.product||'',
         asin:row.asin||'', sku:row.sku||'', campType:row.camp_type||'',
-        status:row.status||'active', rag:row.rag||'none', color:row.color||'#4a9eff',
-        profitPerUnit:row.profit_per_unit||0,
+        status:row.status||'active', rag:row.rag||'none',
+        color:row.color||'#4a9eff', profitPerUnit:row.profit_per_unit||0,
         createdBy:row.created_by||'manual', createdAt:row.created_at||'',
-        spend:campSnaps.length?(campSnaps[campSnaps.length-1].spend||0):0,
-        sales:campSnaps.length?(campSnaps[campSnaps.length-1].sales||0):0,
-        purchases:campSnaps.length?(campSnaps[campSnaps.length-1].purchases||0):0,
-        acos:campSnaps.length?(campSnaps[campSnaps.length-1].acos||0):0,
-        roas:campSnaps.length?(campSnaps[campSnaps.length-1].roas||0):0,
-        ctr:campSnaps.length?(campSnaps[campSnaps.length-1].ctr||0):0,
-        cpc:campSnaps.length?(campSnaps[campSnaps.length-1].cpc||0):0,
-        impressions:campSnaps.length?(campSnaps[campSnaps.length-1].impressions||0):0,
+        spend:lastSnap?lastSnap.spend:0, sales:lastSnap?lastSnap.sales:0,
+        purchases:lastSnap?lastSnap.purchases:0, acos:lastSnap?lastSnap.acos:0,
+        roas:lastSnap?lastSnap.roas:0, ctr:lastSnap?lastSnap.ctr:0,
+        cpc:lastSnap?lastSnap.cpc:0, impressions:lastSnap?lastSnap.impressions:0,
         snapshots:campSnaps, changes:campChanges, keywords:[], notes:[]
       });
     });
-    // Global changes (account-level, no campaign)
+
     globalChanges.length=0;
     (chData||[]).filter(ch=>!ch.campaign_id).forEach(ch=>{
       globalChanges.push({
-        id:ch.numeric_id||Date.now(), uuid:ch.id, type:ch.type||'Other',
-        rawDate:ch.entry_date||'', date:ch.date_label||'', what:ch.what||'',
-        why:ch.why||'', goal:ch.goal||'', outcome:ch.outcome||'',
+        uuid:ch.id, id:ch.numeric_id||Date.now(),
+        type:ch.type||'Other', rawDate:ch.entry_date||'',
+        date:ch.date_label||'', what:ch.what||'', why:ch.why||'',
+        goal:ch.goal||'', outcome:ch.outcome||'',
         outcomeNotes:ch.outcome_notes||'', review:ch.review_date||'',
         createdBy:ch.created_by||'manual', createdAt:ch.created_at||'',
         campaign:ch.campaign_name||''
       });
     });
-    // Products
+
     products.length=0;
     (prodData||[]).forEach(p=>products.push({
       uuid:p.id, name:p.name, asin:p.asin||'', sku:p.sku||'',
       profitPerUnit:p.profit_per_unit||0, category:p.category||'',
       status:p.status||'Active', color:p.color||'#4a9eff'
     }));
-    // Thresholds
+
     if(setData&&setData.value){
-      try{const t=JSON.parse(setData.value);thresholds={...thresholds,...t};}catch(e){}
+      try{Object.assign(thresholds,JSON.parse(setData.value));}catch(e){}
     }
-    // Cache locally for offline fallback
+
     saveLocalCache();
     sbUpdateStatus('connected','Loaded from Supabase');
     sbUpdateLastSync();
@@ -1933,6 +1979,7 @@ async function sbLoadAll(){
     return false;
   }
 }
+
 
 // ── SQL SCHEMA EXPORT ──
 function sbExportSchema(){
@@ -2057,146 +2104,76 @@ create policy "Allow all" on settings for all using (true) with check (true);`;
 // ════════════════════════════════
 // LOCAL STORAGE — cache only
 // ════════════════════════════════
-const STORAGE_KEY='bdl-ppc-v1';
+const STORAGE_KEY='bdl-ppc-v1'; // kept only for dzClearAll cleanup
 function saveLocalCache(){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify({schemaVersion:SCHEMA_VERSION,campaigns,globalChanges,products,thresholds}));
-  }catch(e){console.warn('Local cache write failed:',e);}
+  // localStorage removed — Supabase is the only store
 }
 function loadLocalCache(){
-  try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(!raw)return false;
-    const data=JSON.parse(raw);
-    let _idCounter=Date.now();
-    const stampId=obj=>{if(!obj.id)obj.id=_idCounter++;return obj;};
-    if(data.campaigns){
-      campaigns.length=0;
-      data.campaigns.forEach(c=>{
-        if(c.changes)c.changes=c.changes.map(ch=>stampId({...ch}));
-        campaigns.push(c);
-      });
-    }
-    if(data.globalChanges){globalChanges.length=0;data.globalChanges.forEach(g=>globalChanges.push(stampId({...g})));}
-    if(data.products){products.length=0;data.products.forEach(p=>products.push(p));}
-    if(data.thresholds){thresholds={...thresholds,...data.thresholds};}
-    return true;
-  }catch(e){console.warn('Local cache read failed:',e);return false;}
+  // localStorage removed — data loads from Supabase only
+  return false;
 }
 
-// saveToStorage = write-through: local cache + Supabase push
+// saveToStorage — Supabase only
 function saveToStorage(){
-  saveLocalCache();
   const ind=document.getElementById('save-indicator');
   if(ind){ind.style.opacity='1';setTimeout(()=>ind.style.opacity='0',1500);}
-  // Push to Supabase async (fire and forget — don't block UI)
-  if(_sb&&_sbConnected){
-    (async()=>{
-      try{
-        // Only push campaigns + changes (most frequent writes)
-        for(const c of campaigns)await sbUpsertCampaign(c);
-        for(const ch of globalChanges.slice(0,20))await sbUpsertChange(ch,null);
-        await sbUpsertSettings();
-        sbUpdateLastSync();
-      }catch(e){console.warn('Background sync failed:',e);}
-    })();
+  if(!_sb||!_sbConnected){
+    setSyncStatus('error','Not connected — changes not saved');
+    return;
   }
-}
-
-// ════════════════════════════════
-// INIT
-// ════════════════════════════════
-document.getElementById('live-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
-
-// Restore last-sync label
-const _lastSync=localStorage.getItem('bdl-ppc-last-sync');
-const _sbLastEl=document.getElementById('sb-last-sync');
-if(_lastSync&&_sbLastEl)_sbLastEl.textContent=_lastSync;
-
-// Load local cache immediately so UI isn't blank
-loadLocalCache();
-recomputeAllRag();
-syncThresholdInputs();
-updateThresholdPreview();
-populateCampDropdown();
-populateDashPeriodSelectors();
-renderDashPeriod();
-renderCampTable();
-renderDashAttention();
-renderDashReminders();
-renderDashRecentChanges();
-renderInsights();
-
-// Populate Settings fields from stored creds
-(()=>{
-  const creds=sbLoadCreds();
-  if(creds){
-    const urlEl=document.getElementById('sb-url');
-    const keyEl=document.getElementById('sb-key');
-    if(urlEl)urlEl.value=creds.url||'';
-    if(keyEl)keyEl.value=creds.key||'';
-    // Init client and try to load from Supabase
-    sbInit(creds.url,creds.key);
-    sbUpdateStatus('syncing','Connecting…');
-    sbLoadAll().then(loaded=>{
-      if(loaded){
-        recomputeAllRag();
-        syncThresholdInputs();
-        updateThresholdPreview();
-        populateCampDropdown();
-        populateDashPeriodSelectors();
-        renderDashPeriod();
-        renderCampTable();
-        renderDashAttention();renderDashReminders();renderDashRecentChanges();renderInsights();
+  setSyncStatus('syncing','Saving…');
+  (async()=>{
+    try{
+      for(const c of campaigns){
+        if(!c.uuid)c.uuid=genUUID();
+        await sbUpsertCampaign(c);
       }
-    });
-  } else {
-    sbUpdateStatus('disconnected','');
-    // Show setup guide in settings if no creds
-    const guide=document.getElementById('sb-setup-guide');
-    if(guide)guide.style.display='block';
-  }
-})();
-
-// ════════════════════════════════
-// PAGES
-// ════════════════════════════════
-function showPage(n){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const pg=document.getElementById('page-'+n);
-  if(pg)pg.classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>{
-    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+n+"'"))b.classList.add('active');
-  });
-  if(n==='products'){renderProductPerf();renderProducts();}
-  if(n==='changelog')renderGlobalCL();
-  if(n==='insights')renderInsights();
-  if(n==='snaplog')renderSnapLog();
-  if(n==='dashboard'){populateDashPeriodSelectors();renderDashPeriod();renderDashAttention();renderDashReminders();renderDashRecentChanges();}
-  if(n==='data'){renderDMPage();}
-  if(n==='settings'){
-    const ls=localStorage.getItem('bdl-ppc-last-sync');
-    const el=document.getElementById('sb-last-sync');
-    if(el)el.textContent=ls||'Never';
-    const lb=localStorage.getItem('bdl-ppc-last-backup');
-    const bel=document.getElementById('sb-last-backup');
-    if(bel)bel.textContent=lb||'Never';
-    if(_sbConnected)sbUpdateStatus('connected','Connected — last synced '+( ls||'unknown'));
-    else if(_sb)sbUpdateStatus('error','Not verified — click Test Connection');
-    else sbUpdateStatus('disconnected','Enter credentials above and click Save & Connect');
-    const guide=document.getElementById('sb-setup-guide');
-    if(guide)guide.style.display=(!_sb)?'block':'none';
-  }
-  window.scrollTo({top:0,behavior:'smooth'});
+      for(const ch of globalChanges.slice(0,50)){
+        if(!ch.uuid)ch.uuid=genUUID();
+        await sbUpsertChange(ch,null);
+      }
+      await sbUpsertSettings();
+      setSyncStatus('ok','Saved');
+      sbUpdateLastSync();
+    }catch(e){
+      console.warn('Save failed:',e);
+      setSyncStatus('error','Save failed: '+e.message);
+    }
+  })();
 }
+
+// Sync status helper — updates topbar indicator with detail
+function setSyncStatus(state,msg){
+  const dot=document.getElementById('sync-dot');
+  const label=document.getElementById('sync-label');
+  const indicator=document.getElementById('sync-indicator');
+  const colors={ok:'var(--green)',syncing:'var(--blue)',error:'var(--red)',loading:'var(--amber)'};
+  const col=colors[state]||'var(--text3)';
+  if(dot){
+    dot.style.background=col;
+    dot.style.animation=state==='syncing'||state==='loading'?'pulse 1s infinite':'none';
+  }
+  if(label){label.textContent=msg||'';label.style.color=col;}
+  if(indicator)indicator.title=msg||'';
+  // If error, keep visible for longer so user notices
+  if(state==='error'&&indicator){
+    indicator.style.borderColor='rgba(255,93,108,0.4)';
+    indicator.style.background='var(--red-bg)';
+  } else if(indicator){
+    indicator.style.borderColor='';
+    indicator.style.background='var(--bg3)';
+  }
+}
+
 
 // ════════════════════════════════
 // SNAPSHOT LOG PAGE
 // ════════════════════════════════
 // Track which snapshot tiles are expanded (key: campId-snapIdx)
 const _snapExpanded=new Set();
+
 function ragClassFor(roas){return roas>=5?'rg':roas>=4?'ra':roas>0?'rr':'rn';}
+
 
 function renderSnapLog(){
   const sel=document.getElementById('snaplog-filter');
@@ -2261,6 +2238,40 @@ function renderSnapLog(){
 }
 
 // Build the expanded detail panel (ads table + targeting table + edit form)
+
+function saveSnapEdit(campId, snapIdx){
+  const c=campaigns.find(cc=>cc.id===campId);
+  if(!c||!c.snapshots[snapIdx])return;
+  const s=c.snapshots[snapIdx];
+  const g=id=>parseFloat(document.getElementById(`${id}-${campId}-${snapIdx}`)?.value)||0;
+  s.impressions=parseInt(document.getElementById(`se-imp-${campId}-${snapIdx}`)?.value)||0;
+  s.clicks=parseInt(document.getElementById(`se-clicks-${campId}-${snapIdx}`)?.value)||0;
+  s.ctr=g('se-ctr');
+  s.spend=g('se-spend');
+  s.cpc=g('se-cpc');
+  s.purchases=parseInt(document.getElementById(`se-purch-${campId}-${snapIdx}`)?.value)||0;
+  s.sales=g('se-sales');
+  s.acos=g('se-acos');
+  s.roas=g('se-roas');
+  // Update campaign headline from latest snap
+  const latest=c.snapshots[c.snapshots.length-1];
+  c.spend=latest.spend;c.sales=latest.sales;c.purchases=latest.purchases;
+  c.acos=latest.acos;c.roas=latest.roas;c.rag=calcRag(latest.roas,latest.acos);
+  saveToStorage();
+  renderSnapLog();
+}
+
+// ════════════════════════════════
+// DASHBOARD — ACCOUNT OVERVIEW HERO
+// ════════════════════════════════
+// ════════════════════════════════
+// DASHBOARD — PERIOD SYSTEM
+// ════════════════════════════════
+
+let _dashSort='spend'; // current sort field for breakdown table
+
+// Get all unique period labels across all campaigns, sorted newest first
+
 function snapDetailHtml(s,campId,snapIdx,hasTgt){
   const rc=s.roas>=5?'var(--green)':s.roas>=4?'var(--amber)':s.roas>0?'var(--red)':'var(--text3)';
   const adsRows=[
@@ -2335,11 +2346,6 @@ function snapDetailHtml(s,campId,snapIdx,hasTgt){
   return adsBlock+tgtBlock+noteBlock+editBlock+actions;
 }
 
-function toggleSnapExpand(key){
-  if(_snapExpanded.has(key))_snapExpanded.delete(key);
-  else _snapExpanded.add(key);
-  renderSnapLog();
-}
 
 function toggleSnapEdit(campId, snapIdx){
   const form=document.getElementById(`snap-edit-${campId}-${snapIdx}`);
@@ -2349,36 +2355,91 @@ function toggleSnapEdit(campId, snapIdx){
   form.style.display=isOpen?'none':'block';
   if(btn)btn.textContent=isOpen?'Edit':'Cancel';
 }
-function saveSnapEdit(campId, snapIdx){
-  const c=campaigns.find(cc=>cc.id===campId);
-  if(!c||!c.snapshots[snapIdx])return;
-  const s=c.snapshots[snapIdx];
-  const g=id=>parseFloat(document.getElementById(`${id}-${campId}-${snapIdx}`)?.value)||0;
-  s.impressions=parseInt(document.getElementById(`se-imp-${campId}-${snapIdx}`)?.value)||0;
-  s.clicks=parseInt(document.getElementById(`se-clicks-${campId}-${snapIdx}`)?.value)||0;
-  s.ctr=g('se-ctr');
-  s.spend=g('se-spend');
-  s.cpc=g('se-cpc');
-  s.purchases=parseInt(document.getElementById(`se-purch-${campId}-${snapIdx}`)?.value)||0;
-  s.sales=g('se-sales');
-  s.acos=g('se-acos');
-  s.roas=g('se-roas');
-  // Update campaign headline from latest snap
-  const latest=c.snapshots[c.snapshots.length-1];
-  c.spend=latest.spend;c.sales=latest.sales;c.purchases=latest.purchases;
-  c.acos=latest.acos;c.roas=latest.roas;c.rag=calcRag(latest.roas,latest.acos);
-  saveToStorage();
+
+function toggleSnapExpand(key){
+  if(_snapExpanded.has(key))_snapExpanded.delete(key);
+  else _snapExpanded.add(key);
   renderSnapLog();
 }
 
+
 // ════════════════════════════════
-// DASHBOARD — ACCOUNT OVERVIEW HERO
+// INIT
 // ════════════════════════════════
+document.getElementById('live-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+
+function showLoadingOverlay(msg){
+  const el=document.getElementById('loading-overlay');
+  const st=document.getElementById('loading-status');
+  if(el){el.style.display='flex';}
+  if(st&&msg)st.textContent=msg;
+}
+function hideLoadingOverlay(){
+  const el=document.getElementById('loading-overlay');
+  if(el)el.style.display='none';
+}
+
+
+// Full boot from Supabase — called on init (creds exist) or after connect overlay
+async function bootFromSupabase(){
+  showLoadingOverlay('Loading campaigns…');
+  setSyncStatus('loading','Loading from Supabase…');
+  const loaded=await sbLoadAll();
+  hideLoadingOverlay();
+  if(loaded){
+    recomputeAllRag();
+    syncThresholdInputs();
+    updateThresholdPreview();
+    populateCampDropdown();
+    populateDMASINCampSelect();
+    populateDashPeriodSelectors();
+    renderDashPeriod();
+    renderCampTable();
+    renderDashAttention();renderDashReminders();renderDashRecentChanges();
+    renderInsights();
+    sbUpdateStatus('connected','All data loaded');
+    setSyncStatus('ok','Loaded');
+    sbUpdateLastSync();
+  } else {
+    sbUpdateStatus('error','Load failed — check Settings → Supabase Connection');
+    setSyncStatus('error','Load failed — check Settings');
+  }
+}
+
+// Render initial empty UI immediately (no flash of nothing)
+recomputeAllRag();
+syncThresholdInputs();
+updateThresholdPreview();
+populateCampDropdown();
+populateDashPeriodSelectors();
+renderDashPeriod();
+renderCampTable();
+renderDashAttention();renderDashReminders();renderDashRecentChanges();renderInsights();
+
+// Now try to connect
+(async()=>{
+  const creds=sbLoadCreds();
+  if(!creds){
+    // Creds always present (hardcoded) — should never reach here
+    return;
+  }
+  // Creds exist — restore to settings fields
+  const urlEl=document.getElementById('sb-url');const keyEl=document.getElementById('sb-key');
+  if(urlEl)urlEl.value=creds.url||'';if(keyEl)keyEl.value=creds.key||'';
+  // Restore last-sync label
+  const ls=localStorage.getItem('bdl-ppc-last-sync');
+  const lsEl=document.getElementById('sb-last-sync');if(lsEl&&ls)lsEl.textContent=ls;
+  // Boot from Supabase
+  sbInit(creds.url,creds.key);
+  sbUpdateStatus('syncing','Connecting…');
+  await bootFromSupabase();
+})();
+
+
 // ════════════════════════════════
 // DASHBOARD — PERIOD SYSTEM
 // ════════════════════════════════
 
-let _dashSort='spend'; // current sort field for breakdown table
 
 // Get all unique period labels across all campaigns, sorted newest first
 function getDashPeriods(){
@@ -2413,44 +2474,14 @@ function populateDashPeriodSelectors(){
   if(!sel||!cmpSel)return;
   const prevPeriod=sel.value;
   const prevCmp=cmpSel.value;
-
-  // Group periods by month — if multiple periods share a month, group them
-  // A period is "weekly" if its label appears to span less than ~20 days
-  // Build optgroup structure: Monthly periods flat, weekly ones under their month
-  const monthGroups={};
-  periods.forEach(p=>{
-    const yearMatch=p.match(/\d{4}/);
-    if(!yearMatch){monthGroups['Other']=(monthGroups['Other']||[]);monthGroups['Other'].push(p);return;}
-    // Try to identify month from label
-    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    let monthKey='Other';
-    for(const m of months){if(p.includes(m)){const yr=yearMatch[0];monthKey=m+' '+yr;break;}}
-    monthGroups[monthKey]=(monthGroups[monthKey]||[]);
-    monthGroups[monthKey].push(p);
-  });
-
-  const buildOptions=(sel,includeLatest)=>{
-    let html=includeLatest?'<option value="latest">Latest snapshot (per campaign)</option>':'<option value="none">No comparison</option>';
-    Object.entries(monthGroups).forEach(([month,ps])=>{
-      if(ps.length===1){
-        html+=`<option value="${ps[0].replace(/"/g,'&quot;')}">${ps[0]}</option>`;
-      } else {
-        // Multiple periods in same month — show month summary option + individual options
-        html+=`<optgroup label="${month}">`;
-        ps.forEach(p=>{ html+=`<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`; });
-        html+=`</optgroup>`;
-      }
-    });
-    return html;
-  };
-
-  sel.innerHTML=buildOptions(sel,true);
-  cmpSel.innerHTML=buildOptions(cmpSel,false);
-
-  // Restore
+  sel.innerHTML='<option value="latest">Latest snapshot (per campaign)</option>'+
+    periods.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  cmpSel.innerHTML='<option value="none">No comparison</option>'+
+    periods.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  // Restore selections if still valid
   if(prevPeriod&&[...sel.options].some(o=>o.value===prevPeriod))sel.value=prevPeriod;
   if(prevCmp&&[...cmpSel.options].some(o=>o.value===prevCmp))cmpSel.value=prevCmp;
-  // Auto-suggest comparison
+  // Auto-select comparison: if a specific period is selected, auto-pick the next oldest
   if(sel.value!=='latest'&&cmpSel.value==='none'&&periods.length>1){
     const idx=periods.indexOf(sel.value);
     if(idx<periods.length-1)cmpSel.value=periods[idx+1];
@@ -2717,6 +2748,7 @@ function renderDashRecentChanges(){
     </div>`).join('');
 }
 
+
 // ════════════════════════════════
 // CAMPAIGN TILES (dashboard)
 // ════════════════════════════════
@@ -2965,9 +2997,9 @@ function parseTargetingRow(r){
   const bidKey=colMatch(r,['Bid (GBP)','Bid','bid']);
   const impKey=colMatch(r,['Impressions','impressions']);
   const ctrKey=colMatch(r,['CTR','ctr']);
-  const spendKey=colMatch(r,['Total cost','cost (GBP)','spend']);
-  const purchKey=colMatch(r,['Purchases','purchases']);
-  const salesKey=colMatch(r,['Sales (GBP)','Sales','sales']);
+  const spendKey=colMatch(r,['Total cost','Cost (GBP)','Spend (GBP)','Spend (USD)','spend','Cost (USD)']);
+  const purchKey=colMatch(r,['7 Day Total Orders (#)','7 Day Total Orders','Purchases','Orders','purchases']);
+  const salesKey=colMatch(r,['7 Day Total Sales (GBP)','7 Day Total Sales (USD)','Sales (GBP)','Sales (USD)','Sales','sales']);
   const acosKey=colMatch(r,['ACOS','acos']);
   const roasKey=colMatch(r,['ROAS','roas']);
   const kw=kwKey?r[kwKey]:'Unknown';
@@ -3638,13 +3670,26 @@ function clearTargetingPreview(){
 // Drag and drop handler
 function handleDrop(event,type){
   event.preventDefault();
+  event.stopPropagation();
   const zone=document.getElementById(type==='ads'?'ads-drop-zone':'tgt-drop-zone');
   if(zone){zone.style.borderColor='';zone.style.background='';}
   const file=event.dataTransfer.files[0];
-  if(!file||!file.name.endsWith('.csv'))return;
-  const fakeEvent={target:{files:[file],value:''}};
-  if(type==='ads')parseAdsCSV(fakeEvent);
-  else parseTargetingCSV(fakeEvent);
+  if(!file){alert('No file detected.');return;}
+  if(!file.name.toLowerCase().endsWith('.csv')){alert('Please drop a .csv file — Amazon exports as CSV.');return;}
+  // Pass file directly to avoid fakeEvent fragility
+  if(type==='ads'){
+    parseAdsCSVFile(file);
+  } else {
+    parseTargetingCSVFile(file);
+  }
+}
+// Direct file entry points (used by both drag-drop and file input)
+function parseAdsCSVFile(file){
+  parseAdsCSV({target:{files:[file]}});
+}
+function parseTargetingCSVFile(file){
+  if(!currentCamp){alert('Please open a campaign first before importing targeting data.');return;}
+  parseTargetingCSV({target:{files:[file],value:''}});
 }
 function updateSnapLabel(){
   const from=document.getElementById('sf-date-from').value;
@@ -3684,49 +3729,102 @@ function parseCSVText(text){
   });
 }
 function colMatch(row,candidates){
-  for(const k of Object.keys(row)){
-    if(candidates.some(c=>k.toLowerCase().includes(c.toLowerCase())))return k;
-  }return null;
+  const keys=Object.keys(row);
+  // First try exact match (case-insensitive)
+  for(const k of keys){
+    if(candidates.some(c=>k.trim().toLowerCase()===c.trim().toLowerCase()))return k;
+  }
+  // Then try includes match
+  for(const k of keys){
+    if(candidates.some(c=>k.trim().toLowerCase().includes(c.trim().toLowerCase())))return k;
+  }
+  return null;
 }
 function parseAdsCSV(event){
-  const file=event.target.files[0];if(!file)return;
+  const file=event.target?event.target.files[0]:event.files?event.files[0]:null;
+  if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
     const rows=parseCSVText(e.target.result);
-    if(!rows.length){alert('Could not read CSV — check the file.');return;}
-    // Sum across all rows (could be multiple ads)
-    let imp=0,clicks=0,spend=0,sales=0,purch=0,ctr=0,cpc=0,acos=0,roas=0,count=0;
+    if(!rows.length){alert('Could not read CSV — check the file is a valid Amazon campaign export.');return;}
+
+    // Debug: log column headers so we can diagnose mismatches
+    console.log('Ads CSV headers:',Object.keys(rows[0]));
+
+    // Amazon exports different column names by marketplace, report type and date
+    // These cover SP, SB, SD in UK/US and the new/old report formats
+    const SPEND_COLS  =['Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','Cost (USD)','Total cost','total spend','Total Spend'];
+    const SALES_COLS  =['7 Day Total Sales (GBP)','7 Day Total Sales (USD)','Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales','Attributed Sales 7d'];
+    const PURCH_COLS  =['7 Day Total Orders (#)','7 Day Total Orders','Purchases','Orders','Total Orders','Attributed Conversions 7d'];
+    const IMP_COLS    =['Impressions','impressions'];
+    const CLICK_COLS  =['Clicks','clicks'];
+    const CTR_COLS    =['Click-Through Rate (CTR)','CTR','ctr'];
+    const CPC_COLS    =['Cost Per Click (CPC)','CPC','cpc','Cost-Per-Click'];
+    const ACOS_COLS   =['Total Advertising Cost of Sales (ACOS)','ACOS','acos'];
+    const ROAS_COLS   =['Total Return on Advertising Spend (ROAS)','ROAS','roas'];
+
+    let imp=0,clicks=0,spend=0,sales=0,purch=0;
+    let ctrSum=0,cpcSum=0,acosRaw=0,roasRaw=0,count=0;
+
     rows.forEach(r=>{
-      imp+=parseFloat(colMatch(r,['Impression'])?r[colMatch(r,['Impression'])]:0)||0;
-      clicks+=parseFloat(colMatch(r,['Click'])?r[colMatch(r,['Click'])]:0)||0;
-      spend+=parseFloat(colMatch(r,['cost','Spend','Cost (GBP)','Total cost'])?r[colMatch(r,['cost','Spend','Cost (GBP)','Total cost'])]:0)||0;
-      sales+=parseFloat(colMatch(r,['Sales'])?r[colMatch(r,['Sales'])]:0)||0;
-      purch+=parseFloat(colMatch(r,['Purchase'])?r[colMatch(r,['Purchase'])]:0)||0;
+      const spendKey=colMatch(r,SPEND_COLS);
+      const salesKey=colMatch(r,SALES_COLS);
+      const purchKey=colMatch(r,PURCH_COLS);
+      const impKey  =colMatch(r,IMP_COLS);
+      const clickKey=colMatch(r,CLICK_COLS);
+      const ctrKey  =colMatch(r,CTR_COLS);
+      const cpcKey  =colMatch(r,CPC_COLS);
+      const acosKey =colMatch(r,ACOS_COLS);
+      const roasKey =colMatch(r,ROAS_COLS);
+
+      const parseNum=v=>parseFloat((v||'').toString().replace(/[£$%,]/g,''))||0;
+
+      imp   +=parseNum(impKey?r[impKey]:0);
+      clicks+=parseNum(clickKey?r[clickKey]:0);
+      spend +=parseNum(spendKey?r[spendKey]:0);
+      sales +=parseNum(salesKey?r[salesKey]:0);
+      purch +=parseNum(purchKey?r[purchKey]:0);
+      // CTR/CPC/ACOS/ROAS: take from first non-zero row, don't sum
+      if(!ctrSum&&ctrKey)ctrSum=parseNum(r[ctrKey]);
+      if(!cpcSum&&cpcKey)cpcSum=parseNum(r[cpcKey]);
+      if(!acosRaw&&acosKey)acosRaw=parseNum(r[acosKey]);
+      if(!roasRaw&&roasKey)roasRaw=parseNum(r[roasKey]);
       count++;
     });
-    if(spend>0){cpc=spend/clicks||0;acos=(spend/sales)*100||0;roas=sales/spend||0;}
-    const ctrKey=colMatch(rows[0],['CTR']);
-    if(ctrKey)ctr=parseFloat(rows[0][ctrKey])||0;
-    // Fill form
+
+    console.log(`Ads parsed: spend=${spend} sales=${sales} purch=${purch} imp=${imp} clicks=${clicks}`);
+
+    // If spend still 0, warn the user — likely wrong CSV or wrong tab
+    if(spend===0&&(sales>0||purch>0)){
+      console.warn('Spend is 0 but sales/purchases > 0 — likely wrong CSV tab (ad group instead of campaign) or unrecognised spend column. Headers:',Object.keys(rows[0]));
+    }
+
+    const cpc=cpcSum>0?cpcSum:(clicks>0?spend/clicks:0);
+    const acos=acosRaw>0?(acosRaw>1?acosRaw:acosRaw*100):(sales>0?(spend/sales)*100:0);
+    const roas=roasRaw>0?roasRaw:(spend>0?sales/spend:0);
+    // CTR: Amazon exports as decimal (0.0233) or percent (2.33) — normalise to percent
+    const ctr=ctrSum>1?ctrSum:ctrSum*100;
+
     document.getElementById('sf-imp').value=Math.round(imp);
     document.getElementById('sf-clicks').value=Math.round(clicks);
     document.getElementById('sf-spend').value=spend.toFixed(2);
     document.getElementById('sf-sales').value=sales.toFixed(2);
     document.getElementById('sf-purch').value=Math.round(purch);
-    document.getElementById('sf-ctr').value=(ctr*100||0).toFixed(3);
+    document.getElementById('sf-ctr').value=ctr.toFixed(3);
     document.getElementById('sf-cpc').value=cpc.toFixed(2);
     document.getElementById('sf-acos').value=acos.toFixed(2);
     document.getElementById('sf-roas').value=roas.toFixed(2);
-    // Check for ROAS/ACOS directly in CSV
-    const roasKey=colMatch(rows[0],['ROAS']);const acosKey=colMatch(rows[0],['ACOS']);
-    if(roasKey&&rows[0][roasKey])document.getElementById('sf-roas').value=parseFloat(rows[0][roasKey]).toFixed(2);
-    if(acosKey&&rows[0][acosKey]){
-      const av=parseFloat(rows[0][acosKey]);
-      document.getElementById('sf-acos').value=(av<1?av*100:av).toFixed(2);
-    }
+
+    // Show warning if spend is 0 — likely wrong file
     const succ=document.getElementById('ads-import-success');
-    if(succ)succ.style.display='block';
-    // Show the fields now data is populated
+    if(succ){
+      if(spend===0&&(sales>0||purch>0)){
+        succ.innerHTML='<span style="color:var(--amber)">⚠ Spend read as £0 — check you exported the <strong>Campaign</strong> tab, not the Ad Group or Ad tab. Column headers logged to browser console.</span>';
+      } else {
+        succ.innerHTML='✓ Imported — review fields below';
+      }
+      succ.style.display='block';
+    }
     const fields=document.getElementById('ads-fields');
     const manualToggle=document.getElementById('ads-manual-toggle');
     if(fields)fields.style.display='block';
@@ -3811,8 +3909,13 @@ function saveSnapshot(){
   closeSnapForm();
   clearSnapForm();
   saveToStorage();
-  // Push new snapshot to Supabase
-  if(_sb&&_sbConnected){const _si=currentCamp.snapshots.length-1;sbUpsertSnapshot(currentCamp,currentCamp.snapshots[_si],_si).catch(e=>console.warn(e));}
+  // Push new snapshot to Supabase (UUID already stamped by sbUpsertSnapshot)
+  if(_sb&&_sbConnected){
+    const _si=currentCamp.snapshots.length-1;
+    const _snap=currentCamp.snapshots[_si];
+    if(!_snap.uuid)_snap.uuid=genUUID();
+    sbUpsertSnapshot(currentCamp,_snap,_si).catch(e=>console.warn(e));
+  }
   renderSnapshots(currentCamp);
   renderTrendsInline(currentCamp);
   renderCampTable();renderDashAttention();renderDashReminders();populateDashPeriodSelectors();renderDashPeriod();
