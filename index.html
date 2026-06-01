@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL PPC — v1.03</title>
+<title>BDL PPC — v1.05</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -169,6 +169,13 @@ table.camp-table{width:100%;border-collapse:collapse;min-width:900px}
 .rp-green{background:var(--green-bg);color:var(--green)}
 .rp-amber{background:var(--amber-bg);color:var(--amber)}
 .rp-red{background:var(--red-bg);color:var(--red)}
+.rp-flag{background:rgba(255,140,66,0.16);color:#ff9f5a;border:1px solid rgba(255,140,66,0.4)}
+/* "Spends but no sales" highlight on the campaigns table */
+.row-flag td{background:linear-gradient(90deg,rgba(255,140,66,0.10),rgba(255,140,66,0.02))!important;box-shadow:inset 3px 0 0 #ff8c42}
+.row-flag:hover td{background:linear-gradient(90deg,rgba(255,140,66,0.16),rgba(255,140,66,0.05))!important}
+.flag-dot{color:#ff9f5a;font-weight:700;margin-right:2px}
+.tog.flag{color:#ff9f5a;border-color:rgba(255,140,66,0.35)}
+.tog.flag.on{background:rgba(255,140,66,0.16);color:#ffb37a;border-color:rgba(255,140,66,0.5)}
 
 /* CAMPAIGN TILES (dashboard) */
 .camps-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -531,6 +538,19 @@ select.form-input{cursor:pointer;color-scheme:dark}
 .kwg-roasnow{text-align:right;flex-shrink:0;min-width:64px}
 .kwg-roasnow-l{font-size:8.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);font-weight:600;margin-bottom:1px}
 .kwg-roasnow-v{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-0.6px;line-height:1}
+/* Collapsible keyword cards — compact by default */
+.kwg{margin-bottom:8px}
+.kwg-head{border-bottom:1px solid transparent;transition:background .16s,border-color .16s}
+.kwg.expanded .kwg-head{border-bottom-color:var(--border2)}
+.kwg-head:hover{background:linear-gradient(180deg,var(--bg4),var(--bg3))}
+.kwg-compact{display:flex;align-items:center;gap:16px;flex-shrink:0;margin-left:auto;flex-wrap:wrap}
+.kwg-mini{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
+.kwg-mini-l{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);font-weight:600}
+.kwg-mini-v{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.kwg-mini-flag{font-size:10px;font-weight:700;color:#ff9f5a;background:rgba(255,140,66,0.14);border:1px solid rgba(255,140,66,0.4);padding:2px 8px;border-radius:6px}
+.kwg-chevron{flex-shrink:0;color:var(--text3);font-size:10px;width:18px;text-align:center;transition:color .16s}
+.kwg-head:hover .kwg-chevron{color:var(--text)}
+@media(max-width:760px){.kwg-compact{display:none}}
 .kwg-scroll{overflow-x:auto}
 .kwg-table{width:100%;border-collapse:collapse;font-size:13px}
 .kwg-table th{padding:10px 16px;text-align:right;font-size:10px;font-weight:600;color:var(--text2);background:var(--bg2);border-bottom:1px solid var(--border2);white-space:nowrap;min-width:104px}
@@ -706,6 +726,78 @@ select.form-input{cursor:pointer;color-scheme:dark}
 .ctl-change-what{font-size:12.5px;font-weight:500;margin-bottom:3px}
 .ctl-change-why{font-size:11px;color:var(--text3)}
 .ctl-outcome-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:5px;margin-top:5px}
+/* ════════════════════════════════════════════════════
+   v1.04 — VISUAL REFINEMENT LAYER (overrides only; no markup changes)
+   Adds depth, softer gradients, smoother motion & better focus.
+   ════════════════════════════════════════════════════ */
+:root{
+  --r:16px;--r-sm:11px;--r-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.35),0 2px 8px rgba(0,0,0,0.22);
+  --shadow:0 10px 34px rgba(0,0,0,0.45),0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg:0 30px 70px rgba(0,0,0,0.6);
+  --ring:0 0 0 3px rgba(91,157,255,0.28);
+}
+body{
+  background:
+    radial-gradient(1100px 620px at 8% -10%, rgba(91,157,255,0.13), transparent 60%),
+    radial-gradient(900px 680px at 102% -4%, rgba(183,148,255,0.10), transparent 55%),
+    radial-gradient(820px 560px at 50% 124%, rgba(46,229,157,0.06), transparent 60%),
+    var(--bg);
+}
+/* Panels & cards: subtle top-lit gradient + crisper edge */
+.camp-table-wrap,.metric-picker,.ph-roas,.ph-cell,.ctl-change,
+.po-panel .kwg,.kwg{
+  background-image:linear-gradient(180deg,rgba(255,255,255,0.022),transparent 38%);
+  background-color:var(--panel);
+}
+.camp-table-wrap{box-shadow:var(--shadow)}
+/* Card hover lift everywhere it makes sense */
+.ph-cell{transition:transform .2s cubic-bezier(.2,.7,.2,1),border-color .2s,box-shadow .2s}
+.ph-cell:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:var(--shadow)}
+/* Hero ROAS — make it the clear focal point */
+.perf-hero{gap:14px;margin-bottom:24px}
+.ph-roas{box-shadow:var(--shadow);background-image:linear-gradient(165deg,rgba(255,255,255,0.04),transparent 45%)}
+.ph-roas-val{font-size:50px;letter-spacing:-2.4px;text-shadow:0 2px 24px rgba(0,0,0,0.35)}
+.ph-roas::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:linear-gradient(90deg,var(--blue),var(--purple));opacity:.55}
+/* Tables — softer striping, premium header, smoother row hover */
+.camp-table th,.kwg-table th{
+  background-image:linear-gradient(180deg,rgba(255,255,255,0.03),transparent);
+  backdrop-filter:blur(2px);
+}
+.camp-table tbody tr{transition:background .16s,box-shadow .16s}
+.camp-table tbody tr:hover td{background:linear-gradient(90deg,var(--bg3),rgba(91,157,255,0.06))}
+.camp-table tbody tr:nth-child(even) td{background:rgba(255,255,255,0.012)}
+.camp-table tbody tr:hover:nth-child(even) td{background:linear-gradient(90deg,var(--bg3),rgba(91,157,255,0.06))}
+.kwg-table tbody tr:hover td{background:rgba(255,255,255,0.025)}
+/* Buttons — gentle gradient + lift, consistent radius */
+.btn-primary{border-radius:var(--r-sm);box-shadow:0 2px 14px rgba(91,157,255,0.3),inset 0 1px 0 rgba(255,255,255,0.18)}
+.btn-primary:hover{transform:translateY(-1.5px);box-shadow:0 8px 24px rgba(91,157,255,0.45),inset 0 1px 0 rgba(255,255,255,0.22)}
+.btn-primary:active{transform:translateY(0)}
+.btn-sm,.btn-sec{transition:all .16s;border-radius:var(--r-xs)}
+.btn-sm:hover,.btn-sec:hover{transform:translateY(-1px);border-color:var(--border2);background:var(--bg4)}
+/* Segmented control — pill highlight */
+.seg{background:var(--bg2);border-radius:11px;padding:3px}
+.seg-btn{border-radius:9px}
+.seg-btn.on{background:linear-gradient(180deg,var(--bg5),var(--bg4));box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.06)}
+/* Inputs — clearer focus ring */
+.form-input{border-radius:var(--r-sm);transition:border-color .16s,box-shadow .16s,background .16s}
+.form-input:focus{box-shadow:var(--ring)}
+/* Metric chips */
+.mchip{transition:all .15s}
+.mchip:hover{border-color:var(--border2)}
+.mchip.on{box-shadow:inset 0 0 0 1px rgba(91,157,255,0.25)}
+/* RAG pills — a touch more presence */
+.rag-pill{transition:transform .14s}
+a.rag-pill:hover{transform:translateY(-1px)}
+/* Nav active underline a bit bolder */
+.nav-btn.active::after{height:2.5px;box-shadow:0 0 10px var(--blue-glow)}
+/* Latest-period column glow on keyword/ads grids */
+.kwg-table th.latest,.kwg-table td.latest{position:relative}
+/* Smooth panel fade-in on tab switch */
+.po-panel.active{animation:fadeUp .26s cubic-bezier(.2,.7,.2,1)}
+/* Scrollbar a touch nicer */
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--bg5),var(--bg4));border-radius:10px;border:2px solid transparent;background-clip:padding-box}
 
 </style>
 </head>
@@ -728,7 +820,7 @@ select.form-input{cursor:pointer;color-scheme:dark}
   <div class="logo">
     <div class="logo-mark">B</div>
     BDL PPC
-    <span class="logo-ver">v1.03</span>
+    <span class="logo-ver">v1.05</span>
   </div>
   <div class="nav">
     <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
@@ -847,6 +939,7 @@ select.form-input{cursor:pointer;color-scheme:dark}
         <button class="tog green" onclick="fCampRag('green',this)">● Green</button>
         <button class="tog amber" onclick="fCampRag('amber',this)">● Amber</button>
         <button class="tog red" onclick="fCampRag('red',this)">● Red</button>
+        <button class="tog flag" onclick="fCampRag('flag',this)">⚠ No Sale</button>
       </div>
       <button class="btn-primary" onclick="openAddCamp()">+ Add Campaign</button>
     </div>
@@ -1601,6 +1694,9 @@ select.form-input{cursor:pointer;color-scheme:dark}
       <div class="form-group"><div class="form-label">Est. profit / unit (£) — optional</div><input class="form-input" id="nc-profit" type="number" step="0.01" placeholder="0.00"></div>
     </div>
     <div class="form-grid mt8">
+      <div class="form-group" style="grid-column:1 / -1"><div class="form-label">Seller Central / campaign URL (optional)</div><input class="form-input" id="nc-url" type="url" placeholder="https://advertising.amazon.co.uk/cm/campaigns/..."></div>
+    </div>
+    <div class="form-grid mt8">
       <div class="form-group">
         <div class="form-label">Campaign Type</div>
         <select class="form-input" id="nc-type">
@@ -1748,6 +1844,7 @@ async function sbUpsertCampaign(c){
       id:c.uuid, numeric_id:c.id||null,
       name:c.name, alias:c.alias||'',
       product:c.product||'', asin:c.asin||'', sku:c.sku||'',
+      url:c.url||'',
       camp_type:c.campType||'', status:c.status||'active',
       rag:c.rag||'none', color:c.color||'#4a9eff',
       profit_per_unit:c.profitPerUnit||0,
@@ -1941,7 +2038,7 @@ async function sbLoadAll(){
       campaigns.push({
         uuid:row.id, id:row.numeric_id||Date.now(),
         name:row.name, alias:row.alias||'', product:row.product||'',
-        asin:row.asin||'', sku:row.sku||'', campType:row.camp_type||'',
+        asin:row.asin||'', sku:row.sku||'', url:row.url||'', campType:row.camp_type||'',
         status:row.status||'active', rag:row.rag||'none',
         color:row.color||'#4a9eff', profitPerUnit:row.profit_per_unit||0,
         createdBy:row.created_by||'manual', createdAt:row.created_at||'',
@@ -2002,6 +2099,7 @@ create table if not exists campaigns (
   product text default '',
   asin text default '',
   sku text default '',
+  url text default '',
   camp_type text default '',
   status text default 'active',
   rag text default 'none',
@@ -2554,7 +2652,7 @@ function populateDashPeriodSelectors(){
 
 // Get snapshot for a campaign matching a period label (exact match)
 function _snapForPeriod(c,period){
-  if(period==='latest')return c.snapshots.length?c.snapshots[c.snapshots.length-1]:null;
+  if(period==='latest')return latestSnap(c); // most recent DATE, not most recently added
   return c.snapshots.find(s=>s.date===period)||null;
 }
 
@@ -2828,6 +2926,7 @@ function fmtPct(n,d=2){return fmt(n,d)+'%';}
 
 function ragColor(r){return r==='green'?'var(--green)':r==='amber'?'var(--amber)':r==='red'?'var(--red)':'var(--text3)';}
 function ragPill(r){
+  if(r==='flag')return`<span class="rag-pill rp-flag" title="Spending with no sales — no ROAS to grade">⚠ NO SALE</span>`;
   if(r==='none'||!r)return`<span class="rag-pill" style="background:var(--bg4);color:var(--text3)">NO DATA</span>`;
   return`<span class="rag-pill rp-${r}">${r.toUpperCase()}</span>`;
 }
@@ -2860,7 +2959,8 @@ function renderCampTable(){
     const tSales=withData.reduce((s,c)=>s+c.sales,0);
     const blended=tSpend>0?tSales/tSpend:0;
     const green=data.filter(c=>c.rag==='green').length,amber=data.filter(c=>c.rag==='amber').length,red=data.filter(c=>c.rag==='red').length;
-    const card=(l,v,col,sub)=>`<div style="flex:1;min-width:130px;background:var(--panel);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;box-shadow:var(--shadow-sm)">
+    const flagged=campaigns.filter(c=>c.noSaleSpend).length;
+    const card=(l,v,col,sub,extra)=>`<div style="flex:1;min-width:130px;background:var(--panel);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;box-shadow:var(--shadow-sm)${extra||''}">
       <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:7px">${l}</div>
       <div style="font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-0.5px;color:${col}">${v}</div>
       ${sub?`<div style="font-size:10.5px;color:var(--text3);margin-top:5px">${sub}</div>`:''}
@@ -2871,6 +2971,11 @@ function renderCampTable(){
       ${card('Total Spend',fmtGBP(tSpend),'var(--text)','latest period')}
       ${card('Total Sales',fmtGBP(tSales),'var(--text)','latest period')}
       ${card('RAG split',`<span style="color:var(--green)">${green}</span> · <span style="color:var(--amber)">${amber}</span> · <span style="color:var(--red)">${red}</span>`,'var(--text)','green · amber · red')}
+      <div onclick="fCampRag('flag',document.querySelector('#cf .tog.flag'))" style="flex:1;min-width:130px;background:${flagged?'rgba(255,140,66,0.08)':'var(--panel)'};border:1px solid ${flagged?'rgba(255,140,66,0.35)':'var(--border)'};border-radius:var(--r-sm);padding:14px 16px;box-shadow:var(--shadow-sm);cursor:pointer" title="Click to filter — campaigns spending with no sales">
+        <div style="font-size:10px;color:${flagged?'#ff9f5a':'var(--text3)'};text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:7px">⚠ Spend · No Sales</div>
+        <div style="font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-0.5px;color:${flagged?'#ff9f5a':'var(--text3)'}">${flagged}</div>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:5px">${flagged?'needs review →':'all clear'}</div>
+      </div>
     </div>`;
   }
   const countEl=document.getElementById('camp-count');
@@ -2897,7 +3002,7 @@ function renderCampTable(){
     if(typeof av==='string')return sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
     return sortDir==='asc'?av-bv:bv-av;
   });
-  const lastSnap=c=>c.snapshots.length?c.snapshots[c.snapshots.length-1].date:'—';
+  const lastSnap=c=>{const ls=latestSnap(c);return ls?ls.date:'—';};
   body.innerHTML=data.map(c=>{
     const net=c.profitPerUnit>0?(c.purchases*c.profitPerUnit)-c.spend:null;
     const displayName=c.alias||c.name;
@@ -2908,16 +3013,18 @@ function renderCampTable(){
       const ss=sortedSnaps(c);const vals=ss.map(s=>+s.roas||0);
       trend=miniSpark(vals,roasCol(c.roas),64,20);
     }
-    return`<tr onclick="openCamp(campaigns.find(cc=>cc.id===${c.id}))">
+    return`<tr class="${c.noSaleSpend?'row-flag':''}" onclick="openCamp(campaigns.find(cc=>cc.id===${c.id}))">
       <td>
-        <div class="ct-name">${displayName}</div>
+        <div class="ct-name">${c.noSaleSpend?'<span class="flag-dot" title="Spending with no sales">⚠</span> ':''}${displayName}</div>
         ${c.alias?`<div class="ct-product">${c.name}</div>`:''}
         <div class="ct-product">${c.asin||''}${c.product?' · '+c.product:''}</div>
       </td>
       <td><span style="font-size:11px;color:${c.status==='active'?'var(--green)':'var(--text3)'}">${c.status}</span></td>
-      <td><span class="rag-pill rp-${c.rag==='none'?'amber':c.rag}" style="${c.rag==='none'?'background:var(--bg4);color:var(--text3)':''}">${hasData?c.roas.toFixed(2):'—'}</span></td>
-      <td>${hasData?'£'+c.spend.toFixed(2):'—'}</td>
-      <td>${hasData?'£'+c.sales.toFixed(2):'—'}</td>
+      <td>${c.noSaleSpend
+        ?`<span class="rag-pill rp-flag" title="Spend with no sales — no ROAS to grade">NO SALE</span>`
+        :`<span class="rag-pill rp-${c.rag==='none'?'amber':c.rag}" style="${c.rag==='none'?'background:var(--bg4);color:var(--text3)':''}">${hasData?c.roas.toFixed(2):'—'}</span>`}</td>
+      <td${c.noSaleSpend?' style="color:var(--amber);font-weight:600"':''}>${hasData?'£'+c.spend.toFixed(2):'—'}</td>
+      <td${c.noSaleSpend?' style="color:var(--amber)"':''}>${hasData?'£'+c.sales.toFixed(2):'—'}</td>
       <td>${hasData?c.purchases:'—'}</td>
       <td>${hasData?c.acos.toFixed(1)+'%':'—'}</td>
       <td>${hasData?'£'+c.cpc.toFixed(2):'—'}</td>
@@ -3026,15 +3133,40 @@ function renderInsights(){
 // ════════════════════════════════
 // POPOUT
 // ════════════════════════════════
+// Seller Central / campaign URL chip + inline editor shown in the detail header
+function campUrlHtml(c){
+  if(!c)return'';
+  if(c.url){
+    const safe=c.url.replace(/"/g,'&quot;');
+    return `<a href="${safe}" target="_blank" rel="noopener" class="rag-pill" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,0.3);text-decoration:none;cursor:pointer" title="Open in Seller Central">↗ Seller Central</a>`+
+      `<span class="rag-pill" style="background:var(--bg4);color:var(--text3);cursor:pointer" title="Edit URL" onclick="editCampUrl(${c.id})">✎</span>`;
+  }
+  return `<span class="rag-pill" style="background:var(--bg4);color:var(--text3);cursor:pointer" title="Add Seller Central URL" onclick="editCampUrl(${c.id})">+ Add SC URL</span>`;
+}
+function editCampUrl(id){
+  const c=campaigns.find(cc=>cc.id===id);if(!c)return;
+  const v=prompt('Seller Central / campaign URL for this campaign:',c.url||'');
+  if(v===null)return;
+  c.url=v.trim();
+  saveToStorage();
+  if(_sb&&_sbConnected)sbUpsertCampaign(c).catch(e=>console.warn(e));
+  if(currentCamp&&currentCamp.id===id){
+    document.getElementById('po-meta').innerHTML=ragPill(c.rag)+
+      `<span class="rag-pill" style="background:var(--bg4);color:var(--text2)">${c.status}</span>`+
+      (isStable(c)?`<span class="rag-pill" style="background:rgba(34,201,122,0.08);color:var(--green);border:1px solid rgba(34,201,122,0.2)">✓ Stable</span>`:'')+
+      campUrlHtml(c);
+  }
+}
 function openCamp(c){
   if(!c)return;
   currentCamp=c;
-  _kwSelected.clear(); _cmpSel=null; window._cmpKwFilter=null; trendsOpen=false;
+  _kwSelected.clear(); _kwExpanded.clear(); _cmpSel=null; window._cmpKwFilter=null; trendsOpen=false;
   document.getElementById('po-title').textContent=c.alias||c.name;
   document.getElementById('po-sub').textContent=`${c.asin||''}${c.product?' · '+c.product:''} ${c.campType?' · '+c.campType:''}`.trim();
   document.getElementById('po-meta').innerHTML=ragPill(c.rag)+
     `<span class="rag-pill" style="background:var(--bg4);color:var(--text2)">${c.status}</span>`+
-    (isStable(c)?`<span class="rag-pill" style="background:rgba(34,201,122,0.08);color:var(--green);border:1px solid rgba(34,201,122,0.2)">✓ Stable</span>`:'');
+    (isStable(c)?`<span class="rag-pill" style="background:rgba(34,201,122,0.08);color:var(--green);border:1px solid rgba(34,201,122,0.2)">✓ Stable</span>`:'')+
+    campUrlHtml(c);
   document.getElementById('camp-overlay').classList.add('open');
   document.body.style.overflow='hidden';
   switchTab('performance',document.querySelector('.po-tab'));
@@ -3061,6 +3193,7 @@ function parseTargetingRow(r){
   const matchKey=colMatch(r,['Target match type','Match type','match type','match','Targeting type']);
   const bidKey=colMatch(r,['Bid (GBP)','Bid','bid']);
   const impKey=colMatch(r,['Impressions','impressions']);
+  const clickKey=colMatch(r,['Clicks','clicks']);
   const ctrKey=colMatch(r,['CTR','ctr']);
   const spendKey=colMatch(r,['Total cost','Cost (GBP)','Spend (GBP)','Spend (USD)','spend','Cost (USD)']);
   const purchKey=colMatch(r,['7 Day Total Orders (#)','7 Day Total Orders','Purchases','Orders','purchases']);
@@ -3079,6 +3212,7 @@ function parseTargetingRow(r){
   const sales=parseFloat(salesKey?r[salesKey]:0)||0;
   const purch=parseInt(purchKey?r[purchKey]:0)||0;
   const imp=parseInt(impKey?r[impKey]:0)||0;
+  const clicks=parseInt(clickKey?r[clickKey]:0)||0;
   const rawCtr=parseFloat(ctrKey?r[ctrKey]:0)||0;
   // CTR in Amazon CSV is decimal e.g. 0.0233 = 2.33%
   const ctr=rawCtr>1?rawCtr/100:rawCtr;
@@ -3088,7 +3222,8 @@ function parseTargetingRow(r){
   const rawRoas=roasKey&&r[roasKey]?parseFloat(r[roasKey]):0;
   const roas=rawRoas>0?rawRoas:(spend>0&&sales>0?sales/spend:0);
   const bid=parseFloat(bidKey?r[bidKey]:0)||0;
-  return{kw,match,bid,imp,ctr,spend,purch,acos,roas,flag:imp<10&&spend===0,sales};
+  const cpc=clicks>0?+(spend/clicks).toFixed(2):0;
+  return{kw,match,bid,imp,clicks,cpc,ctr,spend,purch,acos,roas,flag:imp<10&&spend===0,sales};
 }
 
 function addTargetingToSnap(event, snapIndex){
@@ -3106,9 +3241,12 @@ function addTargetingToSnap(event, snapIndex){
       return;
     }
     currentCamp.snapshots[snapIndex].targeting=keywords;
+    deriveAds(currentCamp.snapshots[snapIndex]);
+    recomputeHeadline(currentCamp);
     saveToStorage();
     renderSnapshots(currentCamp);
     renderTrendsInline(currentCamp);
+    renderCampTable();
   };
   reader.readAsText(file);
 }
@@ -3143,6 +3281,7 @@ let snapView='targeting';
 let chartMetric='roas'; // which metric the bottom trend chart shows
 let trendsOpen=false;  // bottom trends collapsible
 const _kwSelected=new Set(); // keywords ticked for Compare (key = kw|||match)
+const _kwExpanded=new Set(); // keyword cards expanded to full metric table
 // Which metric ROWS are visible in the targeting/ads grids (user-controlled via tick boxes)
 const ALL_METRICS=[
   {k:'roas',l:'ROAS'},{k:'spend',l:'Spend'},{k:'sales',l:'Sales'},
@@ -3187,13 +3326,78 @@ function setSnapView(v){
   if(currentCamp)renderSnapshots(currentCamp);
 }
 
-// Sort snapshots oldest→newest by their period start date
+// Sort snapshots oldest→newest by their period END date (robust — falls back to start, then insertion order)
 function sortedSnaps(c){
-  return [...c.snapshots].sort((a,b)=>{
-    const da=new Date(String(a.date).split('–')[0].split('-')[0].trim()+' 2026');
-    const db=new Date(String(b.date).split('–')[0].split('-')[0].trim()+' 2026');
-    return da-db;
+  const arr=c.snapshots.map((s,i)=>({s,i}));
+  arr.sort((A,B)=>{
+    const da=_periodSortTime(A.s.date),db=_periodSortTime(B.s.date);
+    if(da!==db)return da-db;
+    return A.i-B.i; // stable — keep insertion order for identical dates
   });
+  return arr.map(x=>x.s);
+}
+// Robust period→time parser. Uses the END date (after the dash) so the most
+// recent DATA is what surfaces — regardless of the order snapshots were added.
+function _periodSortTime(label){
+  if(!label)return 0;
+  const parts=String(label).split(/[–—-]/);
+  const yearMatch=String(label).match(/\d{4}/);
+  const yr=yearMatch?yearMatch[0]:new Date().getFullYear();
+  // try the end portion first, then the start portion
+  for(const raw of [parts[parts.length-1],parts[0]]){
+    let p=(raw||'').trim();
+    if(!p)continue;
+    if(!/\d{4}/.test(p))p+=' '+yr; // borrow the year from the label
+    const d=new Date(p);
+    if(!isNaN(d))return d.getTime();
+  }
+  return yearMatch?parseInt(yearMatch[0]):0;
+}
+// The snapshot with the most recent END date (NOT the most recently added).
+// Ties broken toward the later-added snapshot.
+function latestSnap(c){
+  if(!c||!c.snapshots||!c.snapshots.length)return null;
+  let best=null,bestT=-Infinity,bestI=-1;
+  c.snapshots.forEach((s,i)=>{
+    const t=_periodSortTime(s.date);
+    if(t>bestT||(t===bestT&&i>bestI)){best=s;bestT=t;bestI=i;}
+  });
+  return best;
+}
+// If campaign-level ads metrics are blank but targeting rows exist, derive them
+// from the keyword rows. Fixes Impressions / CPC showing 0 on the Ads Overview
+// when only a Targeting CSV was imported.
+function deriveAds(s){
+  if(!s||!s.targeting||!s.targeting.length)return s;
+  const sum=k=>s.targeting.reduce((a,t)=>a+(+t[k]||0),0);
+  if(!(+s.impressions))s.impressions=sum('imp');
+  if(!(+s.clicks))s.clicks=sum('clicks');
+  if(!(+s.spend))s.spend=+sum('spend').toFixed(2);
+  if(!(+s.sales))s.sales=+sum('sales').toFixed(2);
+  if(!(+s.purchases))s.purchases=sum('purch');
+  if(!(+s.cpc)&&(+s.clicks)>0)s.cpc=+((+s.spend)/(+s.clicks)).toFixed(2);
+  if(!(+s.roas)&&(+s.spend)>0)s.roas=+((+s.sales)/(+s.spend)).toFixed(2);
+  if(!(+s.acos)&&(+s.sales)>0)s.acos=+(((+s.spend)/(+s.sales))*100).toFixed(1);
+  if(!(+s.ctr)&&(+s.impressions)>0&&(+s.clicks)>0)s.ctr=+(((+s.clicks)/(+s.impressions))*100).toFixed(2);
+  return s;
+}
+// Set a campaign's headline metrics from its LATEST-BY-DATE snapshot.
+function recomputeHeadline(c){
+  const s=latestSnap(c);
+  if(!s){c.noSaleSpend=false;return;}
+  deriveAds(s);
+  c.spend=+s.spend||0;c.sales=+s.sales||0;c.purchases=+s.purchases||0;
+  c.acos=+s.acos||0;c.roas=+s.roas||0;c.ctr=+s.ctr||0;
+  c.cpc=+s.cpc||0;c.impressions=+s.impressions||0;
+  // ── Spend-but-no-sales detector ──
+  // Latest-dated snapshot is spending, yet the WHOLE campaign has zero sales → no ROAS to grade.
+  const totalSales=(c.snapshots||[]).reduce((a,sn)=>a+(+sn.sales||0),0);
+  c.noSaleSpend=(+s.spend>0 && totalSales===0);
+  c.rag=c.noSaleSpend?'flag':calcRag(c.roas,c.acos);
+}
+// Normalise every campaign: backfill ads metrics + set headline to latest-by-date.
+function normalizeAllSnaps(){
+  campaigns.forEach(c=>{(c.snapshots||[]).forEach(deriveAds);recomputeHeadline(c);});
 }
 function roasCol(v){return v>=5?'var(--green)':v>=4?'var(--amber)':v>0?'var(--red)':'var(--text3)';}
 function ragCls(v){return v>=5?'rg':v>=4?'ra':v>0?'rr':'rn';}
@@ -3419,9 +3623,13 @@ function renderKeywordCards(c,snaps){
   ].filter(rd=>visibleMetrics.has(rd.k));
 
   const n=_kwSelected.size;
+  const anyExpanded=allKws.some(k=>_kwExpanded.has(k));
   const actionbar=`<div class="perf-actionbar">
     <div class="kw-section-title">Targeting <span style="color:var(--text3);font-weight:400;font-size:11px">· ${allKws.length} keywords · oldest → latest</span></div>
-    <button class="cmp-cta" id="perf-sel-cta" onclick="compareSelected()" ${n?'':'disabled'}>${n?`Compare ${n} keyword${n>1?'s':''} →`:'Tick keywords to compare →'}</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn-sm" style="font-size:11px" onclick="kwExpandAll(${!anyExpanded})">${anyExpanded?'Collapse all ▲':'Expand all ▼'}</button>
+      <button class="cmp-cta" id="perf-sel-cta" onclick="compareSelected()" ${n?'':'disabled'}>${n?`Compare ${n} keyword${n>1?'s':''} →`:'Tick keywords to compare →'}</button>
+    </div>
   </div>`;
 
   // metric tick-box bar
@@ -3441,6 +3649,7 @@ function renderKeywordCards(c,snaps){
     const found=lat.find(k=>k.kw===kw&&k.match===match);
     const nowRoas=found?found.roas:0;
     const sel=_kwSelected.has(kwKey);
+    const expanded=_kwExpanded.has(kwKey);
     const kwEsc=kw.replace(/'/g,"\\'");
     const roasVals=snaps.map(s=>{const f=(s.targeting||[]).find(k=>k.kw===kw&&k.match===match);return f?+f.roas||0:0;});
 
@@ -3469,28 +3678,56 @@ function renderKeywordCards(c,snaps){
       return`<td class="${isLatest?'latest':''}"><input type="number" step="0.01" value="${f.bid||''}" placeholder="—" class="kw-bid-input" style="width:60px" onchange="updateTargetingBid(${oi},'${kwEsc}','${match}',this.value)"></td>`;
     }).join('')}</tr>`;
 
-    return`<div class="kwg ${ragCls(nowRoas)}${sel?' sel':''}" data-kw="${kwKey.replace(/"/g,'&quot;')}">
-      <div class="kwg-head" onclick="toggleKwSelectFromCard('${kwKey.replace(/'/g,"\\'")}')">
+    // Compact inline stats (shown collapsed) — latest period at a glance
+    const ls=found||{};
+    const flagNoSale=(+ls.spend>0)&&(!(+ls.sales));
+    const miniStat=(l,v,col)=>`<span class="kwg-mini"><span class="kwg-mini-l">${l}</span><span class="kwg-mini-v" style="${col?`color:${col}`:''}">${v}</span></span>`;
+    const compactStats=`<div class="kwg-compact">
+      ${miniStat('Spend',fmtGBP(+ls.spend||0),flagNoSale?'#ff9f5a':'')}
+      ${miniStat('Sales',fmtGBP(+ls.sales||0),'')}
+      ${miniStat('Purch',fmt(+ls.purch||0),'')}
+      ${miniStat('Impr',fmt(+ls.imp||0),'')}
+      ${flagNoSale?`<span class="kwg-mini-flag" title="Spending with no sales">⚠ no sale</span>`:''}
+    </div>`;
+
+    return`<div class="kwg ${ragCls(nowRoas)}${sel?' sel':''}${expanded?' expanded':''}" data-kw="${kwKey.replace(/"/g,'&quot;')}">
+      <div class="kwg-head" onclick="kwToggleExpand('${kwKey.replace(/'/g,"\\'")}')">
         <label class="kwg-checkwrap" onclick="event.stopPropagation()">
           <input type="checkbox" class="kwg-check" ${sel?'checked':''} onchange="toggleKwSelect('${kwKey.replace(/'/g,"\\'")}',this.checked)" title="Select for Compare">
         </label>
-        <div class="kwg-title" style="display:flex;align-items:center;gap:6px">${kw}<span class="match-chip" style="background:${mc}1f;color:${mc};border:1px solid ${mc}40;margin-left:0">${match}</span><button class="kw-hist-btn" data-kwkey="${kwKey.replace(/"/g,'&quot;')}" data-campid="${c.id}" onclick="event.stopPropagation();openKwHistory(this.dataset.kwkey,+this.dataset.campid)">History</button></div>
+        <div class="kwg-title" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${kw}<span class="match-chip" style="background:${mc}1f;color:${mc};border:1px solid ${mc}40;margin-left:0">${match}</span><button class="kw-hist-btn" data-kwkey="${kwKey.replace(/"/g,'&quot;')}" data-campid="${c.id}" onclick="event.stopPropagation();openKwHistory(this.dataset.kwkey,+this.dataset.campid)">History</button></div>
+        ${expanded?'':compactStats}
         <div class="kwg-spark">${miniSpark(roasVals,roasCol(nowRoas),74,22)}</div>
         <div class="kwg-roasnow">
           <div class="kwg-roasnow-l">ROAS now</div>
           <div class="kwg-roasnow-v" style="color:${roasCol(nowRoas)}">${nowRoas>0?fmt(nowRoas,2):'—'}</div>
         </div>
+        <span class="kwg-chevron" title="${expanded?'Collapse':'Expand detail'}">${expanded?'▲':'▼'}</span>
       </div>
-      <div class="kwg-scroll">
+      ${expanded?`<div class="kwg-scroll">
         <table class="kwg-table">
           <thead><tr><th>Metric</th>${headCols}</tr></thead>
           <tbody>${bodyRows}${bidRow}</tbody>
         </table>
-      </div>
+      </div>`:''}
     </div>`;
   }).join('');
 
   return actionbar+metricBar+cards;
+}
+// Expand/collapse a single keyword card
+function kwToggleExpand(key){
+  if(_kwExpanded.has(key))_kwExpanded.delete(key);else _kwExpanded.add(key);
+  if(currentCamp)renderSnapshots(currentCamp);
+}
+// Expand or collapse every keyword card at once
+function kwExpandAll(expand){
+  if(!currentCamp)return;
+  const snaps=sortedSnaps(currentCamp);
+  const allKws=[...new Set(snaps.flatMap(s=>(s.targeting||[]).map(k=>k.kw+'|||'+k.match)))];
+  _kwExpanded.clear();
+  if(expand)allKws.forEach(k=>_kwExpanded.add(k));
+  renderSnapshots(currentCamp);
 }
 function toggleKwSelectFromCard(key){
   const on=!_kwSelected.has(key);
@@ -3831,10 +4068,10 @@ function parseAdsCSV(event){
     const SPEND_COLS  =['Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','Cost (USD)','Total cost','total spend','Total Spend'];
     const SALES_COLS  =['7 Day Total Sales (GBP)','7 Day Total Sales (USD)','Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales','Attributed Sales 7d'];
     const PURCH_COLS  =['7 Day Total Orders (#)','7 Day Total Orders','Purchases','Orders','Total Orders','Attributed Conversions 7d'];
-    const IMP_COLS    =['Impressions','impressions'];
-    const CLICK_COLS  =['Clicks','clicks'];
-    const CTR_COLS    =['Click-Through Rate (CTR)','CTR','ctr'];
-    const CPC_COLS    =['Cost Per Click (CPC)','CPC','cpc','Cost-Per-Click'];
+    const IMP_COLS    =['Impressions','impressions','Impr','Total Impressions'];
+    const CLICK_COLS  =['Clicks','clicks','Total Clicks'];
+    const CTR_COLS    =['Click-Through Rate (CTR)','CTR','ctr','Click-through rate'];
+    const CPC_COLS    =['Cost Per Click (CPC)','CPC','cpc','Cost-Per-Click','CPC (GBP)','CPC (USD)','Avg. CPC','Average CPC'];
     const ACOS_COLS   =['Total Advertising Cost of Sales (ACOS)','ACOS','acos'];
     const ROAS_COLS   =['Total Return on Advertising Spend (ROAS)','ROAS','roas'];
 
@@ -3976,11 +4213,10 @@ function saveSnapshot(){
   };
   window._pendingTargeting=null;
   currentCamp.snapshots.push(snap);
-  // Update campaign headline metrics
-  currentCamp.spend=snap.spend;currentCamp.sales=snap.sales;currentCamp.purchases=snap.purchases;
-  currentCamp.acos=snap.acos;currentCamp.roas=snap.roas;currentCamp.ctr=snap.ctr;
-  currentCamp.cpc=snap.cpc;currentCamp.impressions=snap.impressions;
-  currentCamp.rag=calcRag(roas,acos);
+  // Backfill campaign-level Impressions/CPC/etc from targeting rows if blank
+  deriveAds(snap);
+  // Headline reflects the most recent DATE (not necessarily this snapshot)
+  recomputeHeadline(currentCamp);
   closeSnapForm();
   clearSnapForm();
   saveToStorage();
@@ -5121,7 +5357,8 @@ function calcRag(roas, acos){
 }
 // Recompute every campaign's RAG from the current thresholds, then re-render everything
 function recomputeAllRag(){
-  campaigns.forEach(c=>{c.rag=calcRag(c.roas,c.acos);});
+  normalizeAllSnaps(); // backfill ads metrics + set headline to latest-by-date + flag spend-no-sale
+  campaigns.forEach(c=>{c.rag=c.noSaleSpend?'flag':calcRag(c.roas,c.acos);});
 }
 function refreshAllViews(){
   populateDashPeriodSelectors();renderDashPeriod();
@@ -5180,6 +5417,7 @@ function saveNewCamp(){
     product:document.getElementById('nc-product').value.trim()||'',
     asin:document.getElementById('nc-asin').value.trim()||'',
     sku:document.getElementById('nc-sku').value.trim()||'',
+    url:document.getElementById('nc-url').value.trim()||'',
     campType:document.getElementById('nc-type').value,
     rag:'none',
     status:document.getElementById('nc-status').value,
@@ -5191,7 +5429,7 @@ function saveNewCamp(){
   const opt=document.createElement('option');opt.value=newC.name;opt.textContent=newC.alias||newC.name;
   document.getElementById('gcl-campaign').appendChild(opt);
   // Clear form
-  ['nc-name','nc-alias','nc-asin','nc-sku','nc-product','nc-profit'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['nc-name','nc-alias','nc-asin','nc-sku','nc-product','nc-profit','nc-url'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   saveToStorage();
   closeAddCamp();renderCampTable();renderDashAttention();renderDashReminders();populateDashPeriodSelectors();renderDashPeriod();
   populateDMASINCampSelect();
