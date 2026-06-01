@@ -1694,7 +1694,7 @@ function sbInit(url,key){
   }catch(e){
     console.warn('Supabase init failed:',e);
     _sb=null;_sbConnected=false;
-    sbUpdateStatus('error','Init failed: '+e.message);
+    sbUpdateStatus('error','Init failed: '+(e?.message||JSON.stringify(e)));
   }
 }
 function sbUpdateStatus(state,detail){
@@ -1722,7 +1722,7 @@ async function sbTestConnection(){
     sbUpdateStatus('connected','Connected — tables reachable');
     sbUpdateLastSync();
   }catch(e){
-    sbUpdateStatus('error','Connection failed: '+e.message+' — check URL, key, and that tables exist');
+    sbUpdateStatus('error','Connection failed: '+(e?.message||e?.details||JSON.stringify(e))+' — check URL, key, and that tables exist');
   }
 }
 function sbUpdateLastSync(){
@@ -1871,8 +1871,8 @@ async function sbFullSync(showAlert){
     sbUpdateLastSync();
     if(showAlert)alert('✓ All data synced to Supabase successfully.');
   }catch(e){
-    sbUpdateStatus('error','Sync failed: '+e.message);
-    setSyncStatus('error','Sync failed: '+e.message);
+    sbUpdateStatus('error','Sync failed: '+(e?.message||JSON.stringify(e)));
+    setSyncStatus('error','Sync failed: '+(e?.message||JSON.stringify(e)));
     if(showAlert)alert('Sync error: '+e.message);
   }finally{_sbSyncing=false;}
 }
@@ -1975,7 +1975,7 @@ async function sbLoadAll(){
     return true;
   }catch(e){
     console.warn('sbLoadAll failed:',e);
-    sbUpdateStatus('error','Load failed: '+e.message+' — using local cache');
+    sbUpdateStatus('error','Load failed: '+(e?.message||e?.details||JSON.stringify(e))+' — using local cache');
     return false;
   }
 }
@@ -2137,7 +2137,7 @@ function saveToStorage(){
       sbUpdateLastSync();
     }catch(e){
       console.warn('Save failed:',e);
-      setSyncStatus('error','Save failed: '+e.message);
+      setSyncStatus('error','Save failed: '+(e?.message||JSON.stringify(e)));
     }
   })();
 }
@@ -2159,9 +2159,18 @@ function setSyncStatus(state,msg){
   if(state==='error'&&indicator){
     indicator.style.borderColor='rgba(255,93,108,0.4)';
     indicator.style.background='var(--red-bg)';
+    // Show error banner
+    const banner=document.getElementById('sb-error-banner');
+    const errMsg=document.getElementById('sb-error-msg');
+    if(banner&&msg){banner.style.display='flex';if(errMsg)errMsg.textContent=msg;}
   } else if(indicator){
     indicator.style.borderColor='';
     indicator.style.background='var(--bg3)';
+    // Hide error banner on success
+    if(state==='ok'||state==='connected'){
+      const banner=document.getElementById('sb-error-banner');
+      if(banner)banner.style.display='none';
+    }
   }
 }
 
@@ -2364,10 +2373,39 @@ function toggleSnapExpand(key){
 
 
 // ════════════════════════════════
-// INIT
+// PAGES
 // ════════════════════════════════
-document.getElementById('live-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const pg=document.getElementById('page-'+n);
+  if(pg)pg.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+n+"'"))b.classList.add('active');
+  });
+  if(n==='products'){renderProductPerf();renderProducts();}
+  if(n==='changelog')renderGlobalCL();
+  if(n==='insights')renderInsights();
+  if(n==='snaplog')renderSnapLog();
+  if(n==='dashboard'){populateDashPeriodSelectors();renderDashPeriod();renderDashAttention();renderDashReminders();renderDashRecentChanges();}
+  if(n==='data'){renderDMPage();}
+  if(n==='settings'){
+    // Refresh last-sync label
+    const ls=localStorage.getItem('bdl-ppc-last-sync');
+    const el=document.getElementById('sb-last-sync');
+    if(el)el.textContent=ls||'Never';
+    // Reflect connection state
+    if(_sbConnected)sbUpdateStatus('connected','Connected');
+    else if(_sb)sbUpdateStatus('error','Not verified — click Test');
+    else sbUpdateStatus('disconnected','');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
+// ════════════════════════════════
+// SNAPSHOT LOG PAGE
+// ════════════════════════════════
+// Track which snapshot tiles are expanded (key: campId-snapIdx)
 function showLoadingOverlay(msg){
   const el=document.getElementById('loading-overlay');
   const st=document.getElementById('loading-status');
