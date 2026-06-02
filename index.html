@@ -474,54 +474,97 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
 <!-- ════════ SETTINGS ════════ -->
 <div class="page" id="page-settings">
-  <div class="ph"><div><h1>Settings</h1><div class="sub">Supabase connection, product price history, defaults</div></div></div>
+  <div class="ph"><div><h1>Settings</h1><div class="sub">Account config, alert rules, bid defaults, data export</div></div></div>
 
-  <div class="grid" style="grid-template-columns:1.1fr 1fr;gap:14px;align-items:start">
-
-    <!-- Supabase config -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="card pad">
-      <div class="sh" style="margin:0 0 14px"><div class="tt" style="font-size:13px">Supabase connection</div></div>
-      <div style="display:grid;gap:10px">
-        <div><div class="label" style="margin-bottom:5px">Project URL</div>
-          <input class="input" id="cfg-url" style="width:100%;font-family:var(--mono);font-size:11.5px" placeholder="https://xxxx.supabase.co" oninput="settingsDirty()"></div>
-        <div><div class="label" style="margin-bottom:5px">Anon / public key</div>
-          <input class="input" id="cfg-key" type="password" style="width:100%;font-family:var(--mono);font-size:11.5px" placeholder="eyJh…" oninput="settingsDirty()"></div>
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">☁ Supabase connection</div></div>
+      <div style="display:grid;gap:9px">
+        <div><div class="label" style="margin-bottom:4px">Project URL</div>
+          <input class="input" id="cfg-url" style="width:100%;font-family:var(--mono);font-size:11px" placeholder="https://xxxx.supabase.co" oninput="settingsDirty()"></div>
+        <div><div class="label" style="margin-bottom:4px">Anon / public key</div>
+          <input class="input" id="cfg-key" type="password" style="width:100%;font-family:var(--mono);font-size:11px" placeholder="eyJh…" oninput="settingsDirty()"></div>
         <div style="display:flex;gap:8px;align-items:center">
           <button class="btn" onclick="saveSupabaseConfig()">Save &amp; reconnect</button>
-          <button class="btn ghost" onclick="testSupabaseConnection()">Test connection</button>
-          <span id="cfg-status" style="font-size:11.5px;color:var(--text3)"></span>
+          <button class="btn ghost" onclick="testSupabaseConnection()">Test</button>
+          <span id="cfg-status" style="font-size:11px;color:var(--text3)"></span>
         </div>
       </div>
     </div>
-
-    <!-- Account defaults -->
     <div class="card pad">
-      <div class="sh" style="margin:0 0 14px"><div class="tt" style="font-size:13px">Account defaults</div></div>
-      <div style="display:grid;gap:10px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div><div class="label" style="margin-bottom:5px">Target ROAS</div>
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🛒 Amazon account</div></div>
+      <div style="display:grid;gap:9px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <div><div class="label" style="margin-bottom:4px">Seller / vendor ID</div>
+            <input class="input" id="cfg-seller-id" style="width:100%" placeholder="A1B2C3D4E5" oninput="settingsDirty()"></div>
+          <div><div class="label" style="margin-bottom:4px">Marketplace</div>
+            <select class="sel" id="cfg-marketplace" style="width:100%" onchange="settingsDirty()">
+              <option value="UK">Amazon UK</option><option value="DE">Amazon DE</option>
+              <option value="FR">Amazon FR</option><option value="US">Amazon US</option>
+            </select></div>
+        </div>
+        <div><div class="label" style="margin-bottom:4px">Account label</div>
+          <input class="input" id="cfg-acct-label" style="width:100%" placeholder="e.g. BDL Homeware" oninput="settingsDirty()"></div>
+        <button class="btn ghost" onclick="saveAppSettings()">Save account</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div class="card pad">
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🎯 PPC defaults</div></div>
+      <div style="display:grid;gap:9px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <div><div class="label" style="margin-bottom:4px">Target ROAS</div>
             <input class="input" id="cfg-target-roas" style="width:100%" type="number" step="0.1" placeholder="10" oninput="settingsDirty()"></div>
-          <div><div class="label" style="margin-bottom:5px">Max ACOS %</div>
+          <div><div class="label" style="margin-bottom:4px">Max ACOS %</div>
             <input class="input" id="cfg-max-acos" style="width:100%" type="number" step="1" placeholder="15" oninput="settingsDirty()"></div>
         </div>
-        <div><div class="label" style="margin-bottom:5px">Amazon marketplace</div>
-          <select class="sel" id="cfg-marketplace" style="width:100%">
-            <option value="UK">Amazon UK (amazon.co.uk)</option>
-            <option value="DE">Amazon DE</option>
-            <option value="US">Amazon US</option>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <div><div class="label" style="margin-bottom:4px">Default bid step (£)</div>
+            <input class="input" id="cfg-bid-step" style="width:100%" type="number" step="0.01" placeholder="0.05" oninput="settingsDirty()"></div>
+          <div><div class="label" style="margin-bottom:4px">Max bid cap (£)</div>
+            <input class="input" id="cfg-bid-cap" style="width:100%" type="number" step="0.01" placeholder="2.00" oninput="settingsDirty()"></div>
+        </div>
+        <div><div class="label" style="margin-bottom:4px">Review frequency</div>
+          <select class="sel" id="cfg-review-freq" style="width:100%" onchange="settingsDirty()">
+            <option value="daily">Daily</option><option value="3days">Every 3 days</option>
+            <option value="weekly" selected>Weekly</option><option value="biweekly">Every 2 weeks</option>
           </select></div>
-        <button class="btn" onclick="saveAppSettings()">Save defaults</button>
+        <button class="btn ghost" onclick="saveAppSettings()">Save defaults</button>
       </div>
     </div>
-
+    <div class="card pad">
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🔔 Alert rules</div><button class="btn-sm" onclick="addAlertRule()">+ Add rule</button></div>
+      <div id="alert-rules-list"></div>
+      <div style="margin-top:10px;padding:9px 12px;background:var(--bg3);border-radius:var(--r-sm);font-size:11px;color:var(--text3)">Rules flag campaigns on Insights after each snapshot.</div>
+    </div>
   </div>
 
-  <!-- Price history per product -->
-  <div class="sh" style="margin:18px 0 12px"><div class="tt">Product price history <small>track price changes — used in Profitability tab</small></div>
+  <div class="sh" style="margin:4px 0 10px">
+    <div class="tt">💷 Product price history</div>
     <button class="btn-sm" onclick="addPriceEntry()">+ Log price change</button>
   </div>
-  <div class="card" id="price-history-card">
-    <div id="price-history-list"></div>
+  <div class="card" style="margin-bottom:14px"><div id="price-history-list"></div></div>
+
+  <div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px">📦 Data export</div></div>
+  <div class="card pad" style="margin-bottom:14px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div style="flex:1"><div style="font-size:12.5px;font-weight:600;margin-bottom:3px">Export everything</div>
+        <div style="font-size:11.5px;color:var(--text3)">All campaigns, snapshots, changes and price history.</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn ghost" onclick="exportData('json')">Export JSON</button>
+        <button class="btn ghost" onclick="exportData('csv')">Export CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card pad" style="display:flex;align-items:center;justify-content:space-between;gap:14px">
+    <div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:2px">BDL PPC Manager <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:400;margin-left:6px">v10 · Jun 2026</span></div>
+      <div style="font-size:11.5px;color:var(--text3)">Data stored in Supabase. Connected to ffbdazepqrsyurhouxif.</div>
+    </div>
+    <button class="btn ghost" style="color:var(--red);border-color:rgba(255,93,108,.3)" onclick="if(confirm('Reset ALL local data?'))resetAllData()">Reset local data</button>
   </div>
 
 </div>
@@ -720,6 +763,7 @@ async function loadFromSupabase(){
     const chRes=await fetch(SUPABASE_URL+'/rest/v1/changes?select=*&order=campaign_id',{headers});
     const chData=chRes.ok?await chRes.json():[];
     campaigns.length=0;
+    if(campData.length>0)console.log('Supabase campaign columns:',Object.keys(campData[0]),'first row:',campData[0]);
     campData.forEach(row=>{
       const snaps=snapData.filter(s=>s.campaign_id===row.id).map(s=>{
         const tgts=s.targeting_json?JSON.parse(s.targeting_json):null;
@@ -729,7 +773,8 @@ async function loadFromSupabase(){
         return sn;
       });
       const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
-      campaigns.push(mkCamp({id:row.id,name:row.name,alias:row.alias||row.name,product:row.product_name,asin:row.asin,sku:row.sku||'—',status:row.status||'active',price:row.price||0,snapshots:snaps,changes}));
+      const product=row.product_name||row.product||row.name||'Unnamed product';
+      campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,snapshots:snaps,changes}));
     });
     renderCampaigns();
   }catch(e){
@@ -808,7 +853,7 @@ function campRow(c){
   const winCh=c.changes.filter(x=>x.outcome==='win').length;
   const chBadge=c.changes.length?`<span style="font-family:var(--mono);font-size:11px">${c.changes.length}${winCh?` <span style="color:var(--green)">·${winCh}✓</span>`:''}</span>`:'<span class="muted">—</span>';
   const hl=c.rag==='leak';
-  return `<tr class="${hl?'flagrow':''}" onclick="openCamp(${c.id})">
+  return `<tr class="${hl?'flagrow':''}" onclick="openCamp('${c.id||0}')"  style="cursor:pointer">
     <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta">
       <b>${hl?'<span class="flagdot"></span>':''}${c.alias||c.name}</b>
       <span>${c.asin} · ${c.sku}</span></div></div></td>
@@ -850,7 +895,9 @@ function toggleGroup(){groupByProduct=!groupByProduct;document.getElementById('g
 /* ════════ POPOUT ════════ */
 let curCamp=null;
 function openCamp(id){
-  curCamp=campaigns.find(c=>c.id===id);if(!curCamp)return;
+  if(!id&&id!==0){console.warn('openCamp called with no id');return;}
+  curCamp=campaigns.find(c=>c.id==id);  /* == not === so string/number both match */
+  if(!curCamp){console.warn('Campaign not found:',id);return;}
   const c=curCamp;
   document.getElementById('po-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:11px">${monoTile(c.alias||c.name,30)}${c.name} ${c.rag==='leak'?'<span class="rag flag">SPEND LEAK</span>':`<span class="rag ${c.rag}"><span class="d"></span>${fmt(c.roas,2)} ROAS</span>`}</span>`;
   document.getElementById('po-sub').innerHTML=`<span class="chip">${c.product}</span><span class="chip">ASIN ${c.asin}</span><span class="chip">SKU ${c.sku}</span><span class="chip">£${fmt(c.price,2)} list</span><span class="chip">${c.status}</span>`;
@@ -1067,25 +1114,29 @@ function renderPerf(){
     ${hasPrev?`<span class="sec-item" style="margin-left:auto;color:var(--text4);font-size:10px">vs ${prev.date||'prev period'}</span>`:''}
   </div>`;
 
-  /* targeting / ad groups — toggle between the two */
-  const tgts=last.targeting||[];
-  const ags=last.adGroups||[];
+  /* ── Targeting (keywords) ⇄ Ad Groups — imported per snapshot ──
+     Headline KPIs use the latest snapshot, but the imported keyword / ad-group
+     rows can live on an earlier snapshot, so pull them from the most recent
+     snapshot that actually has them. */
+  const dataSnap=[...ss].reverse().find(s=>(s.targeting&&s.targeting.length)||(s.adGroups&&s.adGroups.length))||last;
+  const tgts=dataSnap.targeting||[];
+  const ags=dataSnap.adGroups||[];
   let tgtHTML='';
-  if(tgts.length||ags.length){
-    const groups={};
-    tgts.forEach(t=>{(groups[t.adGroup||'Targeting']=groups[t.adGroup||'Targeting']||[]).push(t);});
 
-    const tgtTable=`<div style="overflow-x:auto">
-      <table class="simple-tbl" style="min-width:600px">
-        <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${tgts.map(r=>{
-          const rg=ragOf(r.roas,r.sales,r.spend);
-          const rl=r.spend>0&&r.sales===0;
+  if(tgts.length||ags.length){
+    const leaks=tgts.filter(r=>r.spend>0&&r.sales===0).length;
+
+    /* keyword / target level */
+    const tgtTable=tgts.length?`<div style="overflow-x:auto">
+      <table class="simple-tbl" style="min-width:660px">
+        <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+        <tbody>${tgts.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);const rl=r.spend>0&&r.sales===0;
           return `<tr ${rl?'class="trow-leak"':''}>
             <td>${rl?'<span class="flagdot"></span>':''}${r.kw}</td>
             <td><span class="mtag">${r.match||'—'}</span></td>
-            <td><input class="bidinput" value="${fmt(r.bid,2)}"></td>
-            <td>${intf(r.imp)}</td><td>${intf(r.clicks)}</td><td>${fmt(r.ctr,2)}%</td>
+            <td>£${fmt(r.bid,2)}</td>
+            <td>${intf(r.imp)}</td>
+            <td>${gbp(r.cpc||0)}</td>
             <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
             <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
             <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
@@ -1093,46 +1144,48 @@ function renderPerf(){
           </tr>`;}).join('')}
         </tbody>
       </table>
-    </div>`;
+    </div>`
+    :`<div style="padding:14px;color:var(--text3);font-size:12px">No keyword / targeting rows in this snapshot. Paste the <b style="color:var(--blue)">Targeting</b> CSV in + Snapshot.</div>`;
 
+    /* ad group / ad level */
     const agTable=ags.length?`<div style="overflow-x:auto">
-      <table class="simple-tbl" style="min-width:420px">
-        <thead><tr><th>Ad group</th><th>Bid</th><th>Impr</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${ags.map(r=>{
-          const rg=ragOf(r.roas,r.sales,r.spend);
-          return `<tr>
-            <td style="font-weight:500">${r.name}</td>
-            <td>£${fmt(r.bid,2)}</td><td>${intf(r.imp)}</td>
-            <td>${gbp(r.spend)}</td><td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
+      <table class="simple-tbl" style="min-width:660px">
+        <thead><tr><th>Ad group / ad</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+        <tbody>${ags.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);const rl=r.spend>0&&r.sales===0;
+          return `<tr ${rl?'class="trow-leak"':''}>
+            <td style="font-weight:500;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name}">${rl?'<span class="flagdot"></span>':''}${r.name}</td>
+            <td>${intf(r.imp)}</td><td>${intf(r.clicks||0)}</td><td>${fmt(r.ctr||0,2)}%</td>
+            <td>${gbp(r.cpc||0)}</td>
+            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
+            <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
             <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
             <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
           </tr>`;}).join('')}
         </tbody>
       </table>
     </div>`
-    :`<div style="padding:14px;color:var(--text3);font-size:12px">No ad groups data in this snapshot. Add the Ad Groups CSV when importing your next snapshot.</div>`;
+    :`<div style="padding:14px;color:var(--text3);font-size:12px">No ad-group rows in this snapshot. Paste the <b style="color:var(--blue)">Ad Groups</b> CSV in + Snapshot.</div>`;
 
-    tgtHTML=`<div style="margin-top:14px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px" id="data-toggle">
-          <button onclick="showDataView('targeting')" data-view="targeting"
-            style="border:none;padding:5px 14px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--blue);color:#fff;font-family:var(--font)">
-            Targeting <span style="opacity:.75;font-weight:400">${tgts.length}</span>
-          </button>
-          <button onclick="showDataView('adgroups')" data-view="adgroups"
-            style="border:none;padding:5px 14px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;background:none;color:var(--text3);font-family:var(--font)">
-            Ad Groups <span style="opacity:.75">${ags.length||'—'}</span>
-          </button>
+    const startView=tgts.length?'targeting':'adgroups';
+    const tabBtn=(view,label,count)=>`<button onclick="showDataView('${view}')" data-view="${view}"
+        style="border:none;padding:7px 18px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:${view===startView?'600':'500'};background:${view===startView?'var(--blue)':'none'};color:${view===startView?'#fff':'var(--text3)'}">
+        ${label} <span style="opacity:.7;font-weight:400">${count||0}</span></button>`;
+
+    tgtHTML=`<div style="margin-top:16px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:3px;gap:3px" id="data-toggle">
+          ${tabBtn('targeting','Targeting (keywords)',tgts.length)}
+          ${tabBtn('adgroups','Ad Groups',ags.length)}
         </div>
-        <span style="font-size:10.5px;color:var(--text4)">latest snapshot · ${last.date||''}</span>
-        ${tgts.filter(r=>r.spend>0&&r.sales===0).length?`<span style="font-size:10.5px;color:var(--amber)">⚠ ${tgts.filter(r=>r.spend>0&&r.sales===0).length} spend leak${tgts.filter(r=>r.spend>0&&r.sales===0).length>1?'s':''}</span>`:''}
+        <span style="font-size:10.5px;color:var(--text4)">${dataSnap===last?'latest snapshot':'data from'} · ${dataSnap.date||''}</span>
+        ${leaks?`<span style="font-size:10.5px;color:var(--amber)">⚠ ${leaks} spend leak${leaks>1?'s':''}</span>`:''}
       </div>
-      <div id="data-view-targeting">${tgtTable}</div>
-      <div id="data-view-adgroups" style="display:none">${agTable}</div>
+      <div id="data-view-targeting" style="display:${startView==='targeting'?'block':'none'}">${tgtTable}</div>
+      <div id="data-view-adgroups" style="display:${startView==='adgroups'?'block':'none'}">${agTable}</div>
     </div>`;
   } else {
-    tgtHTML=`<div style="margin-top:14px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text3);font-size:12px">
-      No targeting data yet — click <b style="color:var(--blue)">+ Snapshot</b> to import your Amazon CSV exports.
+    tgtHTML=`<div style="margin-top:16px;padding:14px 16px;background:var(--bg2);border:1px dashed var(--border);border-radius:var(--r-sm);color:var(--text3);font-size:12px">
+      No keyword or ad-group data on these snapshots yet. Open <b style="color:var(--blue)">+ Snapshot</b>, paste your <b>Targeting</b> and <b>Ad Groups</b> CSV exports, set the period, and save — then toggle between them here.
     </div>`;
   }
 
@@ -1367,12 +1420,20 @@ function renderNotes(){
     <div class="muted" style="margin-top:18px">No saved notes yet.</div>`;
 }
 
+function splitCsvLine(line){
+  const out=[];let cur='';let q=false;
+  for(let i=0;i<line.length;i++){const ch=line[i];
+    if(q){ if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else { if(ch==='"')q=true; else if(ch===','){out.push(cur);cur='';} else cur+=ch; }
+  }
+  out.push(cur);return out;
+}
 function parseCsv(text){
-  const lines=text.trim().split('\n').map(l=>l.replace(/^\uFEFF/,''));
+  const lines=(text||'').replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n').trim().split('\n');
   if(lines.length<2)return null;
-  const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/\s+/g,'_').replace(/[()]/g,''));
+  const headers=splitCsvLine(lines[0]).map(h=>h.trim().toLowerCase().replace(/\s+/g,'_').replace(/[()]/g,''));
   const rows=lines.slice(1).filter(l=>l.trim()).map(l=>{
-    const vals=l.split(',');
+    const vals=splitCsvLine(l);
     const o={};headers.forEach((h,i)=>o[h]=(vals[i]||'').trim());
     return o;
   });
@@ -1380,6 +1441,18 @@ function parseCsv(text){
 }
 function csvVal(row,...keys){
   for(const k of keys){const v=row[k]||row[k.toLowerCase()]||'';if(v&&v!=='—'&&v!='--')return v;}return'';
+}
+/* turn a period label ("2 Jun 2026" or "25 May – 31 May 2026") into a sortable timestamp using its START date */
+function parseGbPeriod(s){
+  if(!s)return 0;
+  s=String(s);
+  const yearM=s.match(/(20\d{2})/);
+  const year=yearM?+yearM[1]:new Date().getFullYear();
+  const start=s.split(/–|—|-|\bto\b/i)[0];
+  const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  const dm=start.match(/(\d{1,2})\s*([A-Za-z]{3,})/);
+  if(dm){const mo=months[dm[2].slice(0,3).toLowerCase()];if(mo!=null)return new Date(year,mo,+dm[1]).getTime();}
+  const t=Date.parse(s);return isNaN(t)?0:t;
 }
 
 /* ════════ SNAPSHOT TAB ════════ */
@@ -1486,9 +1559,10 @@ function parsePasteFor(type,text){
       const purch=parseInt(csvVal(r,'purchases_14_day','purchases','orders')||0);
       const clicks=parseInt(csvVal(r,'clicks')||0);
       const bid=parseFloat(csvVal(r,'bid_gbp','bid')||0);
+      const cpcCsv=parseFloat(csvVal(r,'cpc_gbp','cpc')||0);
       const match=csvVal(r,'match_type','target_match_type')||'—';
       const adGroup=csvVal(r,'ad_group_name','automatic_targeting_groups','ad_group')||'Targeting';
-      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=clicks?spend/clicks:0;
+      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=cpcCsv||(clicks?spend/clicks:0);
       return{kw:name,adGroup,match:match.replace(/-/g,' '),bid,imp,clicks,spend,sales,purch,acos,roas,ctr,cpc};
     }).filter(r=>r.kw);
     window._snapTgts=rows;
@@ -1509,21 +1583,25 @@ function parsePasteFor(type,text){
   } else {
     /* Ad Groups report: group-level summary */
     const rows=parsed.rows.map(r=>{
-      const name=csvVal(r,'automatic_targeting_groups','ad_group_name','ad_group','targeting_group')||'Ad group';
+      const name=csvVal(r,'ad_name','automatic_targeting_groups','ad_group_name','ad_group','targeting_group','campaign_name')||'Ad group';
       const imp=parseInt(csvVal(r,'impressions')||0);
+      const clicks=parseInt(csvVal(r,'clicks')||0);
       const spend=parseFloat(csvVal(r,'total_cost_gbp','total_cost','spend')||0);
       const sales=parseFloat(csvVal(r,'sales_gbp','sales')||0);
       const purch=parseInt(csvVal(r,'purchases','orders')||0);
       const bid=parseFloat(csvVal(r,'bid_gbp','bid')||0);
-      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0;
-      return{name,bid,imp,spend,sales,purch,acos,roas};
+      const cpcCsv=parseFloat(csvVal(r,'cpc_gbp','cpc')||0);
+      const asin=csvVal(r,'asin'),sku=csvVal(r,'sku');
+      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=cpcCsv||(clicks?spend/clicks:0);
+      return{name,bid,imp,clicks,spend,sales,purch,acos,roas,ctr,cpc,asin,sku};
     }).filter(r=>r.name);
     window._snapAgs=rows;
     badgeEl.innerHTML=`<span style="color:var(--text2)">✓ ${rows.length} groups parsed</span>`;
     previewEl.innerHTML=`<div style="overflow-x:auto"><table class="simple-tbl" style="font-size:11px">
-      <thead><tr><th>Ad group</th><th>Bid</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ROAS</th></tr></thead>
+      <thead><tr><th>Ad group / ad</th><th>Impr</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>ROAS</th></tr></thead>
       <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr>
-        <td>${r.name}</td><td>£${fmt(r.bid,2)}</td><td>${intf(r.imp)}</td>
+        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name}">${r.name}</td>
+        <td>${intf(r.imp)}</td><td>${intf(r.clicks||0)}</td>
         <td>${gbp(r.spend)}</td><td>${gbp(r.sales)}</td>
         <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
       </tr>`;}).join('')}</tbody>
@@ -1538,33 +1616,49 @@ function checkSnapReady(){
   if(!btn)return;
   const hasTgt=window._snapTgts&&window._snapTgts.length>0;
   const hasAg=window._snapAgs&&window._snapAgs.length>0;
-  btn.disabled=!hasTgt;
-  btn.style.opacity=hasTgt?'1':'0.5';
+  const ready=hasTgt||hasAg;
+  btn.disabled=!ready;
+  btn.style.opacity=ready?'1':'0.5';
   if(hasTgt&&hasAg)note.textContent='✓ Both reports ready — will save together';
-  else if(hasTgt)note.textContent='Targeting ready · Ad Groups optional';
-  else note.textContent='Paste Targeting CSV to enable';
-  note.style.color=hasTgt?'var(--green)':'var(--text3)';
+  else if(hasTgt)note.textContent='✓ Targeting ready · Ad Groups optional';
+  else if(hasAg)note.textContent='✓ Ad Groups ready · Targeting recommended';
+  else note.textContent='Paste a CSV to enable';
+  note.style.color=ready?'var(--green)':'var(--text3)';
 }
 
 async function saveSnapshot(){
-  const tgts=window._snapTgts;
-  if(!tgts||!tgts.length)return;
+  const tgts=window._snapTgts||[];
   const ags=window._snapAgs||[];
-  const period=document.getElementById('csv-period')?.value||new Date().toLocaleDateString('en-GB');
+  if(!tgts.length&&!ags.length){return;}
+  const period=(document.getElementById('csv-period')?.value||'').trim();
+  if(!period){
+    const note=document.getElementById('save-snap-note');
+    if(note){note.textContent='⚠ Enter a period label first';note.style.color='var(--amber)';}
+    document.getElementById('csv-period')?.focus();
+    return;
+  }
   const c=curCamp;
 
-  const totSpend=tgts.reduce((a,t)=>a+t.spend,0);
-  const totSales=tgts.reduce((a,t)=>a+t.sales,0);
-  const totPurch=tgts.reduce((a,t)=>a+t.purch,0);
-  const totImp=tgts.reduce((a,t)=>a+t.imp,0);
-  const totClicks=tgts.reduce((a,t)=>a+t.clicks,0);
+  /* totals: keyword report drives spend/sales/orders; fall back to ad-groups if no targeting.
+     targeting exports usually omit clicks, so borrow impressions/clicks from ad-groups when missing. */
+  const src=tgts.length?tgts:ags;
+  const totSpend=src.reduce((a,t)=>a+(t.spend||0),0);
+  const totSales=src.reduce((a,t)=>a+(t.sales||0),0);
+  const totPurch=src.reduce((a,t)=>a+(t.purch||0),0);
+  let totImp=src.reduce((a,t)=>a+(t.imp||0),0);
+  let totClicks=src.reduce((a,t)=>a+(t.clicks||0),0);
+  if(ags.length){
+    if(!totClicks)totClicks=ags.reduce((a,t)=>a+(t.clicks||0),0);
+    if(!totImp)totImp=ags.reduce((a,t)=>a+(t.imp||0),0);
+  }
 
-  const newSnap=snap(period,totImp,totClicks,totSpend,totSales,totPurch,tgts);
+  const newSnap=snap(period,totImp,totClicks,totSpend,totSales,totPurch,tgts.length?tgts:null);
   /* store ad groups separately on the snap object */
   newSnap.adGroups=ags;
 
   const existing=c.snapshots.findIndex(s=>s.date===period);
   if(existing>=0)c.snapshots[existing]=newSnap;else c.snapshots.push(newSnap);
+  c.snapshots.sort((a,b)=>new Date(parseGbPeriod(a.date))-new Date(parseGbPeriod(b.date)));
   const last=c.snapshots[c.snapshots.length-1];
   Object.assign(c,{spend:last.spend||0,sales:last.sales||0,purchases:last.purchases||0,roas:last.roas||0,acos:last.acos||0,cpc:last.cpc||0,ctr:last.ctr||0,impressions:last.impressions||0});
   c.rag=ragOf(c.roas,c.sales,c.spend);c.noSaleSpend=c.spend>0&&c.sales===0;
@@ -1606,7 +1700,7 @@ function renderInsights(){
   const leakTotal=leaks.reduce((a,l)=>a+l.spend,0);
   document.getElementById('leak-total').textContent=gbp(leakTotal)+' leaking';
   document.getElementById('leak-list').innerHTML=leaks.length?leaks.slice(0,9).map(l=>`
-    <div class="leak" onclick="openCamp(${l.cid})">
+    <div class="leak" onclick="openCamp('${l.cid}')">
       <span class="rag flag" style="flex-shrink:0">${l.type}</span>
       <div class="bd"><b>${l.name}</b><span>${l.sub} · ${l.reason}</span></div>
       <div class="amt"><div class="big">${gbp(l.spend)}</div><div class="sm">spent · £0 back</div></div>
@@ -1626,22 +1720,22 @@ function renderInsights(){
       <span><span style="color:var(--green)">●</span> Worked ${wins}</span><span><span style="color:var(--red)">●</span> Didn't ${loss}</span><span><span style="color:var(--amber)">●</span> Watching ${pend}</span>
     </div>
     <div style="margin-top:14px">${allCh.filter(c=>c.outcome==='loss').slice(0,3).map(ch=>`
-      <div class="lrow" onclick="openCamp(${ch.cid})"><div class="nm" style="font-size:11.5px">✕ ${ch.what}</div><div class="vv"><span class="muted" style="font-size:10px">${ch.outcomeNote||'reverting'}</span></div></div>`).join('')||'<div class="muted" style="font-size:11.5px">No failed changes to review.</div>'}</div>`;
+      <div class="lrow" onclick="openCamp('${ch.cid}')"><div class="nm" style="font-size:11.5px">✕ ${ch.what}</div><div class="vv"><span class="muted" style="font-size:10px">${ch.outcomeNote||'reverting'}</span></div></div>`).join('')||'<div class="muted" style="font-size:11.5px">No failed changes to review.</div>'}</div>`;
 
   /* movers */
   const withDelta=A.filter(c=>c.snapshots.length>=2).map(c=>({...c,d:c.snapshots[c.snapshots.length-1].roas-c.snapshots[c.snapshots.length-2].roas,prev:c.snapshots[c.snapshots.length-2].roas}));
-  const moverRow=c=>`<div class="lrow" onclick="openCamp(${c.id})"><div class="nm">${c.alias||c.name}</div><div class="vv"><span class="muted">${fmt(c.prev,1)}→<b style="color:${ragColor(c.rag)}">${fmt(c.roas,1)}</b></span><span style="color:${c.d>=0?'var(--green)':'var(--red)'};font-weight:600">${c.d>=0?'+':''}${fmt(c.d,1)}</span></div></div>`;
+  const moverRow=c=>`<div class="lrow" onclick="openCamp('${c.id}')"><div class="nm">${c.alias||c.name}</div><div class="vv"><span class="muted">${fmt(c.prev,1)}→<b style="color:${ragColor(c.rag)}">${fmt(c.roas,1)}</b></span><span style="color:${c.d>=0?'var(--green)':'var(--red)'};font-weight:600">${c.d>=0?'+':''}${fmt(c.d,1)}</span></div></div>`;
   document.getElementById('ins-up').innerHTML=withDelta.filter(c=>c.d>0.1).sort((a,b)=>b.d-a.d).slice(0,6).map(moverRow).join('')||'<div class="muted" style="padding:6px 0">None improving.</div>';
   document.getElementById('ins-down').innerHTML=withDelta.filter(c=>c.d<-0.1).sort((a,b)=>a.d-b.d).slice(0,6).map(moverRow).join('')||'<div class="muted" style="padding:6px 0">None declining. ✓</div>';
 
   /* reviews due (any change with review date) */
   const reviews=A.flatMap(c=>c.changes.filter(ch=>ch.review).map(ch=>({c,ch}))).slice(0,6);
-  document.getElementById('ins-reviews').innerHTML=reviews.length?reviews.map(({c,ch})=>`<div class="lrow" onclick="openCamp(${c.id})"><div class="nm" style="font-size:12px">${c.alias||c.name}</div><div class="vv"><span class="muted" style="font-size:10px">${ch.type}</span><span class="rag a" style="padding:2px 7px">${ch.review}</span></div></div>`).join(''):'<div class="muted" style="padding:6px 0">No reviews scheduled.</div>';
+  document.getElementById('ins-reviews').innerHTML=reviews.length?reviews.map(({c,ch})=>`<div class="lrow" onclick="openCamp('${c.id}')"><div class="nm" style="font-size:12px">${c.alias||c.name}</div><div class="vv"><span class="muted" style="font-size:10px">${ch.type}</span><span class="rag a" style="padding:2px 7px">${ch.review}</span></div></div>`).join(''):'<div class="muted" style="padding:6px 0">No reviews scheduled.</div>';
 
   /* spend table */
   const maxSp=Math.max(...A.map(c=>c.spend),0.1);
   document.getElementById('ins-spendtable').innerHTML=[...A].sort((a,b)=>b.spend-a.spend).slice(0,12).map(c=>`
-    <tr onclick="openCamp(${c.id})"><td>${c.alias||c.name}</td><td${c.noSaleSpend?' style="color:var(--amber)"':''}>${gbp(c.spend)}</td><td>${gbp(c.sales)}</td><td>${c.sales?fmt(c.acos,1)+'%':'—'}</td>
+    <tr onclick="openCamp('${c.id}')"><td>${c.alias||c.name}</td><td${c.noSaleSpend?' style="color:var(--amber)"':''}>${gbp(c.spend)}</td><td>${gbp(c.sales)}</td><td>${c.sales?fmt(c.acos,1)+'%':'—'}</td>
     <td style="color:${ragColor(c.rag)};font-weight:600">${c.noSaleSpend?'—':fmt(c.roas,2)}</td>
     <td style="text-align:left"><div class="bar" style="width:100%"><i style="width:${c.spend/maxSp*100}%;background:${ragColor(c.rag)}"></i></div></td></tr>`).join('');
 
@@ -1702,7 +1796,7 @@ function renderProducts(){
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden">
         ${[['Sales',gbp(sa),'var(--green)'],['Spend',gbp(sp),'var(--text)'],['Orders',intf(or),'var(--text)']].map(m=>`<div style="background:var(--bg2);padding:9px 11px"><div class="label">${m[0]}</div><div style="font-family:var(--display);font-weight:700;font-size:15px;margin-top:2px;color:${m[2]}">${m[1]}</div></div>`).join('')}
       </div>
-      <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:5px">${p.camps.map(c=>`<span class="asin-chip" onclick="openCamp(${c.id})" title="${c.name}">${c.name.split('—')[1]?.trim()||c.name}</span>`).join('')}</div>
+      <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:5px">${p.camps.map(c=>`<span class="asin-chip" onclick="openCamp('${c.id}')" title="${c.name}">${c.name.split('—')[1]?.trim()||c.name}</span>`).join('')}</div>
     </div>`;
   }).join('');
 }
@@ -1739,13 +1833,14 @@ function openProductEdit(asin){
       <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:4px">
         ${p?`<button class="btn ghost" onclick="if(confirm('Remove this product from tracking?'))closeProdEdit()" style="color:var(--red);border-color:rgba(255,93,108,.3)">Remove</button>`:''}
         <button class="btn ghost" onclick="closeProdEdit()">Cancel</button>
-        <button class="btn" onclick="saveProdEdit('${asin||''}')">Save changes</button>
+        <button class="btn" onclick="saveProdEdit(this.dataset.asin)" data-asin="${asin||''}">Save changes</button>
       </div>
     </div>`;
   document.getElementById('prod-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeProdEdit(){document.getElementById('prod-overlay').classList.remove('open');document.body.style.overflow='';}
-function saveProdEdit(asin){
+function saveProdEdit(btnOrAsin){
+  const asin=typeof btnOrAsin==='string'?btnOrAsin:(btnOrAsin?.dataset?.asin||'');
   /* TODO: write to Supabase products table */
   const name=document.getElementById('pf-name').value.trim();
   const newAsin=document.getElementById('pf-asin').value.trim();
@@ -1772,7 +1867,7 @@ function renderSnapshots(){
   if(snapMode==='date'){
     const periods=allPeriods();
     el.innerHTML=`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${periods.map(p=>{const a=periodAgg(p);
-      return `<div class="snapcard" onclick="openSnapPeriod('${p.replace(/'/g,"")}')">
+      return `<div class="snapcard" onclick="openSnapPeriod(this.dataset.p)" data-p="${p.replace(/'/g,'')}">
         <div class="sc-top"><div class="sc-date">${p}</div><div style="display:flex;gap:7px">${a.leaks?`<span class="rag flag">${a.leaks} leak${a.leaks>1?'s':''}</span>`:''}<span class="rag ${ragOf(a.roas,a.sales,a.spend)}"><span class="d"></span>${fmt(a.roas,1)}</span></div></div>
         <div class="sc-body">
           <div class="sc-m"><div class="l">Spend</div><div class="v">${gbp(a.spend)}</div></div>
@@ -1783,7 +1878,7 @@ function renderSnapshots(){
   } else {
     el.innerHTML=`<div class="tablecard"><div class="tscroll"><table class="dt" style="min-width:760px">
       <thead><tr><th>Campaign</th><th>Snapshots</th><th>Latest period</th><th>Spend</th><th>Sales</th><th>ROAS</th><th>Trend</th></tr></thead>
-      <tbody>${campaigns.map(c=>`<tr onclick="openCamp(${c.id})">
+      <tbody>${campaigns.map(c=>`<tr onclick="openCamp('${c.id}')">
         <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta"><b>${c.alias||c.name}</b><span>${c.asin}</span></div></div></td>
         <td>${c.snapshots.length}</td><td style="text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3)">${c.snapshots[c.snapshots.length-1]?.date||'—'}</td>
         <td>${gbp(c.spend)}</td><td>${gbp(c.sales)}</td><td style="color:${ragColor(c.rag)}">${c.noSaleSpend?'—':fmt(c.roas,2)}</td>
@@ -1798,7 +1893,7 @@ function openSnapPeriod(period){
   document.getElementById('snap-po-sub').innerHTML=`<span class="chip">${a.n} campaigns</span><span class="chip">Spend ${gbp(a.spend)}</span><span class="chip">Sales ${gbp(a.sales)}</span><span class="chip">ROAS ${fmt(a.roas,2)}</span>${a.leaks?`<span class="chip" style="color:var(--amber)">${a.leaks} spend leak${a.leaks>1?'s':''}</span>`:''}`;
   document.getElementById('snap-po-body').innerHTML=`<div class="tablecard"><div class="tscroll" style="max-height:64vh"><table class="dt" style="min-width:860px">
     <thead><tr><th>Campaign</th><th>Impr.</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-    <tbody>${rows.sort((x,y)=>y.s.spend-x.s.spend).map(({c,s})=>{const hl=s.spend>0&&s.sales===0;return `<tr class="${hl?'flagrow':''}" onclick="closeSnap();openCamp(${c.id})">
+    <tbody>${rows.sort((x,y)=>y.s.spend-x.s.spend).map(({c,s})=>{const hl=s.spend>0&&s.sales===0;return `<tr class="${hl?'flagrow':''}" onclick="closeSnap();openCamp('${c.id}')">
       <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta"><b>${hl?'<span class="flagdot"></span>':''}${c.alias||c.name}</b><span>${c.asin}</span></div></div></td>
       <td>${intf(s.impressions)}</td><td>${intf(s.clicks)}</td>
       <td${hl?' style="color:var(--amber);font-weight:600"':''}>${gbp(s.spend)}</td>
