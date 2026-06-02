@@ -342,7 +342,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <select class="sel" id="camp-status" onchange="renderCampaigns()">
         <option value="active">Active</option><option value="all">All statuses</option><option value="paused">Paused</option>
       </select>
-      <button class="btn">+ Add campaign</button>
+      <button class="btn" onclick="openAddCampaign()">+ Add campaign</button>
     </div>
   </div>
 
@@ -554,6 +554,73 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     </div>
   </div>
 </div>
+<!-- ════════ ADD CAMPAIGN MODAL ════════ -->
+<div class="overlay" id="add-camp-overlay" onclick="if(event.target.id==='add-camp-overlay')closeAddCampaign()">
+  <div class="popout" style="max-width:540px;margin:auto">
+    <div class="po-header">
+      <div>
+        <div class="po-title">Add campaign</div>
+        <div class="po-sub" id="add-camp-status" style="color:var(--text3);font-size:11.5px"></div>
+      </div>
+      <button class="close-btn" onclick="closeAddCampaign()">✕</button>
+    </div>
+    <div class="po-body" style="padding:18px 20px">
+      <div style="display:grid;gap:13px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+          <div style="grid-column:1/-1">
+            <div class="label" style="margin-bottom:5px">Campaign name <span style="color:var(--red)">*</span></div>
+            <input class="input" id="ac-name" style="width:100%" placeholder="e.g. Polyfilla — Auto">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Product name <span style="color:var(--red)">*</span></div>
+            <input class="input" id="ac-product" style="width:100%" placeholder="e.g. Polycell Polyfilla 500g">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">ASIN <span style="color:var(--red)">*</span></div>
+            <input class="input" id="ac-asin" style="width:100%" placeholder="B0GLL6TRWK">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">SKU</div>
+            <input class="input" id="ac-sku" style="width:100%" placeholder="V7-CMEG-TWW0">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">List price (£)</div>
+            <input class="input" id="ac-price" style="width:100%" type="number" step="0.01" placeholder="20.99">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Status</div>
+            <select class="sel" id="ac-status" style="width:100%">
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+            </select>
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Campaign type</div>
+            <select class="sel" id="ac-type" style="width:100%">
+              <option value="Auto">Auto</option>
+              <option value="Exact">Exact</option>
+              <option value="Phrase">Phrase</option>
+              <option value="Broad">Broad</option>
+              <option value="Manual">Manual</option>
+            </select>
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Daily budget (£)</div>
+            <input class="input" id="ac-budget" style="width:100%" type="number" step="0.50" placeholder="10.00">
+          </div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;font-size:11.5px;color:var(--text3)" id="ac-info">
+          Saves locally. If Supabase is connected, also writes to the <code style="background:var(--bg4);padding:1px 5px;border-radius:4px">campaigns</code> table.
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn ghost" onclick="closeAddCampaign()">Cancel</button>
+          <button class="btn" id="ac-save-btn" onclick="saveNewCampaign()">Save campaign</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="camp-overlay" onclick="if(event.target.id==='camp-overlay')closePop()">
   <div class="popout" style="max-width:860px">
     <div class="po-header">
@@ -633,53 +700,36 @@ function tgt(name,ag,match,bid,imp,clicks,spend,sales,purch){
 
 const campaigns=[];
 
-/* ── 1. POLYFILLA (the real imported one — accurate to screenshots) ── */
-campaigns.push(mkCamp({
-  id:1,name:'Polyfilla — Auto',alias:'Polyfilla Auto',product:'Polycell Polyfilla Ready Mixed Wall Repair Kit',
-  asin:'B0GLL6TRWK',sku:'V7-CMEG-TWW0',status:'active',price:20.99,
-  snapshots:[
-    snap('16–22 May',2110,4,0.46,18.70,1),
-    snap('23–31 May',1980,3,0.38,11.10,1),
-    snap('1 Jun 2026',2264,1,0.45,17.49,1,[
-      tgt('Loose match','Auto targeting','Loose',0.45,1951,1,0.45,17.49,1),
-      tgt('Close match','Auto targeting','Close',0.55,313,0,0,0,0),
-    ]),
-  ],
-  changes:[
-    {type:'PPC Bid',date:'31 May',what:'Raised Loose match bid £0.40 → £0.45',why:'ROAS very strong, room to scale impressions',goal:'More volume while keeping ROAS > 10×',outcome:'win',outcomeNote:'Impressions +14%, ROAS held at 38.9×',review:'7 Jun'},
-    {type:'PPC Keywords',date:'24 May',what:'Flagged Close match — 313 impr, 0 sales',why:'Spending impressions with no conversions',goal:'Decide: harvest search terms or set bid floor',outcome:'pending',review:'5 Jun'},
-  ],
-}));
-
 /* ════════ SUPABASE CONFIG ════════ */
-/* Set these to load real data. Without them the app shows an empty state. */
-let SUPABASE_URL = '';   /* e.g. 'https://xxxx.supabase.co' */
-let SUPABASE_KEY = '';   /* anon/public key */
+let SUPABASE_URL = 'https://ffbdazepqrsyurhouxif.supabase.co';
+let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmYmRhemVwcXJzeXVyaG91eGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTM5MjIsImV4cCI6MjA5MDQ2OTkyMn0.BAuodLUDGzO9A7IfoRRn0HZ1MgWOXNPeYKPDBNaNWeg';
 
 async function loadFromSupabase(){
   if(!SUPABASE_URL||!SUPABASE_KEY){
-    /* No Supabase configured — render whatever is in the campaigns array (hardcoded real data) */
-    renderCampaigns();
+    /* No Supabase — show empty state prompting to connect */
+    showNoSupabaseState();
     return;
   }
   try{
     const headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
-    /* fetch campaigns */
     const campRes=await fetch(SUPABASE_URL+'/rest/v1/campaigns?select=*&order=id',{headers});
-    if(!campRes.ok)throw new Error('campaigns fetch failed');
+    if(!campRes.ok)throw new Error('campaigns fetch failed ('+campRes.status+')');
     const campData=await campRes.json();
-    /* fetch snapshots */
-    const snapRes=await fetch(SUPABASE_URL+'/rest/v1/snapshots?select=*&order=campaign_id,date',{headers});
+    const snapRes=await fetch(SUPABASE_URL+'/rest/v1/snapshots?select=*&order=campaign_id,period',{headers});
     const snapData=snapRes.ok?await snapRes.json():[];
-    /* fetch changes */
     const chRes=await fetch(SUPABASE_URL+'/rest/v1/changes?select=*&order=campaign_id',{headers});
     const chData=chRes.ok?await chRes.json():[];
-    /* replace local campaigns with Supabase data */
     campaigns.length=0;
     campData.forEach(row=>{
-      const snaps=snapData.filter(s=>s.campaign_id===row.id).map(s=>snap(s.period,s.impressions,s.clicks,s.spend,s.sales,s.purchases,null));
+      const snaps=snapData.filter(s=>s.campaign_id===row.id).map(s=>{
+        const tgts=s.targeting_json?JSON.parse(s.targeting_json):null;
+        const ags=s.ad_groups_json?JSON.parse(s.ad_groups_json):null;
+        const sn=snap(s.period,s.impressions,s.clicks,s.spend,s.sales,s.purchases,tgts);
+        if(ags)sn.adGroups=ags;
+        return sn;
+      });
       const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
-      campaigns.push(mkCamp({id:row.id,name:row.name,alias:row.alias||row.name,product:row.product_name,asin:row.asin,sku:row.sku,status:row.status||'active',price:row.price||0,snapshots:snaps,changes}));
+      campaigns.push(mkCamp({id:row.id,name:row.name,alias:row.alias||row.name,product:row.product_name,asin:row.asin,sku:row.sku||'—',status:row.status||'active',price:row.price||0,snapshots:snaps,changes}));
     });
     renderCampaigns();
   }catch(e){
@@ -688,12 +738,25 @@ async function loadFromSupabase(){
   }
 }
 
+function showNoSupabaseState(){
+  document.getElementById('camp-body').innerHTML=`<tr><td colspan="12" style="padding:48px 24px;text-align:center">
+    <div style="max-width:380px;margin:0 auto">
+      <div style="font-size:26px;margin-bottom:12px">🔌</div>
+      <div style="font-family:var(--display);font-size:15px;font-weight:700;margin-bottom:8px">Connect Supabase to load your campaigns</div>
+      <div style="color:var(--text3);font-size:12px;margin-bottom:18px">All data is stored in your Supabase database. Go to Settings and add your project URL and anon key.</div>
+      <button class="btn" onclick="document.querySelector('[data-p=settings]').click()">Go to Settings →</button>
+    </div>
+  </td></tr>`;
+  document.getElementById('camp-kpis').innerHTML='';
+  document.getElementById('camp-sub').textContent='Not connected';
+}
+
 function showSupabaseError(msg){
   const banner=document.createElement('div');
-  banner.style.cssText='position:fixed;bottom:20px;right:20px;background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:10px;font-size:12px;z-index:999;max-width:320px';
-  banner.textContent='⚠ Supabase: '+msg;
-  document.body.appendChild(banner);setTimeout(()=>banner.remove(),6000);
-  renderCampaigns(); /* fall back to local data */
+  banner.style.cssText='position:fixed;bottom:20px;right:20px;background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:10px;font-size:12px;z-index:999;max-width:340px';
+  banner.innerHTML='<b>Supabase error</b><br>'+msg+'<br><span style="font-size:10.5px;opacity:.7">Check Settings → Supabase connection</span>';
+  document.body.appendChild(banner);setTimeout(()=>banner.remove(),8000);
+  showNoSupabaseState();
 }
 
 
@@ -797,9 +860,139 @@ function openCamp(id){
   document.getElementById('camp-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
 function closePop(){document.getElementById('camp-overlay').classList.remove('open');document.body.style.overflow='';}
+
+/* ════════ SUPABASE WRITE HELPERS ════════ */
+async function sbHeaders(){
+  return{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+}
+async function sbInsert(table,row){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return null;
+  const res=await fetch(SUPABASE_URL+'/rest/v1/'+table,{method:'POST',headers:await sbHeaders(),body:JSON.stringify(row)});
+  if(!res.ok){const err=await res.text();console.error('Supabase insert error',table,err);return null;}
+  const data=await res.json();return Array.isArray(data)?data[0]:data;
+}
+async function sbUpsert(table,row,onConflict){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return null;
+  const url=SUPABASE_URL+'/rest/v1/'+table+(onConflict?`?on_conflict=${onConflict}`:'');
+  const res=await fetch(url,{method:'POST',headers:{...await sbHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});
+  if(!res.ok){const err=await res.text();console.error('Supabase upsert error',table,err);return null;}
+  const data=await res.json();return Array.isArray(data)?data[0]:data;
+}
+
+/* ════════ ADD CAMPAIGN ════════ */
+function openAddCampaign(){
+  /* clear form */
+  ['ac-name','ac-product','ac-asin','ac-sku','ac-price','ac-budget'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ac-status').value='active';
+  document.getElementById('ac-type').value='Auto';
+  document.getElementById('add-camp-status').textContent='';
+  document.getElementById('ac-save-btn').textContent='Save campaign';
+  document.getElementById('ac-save-btn').disabled=false;
+  /* update info note */
+  document.getElementById('ac-info').textContent=SUPABASE_URL&&SUPABASE_KEY
+    ?'✓ Supabase connected — will save to campaigns table automatically.'
+    :'Saves locally only. Add Supabase credentials in Settings to sync to your database.';
+  document.getElementById('ac-info').style.color=SUPABASE_URL&&SUPABASE_KEY?'var(--green)':'var(--text3)';
+  document.getElementById('add-camp-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('ac-name').focus(),50);
+}
+function closeAddCampaign(){
+  document.getElementById('add-camp-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+async function saveNewCampaign(){
+  const name=document.getElementById('ac-name').value.trim();
+  const product=document.getElementById('ac-product').value.trim();
+  const asin=document.getElementById('ac-asin').value.trim().toUpperCase();
+  const sku=document.getElementById('ac-sku').value.trim();
+  const price=parseFloat(document.getElementById('ac-price').value)||0;
+  const status=document.getElementById('ac-status').value;
+  const type=document.getElementById('ac-type').value;
+  const budget=parseFloat(document.getElementById('ac-budget').value)||0;
+
+  if(!name||!product||!asin){
+    document.getElementById('add-camp-status').textContent='⚠ Campaign name, product name and ASIN are required.';
+    document.getElementById('add-camp-status').style.color='var(--red)';
+    return;
+  }
+
+  const btn=document.getElementById('ac-save-btn');
+  btn.textContent='Saving…';btn.disabled=true;
+  document.getElementById('add-camp-status').textContent='';
+
+  /* build a full campaign name from product + type */
+  const fullName=name.includes('—')?name:`${name} — ${type}`;
+  const newId=Math.max(0,...campaigns.map(c=>c.id||0))+1;
+
+  /* ── 1. Save to Supabase ── */
+  let savedId=newId;
+  if(SUPABASE_URL&&SUPABASE_KEY){
+    try{
+      const row={
+        name:fullName,
+        alias:name,
+        product_name:product,
+        asin,
+        sku:sku||null,
+        status,
+        price:price||null,
+        daily_budget:budget||null,
+        campaign_type:type,
+        created_at:new Date().toISOString(),
+      };
+      const saved=await sbInsert('campaigns',row);
+      if(saved?.id)savedId=saved.id;
+      document.getElementById('add-camp-status').textContent='✓ Saved to Supabase';
+      document.getElementById('add-camp-status').style.color='var(--green)';
+    }catch(e){
+      console.error('Supabase save failed:',e);
+      document.getElementById('add-camp-status').textContent='⚠ Supabase save failed — saved locally only';
+      document.getElementById('add-camp-status').style.color='var(--amber)';
+    }
+  }
+
+  /* ── 2. Always add to local campaigns array ── */
+  const newCamp=mkCamp({
+    id:savedId,
+    name:fullName,
+    alias:name,
+    product,
+    asin,
+    sku:sku||'—',
+    status,
+    price,
+    dailyBudget:budget,
+    campaignType:type,
+    snapshots:[],
+    changes:[],
+    notes:[],
+  });
+  campaigns.push(newCamp);
+  renderCampaigns();
+
+  btn.textContent='Saved ✓';
+  setTimeout(()=>{
+    closeAddCampaign();
+    /* open the new campaign's popout so user can add a snapshot immediately */
+    openCamp(savedId);
+  },700);
+}
 function switchTab(t){document.querySelectorAll('.po-tab').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
   document.querySelectorAll('.po-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');}
 document.querySelectorAll('.po-tab').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
+
+function showDataView(view){
+  document.getElementById('data-view-targeting').style.display=view==='targeting'?'block':'none';
+  document.getElementById('data-view-adgroups').style.display=view==='adgroups'?'block':'none';
+  document.querySelectorAll('#data-toggle button').forEach(btn=>{
+    const active=btn.dataset.view===view;
+    btn.style.background=active?'var(--blue)':'none';
+    btn.style.color=active?'#fff':'var(--text3)';
+    btn.style.fontWeight=active?'600':'500';
+  });
+}
 
 function poKpi(label,val,delta,higherBetter=true,sub,spk){
   let dl='';if(delta!=null){const cls=Math.abs(delta)<0.5?'fl':((delta>0)===higherBetter?'up':'dn');const ar=delta>0?'↑':delta<0?'↓':'→';dl=`<div class="dl ${cls}">${ar} ${fmt(Math.abs(delta),1)}%</div>`;}
@@ -874,58 +1067,72 @@ function renderPerf(){
     ${hasPrev?`<span class="sec-item" style="margin-left:auto;color:var(--text4);font-size:10px">vs ${prev.date||'prev period'}</span>`:''}
   </div>`;
 
-  /* targeting rows — grouped by adGroup, collapsible */
+  /* targeting / ad groups — toggle between the two */
   const tgts=last.targeting||[];
+  const ags=last.adGroups||[];
   let tgtHTML='';
-  if(tgts.length){
-    const groups={};tgts.forEach(t=>{(groups[t.adGroup]=groups[t.adGroup]||[]).push(t);});
+  if(tgts.length||ags.length){
+    const groups={};
+    tgts.forEach(t=>{(groups[t.adGroup||'Targeting']=groups[t.adGroup||'Targeting']||[]).push(t);});
+
+    const tgtTable=`<div style="overflow-x:auto">
+      <table class="simple-tbl" style="min-width:600px">
+        <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+        <tbody>${tgts.map(r=>{
+          const rg=ragOf(r.roas,r.sales,r.spend);
+          const rl=r.spend>0&&r.sales===0;
+          return `<tr ${rl?'class="trow-leak"':''}>
+            <td>${rl?'<span class="flagdot"></span>':''}${r.kw}</td>
+            <td><span class="mtag">${r.match||'—'}</span></td>
+            <td><input class="bidinput" value="${fmt(r.bid,2)}"></td>
+            <td>${intf(r.imp)}</td><td>${intf(r.clicks)}</td><td>${fmt(r.ctr,2)}%</td>
+            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
+            <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
+            <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
+            <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'—':fmt(r.roas,2)}</td>
+          </tr>`;}).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+    const agTable=ags.length?`<div style="overflow-x:auto">
+      <table class="simple-tbl" style="min-width:420px">
+        <thead><tr><th>Ad group</th><th>Bid</th><th>Impr</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+        <tbody>${ags.map(r=>{
+          const rg=ragOf(r.roas,r.sales,r.spend);
+          return `<tr>
+            <td style="font-weight:500">${r.name}</td>
+            <td>£${fmt(r.bid,2)}</td><td>${intf(r.imp)}</td>
+            <td>${gbp(r.spend)}</td><td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
+            <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
+            <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
+          </tr>`;}).join('')}
+        </tbody>
+      </table>
+    </div>`
+    :`<div style="padding:14px;color:var(--text3);font-size:12px">No ad groups data in this snapshot. Add the Ad Groups CSV when importing your next snapshot.</div>`;
+
     tgtHTML=`<div style="margin-top:14px">
-      <div class="sec-label" style="margin-bottom:8px">Ad groups &amp; targeting · ${tgts.length} targets · latest snapshot</div>
-      ${Object.entries(groups).map(([ag,rows],gi)=>{
-        const agg=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,cl:a.cl+r.clicks,im:a.im+r.imp,pu:a.pu+r.purch}),{sp:0,sa:0,cl:0,im:0,pu:0});
-        const roas=agg.sp?agg.sa/agg.sp:0,acos=agg.sa?agg.sp/agg.sa*100:0,rg=ragOf(roas,agg.sa,agg.sp);
-        const leak=agg.sp>0&&agg.sa===0;
-        return `<div class="agcard ${gi===0?'open':''}">
-          <div class="ag-head" onclick="this.closest('.agcard').classList.toggle('open')">
-            <span class="ag-chev">▶</span>
-            <div class="ag-name">${ag}
-              ${leak?'<span class="rag flag">NO SALE</span>':`<span class="rag ${rg}"><span class="d"></span>${fmt(roas,2)}</span>`}
-              <span style="color:var(--text4);font-weight:400;font-size:11px">${rows.length} target${rows.length>1?'s':''}</span>
-            </div>
-            <div class="ag-metrics">
-              <div class="ag-m"><div class="l">Impr</div><div class="v">${intf(agg.im)}</div></div>
-              <div class="ag-m"><div class="l">Spend</div><div class="v" style="${leak?'color:var(--amber)':''}">${gbp(agg.sp)}</div></div>
-              <div class="ag-m"><div class="l">Sales</div><div class="v">${gbp(agg.sa)}</div></div>
-              <div class="ag-m"><div class="l">ACOS</div><div class="v">${agg.sa?fmt(acos,1)+'%':'—'}</div></div>
-            </div>
-          </div>
-          <div class="ag-detail">
-            <div style="overflow-x:auto">
-            <table class="simple-tbl" style="min-width:640px">
-              <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-              <tbody>${rows.map(r=>{
-                const rg2=ragOf(r.roas,r.sales,r.spend);
-                const rl=r.spend>0&&r.sales===0;
-                return `<tr ${rl?'class="trow-leak"':''}>
-                  <td>${rl?'<span class="flagdot"></span>':''}${r.kw}</td>
-                  <td><span class="mtag">${r.match}</span></td>
-                  <td><input class="bidinput" value="${fmt(r.bid,2)}"></td>
-                  <td>${intf(r.imp)}</td><td>${intf(r.clicks)}</td><td>${fmt(r.ctr,2)}%</td>
-                  <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
-                  <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
-                  <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
-                  <td style="color:${ragColor(rg2)};font-weight:600">${rg2==='leak'?'—':fmt(r.roas,2)}</td>
-                </tr>`;}).join('')}
-              </tbody>
-            </table>
-            </div>
-          </div>
-        </div>`;
-      }).join('')}
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px" id="data-toggle">
+          <button onclick="showDataView('targeting')" data-view="targeting"
+            style="border:none;padding:5px 14px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--blue);color:#fff;font-family:var(--font)">
+            Targeting <span style="opacity:.75;font-weight:400">${tgts.length}</span>
+          </button>
+          <button onclick="showDataView('adgroups')" data-view="adgroups"
+            style="border:none;padding:5px 14px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;background:none;color:var(--text3);font-family:var(--font)">
+            Ad Groups <span style="opacity:.75">${ags.length||'—'}</span>
+          </button>
+        </div>
+        <span style="font-size:10.5px;color:var(--text4)">latest snapshot · ${last.date||''}</span>
+        ${tgts.filter(r=>r.spend>0&&r.sales===0).length?`<span style="font-size:10.5px;color:var(--amber)">⚠ ${tgts.filter(r=>r.spend>0&&r.sales===0).length} spend leak${tgts.filter(r=>r.spend>0&&r.sales===0).length>1?'s':''}</span>`:''}
+      </div>
+      <div id="data-view-targeting">${tgtTable}</div>
+      <div id="data-view-adgroups" style="display:none">${agTable}</div>
     </div>`;
   } else {
     tgtHTML=`<div style="margin-top:14px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text3);font-size:12px">
-      No targeting data yet — click <b style="color:var(--blue)">+ Snapshot</b> to paste your Amazon CSV export.
+      No targeting data yet — click <b style="color:var(--blue)">+ Snapshot</b> to import your Amazon CSV exports.
     </div>`;
   }
 
@@ -1160,44 +1367,6 @@ function renderNotes(){
     <div class="muted" style="margin-top:18px">No saved notes yet.</div>`;
 }
 
-/* ════════ CSV IMPORT TAB ════════ */
-function renderImport(){
-  document.getElementById('tab-import').innerHTML=`
-    <div style="margin-bottom:12px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Add a snapshot from Amazon</div>
-      <div style="font-size:12px;color:var(--text3)">In Amazon Ads → your campaign → Targeting → Export. Drop the CSV file below, paste the text, or type numbers manually.</div>
-    </div>
-
-    <div class="csv-drop" id="csv-drop" onclick="document.getElementById('csv-file').click()"
-      ondragover="event.preventDefault();this.classList.add('drag')"
-      ondragleave="this.classList.remove('drag')"
-      ondrop="event.preventDefault();this.classList.remove('drag');handleCsvDrop(event)">
-      <div style="font-size:22px;margin-bottom:8px">📋</div>
-      <div style="font-size:13px;font-weight:600">Drop CSV file here or click to browse</div>
-      <div style="font-size:11.5px;color:var(--text3);margin-top:4px">Sponsored Products · Targeting report</div>
-      <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCsvFile(this)">
-    </div>
-
-    <div style="margin:12px 0;display:flex;align-items:center;gap:10px">
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-      <span style="font-size:11px;color:var(--text4)">or paste text</span>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-    </div>
-
-    <textarea class="input" id="csv-paste" style="width:100%;min-height:90px;font-family:var(--mono);font-size:11px;resize:vertical" placeholder="Paste CSV content here…" oninput="previewCsv(this.value)"></textarea>
-
-    <div id="csv-preview-area"></div>`;
-}
-
-function handleCsvDrop(e){
-  const file=e.dataTransfer.files[0];if(!file)return;
-  const r=new FileReader();r.onload=ev=>{ document.getElementById('csv-paste').value=ev.target.result; previewCsv(ev.target.result); };r.readAsText(file);
-}
-function handleCsvFile(input){
-  const file=input.files[0];if(!file)return;
-  const r=new FileReader();r.onload=ev=>{ document.getElementById('csv-paste').value=ev.target.result; previewCsv(ev.target.result); };r.readAsText(file);
-}
-
 function parseCsv(text){
   const lines=text.trim().split('\n').map(l=>l.replace(/^\uFEFF/,''));
   if(lines.length<2)return null;
@@ -1209,93 +1378,219 @@ function parseCsv(text){
   });
   return{headers,rows};
 }
-
 function csvVal(row,...keys){
-  for(const k of keys){
-    const v=row[k]||row[k.toLowerCase()]||'';
-    if(v&&v!=='—'&&v!='--')return v;
-  }return'';
+  for(const k of keys){const v=row[k]||row[k.toLowerCase()]||'';if(v&&v!=='—'&&v!='--')return v;}return'';
 }
 
-function previewCsv(text){
-  const parsed=parseCsv(text);
-  const area=document.getElementById('csv-preview-area');
-  if(!parsed||!parsed.rows.length){area.innerHTML='';return;}
-
-  /* map rows → targeting objects */
-  const tgts=parsed.rows.map(r=>{
-    const name=csvVal(r,'automatic_targeting_groups','targeting_expression','keyword','target');
-    const imp=parseInt(csvVal(r,'impressions')||0);
-    const spend=parseFloat(csvVal(r,'total_cost_gbp','total_cost','spend')||0);
-    const sales=parseFloat(csvVal(r,'sales_gbp','sales')||0);
-    const purch=parseInt(csvVal(r,'purchases','orders')||0);
-    const clicks=parseInt(csvVal(r,'clicks')||0);
-    const bid=parseFloat(csvVal(r,'bid_gbp','bid')||0);
-    const match=csvVal(r,'target_match_type','match_type')||'—';
-    const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=clicks?spend/clicks:0;
-    return{kw:name,adGroup:'Auto targeting',match:match.replace(/-/g,' '),bid,imp,clicks,spend,sales,purch,acos,roas,ctr,cpc};
-  }).filter(t=>t.kw);
-
-  /* totals */
-  const tot=tgts.reduce((a,t)=>({spend:a.spend+t.spend,sales:a.sales+t.sales,purch:a.purch+t.purch,imp:a.imp+t.imp,clicks:a.clicks+t.clicks}),{spend:0,sales:0,purch:0,imp:0,clicks:0});
-  const totRoas=tot.spend?tot.sales/tot.spend:0,totAcos=tot.sales?tot.spend/tot.sales*100:0;
-
-  area.innerHTML=`
-    <div class="csv-preview">
-      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:12px;font-weight:600;color:var(--green)">✓ Parsed ${tgts.length} targets</div>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--text3)">${intf(tot.imp)} impr · £${fmt(tot.spend,2)} spend · £${fmt(tot.sales,2)} sales · ROAS ${fmt(totRoas,2)}</div>
-      </div>
-      <table class="simple-tbl">
-        <thead><tr><th>Target</th><th>Match</th><th>Bid</th><th>Impr</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${tgts.map(t=>{const rg=ragOf(t.roas,t.sales,t.spend);return`<tr ${t.spend>0&&t.sales===0?'class="trow-leak"':''}>
-          <td>${t.kw}</td><td><span class="mtag">${t.match}</span></td><td>£${fmt(t.bid,2)}</td>
-          <td>${intf(t.imp)}</td><td ${t.spend>0&&t.sales===0?'style="color:var(--amber)"':''}>${gbp(t.spend)}</td>
-          <td>${gbp(t.sales)}</td><td>${intf(t.purch)}</td>
-          <td>${t.sales?fmt(t.acos,1)+'%':'—'}</td>
-          <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'—':fmt(t.roas,2)}</td>
-        </tr>`;}).join('')}
-        <tr style="background:var(--bg3);font-weight:600">
-          <td colspan="4" style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px">Total</td>
-          <td>${gbp(tot.spend)}</td><td style="color:var(--green)">${gbp(tot.sales)}</td><td>${intf(tot.purch)}</td>
-          <td>${totAcos?fmt(totAcos,1)+'%':'—'}</td><td style="color:${ragColor(ragOf(totRoas,tot.sales,tot.spend))};font-weight:700">${fmt(totRoas,2)}</td>
-        </tr></tbody>
-      </table>
+/* ════════ SNAPSHOT TAB ════════ */
+function renderImport(){
+  document.getElementById('tab-import').innerHTML=`
+    <div style="margin-bottom:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:3px">Add a snapshot</div>
+      <div style="font-size:12px;color:var(--text3)">Amazon gives you two separate exports. Paste both below — <b style="color:var(--text2)">Targeting is the important one</b>, Ad Groups is the summary above it.</div>
     </div>
-    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+      <!-- TARGETING (primary) -->
+      <div style="border:2px solid var(--blue);border-radius:var(--r);overflow:hidden">
+        <div style="background:var(--blue-bg);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--blue)">Targeting report</div>
+            <div style="font-size:10.5px;color:var(--text3);margin-top:1px">Keyword & target level — the important one</div>
+          </div>
+          <div id="tgt-badge" style="font-size:10px;font-family:var(--mono);color:var(--text4)"></div>
+        </div>
+        <div style="padding:10px">
+          <div class="csv-drop" id="tgt-drop" onclick="document.getElementById('tgt-file').click()"
+            ondragover="event.preventDefault();this.classList.add('drag')"
+            ondragleave="this.classList.remove('drag')"
+            ondrop="event.preventDefault();this.classList.remove('drag');handleCsvDropTo('tgt',event)"
+            style="padding:14px;margin-bottom:8px">
+            <div style="font-size:11px">Drop CSV or click to browse</div>
+            <input type="file" id="tgt-file" accept=".csv" style="display:none" onchange="handleCsvFileTo('tgt',this)">
+          </div>
+          <textarea class="input" id="tgt-paste" style="width:100%;min-height:80px;font-family:var(--mono);font-size:10.5px;resize:vertical" placeholder="…or paste targeting CSV text here" oninput="parsePasteFor('tgt',this.value)"></textarea>
+          <div id="tgt-preview" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- AD GROUPS (secondary) -->
+      <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+        <div style="background:var(--bg3);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text2)">Ad Groups report</div>
+            <div style="font-size:10.5px;color:var(--text3);margin-top:1px">Group summary — Close match, Loose match etc.</div>
+          </div>
+          <div id="ag-badge" style="font-size:10px;font-family:var(--mono);color:var(--text4)"></div>
+        </div>
+        <div style="padding:10px">
+          <div class="csv-drop" id="ag-drop" onclick="document.getElementById('ag-file').click()"
+            ondragover="event.preventDefault();this.classList.add('drag')"
+            ondragleave="this.classList.remove('drag')"
+            ondrop="event.preventDefault();this.classList.remove('drag');handleCsvDropTo('ag',event)"
+            style="padding:14px;margin-bottom:8px">
+            <div style="font-size:11px">Drop CSV or click to browse</div>
+            <input type="file" id="ag-file" accept=".csv" style="display:none" onchange="handleCsvFileTo('ag',this)">
+          </div>
+          <textarea class="input" id="ag-paste" style="width:100%;min-height:80px;font-family:var(--mono);font-size:10.5px;resize:vertical" placeholder="…or paste ad groups CSV text here" oninput="parsePasteFor('ag',this.value)"></textarea>
+          <div id="ag-preview" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;align-items:center;padding-top:12px;border-top:1px solid var(--border)">
       <div>
-        <div style="font-size:11.5px;margin-bottom:4px">Period label <span style="color:var(--text3)">(how it shows in history)</span></div>
-        <input class="input" id="csv-period" style="width:180px" value="${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}">
+        <div style="font-size:11.5px;margin-bottom:4px;font-weight:500">Period label</div>
+        <input class="input" id="csv-period" style="width:170px" value="${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}">
       </div>
       <div style="align-self:flex-end">
-        <button class="btn" onclick="importCsvSnapshot(${JSON.stringify(tgts).replace(/"/g,'&quot;')})">Save as snapshot</button>
+        <button class="btn" id="save-snap-btn" onclick="saveSnapshot()" disabled style="opacity:.5">Save snapshot</button>
       </div>
-      <div style="align-self:flex-end;color:var(--text3);font-size:11.5px">This will add a new row to this campaign's history</div>
+      <div style="align-self:flex-end;color:var(--text3);font-size:11px" id="save-snap-note">Paste Targeting CSV to enable</div>
     </div>`;
+
+  window._snapTgts=null;
+  window._snapAgs=null;
 }
 
-function importCsvSnapshot(tgts){
+function handleCsvDropTo(type,e){
+  const file=e.dataTransfer.files[0];if(!file)return;
+  const r=new FileReader();r.onload=ev=>{
+    document.getElementById(type+'-paste').value=ev.target.result;
+    parsePasteFor(type,ev.target.result);
+  };r.readAsText(file);
+}
+function handleCsvFileTo(type,input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();r.onload=ev=>{
+    document.getElementById(type+'-paste').value=ev.target.result;
+    parsePasteFor(type,ev.target.result);
+  };r.readAsText(file);
+}
+
+function parsePasteFor(type,text){
+  const parsed=parseCsv(text);
+  const previewEl=document.getElementById(type+'-preview');
+  const badgeEl=document.getElementById(type+'-badge');
+  if(!parsed||!parsed.rows.length){previewEl.innerHTML='';badgeEl.textContent='';checkSnapReady();return;}
+
+  if(type==='tgt'){
+    /* Targeting report: keyword/target level */
+    const rows=parsed.rows.map(r=>{
+      const name=csvVal(r,'targeting_expression','keyword','customer_search_term','target','automatic_targeting_groups');
+      const imp=parseInt(csvVal(r,'impressions')||0);
+      const spend=parseFloat(csvVal(r,'total_cost_gbp','total_cost','spend')||0);
+      const sales=parseFloat(csvVal(r,'sales_gbp','sales_14_day','sales')||0);
+      const purch=parseInt(csvVal(r,'purchases_14_day','purchases','orders')||0);
+      const clicks=parseInt(csvVal(r,'clicks')||0);
+      const bid=parseFloat(csvVal(r,'bid_gbp','bid')||0);
+      const match=csvVal(r,'match_type','target_match_type')||'—';
+      const adGroup=csvVal(r,'ad_group_name','automatic_targeting_groups','ad_group')||'Targeting';
+      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=clicks?spend/clicks:0;
+      return{kw:name,adGroup,match:match.replace(/-/g,' '),bid,imp,clicks,spend,sales,purch,acos,roas,ctr,cpc};
+    }).filter(r=>r.kw);
+    window._snapTgts=rows;
+    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch}),{sp:0,sa:0,pu:0});
+    badgeEl.innerHTML=`<span style="color:var(--green)">✓ ${rows.length} targets parsed</span>`;
+    previewEl.innerHTML=`<div style="font-size:10.5px;color:var(--text3);padding:6px 0">${rows.length} targets · £${fmt(tot.sp,2)} spend · £${fmt(tot.sa,2)} sales · ROAS ${fmt(tot.sp?tot.sa/tot.sp:0,2)}</div>
+      <div style="overflow-x:auto"><table class="simple-tbl" style="min-width:480px;font-size:11px">
+        <thead><tr><th>Target</th><th>Match</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ROAS</th></tr></thead>
+        <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr ${r.spend>0&&r.sales===0?'class="trow-leak"':''}>
+          <td style="font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.kw}</td>
+          <td><span class="mtag">${r.match}</span></td>
+          <td>${intf(r.imp)}</td>
+          <td ${r.spend>0&&r.sales===0?'style="color:var(--amber)"':''}>${gbp(r.spend)}</td>
+          <td>${gbp(r.sales)}</td>
+          <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'—':fmt(r.roas,2)}</td>
+        </tr>`;}).join('')}</tbody>
+      </table></div>`;
+  } else {
+    /* Ad Groups report: group-level summary */
+    const rows=parsed.rows.map(r=>{
+      const name=csvVal(r,'automatic_targeting_groups','ad_group_name','ad_group','targeting_group')||'Ad group';
+      const imp=parseInt(csvVal(r,'impressions')||0);
+      const spend=parseFloat(csvVal(r,'total_cost_gbp','total_cost','spend')||0);
+      const sales=parseFloat(csvVal(r,'sales_gbp','sales')||0);
+      const purch=parseInt(csvVal(r,'purchases','orders')||0);
+      const bid=parseFloat(csvVal(r,'bid_gbp','bid')||0);
+      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0;
+      return{name,bid,imp,spend,sales,purch,acos,roas};
+    }).filter(r=>r.name);
+    window._snapAgs=rows;
+    badgeEl.innerHTML=`<span style="color:var(--text2)">✓ ${rows.length} groups parsed</span>`;
+    previewEl.innerHTML=`<div style="overflow-x:auto"><table class="simple-tbl" style="font-size:11px">
+      <thead><tr><th>Ad group</th><th>Bid</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ROAS</th></tr></thead>
+      <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr>
+        <td>${r.name}</td><td>£${fmt(r.bid,2)}</td><td>${intf(r.imp)}</td>
+        <td>${gbp(r.spend)}</td><td>${gbp(r.sales)}</td>
+        <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
+      </tr>`;}).join('')}</tbody>
+    </table></div>`;
+  }
+  checkSnapReady();
+}
+
+function checkSnapReady(){
+  const btn=document.getElementById('save-snap-btn');
+  const note=document.getElementById('save-snap-note');
+  if(!btn)return;
+  const hasTgt=window._snapTgts&&window._snapTgts.length>0;
+  const hasAg=window._snapAgs&&window._snapAgs.length>0;
+  btn.disabled=!hasTgt;
+  btn.style.opacity=hasTgt?'1':'0.5';
+  if(hasTgt&&hasAg)note.textContent='✓ Both reports ready — will save together';
+  else if(hasTgt)note.textContent='Targeting ready · Ad Groups optional';
+  else note.textContent='Paste Targeting CSV to enable';
+  note.style.color=hasTgt?'var(--green)':'var(--text3)';
+}
+
+async function saveSnapshot(){
+  const tgts=window._snapTgts;
+  if(!tgts||!tgts.length)return;
+  const ags=window._snapAgs||[];
   const period=document.getElementById('csv-period')?.value||new Date().toLocaleDateString('en-GB');
   const c=curCamp;
+
   const totSpend=tgts.reduce((a,t)=>a+t.spend,0);
   const totSales=tgts.reduce((a,t)=>a+t.sales,0);
   const totPurch=tgts.reduce((a,t)=>a+t.purch,0);
   const totImp=tgts.reduce((a,t)=>a+t.imp,0);
   const totClicks=tgts.reduce((a,t)=>a+t.clicks,0);
+
   const newSnap=snap(period,totImp,totClicks,totSpend,totSales,totPurch,tgts);
-  /* replace if same period already exists */
+  /* store ad groups separately on the snap object */
+  newSnap.adGroups=ags;
+
   const existing=c.snapshots.findIndex(s=>s.date===period);
   if(existing>=0)c.snapshots[existing]=newSnap;else c.snapshots.push(newSnap);
-  /* re-derive campaign metrics */
   const last=c.snapshots[c.snapshots.length-1];
   Object.assign(c,{spend:last.spend||0,sales:last.sales||0,purchases:last.purchases||0,roas:last.roas||0,acos:last.acos||0,cpc:last.cpc||0,ctr:last.ctr||0,impressions:last.impressions||0});
   c.rag=ragOf(c.roas,c.sales,c.spend);c.noSaleSpend=c.spend>0&&c.sales===0;
+
+  /* save to Supabase */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      await sbUpsert('snapshots',{
+        campaign_id:c.id,period,
+        impressions:totImp,clicks:totClicks,spend:totSpend,sales:totSales,purchases:totPurch,
+        acos:totSales?totSpend/totSales*100:0,roas:totSpend?totSales/totSpend:0,
+        cpc:totClicks?totSpend/totClicks:0,ctr:totImp?totClicks/totImp*100:0,
+        targeting_json:JSON.stringify(tgts),
+        ad_groups_json:JSON.stringify(ags),
+        imported_at:new Date().toISOString(),
+      },'campaign_id,period');
+    }catch(e){console.error('Supabase snapshot save failed:',e);}
+  }
+
   switchTab('performance');renderPerf();renderCampaigns();
-  /* flash confirmation */
   const banner=document.createElement('div');
   banner.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green-bg);border:1px solid var(--green);color:var(--green);padding:10px 18px;border-radius:10px;font-size:12.5px;font-weight:600;z-index:9999';
-  banner.textContent='✓ Snapshot saved for '+period;document.body.appendChild(banner);setTimeout(()=>banner.remove(),2500);
+  banner.textContent='✓ Snapshot saved — '+tgts.length+' targets'+(ags.length?' + '+ags.length+' ad groups':'')+(SUPABASE_URL&&SUPABASE_KEY?' · synced':'');
+  document.body.appendChild(banner);setTimeout(()=>banner.remove(),3000);
 }
+
 
 /* ════════ INSIGHTS PAGE ════════ */
 function renderInsights(){
@@ -1526,9 +1821,16 @@ function settingsDirty(){document.getElementById('cfg-status').textContent='Unsa
 function saveSupabaseConfig(){
   const url=document.getElementById('cfg-url').value.trim();
   const key=document.getElementById('cfg-key').value.trim();
-  if(url)SUPABASE_URL=url; if(key)SUPABASE_KEY=key;
-  document.getElementById('cfg-status').textContent='Saved — reconnecting…';
-  loadFromSupabase().then(()=>{document.getElementById('cfg-status').textContent='Connected ✓';}).catch(()=>{document.getElementById('cfg-status').textContent='Connection failed';});
+  if(!url||!key){document.getElementById('cfg-status').textContent='⚠ Both URL and key required';return;}
+  SUPABASE_URL=url;SUPABASE_KEY=key;
+  document.getElementById('cfg-status').textContent='Connecting…';
+  loadFromSupabase().then(()=>{
+    document.getElementById('cfg-status').textContent='✓ Connected — '+campaigns.length+' campaigns loaded';
+    document.getElementById('cfg-status').style.color='var(--green)';
+  }).catch(e=>{
+    document.getElementById('cfg-status').textContent='✕ Failed: '+e.message;
+    document.getElementById('cfg-status').style.color='var(--red)';
+  });
 }
 
 function testSupabaseConnection(){
