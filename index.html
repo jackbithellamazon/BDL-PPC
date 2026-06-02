@@ -197,7 +197,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .lrow .vv{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px}
 
 /* ───── OVERLAY / POPOUT ───── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(4,6,10,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:200;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,6,10,0.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:200;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .overlay.open{display:flex;animation:fadeIn .2s}
 .popout{background:var(--panel);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:1340px;margin:auto;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:popIn .3s cubic-bezier(.4,0,.2,1)}
 .po-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 18px 12px;border-bottom:1px solid var(--border)}
@@ -213,7 +213,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .po-tab.active{color:var(--text)}
 .po-tab.active::after{content:'';position:absolute;left:10px;right:10px;bottom:-1px;height:2.5px;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--purple))}
 .po-tab .badge{background:var(--red-bg);color:var(--red);font-size:9.5px;padding:1px 5px;border-radius:9px;margin-left:5px;font-weight:600}
-.po-body{padding:14px 18px;flex:1}
+.po-body{padding:16px 22px 22px;flex:1;overflow-y:auto;min-height:0}
 .po-panel{display:none}.po-panel.active{display:block;animation:fadeIn .25s}
 
 /* hero kpis in popout */
@@ -312,6 +312,29 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .csv-drop:hover,.csv-drop.drag{border-color:var(--blue);background:var(--blue-bg)}
 .csv-preview{margin-top:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden}
 @media(max-width:920px){.nav{display:none}.hide-sm{display:none}.hero-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* DASHBOARD KPI TILES */
+.dash-kpi{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;position:relative;overflow:hidden;box-shadow:var(--shadow-sm)}
+.dash-kpi-l{font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);font-weight:600;margin-bottom:6px}
+.dash-kpi-v{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-0.5px;line-height:1.1}
+.dash-kpi-delta{font-size:10.5px;font-weight:600;margin-top:5px;display:flex;align-items:center;gap:4px}
+.dash-kpi-delta.up{color:var(--green)}.dash-kpi-delta.down{color:var(--red)}.dash-kpi-delta.flat{color:var(--text3)}
+.rag-health{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;overflow:hidden;border-radius:6px;border:1px solid var(--border)}
+.rag-health .rh{padding:6px 8px;text-align:center}
+.rh .rl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.rh .rv{font-family:var(--display);font-size:18px;font-weight:700;margin-top:2px}
+/* attention + reminder items */
+.attn-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s}
+.attn-item:last-child{border-bottom:none}
+.attn-item:hover{padding-left:4px}
+.attn-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.attn-text{font-size:12.5px;font-weight:500}
+.attn-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.dct-name{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px}
+.dct-sub{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px}
+.dct-delta{font-family:var(--mono);font-size:10px;font-weight:600}
+.dct-delta.up{color:var(--green)}.dct-delta.down{color:var(--red)}.dct-delta.flat{color:var(--text3)}
+
 </style>
 </head>
 <body>
@@ -319,7 +342,8 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 <div class="topbar">
   <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;PPC <span class="logo-ver">v2.0</span></div>
   <div class="nav" id="nav">
-    <button class="nav-btn active" data-p="campaigns">Campaigns</button>
+    <button class="nav-btn active" data-p="dashboard">Dashboard</button>
+    <button class="nav-btn" data-p="campaigns">Campaigns</button>
     <button class="nav-btn" data-p="insights">Insights<span class="badge" id="nav-leak">·</span></button>
     <button class="nav-btn" data-p="changelog">Change Log</button>
     <button class="nav-btn" data-p="snapshots">Snapshots</button>
@@ -333,8 +357,72 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
 <div class="main">
 
+<!-- ════════ DASHBOARD ════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="ph" style="margin-bottom:14px">
+    <div><h1>Dashboard</h1><div class="sub" id="dash-sub">Account overview</div></div>
+    <div class="ctrls">
+      <select class="sel" id="dash-period-sel" onchange="renderDashPeriod()" style="min-width:200px">
+        <option value="latest">Latest snapshot (per campaign)</option>
+      </select>
+      <select class="sel" id="dash-compare-sel" onchange="renderDashPeriod()" style="min-width:180px">
+        <option value="none">No comparison</option>
+      </select>
+      <span id="dash-period-coverage" style="font-size:11px;color:var(--text3)"></span>
+    </div>
+  </div>
+
+  <!-- KPI row — 7 tiles -->
+  <div id="dash-kpi-row" style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:16px"></div>
+
+  <!-- Attention + Reminders -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+    <div class="card pad">
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px"><span style="color:var(--red)">●</span> Needs attention</div></div>
+      <div id="dash-attention"></div>
+    </div>
+    <div class="card pad">
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px"><span style="color:var(--amber)">●</span> Review reminders</div></div>
+      <div id="dash-reminders"></div>
+    </div>
+  </div>
+
+  <!-- Campaign breakdown for selected period -->
+  <div class="sh">
+    <div class="tt">Campaigns <small id="dash-camps-period-label"></small></div>
+    <div class="ctrls">
+      <div style="display:flex;gap:5px" id="db-rag-filter">
+        <button class="tog on" data-rag="all">All</button>
+        <button class="tog green" data-rag="g"><span class="d" style="background:var(--green)"></span>Green</button>
+        <button class="tog amber" data-rag="a"><span class="d" style="background:var(--amber)"></span>Amber</button>
+        <button class="tog red" data-rag="r"><span class="d" style="background:var(--red)"></span>Red</button>
+      </div>
+      <div style="display:flex;gap:5px">
+        <button class="tog on" id="db-sort-spend" onclick="setDashSort('spend',this)">Spend ↓</button>
+        <button class="tog" id="db-sort-roas" onclick="setDashSort('roas',this)">ROAS ↓</button>
+        <button class="tog" id="db-sort-sales" onclick="setDashSort('sales',this)">Sales ↓</button>
+      </div>
+    </div>
+  </div>
+  <div class="tablecard" style="margin-bottom:16px"><div class="tscroll" style="max-height:52vh">
+    <table class="dt" style="min-width:860px">
+      <thead><tr>
+        <th style="text-align:left">Campaign</th>
+        <th>ROAS</th><th>Spend</th><th>Sales</th><th>Orders</th>
+        <th>ACOS</th><th>CPC</th><th>Impressions</th>
+      </tr></thead>
+      <tbody id="dash-camp-tbody"></tbody>
+    </table>
+  </div></div>
+
+  <!-- Recent activity -->
+  <div class="sh"><div class="tt">Recent changes <small>latest log entries</small></div></div>
+  <div class="card pad" id="dash-recent-changes"></div>
+</div>
+
+
 <!-- ════════ CAMPAIGNS ════════ -->
-<div class="page active" id="page-campaigns">
+<div class="page" id="page-campaigns">
   <div class="ph">
     <div><h1>Campaigns</h1><div class="sub" id="camp-sub"></div></div>
     <div class="ctrls">
@@ -347,7 +435,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   </div>
 
   <!-- account KPI strip -->
-  <div class="grid" id="camp-kpis" style="grid-template-columns:repeat(6,1fr);margin-bottom:14px"></div>
+  <div class="grid" id="camp-kpis" style="grid-template-columns:repeat(7,1fr);margin-bottom:14px"></div>
 
   <!-- filter row -->
   <div class="ctrls" style="margin-bottom:12px">
@@ -406,8 +494,11 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
   <!-- movers -->
   <div class="grid" style="grid-template-columns:1fr 1fr 1fr;margin-top:13px">
-    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--green)">↗</span> ROAS improving</div></div><div id="ins-up"></div></div>
-    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--red)">↘</span> ROAS declining</div></div><div id="ins-down"></div></div>
+    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--green)">↗</span> Largest ROAS improvements <small>top 5</small></div></div><div id="ins-up"></div></div>
+    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--red)">↘</span> Largest ROAS declines <small>top 5</small></div></div><div id="ins-down"></div></div>
+    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--red)">🔴</span> New red campaigns</div></div><div id="ins-newred"></div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr;margin-top:13px">
     <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--amber)">◷</span> Reviews due</div></div><div id="ins-reviews"></div></div>
   </div>
 
@@ -428,7 +519,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     <div class="ctrls">
       <select class="sel" id="cl-scope" onchange="renderChangeLog()"><option value="campaign">Group by campaign</option><option value="asin">Group by product / ASIN</option><option value="type">Group by change type</option></select>
       <select class="sel" id="cl-type-filter" onchange="renderChangeLog()"><option value="all">All types</option><option>PPC Bid</option><option>PPC Budget</option><option>PPC Keywords</option><option>Pricing</option><option>Listing</option><option>Stock</option></select>
-      <button class="btn">+ Log change</button>
+      <button class="btn" onclick="openGlobalChangeLog()">+ Log change</button>
     </div>
   </div>
   <div id="cl-summary" class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px"></div>
@@ -665,7 +756,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 </div>
 
 <div class="overlay" id="camp-overlay" onclick="if(event.target.id==='camp-overlay')closePop()">
-  <div class="popout" style="max-width:860px">
+  <div class="popout" style="max-width:1300px;height:90vh;overflow:hidden;display:flex;flex-direction:column">
     <div class="po-header">
       <div>
         <div class="po-title" id="po-title"></div>
@@ -710,7 +801,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 const fmt=(n,d=2)=>Number(n||0).toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});
 const gbp=(n,d=2)=>'£'+fmt(n,d);
 const intf=n=>Number(n||0).toLocaleString('en-GB');
-const ragOf=(roas,sales,spend)=>{ if(spend>0&&sales===0)return 'leak'; if(!sales&&!spend)return 'n'; if(roas>=5)return 'g'; if(roas>=3.5)return 'a'; return 'r'; };
+const ragOf=(roas,sales,spend)=>{ if(spend>0&&sales===0)return 'leak'; if(!sales&&!spend)return 'n'; if(roas>=5)return 'g'; if(roas>=4)return 'a'; return 'r'; };
 const ragColor=r=>({g:'var(--green)',a:'var(--amber)',r:'var(--red)',leak:'var(--amber)',n:'var(--text3)'}[r]);
 
 /* monogram tile — replaces emojis */
@@ -725,8 +816,13 @@ const PERIODS=['Apr 2026','25 Apr–1 May','2–8 May','9–15 May','16–22 May
 /* Build a campaign with snapshots, ad-groups/targeting, changes */
 function mkCamp(o){ const c=Object.assign({snapshots:[],changes:[],notes:[]},o);
   const last=c.snapshots[c.snapshots.length-1]||{};
+  const rawCpc=last.cpc||0;
+  const rawCtr=last.ctr||0;
+  const compCpc=rawCpc>0?rawCpc:((last.clicks&&last.spend)?(last.spend/last.clicks):0);
+  const compCtr=rawCtr>0?rawCtr:((last.impressions&&last.clicks)?(last.clicks/last.impressions*100):0);
   Object.assign(c,{spend:last.spend||0,sales:last.sales||0,purchases:last.purchases||0,
-    roas:last.roas||0,acos:last.acos||0,cpc:last.cpc||0,ctr:last.ctr||0,impressions:last.impressions||0});
+    roas:last.roas||0,acos:last.acos||0,cpc:compCpc,ctr:compCtr,
+    impressions:last.impressions||0,clicks:last.clicks||0});
   c.rag=ragOf(c.roas,c.sales,c.spend);
   c.noSaleSpend=c.spend>0&&c.sales===0;
   c.net=c.profitPerUnit?(c.purchases*c.profitPerUnit-c.spend):null;
@@ -734,7 +830,7 @@ function mkCamp(o){ const c=Object.assign({snapshots:[],changes:[],notes:[]},o);
 }
 function snap(period,imp,clicks,spend,sales,purch,targeting){
   const cpc=clicks?spend/clicks:0, ctr=imp?clicks/imp*100:0, acos=sales?spend/sales*100:0, roas=spend?sales/spend:0;
-  return{date:period,impressions:imp,clicks,spend,sales,purchases:purch,cpc,ctr,acos,roas,targeting:targeting||null};
+  return{date:period,impressions:imp,clicks:clicks||0,spend,sales,purchases:purch,cpc,ctr,acos,roas,targeting:targeting||null};
 }
 function tgt(name,ag,match,bid,imp,clicks,spend,sales,purch){
   const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=clicks?spend/clicks:0;
@@ -768,7 +864,11 @@ async function loadFromSupabase(){
       const snaps=snapData.filter(s=>s.campaign_id===row.id).map(s=>{
         const tgts=s.targeting_json?JSON.parse(s.targeting_json):null;
         const ags=s.ad_groups_json?JSON.parse(s.ad_groups_json):null;
+        const rawCpc=s.cpc||0, rawCtr=s.ctr||0;
+        const builtCpc=rawCpc>0?rawCpc:((s.clicks&&s.spend)?(s.spend/s.clicks):0);
+        const builtCtr=rawCtr>0?rawCtr:((s.impressions&&s.clicks)?(s.clicks/s.impressions*100):0);
         const sn=snap(s.period,s.impressions,s.clicks,s.spend,s.sales,s.purchases,tgts);
+        sn.cpc=builtCpc; sn.ctr=builtCtr;
         if(ags)sn.adGroups=ags;
         return sn;
       });
@@ -777,6 +877,10 @@ async function loadFromSupabase(){
       campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,snapshots:snaps,changes}));
     });
     renderCampaigns();
+    /* re-render dashboard if visible */
+    if(document.getElementById('page-dashboard')?.classList.contains('active')){
+      populateDashPeriodSelectors();renderDashPeriod();renderDashAttention();renderDashReminders();renderDashRecentChanges();
+    }
   }catch(e){
     console.error('Supabase error:',e);
     showSupabaseError(e.message);
@@ -836,6 +940,9 @@ function campKpis(){
   const ns=Math.max(...A.map(c=>c.snapshots.length),1);
   const series=k=>{const out=[];for(let i=0;i<ns;i++){let sp=0,sa=0,or=0,im=0;A.forEach(c=>{const s=c.snapshots[c.snapshots.length-ns+i];if(s){sp+=s.spend;sa+=s.sales;or+=s.purchases;im+=s.impressions;}});
     out.push(k==='spend'?sp:k==='sales'?sa:k==='orders'?or:k==='impr'?im:k==='roas'?(sp?sa/sp:0):k==='acos'?(sa?sp/sa*100:0):0);}return out;};
+  const gCount=A.filter(c=>c.roas>=5&&c.rag!=='leak').length;
+  const aCount=A.filter(c=>c.roas>=4&&c.roas<5&&c.rag!=='leak').length;
+  const rCount=A.filter(c=>c.roas<4&&c.roas>0&&c.rag!=='leak').length;
   const K=[
     {l:'Active campaigns',v:intf(A.length),c:'var(--text)',s:null},
     {l:'Total spend',v:gbp(sum.spend),c:'var(--blue)',s:series('spend'),sc:'var(--blue)'},
@@ -844,7 +951,24 @@ function campKpis(){
     {l:'Avg ACOS',v:fmt(acos,1)+'%',c:'var(--text)',s:series('acos'),sc:'var(--amber)'},
     {l:'Spend leaks',v:leaks.length+' · '+gbp(leakSpend),c:leaks.length?'var(--amber)':'var(--text3)',s:null},
   ];
-  document.getElementById('camp-kpis').innerHTML=K.map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="v" style="color:${k.c}">${k.v}</div>${k.s?`<div class="spk">${spark(k.s,k.sc,150,22)}</div>`:''}</div>`).join('');
+  const ragBox=`<div class="card kpi" style="padding:10px 12px">
+    <div class="label" style="margin-bottom:8px">Campaign health</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px">
+      <div style="background:var(--green-bg);border-radius:6px;padding:5px 4px;text-align:center">
+        <div style="font-size:8.5px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px">G</div>
+        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--green)">${gCount}</div>
+      </div>
+      <div style="background:var(--amber-bg);border-radius:6px;padding:5px 4px;text-align:center">
+        <div style="font-size:8.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px">A</div>
+        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--amber)">${aCount}</div>
+      </div>
+      <div style="background:var(--red-bg);border-radius:6px;padding:5px 4px;text-align:center">
+        <div style="font-size:8.5px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px">R</div>
+        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--red)">${rCount}</div>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('camp-kpis').innerHTML=K.map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="v" style="color:${k.c}">${k.v}</div>${k.s?`<div class="spk">${spark(k.s,k.sc,150,22)}</div>`:''}</div>`).join('')+ragBox;
   document.getElementById('camp-sub').textContent=campaigns.length+' campaigns across '+new Set(campaigns.map(c=>c.asin)).size+' products · auto + manual targeting';
   document.getElementById('nav-leak').textContent=leaks.length||'·';
 }
@@ -1051,73 +1175,67 @@ function renderPerf(){
   const c=curCamp,ss=c.snapshots,last=ss[ss.length-1]||{},prev=ss[ss.length-2]||{};
   const hasPrev=ss.length>=2;
 
-  /* trend arrow + % vs previous period */
-  const trend=(cur,prv,higherBetter=true)=>{
-    if(!hasPrev||!prv)return {arrow:'',cls:'fl',pct:null};
-    const pct=((cur-prv)/Math.abs(prv))*100;
-    if(Math.abs(pct)<0.5)return{arrow:'→',cls:'fl',pct:0};
-    const good=(pct>0)===higherBetter;
-    return{arrow:pct>0?'↑':'↓',cls:good?'up':'dn',pct:Math.abs(pct)};
+  const compCpc=(last.cpc&&last.cpc>0)?last.cpc:((last.clicks&&last.spend)?(last.spend/last.clicks):0);
+  const compCtr=(last.ctr&&last.ctr>0)?last.ctr:((last.impressions&&last.clicks)?(last.clicks/last.impressions*100):0);
+  const prevCpc=(prev.cpc&&prev.cpc>0)?prev.cpc:((prev.clicks&&prev.spend)?(prev.spend/prev.clicks):0);
+  const prevCtr=(prev.ctr&&prev.ctr>0)?prev.ctr:((prev.impressions&&prev.clicks)?(prev.clicks/prev.impressions*100):0);
+
+  const pctDiff=(cur,prv,hb)=>{
+    if(!hasPrev||!prv)return{cls:'fl',arrow:'',pct:null};
+    const p=((cur-prv)/Math.abs(prv))*100;
+    if(Math.abs(p)<0.5)return{cls:'fl',arrow:'→',pct:0};
+    const good=(p>0)===hb;
+    return{cls:good?'up':'dn',arrow:p>0?'↑':'↓',pct:Math.abs(p)};
   };
 
-  /* mini sparkline inline SVG */
-  const spk=(key,color,higherBetter=true)=>{
-    if(ss.length<2)return '';
+  const spk=(key,color,hb=true,w=72,hh=28)=>{
+    if(ss.length<2)return'';
     const vals=ss.map(s=>s[key]||0);
     const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
-    const W=60,H=22,pts=vals.map((v,i)=>[i/(vals.length-1)*(W-4)+2, H-4-((v-mn)/range)*(H-8)]);
+    const pts=vals.map((v,i)=>[i/(vals.length-1)*(w-4)+2,hh-4-((v-mn)/range)*(hh-8)]);
     const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
-    const last2=vals[vals.length-1],prev2=vals[vals.length-2];
-    const trendColor=Math.abs(last2-prev2)<0.001?'var(--text4)':((last2>prev2)===higherBetter?color:'var(--red)');
-    return `<svg width="${W}" height="${H}" style="display:block;margin-top:4px"><path d="${d}" fill="none" stroke="${trendColor}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2" fill="${trendColor}"/></svg>`;
+    const lv=vals[vals.length-1],pv=vals[vals.length-2];
+    const tc=Math.abs(lv-pv)<0.001?'var(--text4)':((lv>pv)===hb?color:'var(--red)');
+    return `<svg width="${w}" height="${hh}" style="display:block;margin-top:5px"><path d="${d}" fill="none" stroke="${tc}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2.2" fill="${tc}"/></svg>`;
   };
 
-  /* 4 hero KPIs with sparkline + trend */
-  const tR=trend(last.roas,prev.roas,true),tS=trend(last.sales,prev.sales,true),tSp=trend(last.spend,prev.spend,false),tO=trend(last.purchases,prev.purchases,true);
-  const heroHTML=`<div class="hero-grid">
-    <div class="hero-cell">
-      <div class="sec-label">Sales</div>
-      <div class="hero-v" style="color:var(--green)">${gbp(last.sales||0)}</div>
-      ${tS.pct!=null?`<div class="kd ${tS.cls}">${tS.arrow} ${fmt(tS.pct,1)}% vs prev</div>`:'<div class="kd fl">First snapshot</div>'}
-      ${spk('sales','var(--green)',true)}
-    </div>
-    <div class="hero-cell">
-      <div class="sec-label">ROAS</div>
-      <div class="hero-v" style="color:${ragColor(c.rag)}">${fmt(last.roas||0,2)}</div>
-      ${tR.pct!=null?`<div class="kd ${tR.cls}">${tR.arrow} ${fmt(tR.pct,1)}% vs prev</div>`:'<div class="kd fl">First snapshot</div>'}
-      ${spk('roas',ragColor(c.rag),true)}
-    </div>
-    <div class="hero-cell">
-      <div class="sec-label">Spend</div>
-      <div class="hero-v" style="color:var(--blue)">${gbp(last.spend||0)}</div>
-      ${tSp.pct!=null?`<div class="kd ${tSp.cls}">${tSp.arrow} ${fmt(tSp.pct,1)}% vs prev</div>`:'<div class="kd fl">First snapshot</div>'}
-      ${spk('spend','var(--blue)',false)}
-    </div>
-    <div class="hero-cell">
-      <div class="sec-label">Orders</div>
-      <div class="hero-v">${intf(last.purchases||0)}</div>
-      ${tO.pct!=null?`<div class="kd ${tO.cls}">${tO.arrow} ${fmt(tO.pct,1)}% vs prev</div>`:'<div class="kd fl">First snapshot</div>'}
-      ${spk('purchases','var(--purple)',true)}
-    </div>
-  </div>`;
-
-  /* secondary stats row */
-  const secondary=[
-    {l:'ACOS',v:last.sales?fmt(last.acos,1)+'%':'—'},
-    {l:'CPC',v:gbp(last.cpc||0)},
-    {l:'CTR',v:fmt(last.ctr||0,2)+'%'},
-    {l:'Impr.',v:intf(last.impressions||0)},
-    {l:'Clicks',v:intf(last.clicks||0)},
+  /* 4 hero KPIs */
+  const heroes=[
+    {l:'Sales',v:gbp(last.sales||0),col:'var(--green)',key:'sales',hb:true,d:pctDiff(last.sales||0,prev.sales||0,true)},
+    {l:'ROAS',v:fmt(last.roas||0,2),col:ragColor(c.rag),key:'roas',hb:true,d:pctDiff(last.roas||0,prev.roas||0,true)},
+    {l:'Spend',v:gbp(last.spend||0),col:'var(--blue)',key:'spend',hb:false,d:pctDiff(last.spend||0,prev.spend||0,false)},
+    {l:'Orders',v:intf(last.purchases||0),col:'var(--purple)',key:'purchases',hb:true,d:pctDiff(last.purchases||0,prev.purchases||0,true)},
   ];
-  const secHTML=`<div class="sec-row">
-    ${secondary.map(s=>`<span class="sec-item"><span class="sec-label">${s.l}</span> <span class="sec-val">${s.v}</span></span>`).join('')}
-    ${hasPrev?`<span class="sec-item" style="margin-left:auto;color:var(--text4);font-size:10px">vs ${prev.date||'prev period'}</span>`:''}
+
+  const heroHTML=`<div class="hero-grid" style="grid-template-columns:repeat(4,1fr)">
+    ${heroes.map(h=>`<div class="hero-cell">
+      <div class="sec-label">${h.l}</div>
+      <div class="hero-v" style="color:${h.col}">${h.v}</div>
+      ${h.d.pct!=null?`<div class="kd ${h.d.cls}">${h.d.arrow} ${fmt(h.d.pct,1)}% vs prev</div>`:'<div class="kd fl">First snapshot</div>'}
+      ${spk(h.key,h.col,h.hb)}
+    </div>`).join('')}
   </div>`;
 
-  /* ── Targeting (keywords) ⇄ Ad Groups — imported per snapshot ──
-     Headline KPIs use the latest snapshot, but the imported keyword / ad-group
-     rows can live on an earlier snapshot, so pull them from the most recent
-     snapshot that actually has them. */
+  /* 8-metric secondary bar */
+  const acosVal=last.sales?(last.acos||last.spend/last.sales*100):0;
+  const prevAcos=prev.sales?(prev.acos||prev.spend/prev.sales*100):0;
+  const secMetrics=[
+    {l:'ACOS',v:acosVal>0?fmt(acosVal,1)+'%':'—',d:pctDiff(acosVal,prevAcos,false),col:acosVal>30?'var(--red)':acosVal>20?'var(--amber)':'var(--green)'},
+    {l:'CPC',v:compCpc>0?gbp(compCpc):'—',d:pctDiff(compCpc,prevCpc,false),col:'var(--text)'},
+    {l:'CTR',v:compCtr>0?fmt(compCtr,2)+'%':'—',d:pctDiff(compCtr,prevCtr,true),col:'var(--text)'},
+    {l:'Impressions',v:intf(last.impressions||0),d:pctDiff(last.impressions||0,prev.impressions||0,true),col:'var(--text)'},
+    {l:'Clicks',v:intf(last.clicks||0),d:pctDiff(last.clicks||0,prev.clicks||0,true),col:'var(--text)'},
+  ];
+  const secHTML=`<div style="display:flex;gap:0;margin-top:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden">
+    ${secMetrics.map(m=>`<div style="padding:9px 16px;border-right:1px solid var(--border);flex:1">
+      <div class="sec-label">${m.l}</div>
+      <div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px;color:${m.col}">${m.v}</div>
+      ${m.d.pct!=null?`<div class="kd ${m.d.cls}" style="font-size:9.5px;margin-top:2px">${m.d.arrow} ${fmt(m.d.pct,1)}%</div>`:''}
+    </div>`).join('')}
+    ${hasPrev?`<div style="padding:9px 14px;color:var(--text4);font-size:10px;display:flex;align-items:center;flex-shrink:0">vs ${prev.date||'prev'}</div>`:''}
+  </div>`;
+
+  /* Targeting / Ad Groups toggle */
   const dataSnap=[...ss].reverse().find(s=>(s.targeting&&s.targeting.length)||(s.adGroups&&s.adGroups.length))||last;
   const tgts=dataSnap.targeting||[];
   const ags=dataSnap.adGroups||[];
@@ -1125,51 +1243,70 @@ function renderPerf(){
 
   if(tgts.length||ags.length){
     const leaks=tgts.filter(r=>r.spend>0&&r.sales===0).length;
-
-    /* keyword / target level */
-    const tgtTable=tgts.length?`<div style="overflow-x:auto">
-      <table class="simple-tbl" style="min-width:660px">
-        <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${tgts.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);const rl=r.spend>0&&r.sales===0;
-          return `<tr ${rl?'class="trow-leak"':''}>
-            <td>${rl?'<span class="flagdot"></span>':''}${r.kw}</td>
-            <td><span class="mtag">${r.match||'—'}</span></td>
-            <td>£${fmt(r.bid,2)}</td>
-            <td>${intf(r.imp)}</td>
-            <td>${gbp(r.cpc||0)}</td>
-            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
-            <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
-            <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
-            <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'—':fmt(r.roas,2)}</td>
-          </tr>`;}).join('')}
-        </tbody>
-      </table>
-    </div>`
-    :`<div style="padding:14px;color:var(--text3);font-size:12px">No keyword / targeting rows in this snapshot. Paste the <b style="color:var(--blue)">Targeting</b> CSV in + Snapshot.</div>`;
-
-    /* ad group / ad level */
-    const agTable=ags.length?`<div style="overflow-x:auto">
-      <table class="simple-tbl" style="min-width:660px">
-        <thead><tr><th>Ad group / ad</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${ags.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);const rl=r.spend>0&&r.sales===0;
-          return `<tr ${rl?'class="trow-leak"':''}>
-            <td style="font-weight:500;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name}">${rl?'<span class="flagdot"></span>':''}${r.name}</td>
-            <td>${intf(r.imp)}</td><td>${intf(r.clicks||0)}</td><td>${fmt(r.ctr||0,2)}%</td>
-            <td>${gbp(r.cpc||0)}</td>
-            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
-            <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
-            <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
-            <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
-          </tr>`;}).join('')}
-        </tbody>
-      </table>
-    </div>`
-    :`<div style="padding:14px;color:var(--text3);font-size:12px">No ad-group rows in this snapshot. Paste the <b style="color:var(--blue)">Ad Groups</b> CSV in + Snapshot.</div>`;
-
     const startView=tgts.length?'targeting':'adgroups';
-    const tabBtn=(view,label,count)=>`<button onclick="showDataView('${view}')" data-view="${view}"
-        style="border:none;padding:7px 18px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:${view===startView?'600':'500'};background:${view===startView?'var(--blue)':'none'};color:${view===startView?'#fff':'var(--text3)'}">
-        ${label} <span style="opacity:.7;font-weight:400">${count||0}</span></button>`;
+
+    const tgtTable=tgts.length?`<div style="overflow-x:auto">
+      <table class="simple-tbl" style="min-width:720px">
+        <thead><tr>
+          <th style="text-align:left">Target / keyword</th>
+          <th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th>
+          <th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
+        </tr></thead>
+        <tbody>${tgts.map(r=>{
+          const rg=ragOf(r.roas,r.sales,r.spend);
+          const rl=r.spend>0&&r.sales===0;
+          const compR_cpc=r.cpc>0?r.cpc:(r.clicks?r.spend/r.clicks:0);
+          const compR_ctr=r.ctr>0?(r.ctr>1?r.ctr:r.ctr*100):0;
+          return `<tr ${rl?'class="trow-leak"':''}>
+            <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.kw||''}">${rl?'<span class="flagdot"></span>':''}${r.kw||'—'}</td>
+            <td><span class="mtag">${r.match||'—'}</span></td>
+            <td style="color:var(--text3)">${gbp(r.bid||0)}</td>
+            <td>${intf(r.imp||0)}</td>
+            <td>${intf(r.clicks||0)}</td>
+            <td>${compR_ctr>0?fmt(compR_ctr,2)+'%':'—'}</td>
+            <td>${compR_cpc>0?gbp(compR_cpc):'—'}</td>
+            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend||0)}</td>
+            <td>${gbp(r.sales||0)}</td>
+            <td>${intf(r.purch||0)}</td>
+            <td>${r.sales?fmt(r.acos||r.spend/r.sales*100,1)+'%':'—'}</td>
+            <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'NO SALE':r.roas>0?fmt(r.roas,2):'—'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`:`<div style="padding:16px;color:var(--text3);font-size:12px;background:var(--bg2);border-radius:var(--r-sm)">No keyword/targeting rows in this snapshot. Drop the <b style="color:var(--blue)">Targeting CSV</b> in the + Snapshot tab.</div>`;
+
+    const agTable=ags.length?`<div style="overflow-x:auto">
+      <table class="simple-tbl" style="min-width:720px">
+        <thead><tr>
+          <th style="text-align:left">Ad name</th>
+          <th>ASIN</th><th>Impr</th><th>Clicks</th><th>CTR</th>
+          <th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
+        </tr></thead>
+        <tbody>${ags.map(r=>{
+          const rg=ragOf(r.roas,r.sales,r.spend);
+          const rl=r.spend>0&&r.sales===0;
+          const compA_cpc=r.cpc>0?r.cpc:(r.clicks?r.spend/r.clicks:0);
+          const compA_ctr=r.ctr>0?(r.ctr>1?r.ctr:r.ctr*100):0;
+          return `<tr ${rl?'class="trow-leak"':''}>
+            <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name||''}">${rl?'<span class="flagdot"></span>':''}${r.name||'—'}</td>
+            <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${r.asin||'—'}</td>
+            <td>${intf(r.imp||0)}</td>
+            <td>${intf(r.clicks||0)}</td>
+            <td>${compA_ctr>0?fmt(compA_ctr,2)+'%':'—'}</td>
+            <td>${compA_cpc>0?gbp(compA_cpc):'—'}</td>
+            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend||0)}</td>
+            <td>${gbp(r.sales||0)}</td>
+            <td>${intf(r.purch||0)}</td>
+            <td>${r.sales?fmt(r.acos||r.spend/r.sales*100,1)+'%':'—'}</td>
+            <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas||0,2)}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`:`<div style="padding:16px;color:var(--text3);font-size:12px;background:var(--bg2);border-radius:var(--r-sm)">No ad-group rows. Drop the <b style="color:var(--blue)">Ad Groups CSV</b> in the + Snapshot tab.</div>`;
+
+    const tabBtn=(view,label,cnt)=>`<button onclick="showDataView('${view}')" data-view="${view}"
+        style="border:none;padding:7px 18px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600;background:${view===startView?'var(--blue)':'var(--bg4)'};color:${view===startView?'#fff':'var(--text3)'};transition:.15s">
+        ${label} <span style="opacity:.7;font-weight:400;font-size:11px">${cnt}</span></button>`;
 
     tgtHTML=`<div style="margin-top:16px">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
@@ -1177,50 +1314,61 @@ function renderPerf(){
           ${tabBtn('targeting','Targeting (keywords)',tgts.length)}
           ${tabBtn('adgroups','Ad Groups',ags.length)}
         </div>
-        <span style="font-size:10.5px;color:var(--text4)">${dataSnap===last?'latest snapshot':'data from'} · ${dataSnap.date||''}</span>
-        ${leaks?`<span style="font-size:10.5px;color:var(--amber)">⚠ ${leaks} spend leak${leaks>1?'s':''}</span>`:''}
+        <span style="font-size:10.5px;color:var(--text4)">${dataSnap===last?'latest snapshot':'older snapshot'} · ${dataSnap.date||''}</span>
+        ${leaks?`<span style="font-size:11px;color:var(--amber);font-weight:600">⚠ ${leaks} spend leak${leaks>1?'s':''}</span>`:''}
       </div>
       <div id="data-view-targeting" style="display:${startView==='targeting'?'block':'none'}">${tgtTable}</div>
       <div id="data-view-adgroups" style="display:${startView==='adgroups'?'block':'none'}">${agTable}</div>
     </div>`;
   } else {
-    tgtHTML=`<div style="margin-top:16px;padding:14px 16px;background:var(--bg2);border:1px dashed var(--border);border-radius:var(--r-sm);color:var(--text3);font-size:12px">
-      No keyword or ad-group data on these snapshots yet. Open <b style="color:var(--blue)">+ Snapshot</b>, paste your <b>Targeting</b> and <b>Ad Groups</b> CSV exports, set the period, and save — then toggle between them here.
+    tgtHTML=`<div style="margin-top:16px;padding:14px 16px;background:var(--bg2);border:2px dashed var(--border);border-radius:var(--r-sm);color:var(--text3);font-size:12px;text-align:center">
+      <div style="font-size:20px;margin-bottom:8px">📊</div>
+      <div>No targeting or ad-group data yet.</div>
+      <div style="margin-top:6px">Open <b style="color:var(--blue)">+ Snapshot</b>, drop your <b>Targeting CSV</b> and <b>Ad Groups CSV</b>, set the date range, and save.</div>
     </div>`;
   }
 
-  /* snapshot history — compact */
+  /* Full snapshot history table */
   const histRows=ss.slice().reverse().map(s=>{
     const rg=ragOf(s.roas,s.sales,s.spend);
     const isLast=s===ss[ss.length-1];
+    const sCpc=(s.cpc&&s.cpc>0)?s.cpc:((s.clicks&&s.spend)?s.spend/s.clicks:0);
+    const sCtr=(s.ctr&&s.ctr>0)?s.ctr:((s.impressions&&s.clicks)?s.clicks/s.impressions*100:0);
     return `<tr ${isLast?'class="hist-current"':''}>
-      <td>${s.date}${isLast?' <span class="chip" style="font-size:9px;padding:1px 5px">latest</span>':''}</td>
-      <td>${intf(s.impressions)}</td><td>${intf(s.clicks||0)}</td>
-      <td>${gbp(s.spend)}</td><td style="color:var(--green)">${gbp(s.sales)}</td>
-      <td>${intf(s.purchases)}</td>
-      <td>${s.sales?fmt(s.acos,1)+'%':'—'}</td>
-      <td style="color:${ragColor(rg)};font-weight:600">${fmt(s.roas,2)}</td>
-    </tr>`;}).join('');
+      <td>${s.date}${isLast?' <span class="ctag" style="font-size:9px;padding:1px 5px">latest</span>':''}</td>
+      <td>${intf(s.impressions||0)}</td><td>${intf(s.clicks||0)}</td>
+      <td>${sCtr>0?fmt(sCtr,2)+'%':'—'}</td>
+      <td>${gbp(s.spend)}</td>
+      <td>${sCpc>0?gbp(sCpc):'—'}</td>
+      <td style="color:var(--green)">${gbp(s.sales)}</td>
+      <td>${intf(s.purchases||0)}</td>
+      <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
+      <td style="color:${ragColor(rg)};font-weight:700">${fmt(s.roas||0,2)}</td>
+    </tr>`;
+  }).join('');
 
   document.getElementById('tab-performance').innerHTML=`
     ${heroHTML}
     ${secHTML}
-
     ${tgtHTML}
-
-    <!-- Snapshot history -->
-    <div style="margin-top:18px">
-      <div class="sec-label">All snapshots (${ss.length})</div>
-      <div style="overflow-x:auto;margin-top:8px">
-      <table class="simple-tbl" style="min-width:520px">
-        <thead><tr><th>Period</th><th>Impr.</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${histRows}</tbody>
-      </table>
+    <div style="margin-top:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="sec-label">All snapshots (${ss.length})</div>
+        <button class="btn-sm" onclick="switchTab('import')" style="color:var(--blue);border-color:rgba(91,157,255,.3)">+ Add snapshot</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="simple-tbl" style="min-width:680px">
+          <thead><tr>
+            <th>Period</th><th>Impr.</th><th>Clicks</th><th>CTR</th>
+            <th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
+          </tr></thead>
+          <tbody>${histRows||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text3)">No snapshots yet — add one with the button above.</td></tr>'}</tbody>
+        </table>
       </div>
     </div>`;
 }
 
-/* change-annotated dual chart: sales area + spend line + event markers + hover readout */
+
 function changeChart(c){
   const ss=c.snapshots; if(ss.length<2)return '<div class="chartwrap"><div class="muted">Need 2+ snapshots to chart the trend.</div></div>';
   const W=920,H=175,padL=46,padR=18,padT=20,padB=36,iw=W-padL-padR,ih=H-padT-padB;
@@ -1324,21 +1472,188 @@ function adGroupsHTML(targeting){
 /* change log tab in popout */
 function renderChanges(){
   const c=curCamp;
-  document.getElementById('tab-changes').innerHTML=
-    `<div class="cl-list">${c.changes.length?c.changes.map(changeEntry).join(''):'<div class="empty">No changes logged yet for this campaign.</div>'}</div>
-     <button class="btn ghost" style="margin-top:14px">+ Log a change</button>`;
+  /* Re-render with campId+chIdx for mark-complete buttons */
+  const entryList=c.changes.map((ch,i)=>changeEntry(ch,c.id,i)).join('');
+  document.getElementById('tab-changes').innerHTML=`
+    <!-- Log change form -->
+    <div id="change-form" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:18px">
+      <div class="sh" style="margin:0 0 14px"><div class="tt" style="font-size:13px">Log a change</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px">
+        <div>
+          <div class="label" style="margin-bottom:5px">Date made <span style="color:var(--red)">*</span></div>
+          <input class="input" id="clf-date" type="date" style="width:100%" value="${new Date().toISOString().slice(0,10)}">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Change type <span style="color:var(--red)">*</span></div>
+          <select class="sel" id="clf-type" style="width:100%">
+            <option value="PPC Bid">PPC Bid</option>
+            <option value="PPC Budget">PPC Budget</option>
+            <option value="PPC Keywords">PPC Keywords</option>
+            <option value="Pricing">Pricing</option>
+            <option value="Listing">Listing</option>
+            <option value="Stock">Stock</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:11px">
+        <div class="label" style="margin-bottom:5px">What was changed <span style="color:var(--red)">*</span></div>
+        <input class="input" id="clf-what" style="width:100%" placeholder="e.g. Increased polyfilla exact bid from £0.58 to £0.68">
+      </div>
+      <div style="margin-bottom:11px">
+        <div class="label" style="margin-bottom:5px">Why / reason <span style="color:var(--red)">*</span></div>
+        <textarea class="input" id="clf-why" style="width:100%;min-height:70px;resize:vertical" placeholder="Why was this changed? What problem was identified? What result is expected?"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px">
+        <div>
+          <div class="label" style="margin-bottom:5px">Review date <span style="color:var(--red)">*</span></div>
+          <input class="input" id="clf-review" type="date" style="width:100%">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Goal / expected outcome</div>
+          <input class="input" id="clf-goal" style="width:100%" placeholder="e.g. ACOS below 20% within 2 weeks">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" onclick="saveChangeEntry()">Save change</button>
+        <span id="clf-status" style="font-size:11.5px;color:var(--text3)"></span>
+      </div>
+    </div>
+
+    <!-- Existing changes -->
+    <div class="cl-list" id="change-list">${c.changes.length?c.changes.map(changeEntry).join(''):'<div class="empty">No changes logged yet for this campaign.</div>'}</div>`;
 }
-function changeEntry(ch){
+
+async function saveChangeEntry(){
+  const c=curCamp;if(!c)return;
+  const date=document.getElementById('clf-date').value;
+  const type=document.getElementById('clf-type').value;
+  const what=document.getElementById('clf-what').value.trim();
+  const why=document.getElementById('clf-why').value.trim();
+  const review=document.getElementById('clf-review').value;
+  const goal=document.getElementById('clf-goal').value.trim();
+  const status=document.getElementById('clf-status');
+
+  if(!date||!what||!why||!review){
+    if(status){status.textContent='⚠ Date, what, why and review date are all required';status.style.color='var(--red)';}
+    return;
+  }
+
+  const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
+  c.changes.unshift(change); // newest first
+
+  /* Save to Supabase */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      await sbInsert('changes',{
+        campaign_id:c.id,type,date,what,why,goal:goal||null,
+        outcome:'pending',outcome_note:null,
+        review_date:review,created_at:new Date().toISOString()
+      });
+      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
+    }catch(e){
+      console.error('Change save failed:',e);
+      if(status){status.textContent='Saved locally (Supabase failed)';status.style.color='var(--amber)';}
+    }
+  } else {
+    if(status){status.textContent='✓ Change saved';status.style.color='var(--green)';}
+  }
+
+  /* Reset form */
+  document.getElementById('clf-what').value='';
+  document.getElementById('clf-why').value='';
+  document.getElementById('clf-goal').value='';
+  document.getElementById('clf-review').value='';
+  document.getElementById('clf-date').value=new Date().toISOString().slice(0,10);
+
+  /* Update badge + list */
+  document.getElementById('potab-changes').textContent=c.changes.length||'';
+  document.getElementById('change-list').innerHTML=c.changes.map((ch,i)=>changeEntry(ch,c.id,i)).join('');
+  renderCampaigns();
+  renderChangeLog();
+  setTimeout(()=>{if(status)status.textContent='';},3000);
+}
+function changeEntry(ch, campId, chIdx){
   const ic={'PPC Bid':'⊙','PPC Budget':'£','PPC Keywords':'⌗','Pricing':'฿','Listing':'≣','Stock':'▣','Other':'•'}[ch.type]||'•';
-  const oc=ch.outcome==='win'?'<span class="outcome win">✓ Worked</span>':ch.outcome==='loss'?'<span class="outcome loss">✕ Didn\'t work</span>':'<span class="outcome pending">◷ Watching</span>';
-  const c=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
-  return `<div class="cle">
-    <div class="tline"><div class="tdot" style="background:${c}1f;color:${c};border:1px solid ${c}55">${ic}</div><div class="tbar"></div></div>
+  const today=new Date(); today.setHours(0,0,0,0);
+  const reviewDate=ch.review?new Date(ch.review+'T00:00:00'):null;
+  const reviewDue=reviewDate&&reviewDate<=today&&ch.outcome==='pending';
+  const daysUntil=reviewDate?Math.round((reviewDate-today)/86400000):null;
+
+  const oc=ch.outcome==='win'
+    ?'<span class="outcome win">✓ Worked</span>'
+    :ch.outcome==='loss'
+      ?'<span class="outcome loss">✕ Did not work</span>'
+      :'<span class="outcome pending">◷ Awaiting review</span>';
+  const dotCol=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
+
+  const reviewLabel=reviewDate
+    ?(daysUntil===0?'<b style="color:var(--red)">Review due TODAY</b>'
+      :daysUntil<0?`<b style="color:var(--red)">Review ${Math.abs(daysUntil)}d overdue</b>`
+      :daysUntil<=7?`<span style="color:var(--amber)">Review in ${daysUntil}d — ${ch.review}</span>`
+      :`<span style="color:var(--text3)">Review ${ch.review}</span>`)
+    :'<span style="color:var(--text4)">No review date</span>';
+
+  const completeBtn=(campId!=null&&chIdx!=null&&ch.outcome==='pending')
+    ?`<div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:7px">Mark this change as reviewed:</div>
+        <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+          <textarea id="rn-${campId}-${chIdx}" placeholder="Review notes (optional)…" class="input" style="flex:1;min-width:180px;min-height:48px;font-size:11.5px;resize:vertical"></textarea>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <button class="btn" style="background:var(--green);font-size:11px;padding:6px 12px" onclick="markChange(${campId},${chIdx},'win')">✓ Worked</button>
+            <button class="btn" style="background:var(--red);font-size:11px;padding:6px 12px" onclick="markChange(${campId},${chIdx},'loss')">✕ Did not work</button>
+          </div>
+        </div>
+      </div>`
+    :'';
+
+  const hilite=reviewDue?'border-left:3px solid var(--red);background:rgba(255,93,108,.04);':'';
+
+  return `<div class="cle" style="${hilite}padding-left:${reviewDue?'11px':'0'}">
+    <div class="tline"><div class="tdot" style="background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}55">${ic}</div><div class="tbar"></div></div>
     <div class="body">
-      <div class="top"><div class="what">${ch.what}</div><div class="date">${ch.date}</div></div>
-      <div class="why"><b>Why:</b> ${ch.why} ${ch.goal?`· <b>Goal:</b> ${ch.goal}`:''}</div>
-      <div class="tags"><span class="ctag type">${ch.type}</span>${oc}${ch.review?`<span class="ctag">review ${ch.review}</span>`:''}${ch.outcomeNote?`<span class="ctag" style="color:var(--text2)">${ch.outcomeNote}</span>`:''}</div>
+      <div class="top">
+        <div class="what">${ch.what}</div>
+        <div class="date">${ch.date}</div>
+      </div>
+      <div class="why" style="margin-top:4px"><b style="color:var(--text3)">Why:</b> ${ch.why}</div>
+      ${ch.goal?`<div class="why" style="margin-top:2px"><b style="color:var(--text3)">Goal:</b> ${ch.goal}</div>`:''}
+      ${ch.outcomeNote?`<div class="why" style="margin-top:2px;color:var(--text2)"><b style="color:var(--text3)">Outcome note:</b> ${ch.outcomeNote}</div>`:''}
+      <div class="tags" style="margin-top:7px">
+        <span class="ctag type">${ch.type}</span>
+        ${oc}
+        ${reviewLabel}
+      </div>
+      ${completeBtn}
     </div></div>`;
+}
+
+function markChange(campId, chIdx, outcome){
+  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const ch=c.changes[chIdx];if(!ch)return;
+  const note=(document.getElementById('rn-'+campId+'-'+chIdx)||{value:''}).value.trim();
+  ch.outcome=outcome;
+  ch.outcomeNote=note||'';
+  ch.reviewedAt=new Date().toISOString().slice(0,10);
+  /* Supabase update */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    sbHeaders().then(async hds=>{
+      /* find the change row by matching campaign_id + date + what */
+      const res=await fetch(SUPABASE_URL+'/rest/v1/changes?campaign_id=eq.'+c.id+'&date=eq.'+encodeURIComponent(ch.date)+'&what=eq.'+encodeURIComponent(ch.what),{headers:hds});
+      if(res.ok){
+        const rows=await res.json();
+        if(rows[0]?.id){
+          fetch(SUPABASE_URL+'/rest/v1/changes?id=eq.'+rows[0].id,{
+            method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},
+            body:JSON.stringify({outcome,outcome_note:note||null,reviewed_at:new Date().toISOString().slice(0,10)})
+          }).catch(e=>console.warn('markChange PATCH fail',e));
+        }
+      }
+    }).catch(e=>console.warn('markChange Supabase fail',e));
+  }
+  renderCampaigns();renderChangeLog();
+  /* If inside popout, re-render changes tab */
+  if(curCamp&&curCamp.id==campId)renderChanges();
 }
 
 /* profitability tab */
@@ -1513,15 +1828,25 @@ function renderImport(){
 
     </div>
 
-    <div style="margin-top:14px;display:flex;gap:10px;align-items:center;padding-top:12px;border-top:1px solid var(--border)">
-      <div>
-        <div style="font-size:11.5px;margin-bottom:4px;font-weight:500">Period label</div>
-        <input class="input" id="csv-period" style="width:170px" value="${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}">
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div class="label" style="margin-bottom:5px">Start date <span style="color:var(--red)">*</span></div>
+          <input class="input" id="csv-date-from" type="date" style="width:150px" oninput="updatePeriodLabel()">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">End date <span style="color:var(--red)">*</span></div>
+          <input class="input" id="csv-date-to" type="date" style="width:150px" oninput="updatePeriodLabel()">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Period label</div>
+          <input class="input" id="csv-period" style="width:200px;color:var(--text3);font-family:var(--mono);font-size:11.5px" placeholder="Auto-generated from dates" readonly>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn" id="save-snap-btn" onclick="saveSnapshot()" disabled style="opacity:.5">Save snapshot</button>
+          <div style="color:var(--text3);font-size:10.5px;text-align:center" id="save-snap-note">Select dates + paste a CSV</div>
+        </div>
       </div>
-      <div style="align-self:flex-end">
-        <button class="btn" id="save-snap-btn" onclick="saveSnapshot()" disabled style="opacity:.5">Save snapshot</button>
-      </div>
-      <div style="align-self:flex-end;color:var(--text3);font-size:11px" id="save-snap-note">Paste Targeting CSV to enable</div>
     </div>`;
 
   window._snapTgts=null;
@@ -1543,6 +1868,29 @@ function handleCsvFileTo(type,input){
   };r.readAsText(file);
 }
 
+/* ─── ROBUST CSV COLUMN MATCHER ─── */
+function colFind(row, candidates){
+  const keys=Object.keys(row);
+  for(const k of keys){
+    if(candidates.some(c=>k.trim().toLowerCase()===c.trim().toLowerCase()))return k;
+  }
+  for(const k of keys){
+    if(candidates.some(c=>k.trim().toLowerCase().includes(c.trim().toLowerCase())))return k;
+  }
+  return null;
+}
+function colNum(row, candidates, fallback=0){
+  const k=colFind(row,candidates);
+  if(!k)return fallback;
+  const raw=String(row[k]||'').replace(/[£$%,]/g,'').trim();
+  const n=parseFloat(raw);
+  return isNaN(n)?fallback:n;
+}
+function colStr(row, candidates, fallback=''){
+  const k=colFind(row,candidates);
+  return k?(row[k]||'').trim():fallback;
+}
+
 function parsePasteFor(type,text){
   const parsed=parseCsv(text);
   const previewEl=document.getElementById(type+'-preview');
@@ -1550,63 +1898,189 @@ function parsePasteFor(type,text){
   if(!parsed||!parsed.rows.length){previewEl.innerHTML='';badgeEl.textContent='';checkSnapReady();return;}
 
   if(type==='tgt'){
-    /* Targeting report: keyword/target level */
+    /* ── Targeting report: real Amazon column names ── */
+    const matchMap={
+      'broad match':'Broad','phrase match':'Phrase','exact match':'Exact',
+      'broad':'Broad','phrase':'Phrase','exact':'Exact',
+      'targeting_expression_predefined_close_match':'Close Match',
+      'targeting_expression_predefined_loose_match':'Loose Match',
+      'targeting_expression_predefined_substitutes':'Substitutes',
+      'targeting_expression_predefined_complements':'Complements',
+      'close match':'Close Match','loose match':'Loose Match',
+    };
+
     const rows=parsed.rows.map(r=>{
-      const name=csvVal(r,'targeting_expression','keyword','customer_search_term','target','automatic_targeting_groups');
-      const imp=parseInt(csvVal(r,'impressions')||0);
-      const spend=parseFloat(csvVal(r,'total_cost_gbp','total_cost','spend')||0);
-      const sales=parseFloat(csvVal(r,'sales_gbp','sales_14_day','sales')||0);
-      const purch=parseInt(csvVal(r,'purchases_14_day','purchases','orders')||0);
-      const clicks=parseInt(csvVal(r,'clicks')||0);
-      const bid=parseFloat(csvVal(r,'bid_gbp','bid')||0);
-      const cpcCsv=parseFloat(csvVal(r,'cpc_gbp','cpc')||0);
-      const match=csvVal(r,'match_type','target_match_type')||'—';
-      const adGroup=csvVal(r,'ad_group_name','automatic_targeting_groups','ad_group')||'Targeting';
-      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=cpcCsv||(clicks?spend/clicks:0);
-      return{kw:name,adGroup,match:match.replace(/-/g,' '),bid,imp,clicks,spend,sales,purch,acos,roas,ctr,cpc};
-    }).filter(r=>r.kw);
+      // Keyword / target name
+      const kw=colStr(r,['Keyword','keyword','Targeting expression','targeting_expression','Customer Search Term','customer_search_term','Target','target'],'');
+      if(!kw)return null;
+
+      const rawMatch=colStr(r,['Target match type','target_match_type','Match type','match_type','Match','match'],'');
+      const match=matchMap[rawMatch.toLowerCase()]||rawMatch||'—';
+
+      const bid=colNum(r,['Bid (GBP)','Bid (USD)','Bid','bid_gbp','bid'],0);
+      const imp=Math.round(colNum(r,['Impressions','impressions'],0));
+      const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
+
+      // CTR: Amazon exports as decimal (0.0032) or percent (0.32%)
+      let rawCtr=colNum(r,['CTR','ctr','Click-Through Rate (CTR)'],0);
+      const ctr=rawCtr>1?rawCtr/100:rawCtr; // normalise to decimal
+
+      const spend=colNum(r,['Total cost (GBP)','Total cost (USD)','Total cost','Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','Cost (USD)','total_cost_gbp','total_cost'],0);
+      const sales=colNum(r,['Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales (GBP)','7 Day Total Sales (USD)','7 Day Total Sales','sales_gbp','sales'],0);
+      const purch=Math.round(colNum(r,['Purchases','purchases','7 Day Total Orders (#)','7 Day Total Orders','Orders','orders'],0));
+
+      let rawAcos=colNum(r,['ACOS','acos','Advertising Cost of Sales'],0);
+      const acos=rawAcos>1?rawAcos:(rawAcos>0&&rawAcos<=1?rawAcos*100:0)||(sales?spend/sales*100:0);
+
+      let rawRoas=colNum(r,['ROAS','roas'],0);
+      const roas=rawRoas>0?rawRoas:(spend>0?sales/spend:0);
+
+      const cpcCsv=colNum(r,['CPC (GBP)','CPC (USD)','CPC','cpc_gbp','cpc','Cost Per Click (CPC)'],0);
+      const cpc=cpcCsv>0?cpcCsv:(clicks?spend/clicks:0);
+
+      const adGroup=colStr(r,['Ad group name','ad_group_name','Ad Group','ad_group','Automatic targeting groups'],'Targeting');
+
+      return{kw,adGroup,match,bid,imp,clicks,ctr,spend,sales,purch,acos,roas,cpc};
+    }).filter(Boolean);
+
     window._snapTgts=rows;
-    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch}),{sp:0,sa:0,pu:0});
+    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch,cl:a.cl+r.clicks,im:a.im+r.imp}),{sp:0,sa:0,pu:0,cl:0,im:0});
+    const totRoas=tot.sp?tot.sa/tot.sp:0;
+    const totAcos=tot.sa?tot.sp/tot.sa*100:0;
+    const totCpc=tot.cl?tot.sp/tot.cl:0;
+    const totCtr=tot.im?tot.cl/tot.im*100:0;
+
     badgeEl.innerHTML=`<span style="color:var(--green)">✓ ${rows.length} targets parsed</span>`;
-    previewEl.innerHTML=`<div style="font-size:10.5px;color:var(--text3);padding:6px 0">${rows.length} targets · £${fmt(tot.sp,2)} spend · £${fmt(tot.sa,2)} sales · ROAS ${fmt(tot.sp?tot.sa/tot.sp:0,2)}</div>
-      <div style="overflow-x:auto"><table class="simple-tbl" style="min-width:480px;font-size:11px">
-        <thead><tr><th>Target</th><th>Match</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ROAS</th></tr></thead>
+    previewEl.innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
+        ${[
+          ['Spend',gbp(tot.sp)],
+          ['Sales',gbp(tot.sa)],
+          ['ROAS',fmt(totRoas,2)],
+          ['ACOS',totAcos>0?fmt(totAcos,1)+'%':'—'],
+          ['Orders',intf(tot.pu)],
+        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
+        ${[
+          ['Impressions',intf(tot.im)],
+          ['Clicks',intf(tot.cl)],
+          ['CTR',fmt(totCtr,2)+'%'],
+          ['CPC',gbp(totCpc)],
+        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
+      </div>
+      <div style="overflow-x:auto"><table class="simple-tbl" style="min-width:580px;font-size:11px">
+        <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
         <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr ${r.spend>0&&r.sales===0?'class="trow-leak"':''}>
-          <td style="font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.kw}</td>
+          <td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.kw}">${r.kw}</td>
           <td><span class="mtag">${r.match}</span></td>
+          <td>${gbp(r.bid)}</td>
           <td>${intf(r.imp)}</td>
-          <td ${r.spend>0&&r.sales===0?'style="color:var(--amber)"':''}>${gbp(r.spend)}</td>
+          <td>${gbp(r.cpc)}</td>
+          <td ${r.spend>0&&r.sales===0?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
           <td>${gbp(r.sales)}</td>
+          <td>${intf(r.purch)}</td>
+          <td>${r.acos>0?fmt(r.acos,1)+'%':'—'}</td>
           <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'—':fmt(r.roas,2)}</td>
         </tr>`;}).join('')}</tbody>
       </table></div>`;
+
   } else {
-    /* Ad Groups report: group-level summary */
+    /* ── Ad Groups report: real Amazon column names ── */
     const rows=parsed.rows.map(r=>{
-      const name=csvVal(r,'ad_name','automatic_targeting_groups','ad_group_name','ad_group','targeting_group','campaign_name')||'Ad group';
-      const imp=parseInt(csvVal(r,'impressions')||0);
-      const clicks=parseInt(csvVal(r,'clicks')||0);
-      const spend=parseFloat(csvVal(r,'total_cost_gbp','total_cost','spend')||0);
-      const sales=parseFloat(csvVal(r,'sales_gbp','sales')||0);
-      const purch=parseInt(csvVal(r,'purchases','orders')||0);
-      const bid=parseFloat(csvVal(r,'bid_gbp','bid')||0);
-      const cpcCsv=parseFloat(csvVal(r,'cpc_gbp','cpc')||0);
-      const asin=csvVal(r,'asin'),sku=csvVal(r,'sku');
-      const acos=sales?spend/sales*100:0,roas=spend?sales/spend:0,ctr=imp?clicks/imp*100:0,cpc=cpcCsv||(clicks?spend/clicks:0);
-      return{name,bid,imp,clicks,spend,sales,purch,acos,roas,ctr,cpc,asin,sku};
-    }).filter(r=>r.name);
+      const name=colStr(r,['Ad name','ad_name','Ad Name','Ad group name','ad_group_name','Ad Group'],'');
+      if(!name)return null;
+
+      const imp=Math.round(colNum(r,['Impressions','impressions'],0));
+      const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
+      const spend=colNum(r,['Total cost (GBP)','Total cost (USD)','Total cost','Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','total_cost_gbp','total_cost'],0);
+      const sales=colNum(r,['Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales (GBP)','7 Day Total Sales','sales_gbp','sales'],0);
+      const purch=Math.round(colNum(r,['Purchases','purchases','7 Day Total Orders (#)','7 Day Total Orders','Orders'],0));
+
+      const cpcCsv=colNum(r,['CPC (GBP)','CPC (USD)','CPC','cpc_gbp','cpc'],0);
+      const cpc=cpcCsv>0?cpcCsv:(clicks?spend/clicks:0);
+
+      let rawCtr=colNum(r,['CTR','ctr','Click-Through Rate (CTR)'],0);
+      const ctr=rawCtr>1?rawCtr/100:rawCtr;
+
+      let rawAcos=colNum(r,['ACOS','acos'],0);
+      const acos=rawAcos>1?rawAcos:(rawAcos>0&&rawAcos<=1?rawAcos*100:0)||(sales?spend/sales*100:0);
+
+      let rawRoas=colNum(r,['ROAS','roas'],0);
+      const roas=rawRoas>0?rawRoas:(spend>0?sales/spend:0);
+
+      const asin=colStr(r,['ASIN','asin'],'');
+      const sku=colStr(r,['SKU','sku'],'');
+      const status=colStr(r,['Status','state','State'],'');
+
+      return{name,imp,clicks,spend,sales,purch,cpc,ctr,acos,roas,asin,sku,status};
+    }).filter(Boolean);
+
     window._snapAgs=rows;
-    badgeEl.innerHTML=`<span style="color:var(--text2)">✓ ${rows.length} groups parsed</span>`;
-    previewEl.innerHTML=`<div style="overflow-x:auto"><table class="simple-tbl" style="font-size:11px">
-      <thead><tr><th>Ad group / ad</th><th>Impr</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>ROAS</th></tr></thead>
-      <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr>
-        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name}">${r.name}</td>
-        <td>${intf(r.imp)}</td><td>${intf(r.clicks||0)}</td>
-        <td>${gbp(r.spend)}</td><td>${gbp(r.sales)}</td>
-        <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
-      </tr>`;}).join('')}</tbody>
-    </table></div>`;
+    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch,cl:a.cl+r.clicks,im:a.im+r.imp}),{sp:0,sa:0,pu:0,cl:0,im:0});
+    const totRoas=tot.sp?tot.sa/tot.sp:0;
+    const totCpc=tot.cl?tot.sp/tot.cl:0;
+    const totCtr=tot.im?tot.cl/tot.im*100:0;
+    const totAcos=tot.sa?tot.sp/tot.sa*100:0;
+
+    badgeEl.innerHTML=`<span style="color:var(--text2)">✓ ${rows.length} ads parsed</span>`;
+    previewEl.innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
+        ${[
+          ['Spend',gbp(tot.sp)],
+          ['Sales',gbp(tot.sa)],
+          ['ROAS',fmt(totRoas,2)],
+          ['ACOS',totAcos>0?fmt(totAcos,1)+'%':'—'],
+          ['Orders',intf(tot.pu)],
+        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
+        ${[
+          ['Impressions',intf(tot.im)],
+          ['Clicks',intf(tot.cl)],
+          ['CTR',fmt(totCtr,2)+'%'],
+          ['CPC',gbp(totCpc)],
+        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
+      </div>
+      <div style="overflow-x:auto"><table class="simple-tbl" style="min-width:540px;font-size:11px">
+        <thead><tr><th>Ad name</th><th>ASIN</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+        <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr ${r.spend>0&&r.sales===0?'class="trow-leak"':''}>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name}">${r.name}</td>
+          <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${r.asin||'—'}</td>
+          <td>${intf(r.imp)}</td><td>${intf(r.clicks)}</td>
+          <td>${fmt(r.ctr*100,2)}%</td>
+          <td>${gbp(r.cpc)}</td>
+          <td ${r.spend>0&&r.sales===0?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
+          <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
+          <td>${r.acos>0?fmt(r.acos,1)+'%':'—'}</td>
+          <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
+        </tr>`;}).join('')}</tbody>
+      </table></div>`;
   }
+  checkSnapReady();
+}
+
+function updatePeriodLabel(){
+  const from=document.getElementById('csv-date-from')?.value;
+  const to=document.getElementById('csv-date-to')?.value;
+  if(!from&&!to)return;
+  const fmtD=d=>{if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});};
+  let label='';
+  if(from&&to){
+    const fd=new Date(from+'T00:00:00'),td=new Date(to+'T00:00:00');
+    // same month+year: "1–7 Jun 2026"
+    if(fd.getMonth()===td.getMonth()&&fd.getFullYear()===td.getFullYear()){
+      label=fd.getDate()+'–'+td.getDate()+' '+td.toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+    } else if(fd.getFullYear()===td.getFullYear()){
+      // same year: "25 May – 1 Jun 2026"
+      label=fd.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' – '+td.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    } else {
+      label=fmtD(from)+' – '+fmtD(to);
+    }
+  } else if(from){label=fmtD(from);}
+  else{label=fmtD(to);}
+  const inp=document.getElementById('csv-period');
+  if(inp)inp.value=label;
   checkSnapReady();
 }
 
@@ -1616,41 +2090,55 @@ function checkSnapReady(){
   if(!btn)return;
   const hasTgt=window._snapTgts&&window._snapTgts.length>0;
   const hasAg=window._snapAgs&&window._snapAgs.length>0;
-  const ready=hasTgt||hasAg;
+  const hasCSV=hasTgt||hasAg;
+  const period=(document.getElementById('csv-period')?.value||'').trim();
+  const hasDateFrom=(document.getElementById('csv-date-from')?.value||'').trim();
+  const hasDateTo=(document.getElementById('csv-date-to')?.value||'').trim();
+  const hasDates=hasDateFrom&&hasDateTo;
+  const ready=hasCSV&&hasDates;
   btn.disabled=!ready;
   btn.style.opacity=ready?'1':'0.5';
-  if(hasTgt&&hasAg)note.textContent='✓ Both reports ready — will save together';
+  if(!hasDates&&hasCSV)note.textContent='⚠ Select start & end dates to save';
+  else if(!hasCSV&&hasDates)note.textContent='⚠ Paste or drop a CSV file';
+  else if(hasTgt&&hasAg)note.textContent='✓ Both reports ready — click to save';
   else if(hasTgt)note.textContent='✓ Targeting ready · Ad Groups optional';
   else if(hasAg)note.textContent='✓ Ad Groups ready · Targeting recommended';
-  else note.textContent='Paste a CSV to enable';
-  note.style.color=ready?'var(--green)':'var(--text3)';
+  else note.textContent='Select dates + paste a CSV';
+  note.style.color=ready?'var(--green)':(!hasCSV||!hasDates)?'var(--amber)':'var(--text3)';
 }
 
 async function saveSnapshot(){
   const tgts=window._snapTgts||[];
   const ags=window._snapAgs||[];
   if(!tgts.length&&!ags.length){return;}
+  const dateFrom=(document.getElementById('csv-date-from')?.value||'').trim();
+  const dateTo=(document.getElementById('csv-date-to')?.value||'').trim();
   const period=(document.getElementById('csv-period')?.value||'').trim();
+  if(!dateFrom||!dateTo){
+    const note=document.getElementById('save-snap-note');
+    if(note){note.textContent='⚠ Start date and end date are required';note.style.color='var(--red)';}
+    document.getElementById('csv-date-from')?.focus();
+    return;
+  }
   if(!period){
     const note=document.getElementById('save-snap-note');
-    if(note){note.textContent='⚠ Enter a period label first';note.style.color='var(--amber)';}
-    document.getElementById('csv-period')?.focus();
+    if(note){note.textContent='⚠ Period label missing — re-enter dates';note.style.color='var(--red)';}
     return;
   }
   const c=curCamp;
 
   /* totals: keyword report drives spend/sales/orders; fall back to ad-groups if no targeting.
-     targeting exports usually omit clicks, so borrow impressions/clicks from ad-groups when missing. */
+     Always use ad-groups for impressions/clicks (more reliable). */
   const src=tgts.length?tgts:ags;
   const totSpend=src.reduce((a,t)=>a+(t.spend||0),0);
   const totSales=src.reduce((a,t)=>a+(t.sales||0),0);
   const totPurch=src.reduce((a,t)=>a+(t.purch||0),0);
-  let totImp=src.reduce((a,t)=>a+(t.imp||0),0);
-  let totClicks=src.reduce((a,t)=>a+(t.clicks||0),0);
-  if(ags.length){
-    if(!totClicks)totClicks=ags.reduce((a,t)=>a+(t.clicks||0),0);
-    if(!totImp)totImp=ags.reduce((a,t)=>a+(t.imp||0),0);
-  }
+  // Prefer ad-groups for impressions + clicks (targeting rows often duplicate)
+  let totImp=ags.length?ags.reduce((a,t)=>a+(t.imp||0),0):src.reduce((a,t)=>a+(t.imp||0),0);
+  let totClicks=ags.length?ags.reduce((a,t)=>a+(t.clicks||0),0):src.reduce((a,t)=>a+(t.clicks||0),0);
+  // If still missing, fall back to targeting
+  if(!totClicks&&tgts.length)totClicks=tgts.reduce((a,t)=>a+(t.clicks||0),0);
+  if(!totImp&&tgts.length)totImp=tgts.reduce((a,t)=>a+(t.imp||0),0);
 
   const newSnap=snap(period,totImp,totClicks,totSpend,totSales,totPurch,tgts.length?tgts:null);
   /* store ad groups separately on the snap object */
@@ -1699,12 +2187,18 @@ function renderInsights(){
   leaks.sort((a,b)=>b.spend-a.spend);
   const leakTotal=leaks.reduce((a,l)=>a+l.spend,0);
   document.getElementById('leak-total').textContent=gbp(leakTotal)+' leaking';
-  document.getElementById('leak-list').innerHTML=leaks.length?leaks.slice(0,9).map(l=>`
+  document.getElementById('leak-list').innerHTML=leaks.length?leaks.slice(0,12).map(l=>`
     <div class="leak" onclick="openCamp('${l.cid}')">
-      <span class="rag flag" style="flex-shrink:0">${l.type}</span>
-      <div class="bd"><b>${l.name}</b><span>${l.sub} · ${l.reason}</span></div>
-      <div class="amt"><div class="big">${gbp(l.spend)}</div><div class="sm">spent · £0 back</div></div>
-    </div>`).join(''):'<div class="empty">No spend leaks. Every active target is converting. ✓</div>';
+      <span class="rag ${l.type==='Campaign'?'r':'flag'}" style="flex-shrink:0;font-size:9.5px">${l.type}</span>
+      <div class="bd">
+        <b>${l.name}</b>
+        <span>${l.sub} · ${l.reason}</span>
+      </div>
+      <div class="amt">
+        <div class="big">${gbp(l.spend)}</div>
+        <div class="sm">£0 sales · ROAS 0.00</div>
+      </div>
+    </div>`).join(''):'<div class="empty">No spend leaks — every active target is converting ✓</div>';
 
   /* change scoreboard */
   const allCh=A.flatMap(c=>c.changes.map(ch=>({...ch,cid:c.id})));
@@ -1723,10 +2217,26 @@ function renderInsights(){
       <div class="lrow" onclick="openCamp('${ch.cid}')"><div class="nm" style="font-size:11.5px">✕ ${ch.what}</div><div class="vv"><span class="muted" style="font-size:10px">${ch.outcomeNote||'reverting'}</span></div></div>`).join('')||'<div class="muted" style="font-size:11.5px">No failed changes to review.</div>'}</div>`;
 
   /* movers */
-  const withDelta=A.filter(c=>c.snapshots.length>=2).map(c=>({...c,d:c.snapshots[c.snapshots.length-1].roas-c.snapshots[c.snapshots.length-2].roas,prev:c.snapshots[c.snapshots.length-2].roas}));
-  const moverRow=c=>`<div class="lrow" onclick="openCamp('${c.id}')"><div class="nm">${c.alias||c.name}</div><div class="vv"><span class="muted">${fmt(c.prev,1)}→<b style="color:${ragColor(c.rag)}">${fmt(c.roas,1)}</b></span><span style="color:${c.d>=0?'var(--green)':'var(--red)'};font-weight:600">${c.d>=0?'+':''}${fmt(c.d,1)}</span></div></div>`;
-  document.getElementById('ins-up').innerHTML=withDelta.filter(c=>c.d>0.1).sort((a,b)=>b.d-a.d).slice(0,6).map(moverRow).join('')||'<div class="muted" style="padding:6px 0">None improving.</div>';
-  document.getElementById('ins-down').innerHTML=withDelta.filter(c=>c.d<-0.1).sort((a,b)=>a.d-b.d).slice(0,6).map(moverRow).join('')||'<div class="muted" style="padding:6px 0">None declining. ✓</div>';
+  const withDelta=A.filter(c=>c.snapshots.length>=2).map(c=>{
+    const last2=c.snapshots[c.snapshots.length-1],prev2=c.snapshots[c.snapshots.length-2];
+    return{...c,d:last2.roas-prev2.roas,prev:prev2.roas,prevRag:ragOf(prev2.roas,prev2.sales,prev2.spend)};
+  });
+  const moverRow=(c,showPrev=true)=>`<div class="lrow" onclick="openCamp('${c.id}')">
+    <div class="nm" style="font-size:12px">${c.alias||c.name}</div>
+    <div class="vv">
+      ${showPrev?`<span class="muted" style="font-size:10.5px">${fmt(c.prev,2)} →</span>`:''}
+      <b style="color:${ragColor(c.rag)}">${fmt(c.roas,2)}</b>
+      <span style="color:${c.d>=0?'var(--green)':'var(--red)'};font-weight:700">${c.d>=0?'+':''}${fmt(c.d,2)}</span>
+    </div>
+  </div>`;
+  document.getElementById('ins-up').innerHTML=withDelta.filter(c=>c.d>0.05).sort((a,b)=>b.d-a.d).slice(0,5).map(c=>moverRow(c)).join('')||'<div class="muted" style="padding:6px 0;font-size:12px">None improving this period.</div>';
+  document.getElementById('ins-down').innerHTML=withDelta.filter(c=>c.d<-0.05).sort((a,b)=>a.d-b.d).slice(0,5).map(c=>moverRow(c)).join('')||'<div class="muted" style="padding:6px 0;font-size:12px">None declining. ✓</div>';
+  /* new red: previously ROAS>=4 now ROAS<4 */
+  const newRed=withDelta.filter(c=>c.prev>=4&&c.roas<4);
+  document.getElementById('ins-newred').innerHTML=newRed.length?newRed.map(c=>`<div class="lrow" onclick="openCamp('${c.id}')">
+    <div class="nm" style="font-size:12px;color:var(--red)">${c.alias||c.name}</div>
+    <div class="vv"><span class="muted" style="font-size:10.5px">${fmt(c.prev,2)}</span><span style="color:var(--red);font-weight:700">→ ${fmt(c.roas,2)}</span></div>
+  </div>`).join(''):'<div class="muted" style="padding:6px 0;font-size:12px">No new red campaigns. ✓</div>';
 
   /* reviews due (any change with review date) */
   const reviews=A.flatMap(c=>c.changes.filter(ch=>ch.review).map(ch=>({c,ch}))).slice(0,6);
@@ -1754,19 +2264,26 @@ function renderInsights(){
 /* ════════ CHANGE LOG PAGE ════════ */
 function renderChangeLog(){
   const scope=document.getElementById('cl-scope').value, tf=document.getElementById('cl-type-filter').value;
-  const all=campaigns.flatMap(c=>c.changes.map(ch=>({...ch,c}))).filter(x=>tf==='all'||x.type===tf);
+  const all=campaigns.flatMap(c=>c.changes.map((ch,i)=>({...ch,ch,c,idx:i}))).filter(x=>tf==='all'||x.type===tf);
   /* summary */
   const wins=all.filter(x=>x.outcome==='win').length,loss=all.filter(x=>x.outcome==='loss').length,pend=all.filter(x=>x.outcome==='pending').length;
+  const today2=new Date();today2.setHours(0,0,0,0);
+  const overdue=all.filter(x=>x.outcome==='pending'&&x.review&&new Date((x.review||x.ch?.review||'')+'T00:00:00')<=today2).length;
   document.getElementById('cl-summary').innerHTML=[
-    {l:'Changes logged',v:all.length,c:'var(--text)'},{l:'Worked',v:wins,c:'var(--green)'},
-    {l:"Didn't work",v:loss,c:'var(--red)'},{l:'Watching',v:pend,c:'var(--amber)'},
-  ].map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="v" style="color:${k.c}">${k.v}</div></div>`).join('');
+    {l:'Total changes logged',v:all.length,c:'var(--text)',s:'all time'},
+    {l:'Changes that worked',v:wins,c:'var(--green)',s:'post-review'},
+    {l:'Did not work',v:loss,c:'var(--red)',s:'post-review'},
+    {l:'Awaiting review',v:pend,c:'var(--amber)',s:overdue?overdue+' overdue':'all pending'},
+  ].map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="v" style="color:${k.c}">${k.v}</div><div style="font-size:10px;color:var(--text4);margin-top:3px">${k.s}</div></div>`).join('');
   /* group */
   const groups={};
-  all.forEach(x=>{const key=scope==='asin'?(x.c.product+' · '+x.c.asin):scope==='type'?x.type:(x.c.name);(groups[key]=groups[key]||[]).push(x);});
+  all.forEach(x=>{
+    const key=scope==='asin'?(x.c.product+' · '+x.c.asin):scope==='type'?x.type:(x.c.name);
+    (groups[key]=groups[key]||[]).push({...x,cid:x.c.id,idx:x.c.changes.indexOf(x.ch||x),ch:x.ch||x});
+  });
   document.getElementById('cl-content').innerHTML=Object.entries(groups).map(([k,items])=>`
     <div class="sh" style="margin:18px 0 10px"><div class="tt" style="font-size:13px">${k} <small>${items.length} change${items.length>1?'s':''}</small></div></div>
-    <div class="card pad"><div class="cl-list">${items.map(changeEntry).join('')}</div></div>`).join('')||'<div class="empty">No changes match this filter.</div>';
+    <div class="card pad"><div class="cl-list">${items.map(x=>changeEntry(x.ch||x,x.cid||x.c?.id,x.idx!=null?x.idx:null)).join('')}</div></div>`).join('')||'<div class="empty">No changes match this filter.</div>';
 }
 
 /* ════════ PRODUCTS PAGE ════════ */
@@ -1866,10 +2383,18 @@ function renderSnapshots(){
   const el=document.getElementById('snap-page-content');
   if(snapMode==='date'){
     const periods=allPeriods();
-    el.innerHTML=`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${periods.map(p=>{const a=periodAgg(p);
-      return `<div class="snapcard" onclick="openSnapPeriod(this.dataset.p)" data-p="${p.replace(/'/g,'')}">
-        <div class="sc-top"><div class="sc-date">${p}</div><div style="display:flex;gap:7px">${a.leaks?`<span class="rag flag">${a.leaks} leak${a.leaks>1?'s':''}</span>`:''}<span class="rag ${ragOf(a.roas,a.sales,a.spend)}"><span class="d"></span>${fmt(a.roas,1)}</span></div></div>
-        <div class="sc-body">
+    el.innerHTML=`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">${periods.map(p=>{const a=periodAgg(p);
+      const safeP=p.replace(/'/g,'').replace(/"/g,'&quot;');
+      return `<div class="snapcard" data-p="${safeP}">
+        <div class="sc-top" onclick="openSnapPeriod('${safeP}')" style="cursor:pointer">
+          <div class="sc-date">${p}</div>
+          <div style="display:flex;gap:7px;align-items:center">
+            ${a.leaks?`<span class="rag flag">${a.leaks} leak${a.leaks>1?'s':''}</span>`:''}
+            <span class="rag ${ragOf(a.roas,a.sales,a.spend)}"><span class="d"></span>${fmt(a.roas,1)}</span>
+            <button onclick="event.stopPropagation();deleteSnapshotPeriod('${safeP}')" style="background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);font-size:10px;padding:2px 7px;border-radius:5px;cursor:pointer;font-family:var(--font)" title="Delete snapshot">✕</button>
+          </div>
+        </div>
+        <div class="sc-body" onclick="openSnapPeriod('${safeP}')" style="cursor:pointer">
           <div class="sc-m"><div class="l">Spend</div><div class="v">${gbp(a.spend)}</div></div>
           <div class="sc-m"><div class="l">Sales</div><div class="v" style="color:var(--green)">${gbp(a.sales)}</div></div>
           <div class="sc-m"><div class="l">Orders</div><div class="v">${intf(a.orders)}</div></div>
@@ -1891,18 +2416,44 @@ function openSnapPeriod(period){
   const a=periodAgg(period);
   document.getElementById('snap-po-title').innerHTML=`Snapshot · ${period}`;
   document.getElementById('snap-po-sub').innerHTML=`<span class="chip">${a.n} campaigns</span><span class="chip">Spend ${gbp(a.spend)}</span><span class="chip">Sales ${gbp(a.sales)}</span><span class="chip">ROAS ${fmt(a.roas,2)}</span>${a.leaks?`<span class="chip" style="color:var(--amber)">${a.leaks} spend leak${a.leaks>1?'s':''}</span>`:''}`;
-  document.getElementById('snap-po-body').innerHTML=`<div class="tablecard"><div class="tscroll" style="max-height:64vh"><table class="dt" style="min-width:860px">
-    <thead><tr><th>Campaign</th><th>Impr.</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-    <tbody>${rows.sort((x,y)=>y.s.spend-x.s.spend).map(({c,s})=>{const hl=s.spend>0&&s.sales===0;return `<tr class="${hl?'flagrow':''}" onclick="closeSnap();openCamp('${c.id}')">
+  const sCpc=s=>s.cpc>0?s.cpc:(s.clicks&&s.spend?s.spend/s.clicks:0);
+  const sCtr=s=>s.ctr>0?s.ctr:(s.impressions&&s.clicks?s.clicks/s.impressions*100:0);
+  document.getElementById('snap-po-body').innerHTML=`
+    <div style="display:flex;gap:8px;align-items:center;padding:0 0 12px;border-bottom:1px solid var(--border);margin-bottom:12px">
+      <button class="btn ghost" onclick="deleteSnapshotPeriod('${period.replace(/'/g,"\\'")}')" style="color:var(--red);border-color:rgba(255,93,108,.3);font-size:11px">🗑 Delete this snapshot</button>
+      <span style="font-size:11px;color:var(--text3)">Click a campaign row to open it</span>
+    </div>
+    <div class="tablecard"><div class="tscroll" style="max-height:60vh"><table class="dt" style="min-width:900px">
+    <thead><tr><th>Campaign</th><th>Impr.</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+    <tbody>${rows.sort((x,y)=>y.s.spend-x.s.spend).map(({c,s})=>{const hl=s.spend>0&&s.sales===0;const rg=ragOf(s.roas,s.sales,s.spend);return `<tr class="${hl?'flagrow':''}" onclick="closeSnap();openCamp('${c.id}')">
       <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta"><b>${hl?'<span class="flagdot"></span>':''}${c.alias||c.name}</b><span>${c.asin}</span></div></div></td>
-      <td>${intf(s.impressions)}</td><td>${intf(s.clicks)}</td>
+      <td>${intf(s.impressions||0)}</td><td>${intf(s.clicks||0)}</td>
+      <td>${sCtr(s)>0?fmt(sCtr(s),2)+'%':'—'}</td>
       <td${hl?' style="color:var(--amber);font-weight:600"':''}>${gbp(s.spend)}</td>
-      <td${hl?' style="color:var(--amber)"':''}>${gbp(s.sales)}</td><td>${intf(s.purchases)}</td>
-      <td>${s.sales?fmt(s.acos,1)+'%':'—'}</td>
-      <td style="color:${ragColor(ragOf(s.roas,s.sales,s.spend))};font-weight:600">${hl?'—':fmt(s.roas,2)}</td></tr>`;}).join('')}</tbody>
+      <td>${sCpc(s)>0?gbp(sCpc(s)):'—'}</td>
+      <td${hl?' style="color:var(--amber)"':''}>${gbp(s.sales)}</td><td>${intf(s.purchases||0)}</td>
+      <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
+      <td style="color:${ragColor(rg)};font-weight:600">${hl?'<span class="rag flag">NO SALE</span>':fmt(s.roas||0,2)}</td></tr>`;}).join('')}</tbody>
   </table></div></div>`;
   document.getElementById('snap-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
+
+function deleteSnapshotPeriod(period){
+  if(!confirm('Delete the snapshot "'+period+'" from ALL campaigns? This cannot be undone.'))return;
+  campaigns.forEach(c=>{
+    c.snapshots=c.snapshots.filter(s=>s.date!==period);
+    /* Recompute campaign metrics from new last snapshot */
+    const last=c.snapshots[c.snapshots.length-1]||{};
+    const rawCpc=last.cpc||0,rawCtr=last.ctr||0;
+    c.spend=last.spend||0;c.sales=last.sales||0;c.purchases=last.purchases||0;
+    c.roas=last.roas||0;c.acos=last.acos||0;
+    c.cpc=rawCpc>0?rawCpc:((last.clicks&&last.spend)?(last.spend/last.clicks):0);
+    c.ctr=rawCtr>0?rawCtr:((last.impressions&&last.clicks)?(last.clicks/last.impressions*100):0);
+    c.impressions=last.impressions||0;c.rag=ragOf(c.roas,c.sales,c.spend);c.noSaleSpend=c.spend>0&&c.sales===0;
+  });
+  renderSnapshots();renderCampaigns();
+}
+
 function closeSnap(){document.getElementById('snap-overlay').classList.remove('open');document.body.style.overflow='';}
 
 /* ════════ SETTINGS DATA MODEL ════════ */
@@ -2000,6 +2551,8 @@ function deletePriceEntry(asin,date){
 document.querySelectorAll('#nav .nav-btn').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#nav .nav-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+b.dataset.p).classList.add('active');
+  if(b.dataset.p==='dashboard'){populateDashPeriodSelectors();renderDashPeriod();renderDashAttention();renderDashReminders();renderDashRecentChanges();}
+  if(b.dataset.p==='campaigns')renderCampaigns();
   if(b.dataset.p==='insights')renderInsights();
   if(b.dataset.p==='changelog')renderChangeLog();
   if(b.dataset.p==='snapshots')renderSnapshots();
@@ -2008,8 +2561,353 @@ document.querySelectorAll('#nav .nav-btn').forEach(b=>b.onclick=()=>{
   window.scrollTo({top:0,behavior:'smooth'});
 });
 
+
+
+/* ════════ DASHBOARD PAGE ════════ */
+let _dashSort='spend';
+let _dashRagFilter='all';
+
+function getDashPeriods(){
+  const labels=new Set();
+  campaigns.forEach(c=>c.snapshots.forEach(s=>{if(s.date)labels.add(s.date);}));
+  return [...labels].sort((a,b)=>parseGbPeriod(b)-parseGbPeriod(a));
+}
+
+function populateDashPeriodSelectors(){
+  const periods=getDashPeriods();
+  const sel=document.getElementById('dash-period-sel');
+  const cmpSel=document.getElementById('dash-compare-sel');
+  if(!sel||!cmpSel)return;
+  const prev=sel.value, prevCmp=cmpSel.value;
+  sel.innerHTML='<option value="latest">Latest snapshot (per campaign)</option>'+
+    periods.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  cmpSel.innerHTML='<option value="none">No comparison</option>'+
+    periods.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  if(prev&&[...sel.options].some(o=>o.value===prev))sel.value=prev;
+  if(prevCmp&&[...cmpSel.options].some(o=>o.value===prevCmp))cmpSel.value=prevCmp;
+  if(sel.value!=='latest'&&cmpSel.value==='none'&&periods.length>1){
+    const idx=periods.indexOf(sel.value);
+    if(idx<periods.length-1)cmpSel.value=periods[idx+1];
+  }
+}
+
+function _snapForPeriod(c,period){
+  if(period==='latest')return c.snapshots.length?c.snapshots[c.snapshots.length-1]:null;
+  return c.snapshots.find(s=>s.date===period)||null;
+}
+
+function _aggregatePeriod(period){
+  let spend=0,sales=0,purchases=0,impressions=0,clicks=0,matched=0;
+  campaigns.forEach(c=>{
+    const s=_snapForPeriod(c,period);
+    if(!s)return;
+    matched++;
+    spend+=s.spend||0;sales+=s.sales||0;purchases+=s.purchases||0;
+    impressions+=s.impressions||0;clicks+=s.clicks||0;
+  });
+  const roas=spend?sales/spend:0;
+  const acos=sales?(spend/sales)*100:0;
+  const cpc=clicks?spend/clicks:0;
+  const ctr=impressions?(clicks/impressions)*100:0;
+  return{spend,sales,purchases,impressions,clicks,roas,acos,cpc,ctr,matched};
+}
+
+function setDashSort(field,btn){
+  _dashSort=field;
+  document.querySelectorAll('#db-sort-spend,#db-sort-roas,#db-sort-sales').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  renderDashCampBreakdown();
+}
+
+function renderDashPeriod(){
+  const period=(document.getElementById('dash-period-sel')||{value:'latest'}).value;
+  const cmpPeriod=(document.getElementById('dash-compare-sel')||{value:'none'}).value;
+  populateDashPeriodSelectors();
+  renderDashKPIs(period,cmpPeriod);
+  renderDashCampBreakdown(period,cmpPeriod);
+  const lbl=document.getElementById('dash-camps-period-label');
+  if(lbl)lbl.textContent=period==='latest'?'latest snapshot per campaign':'period: '+period;
+  const cov=document.getElementById('dash-period-coverage');
+  if(cov){const a=_aggregatePeriod(period);cov.textContent=a.matched+' of '+campaigns.length+' campaigns have data';}
+}
+
+function renderDashKPIs(period,cmpPeriod){
+  const el=document.getElementById('dash-kpi-row');
+  if(!el||!campaigns.length){if(el)el.innerHTML='';return;}
+  const cur=_aggregatePeriod(period||'latest');
+  const cmp=cmpPeriod&&cmpPeriod!=='none'?_aggregatePeriod(cmpPeriod):null;
+
+  const delta=(c,p,hb)=>{
+    if(p==null||p===0)return null;
+    const pct=((c-p)/Math.abs(p))*100;
+    const up=hb?pct>0:pct<0;
+    const cls=Math.abs(pct)<0.5?'flat':up?'up':'down';
+    return{cls,label:`${pct>0?'↑':'↓'} ${Math.abs(pct).toFixed(1)}% vs prev`};
+  };
+
+  const kpi=(label,valHtml,col,d)=>{
+    const dHtml=d?`<div class="dash-kpi-delta ${d.cls}">${d.label}</div>`:'';
+    return`<div class="dash-kpi"><div class="dash-kpi-l">${label}</div><div class="dash-kpi-v" style="color:${col||'var(--text)'}">${valHtml}</div>${dHtml}</div>`;
+  };
+
+  const roasCol=cur.roas>=5?'var(--green)':cur.roas>=4?'var(--amber)':cur.roas>0?'var(--red)':'var(--text3)';
+  const g=campaigns.filter(c=>c.rag==='g'||c.roas>=5).length;
+  const a=campaigns.filter(c=>(c.rag==='a'||(c.roas>=4&&c.roas<5))&&c.rag!=='g').length;
+  const red=campaigns.filter(c=>c.rag==='r'||(c.roas>0&&c.roas<4&&c.rag!=='leak')).length;
+
+  el.innerHTML=
+    kpi('ROAS',fmt(cur.roas,2),roasCol,cmp?delta(cur.roas,cmp.roas,true):null)+
+    kpi('Spend',gbp(cur.spend),'var(--coral)',cmp?delta(cur.spend,cmp.spend,false):null)+
+    kpi('Sales',gbp(cur.sales),'var(--green)',cmp?delta(cur.sales,cmp.sales,true):null)+
+    kpi('Orders',intf(cur.purchases),'var(--text)',cmp?delta(cur.purchases,cmp.purchases,true):null)+
+    kpi('ACOS',cur.acos>0?fmt(cur.acos,1)+'%':'—',cur.acos>30?'var(--red)':cur.acos>20?'var(--amber)':'var(--green)',cmp?delta(cur.acos,cmp.acos,false):null)+
+    kpi('CPC',cur.cpc>0?gbp(cur.cpc):'—','var(--text)',cmp?delta(cur.cpc,cmp.cpc,false):null)+
+    `<div class="dash-kpi">
+      <div class="dash-kpi-l">Campaign health</div>
+      <div class="rag-health" style="margin-top:6px">
+        <div class="rh" style="background:var(--green-bg)"><div class="rl" style="color:var(--green)">G</div><div class="rv" style="color:var(--green)">${g}</div></div>
+        <div class="rh" style="background:var(--amber-bg);border-left:1px solid var(--border);border-right:1px solid var(--border)"><div class="rl" style="color:var(--amber)">A</div><div class="rv" style="color:var(--amber)">${a}</div></div>
+        <div class="rh" style="background:var(--red-bg)"><div class="rl" style="color:var(--red)">R</div><div class="rv" style="color:var(--red)">${red}</div></div>
+      </div>
+    </div>`;
+}
+
+function renderDashCampBreakdown(period,cmpPeriod){
+  period=period||(document.getElementById('dash-period-sel')||{value:'latest'}).value;
+  cmpPeriod=cmpPeriod||(document.getElementById('dash-compare-sel')||{value:'none'}).value;
+  const tbody=document.getElementById('dash-camp-tbody');
+  if(!tbody)return;
+  if(!campaigns.length){
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:48px;color:var(--text3)">No campaigns yet. Connect Supabase in Settings to load your data.</td></tr>`;
+    return;
+  }
+  let rows=campaigns.map(c=>{
+    const s=_snapForPeriod(c,period);
+    const prev=cmpPeriod&&cmpPeriod!=='none'?_snapForPeriod(c,cmpPeriod):null;
+    if(!s)return null;
+    return{c,s,prev};
+  }).filter(Boolean);
+
+  if(_dashRagFilter!=='all')rows=rows.filter(r=>r.c.rag===_dashRagFilter);
+  rows.sort((a,b)=>(b.s[_dashSort]||0)-(a.s[_dashSort]||0));
+
+  if(!rows.length){
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">No campaigns have data for this period.</td></tr>`;
+    return;
+  }
+
+  const d=(cur,prv,hb)=>{
+    if(prv==null||prv===0||cur==null)return'';
+    const pct=((cur-prv)/Math.abs(prv))*100;
+    const up=hb?pct>0:pct<0;
+    const cls=Math.abs(pct)<0.5?'flat':up?'up':'down';
+    return`<div class="dct-delta ${cls}">${pct>0?'↑':'↓'} ${Math.abs(pct).toFixed(1)}%</div>`;
+  };
+
+  tbody.innerHTML=rows.map(r=>{
+    const rc=ragColor(r.c.rag);
+    const hl=r.c.rag==='leak';
+    return`<tr onclick="openCamp('${r.c.id}')" style="cursor:pointer">
+      <td><div class="cn">${monoTile(r.c.alias||r.c.name)}<div class="meta">
+        <b>${hl?'<span class="flagdot"></span>':''}${r.c.alias||r.c.name}</b>
+        <span>${r.c.asin||''}${r.c.product?' · '+r.c.product:''}</span>
+      </div></div></td>
+      <td style="font-weight:700;color:${rc}">
+        ${hl?'<span class="rag flag">NO SALE</span>':`<span class="rag ${r.c.rag}"><span class="d"></span>${fmt(r.s.roas||0,2)}</span>`}
+        ${d(r.s.roas,r.prev?.roas,true)}
+      </td>
+      <td style="color:var(--coral)">${gbp(r.s.spend)}${d(r.s.spend,r.prev?.spend,false)}</td>
+      <td style="color:var(--green)">${gbp(r.s.sales)}${d(r.s.sales,r.prev?.sales,true)}</td>
+      <td>${intf(r.s.purchases||0)}${d(r.s.purchases||0,r.prev?.purchases,true)}</td>
+      <td>${r.s.sales?fmt(r.s.acos||0,1)+'%':'—'}${d(r.s.acos,r.prev?.acos,false)}</td>
+      <td>${r.s.cpc>0?gbp(r.s.cpc):'—'}</td>
+      <td>${intf(r.s.impressions||0)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderDashAttention(){
+  const el=document.getElementById('dash-attention');
+  if(!el)return;
+  const flags=[];
+  campaigns.filter(c=>c.status==='active').forEach(c=>{
+    if(c.noSaleSpend)flags.push({col:'var(--amber)',text:c.alias||c.name,sub:'Spending £'+fmt(c.spend,2)+' with 0 sales — immediate review needed',id:c.id});
+    else if(c.rag==='r')flags.push({col:'var(--red)',text:c.alias||c.name,sub:'ROAS '+fmt(c.roas,2)+' — below target (4.0×)',id:c.id});
+    else{
+      const last=c.snapshots[c.snapshots.length-1];
+      const prev=c.snapshots[c.snapshots.length-2];
+      if(prev&&last&&prev.impressions>50){
+        const drop=(prev.impressions-last.impressions)/prev.impressions;
+        if(drop>0.3)flags.push({col:'var(--amber)',text:c.alias||c.name,sub:'Impressions dropped '+Math.round(drop*100)+'% vs previous period',id:c.id});
+      }
+      if(c.acos>30&&c.rag!=='r')flags.push({col:'var(--amber)',text:c.alias||c.name,sub:'ACOS '+fmt(c.acos,1)+'% — approaching red threshold',id:c.id});
+    }
+  });
+  if(!flags.length){el.innerHTML='<div style="padding:10px 0;font-size:12px;color:var(--text3)">All campaigns looking healthy ✓</div>';return;}
+  el.innerHTML=flags.slice(0,6).map(f=>`
+    <div class="attn-item" onclick="openCamp('${f.id}')">
+      <div class="attn-dot" style="background:${f.col}"></div>
+      <div><div class="attn-text">${f.text}</div><div class="attn-sub">${f.sub}</div></div>
+    </div>`).join('');
+}
+
+function renderDashReminders(){
+  const el=document.getElementById('dash-reminders');
+  if(!el)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const reminders=[];
+  campaigns.forEach(c=>c.changes.forEach(ch=>{
+    if(!ch.review)return;
+    const d=new Date(ch.review);d.setHours(0,0,0,0);
+    const diff=Math.round((d-today)/(86400000));
+    reminders.push({diff,text:ch.what,camp:c.alias||c.name,id:c.id,date:ch.review});
+  }));
+  reminders.sort((a,b)=>a.diff-b.diff);
+  if(!reminders.length){el.innerHTML='<div style="padding:10px 0;font-size:12px;color:var(--text3)">No review reminders set.</div>';return;}
+  el.innerHTML=reminders.slice(0,6).map(r=>{
+    const col=r.diff<=0?'var(--red)':r.diff<=3?'var(--amber)':'var(--text3)';
+    const label=r.diff<0?Math.abs(r.diff)+' days overdue':r.diff===0?'Due today':'Due in '+r.diff+' day'+(r.diff===1?'':'s');
+    return`<div class="attn-item" onclick="openCamp('${r.id}')">
+      <div class="attn-dot" style="background:${col}"></div>
+      <div><div class="attn-text" style="font-size:12px">${r.camp} — ${r.text}</div>
+        <div class="attn-sub" style="color:${col}">${label}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashRecentChanges(){
+  const el=document.getElementById('dash-recent-changes');
+  if(!el)return;
+  const all=campaigns.flatMap(c=>c.changes.map(ch=>({...ch,cn:c.alias||c.name,id:c.id}))).slice(0,6);
+  if(!all.length){el.innerHTML='<div style="font-size:12px;color:var(--text3)">No changes logged yet.</div>';return;}
+  el.innerHTML=`<div class="cl-list">${all.map(ch=>changeEntry(ch)).join('')}</div>`;
+}
+
+/* RAG filter for dashboard campaign table */
+document.querySelectorAll('#db-rag-filter .tog').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('#db-rag-filter .tog').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    _dashRagFilter=b.dataset.rag;
+    renderDashCampBreakdown();
+  };
+});
+
+function openGlobalChangeLog(){
+  if(!campaigns.length){alert('Add a campaign first before logging a change.');return;}
+  const sel=document.getElementById('gcl-camp');
+  sel.innerHTML=campaigns.map(c=>`<option value="${c.id}">${c.alias||c.name}</option>`).join('');
+  document.getElementById('gcl-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('gcl-what').value='';
+  document.getElementById('gcl-why').value='';
+  document.getElementById('gcl-goal').value='';
+  document.getElementById('gcl-review').value='';
+  document.getElementById('gcl-status').textContent='';
+  document.getElementById('gcl-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('gcl-what').focus(),50);
+}
+function closeGlobalCL(){document.getElementById('gcl-overlay').classList.remove('open');document.body.style.overflow='';}
+async function saveGlobalChange(){
+  const campId=document.getElementById('gcl-camp').value;
+  const c=campaigns.find(x=>x.id==campId);
+  if(!c){return;}
+  const date=document.getElementById('gcl-date').value;
+  const type=document.getElementById('gcl-type').value;
+  const what=document.getElementById('gcl-what').value.trim();
+  const why=document.getElementById('gcl-why').value.trim();
+  const review=document.getElementById('gcl-review').value;
+  const goal=document.getElementById('gcl-goal').value.trim();
+  const status=document.getElementById('gcl-status');
+  if(!date||!what||!why||!review){
+    if(status){status.textContent='⚠ All fields marked * are required';status.style.color='var(--red)';}
+    return;
+  }
+  const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
+  c.changes.unshift(change);
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      await sbInsert('changes',{campaign_id:c.id,type,date,what,why,goal:goal||null,outcome:'pending',review_date:review,created_at:new Date().toISOString()});
+      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
+    }catch(e){if(status){status.textContent='Saved locally';status.style.color='var(--amber)';}}
+  } else {
+    if(status){status.textContent='✓ Saved';status.style.color='var(--green)';}
+  }
+  renderCampaigns();renderChangeLog();
+  setTimeout(()=>{closeGlobalCL();},900);
+}
+
 /* boot */
-loadFromSupabase();
+loadFromSupabase().then(()=>{
+  /* after data loads, render dashboard if it's the active page */
+  if(document.getElementById('page-dashboard')?.classList.contains('active')){
+    populateDashPeriodSelectors();
+    renderDashPeriod();
+    renderDashAttention();
+    renderDashReminders();
+    renderDashRecentChanges();
+  }
+});
 </script>
+
+<!-- ════════ GLOBAL LOG CHANGE MODAL ════════ -->
+<div class="overlay" id="gcl-overlay" onclick="if(event.target.id==='gcl-overlay')closeGlobalCL()">
+  <div class="popout" style="max-width:580px;min-height:auto;margin:auto">
+    <div class="po-header">
+      <div><div class="po-title">Log a change</div><div class="po-sub" id="gcl-sub"></div></div>
+      <button class="close-btn" onclick="closeGlobalCL()">✕</button>
+    </div>
+    <div class="po-body" style="padding:16px 20px">
+      <div style="display:grid;gap:12px">
+        <div>
+          <div class="label" style="margin-bottom:5px">Campaign <span style="color:var(--red)">*</span></div>
+          <select class="sel" id="gcl-camp" style="width:100%"></select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div class="label" style="margin-bottom:5px">Date made <span style="color:var(--red)">*</span></div>
+            <input class="input" id="gcl-date" type="date" style="width:100%">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Change type <span style="color:var(--red)">*</span></div>
+            <select class="sel" id="gcl-type" style="width:100%">
+              <option value="PPC Bid">PPC Bid</option>
+              <option value="PPC Budget">PPC Budget</option>
+              <option value="PPC Keywords">PPC Keywords</option>
+              <option value="Pricing">Pricing</option>
+              <option value="Listing">Listing</option>
+              <option value="Stock">Stock</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">What was changed <span style="color:var(--red)">*</span></div>
+          <input class="input" id="gcl-what" style="width:100%" placeholder="e.g. Added negative keyword 'free', paused broad match">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Why / reason <span style="color:var(--red)">*</span></div>
+          <textarea class="input" id="gcl-why" style="width:100%;min-height:80px;resize:vertical" placeholder="Why was this changed? What problem was identified? What result is expected?"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div class="label" style="margin-bottom:5px">Review date <span style="color:var(--red)">*</span></div>
+            <input class="input" id="gcl-review" type="date" style="width:100%">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Goal / expected outcome</div>
+            <input class="input" id="gcl-goal" style="width:100%" placeholder="e.g. ACOS below 20%">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;padding-top:4px">
+          <span id="gcl-status" style="font-size:11.5px;color:var(--text3);flex:1"></span>
+          <button class="btn ghost" onclick="closeGlobalCL()">Cancel</button>
+          <button class="btn" onclick="saveGlobalChange()">Save change</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
