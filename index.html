@@ -17,7 +17,13 @@
   --green:#2ee59d;--green-bg:rgba(46,229,157,0.12);--green-dim:rgba(46,229,157,0.4);
   --amber:#ffb547;--amber-bg:rgba(255,181,71,0.12);
   --red:#ff5d6c;--red-bg:rgba(255,93,108,0.12);
-  --blue:#5b9dff;--blue-bg:rgba(91,157,255,0.12);--blue-glow:rgba(91,157,255,0.35);
+  --blue:#5b9dff;
+  --match-exact:#2ee59d;--match-exact-bg:rgba(46,229,157,0.15);
+  --match-phrase:#5b9dff;--match-phrase-bg:rgba(91,157,255,0.15);
+  --match-broad:#ffb547;--match-broad-bg:rgba(255,181,71,0.15);
+  --match-auto:#b794ff;--match-auto-bg:rgba(183,148,255,0.15);
+  --match-close:#2ee59d;--match-close-bg:rgba(46,229,157,0.15);
+  --match-loose:#ffb547;--match-loose-bg:rgba(255,181,71,0.15);--blue-bg:rgba(91,157,255,0.12);--blue-glow:rgba(91,157,255,0.35);
   --purple:#b794ff;--purple-bg:rgba(183,148,255,0.12);
   --teal:#34e0d0;--coral:#ff7a8a;
   --font:'Inter',system-ui,-apple-system,sans-serif;
@@ -197,11 +203,11 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .lrow .vv{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px}
 
 /* ───── OVERLAY / POPOUT ───── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(4,6,10,0.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:200;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,6,10,0.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:200;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .overlay.open{display:flex;animation:fadeIn .2s}
 .popout{background:var(--panel);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:1340px;margin:auto;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:popIn .3s cubic-bezier(.4,0,.2,1)}
 .po-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 18px 12px;border-bottom:1px solid var(--border)}
-.po-title{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.4px;display:flex;align-items:center;gap:10px}
+.po-title{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .po-sub{font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap}
 .po-sub .chip{background:var(--bg3);border:1px solid var(--border);padding:2px 8px;border-radius:6px}
 .po-hr{display:flex;gap:8px;align-items:center}
@@ -258,7 +264,13 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .kwtable tr:hover{background:var(--bg3)}
 .bidinput{width:62px;background:var(--bg4);border:1px solid var(--border);color:var(--text);font-size:11px;padding:3px 7px;border-radius:6px;text-align:right;font-family:var(--mono)}
 .bidinput:focus{outline:none;border-color:var(--blue)}
-.mtag{font-family:var(--mono);font-size:9.5px;color:var(--text3);background:var(--bg4);padding:2px 6px;border-radius:5px}
+.mtag{font-family:var(--mono);font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap}
+.mtag-exact{background:var(--match-exact-bg);color:var(--match-exact);border:1px solid var(--match-exact)}
+.mtag-phrase{background:var(--match-phrase-bg);color:var(--match-phrase);border:1px solid var(--match-phrase)}
+.mtag-broad{background:var(--match-broad-bg);color:var(--match-broad);border:1px solid var(--match-broad)}
+.mtag-auto{background:var(--match-auto-bg);color:var(--match-auto);border:1px solid var(--match-auto)}
+.mtag-close{background:var(--match-close-bg);color:var(--match-close);border:1px solid var(--match-close)}
+.mtag-loose{background:var(--match-loose-bg);color:var(--match-loose);border:1px solid var(--match-loose)}
 
 /* change log entries */
 .cl-list{display:flex;flex-direction:column}
@@ -288,7 +300,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .asin-chip:hover{filter:brightness(1.15)}
 /* ── simplified popout layout ── */
 .hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:10px}
-.hero-cell{background:var(--bg2);padding:11px 14px 10px}
+.hero-cell{background:var(--bg2);padding:18px 22px 16px;min-height:120px}
 .hero-v{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.6px;margin:3px 0 2px}
 .kd{font-family:var(--mono);font-size:10px;font-weight:500}
 .kd.up{color:var(--green)}.kd.dn{color:var(--red)}.kd.fl{color:var(--text4)}
@@ -301,7 +313,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .trow-leak td{background:rgba(255,181,71,.04)}
 /* simple table — replaces the heavy .dt style inside popout */
 .simple-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
-.simple-tbl thead th{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text4);text-align:right;padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg2)}
+.simple-tbl thead th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);text-align:right;padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg2);position:sticky;top:0;z-index:2}
 .simple-tbl thead th:first-child{text-align:left}
 .simple-tbl tbody td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);font-family:var(--mono);color:var(--text2)}
 .simple-tbl tbody td:first-child{text-align:left;font-family:var(--font);color:var(--text)}
@@ -473,44 +485,109 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
 <!-- ════════ INSIGHTS ════════ -->
 <div class="page" id="page-insights">
-  <div class="ph"><div><h1>Insights</h1><div class="sub">what your changes did, and where money is leaking — not vanity metrics</div></div>
-    <div class="ctrls"><select class="sel" id="ins-window"><option>Since last snapshot</option><option>Last 30 days</option></select></div>
+
+  <!-- PAGE HEADER -->
+  <div class="ph" style="margin-bottom:16px">
+    <div>
+      <h1>Insights</h1>
+      <div class="sub">trends, leaks, what's working and what isn't — updated every snapshot</div>
+    </div>
+    <div class="ctrls">
+      <div id="ins-account-kpis" style="display:flex;gap:8px"></div>
+    </div>
   </div>
 
-  <!-- top: leaks (big) + change scoreboard -->
-  <div class="grid" style="grid-template-columns:1.4fr 1fr">
+  <!-- ROW 1: Account trend sparklines (4 mini KPI trend cards) -->
+  <div id="ins-trend-bar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+
+  <!-- ROW 2: Spend leaks (priority) + Change scoreboard -->
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-bottom:14px">
     <div class="card">
-      <div style="padding:15px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        <div class="sh" style="margin:0"><div class="tt" style="font-size:13px">Spend leaks <small>spend with no / poor return — fix these first</small></div></div>
-        <span class="rag flag" id="leak-total"></span>
+      <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:600">🔴 Spend leaks</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Campaigns &amp; keywords burning budget with zero return — fix these first</div>
+        </div>
+        <span class="rag flag" id="leak-total" style="flex-shrink:0"></span>
       </div>
       <div id="leak-list"></div>
     </div>
     <div class="card pad">
-      <div class="sh" style="margin:0 0 14px"><div class="tt" style="font-size:13px">Change scoreboard <small>did our changes work?</small></div></div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">🏆 Change scoreboard</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Do your optimisations actually work?</div>
       <div id="scoreboard"></div>
     </div>
   </div>
 
-  <!-- movers -->
-  <div class="grid" style="grid-template-columns:1fr 1fr 1fr;margin-top:13px">
-    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--green)">↗</span> Largest ROAS improvements <small>top 5</small></div></div><div id="ins-up"></div></div>
-    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--red)">↘</span> Largest ROAS declines <small>top 5</small></div></div><div id="ins-down"></div></div>
-    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--red)">🔴</span> New red campaigns</div></div><div id="ins-newred"></div></div>
-  </div>
-  <div class="grid" style="grid-template-columns:1fr;margin-top:13px">
-    <div class="card pad"><div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px"><span style="color:var(--amber)">◷</span> Reviews due</div></div><div id="ins-reviews"></div></div>
+  <!-- ROW 3: ROAS movers 3-col -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+    <div class="card pad">
+      <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px">↗ Largest ROAS gains</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Top 5 vs previous snapshot</div>
+      <div id="ins-up"></div>
+    </div>
+    <div class="card pad">
+      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">↘ Largest ROAS drops</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Top 5 vs previous snapshot</div>
+      <div id="ins-down"></div>
+    </div>
+    <div class="card pad">
+      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">🆕 New red campaigns</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Crossed below 4.0× ROAS since last snapshot</div>
+      <div id="ins-newred"></div>
+    </div>
   </div>
 
-  <!-- spend vs sales table -->
-  <div class="sh"><div class="tt">Spend vs sales <small>ranked by spend · click to open</small></div></div>
-  <div class="tablecard"><div class="tscroll">
-    <table class="dt" style="min-width:760px"><thead><tr><th>Campaign</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th><th style="width:34%;text-align:left">Spend share</th></tr></thead>
-    <tbody id="ins-spendtable"></tbody></table>
-  </div></div>
+  <!-- ROW 4: Keyword-level intelligence -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+    <div class="card">
+      <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:600">🔑 Top performing keywords</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Highest ROAS targets across all campaigns</div>
+      </div>
+      <div id="ins-top-kw"></div>
+    </div>
+    <div class="card">
+      <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:600">💸 Worst performing keywords</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Highest spend with worst return — pause candidates</div>
+      </div>
+      <div id="ins-worst-kw"></div>
+    </div>
+  </div>
 
-  <div class="sh"><div class="tt">Account-level flags</div></div>
-  <div class="card pad" id="ins-flags"></div>
+  <!-- ROW 5: Spend vs Sales full table + Reviews -->
+  <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:14px">
+    <div class="card">
+      <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:600">📊 Spend vs sales — all campaigns</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Ranked by spend · click any row to open campaign</div>
+      </div>
+      <div style="overflow-x:auto;max-height:340px;overflow-y:auto">
+        <table class="dt" style="min-width:660px">
+          <thead><tr>
+            <th style="text-align:left">Campaign</th>
+            <th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th>
+            <th>CPC</th><th>Orders</th>
+            <th style="text-align:left;width:120px">Share</th>
+          </tr></thead>
+          <tbody id="ins-spendtable"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card pad">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">⏰ Reviews due</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Changes that need assessing</div>
+      <div id="ins-reviews"></div>
+    </div>
+  </div>
+
+  <!-- ROW 6: Account flags -->
+  <div style="margin-bottom:14px">
+    <div class="sh" style="margin:0 0 10px"><div class="tt">Account-level flags &amp; recommendations</div></div>
+    <div id="ins-flags"></div>
+  </div>
+
 </div>
 
 <!-- ════════ CHANGE LOG ════════ -->
@@ -528,7 +605,8 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
 <!-- ════════ SNAPSHOTS ════════ -->
 <div class="page" id="page-snapshots">
-  <div class="ph"><div><h1>Snapshots</h1><div class="sub">every import, condensed — click to expand the full breakdown</div></div>
+  <div class="ph">
+    <div><h1>Snapshots</h1><div class="sub">full history of every import — click a period to expand</div></div>
     <div class="ctrls">
       <div class="seg" style="display:inline-flex;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px">
         <button class="tog on" id="snap-by-date" onclick="setSnapMode('date')" style="border:none;background:var(--bg4)">By date</button>
@@ -658,6 +736,63 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     <button class="btn ghost" style="color:var(--red);border-color:rgba(255,93,108,.3)" onclick="if(confirm('Reset ALL local data?'))resetAllData()">Reset local data</button>
   </div>
 
+  <!-- PPC APPEARANCE -->
+  <div style="margin-top:20px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:10px">PPC Appearance — Match Type Colours</div>
+    <div class="card pad">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px">
+        <div>
+          <div class="label" style="margin-bottom:6px;font-size:12px">Exact match colour</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="color" id="cfg-col-exact" value="#2ee59d" oninput="applyMatchColours()" style="width:44px;height:34px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;padding:2px">
+            <span class="mtag mtag-exact" id="mtag-preview-exact">Exact</span>
+          </div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:6px;font-size:12px">Phrase match colour</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="color" id="cfg-col-phrase" value="#5b9dff" oninput="applyMatchColours()" style="width:44px;height:34px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;padding:2px">
+            <span class="mtag mtag-phrase" id="mtag-preview-phrase">Phrase</span>
+          </div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:6px;font-size:12px">Broad match colour</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="color" id="cfg-col-broad" value="#ffb547" oninput="applyMatchColours()" style="width:44px;height:34px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;padding:2px">
+            <span class="mtag mtag-broad" id="mtag-preview-broad">Broad</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost" style="font-size:11px;padding:4px 10px" onclick="setMatchPreset('default')">Default (Green/Blue/Orange)</button>
+        <button class="btn ghost" style="font-size:11px;padding:4px 10px" onclick="setMatchPreset('cool')">Cool (Purple/Cyan/Pink)</button>
+        <button class="btn ghost" style="font-size:11px;padding:4px 10px" onclick="setMatchPreset('warm')">Warm (Red/Yellow/Green)</button>
+        <button class="btn" style="font-size:11px;padding:4px 14px" onclick="saveMatchColours()">Save colours</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DANGER ZONE -->
+  <div style="margin-top:24px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:7px">⚠ Danger zone</div>
+    <div style="background:var(--red-bg);border:1px solid rgba(255,93,108,.3);border-radius:var(--r);padding:16px">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin-bottom:12px">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:3px">Delete all snapshots</div>
+          <div style="font-size:12px;color:var(--text3)">Wipes ALL snapshot data from every campaign. Campaigns, products, changes and settings are kept. Use this to start fresh imports without losing your campaign setup.</div>
+        </div>
+        <button class="btn" onclick="deleteAllSnapshots()" style="background:var(--red);border-color:var(--red);flex-shrink:0">🗑 Delete all snapshots</button>
+      </div>
+      <div style="border-top:1px solid rgba(255,93,108,.2);margin-top:4px;padding-top:12px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:3px">Delete a specific period</div>
+          <div style="font-size:12px;color:var(--text3)">Remove one snapshot period from all campaigns. Go to the Snapshots tab, find the period card, and click Delete.</div>
+        </div>
+        <button class="btn ghost" onclick="document.querySelectorAll('.nav-btn').forEach(b=>{if(b.dataset&&b.dataset.p==='snapshots')b.click()})">Go to Snapshots →</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -756,7 +891,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 </div>
 
 <div class="overlay" id="camp-overlay" onclick="if(event.target.id==='camp-overlay')closePop()">
-  <div class="popout" style="max-width:1300px;height:90vh;overflow:hidden;display:flex;flex-direction:column">
+  <div class="popout" style="max-width:1560px;width:calc(100vw - 40px);height:95vh;overflow:hidden;display:flex;flex-direction:column">
     <div class="po-header">
       <div>
         <div class="po-title" id="po-title"></div>
@@ -1023,8 +1158,11 @@ function openCamp(id){
   curCamp=campaigns.find(c=>c.id==id);  /* == not === so string/number both match */
   if(!curCamp){console.warn('Campaign not found:',id);return;}
   const c=curCamp;
-  document.getElementById('po-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:11px">${monoTile(c.alias||c.name,30)}${c.name} ${c.rag==='leak'?'<span class="rag flag">SPEND LEAK</span>':`<span class="rag ${c.rag}"><span class="d"></span>${fmt(c.roas,2)} ROAS</span>`}</span>`;
-  document.getElementById('po-sub').innerHTML=`<span class="chip">${c.product}</span><span class="chip">ASIN ${c.asin}</span><span class="chip">SKU ${c.sku}</span><span class="chip">£${fmt(c.price,2)} list</span><span class="chip">${c.status}</span>`;
+  const campName=c.alias||c.name;
+  const ragPillHtml=c.rag==='leak'?'<span class="rag flag">SPEND LEAK</span>':`<span class="rag ${c.rag}"><span class="d"></span>${fmt(c.roas,2)} ROAS</span>`;
+  document.getElementById('po-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:11px">${monoTile(campName,30)}<span style="display:flex;flex-direction:column;gap:3px"><span>${campName}</span><span style="font-size:12px;font-weight:400;color:var(--text3);font-family:var(--font)">${c.product||''}</span></span>${ragPillHtml}</span>`;
+  const _ss=c.snapshots;
+  document.getElementById('po-sub').innerHTML=`<span class="chip">ASIN ${c.asin}</span><span class="chip">SKU ${c.sku||'—'}</span>${c.price?`<span class="chip">£${fmt(c.price,2)} list</span>`:''}<span class="chip"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${c.status==='active'?'var(--green)':'var(--text3)'};margin-right:4px"></span>${c.status}</span><span class="chip">${_ss.length} snapshot${_ss.length!==1?'s':''}</span><span class="chip">${c.changes.length} change${c.changes.length!==1?'s':''}</span>`;
   document.getElementById('potab-changes').textContent=c.changes.length||'';
   renderPerf();renderChanges();renderProfit();renderNotes();renderImport();
   switchTab('performance');
@@ -1154,16 +1292,7 @@ function switchTab(t){document.querySelectorAll('.po-tab').forEach(b=>b.classLis
   document.querySelectorAll('.po-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');}
 document.querySelectorAll('.po-tab').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
 
-function showDataView(view){
-  document.getElementById('data-view-targeting').style.display=view==='targeting'?'block':'none';
-  document.getElementById('data-view-adgroups').style.display=view==='adgroups'?'block':'none';
-  document.querySelectorAll('#data-toggle button').forEach(btn=>{
-    const active=btn.dataset.view===view;
-    btn.style.background=active?'var(--blue)':'none';
-    btn.style.color=active?'#fff':'var(--text3)';
-    btn.style.fontWeight=active?'600':'500';
-  });
-}
+/* showDataView moved into renderPerf */
 
 function poKpi(label,val,delta,higherBetter=true,sub,spk){
   let dl='';if(delta!=null){const cls=Math.abs(delta)<0.5?'fl':((delta>0)===higherBetter?'up':'dn');const ar=delta>0?'↑':delta<0?'↓':'→';dl=`<div class="dl ${cls}">${ar} ${fmt(Math.abs(delta),1)}%</div>`;}
@@ -1172,200 +1301,258 @@ function poKpi(label,val,delta,higherBetter=true,sub,spk){
 function pctDelta(cur,prev){return (prev&&prev!==0)?((cur-prev)/Math.abs(prev))*100:null;}
 
 function renderPerf(){
-  const c=curCamp,ss=c.snapshots,last=ss[ss.length-1]||{},prev=ss[ss.length-2]||{};
+  const c=curCamp, ss=c.snapshots, last=ss[ss.length-1]||{}, prev=ss[ss.length-2]||{};
   const hasPrev=ss.length>=2;
 
-  const compCpc=(last.cpc&&last.cpc>0)?last.cpc:((last.clicks&&last.spend)?(last.spend/last.clicks):0);
-  const compCtr=(last.ctr&&last.ctr>0)?last.ctr:((last.impressions&&last.clicks)?(last.clicks/last.impressions*100):0);
-  const prevCpc=(prev.cpc&&prev.cpc>0)?prev.cpc:((prev.clicks&&prev.spend)?(prev.spend/prev.clicks):0);
-  const prevCtr=(prev.ctr&&prev.ctr>0)?prev.ctr:((prev.impressions&&prev.clicks)?(prev.clicks/prev.impressions*100):0);
+  /* ── metric selectors (stored per-campaign in session) ── */
+  if(!window._metricSel)window._metricSel={};
+  const METRIC_OPTS=[
+    {k:'sales',    l:'Sales',      fmt_:v=>gbp(v),  hb:true,  col:'var(--green)'},
+    {k:'roas',     l:'ROAS',       fmt_:v=>fmt(v,2),hb:true,  col:null},
+    {k:'spend',    l:'Spend',      fmt_:v=>gbp(v),  hb:false, col:'var(--blue)'},
+    {k:'purchases',l:'Orders',     fmt_:v=>intf(v), hb:true,  col:'var(--purple)'},
+    {k:'acos',     l:'ACOS',       fmt_:v=>fmt(v,1)+'%', hb:false, col:null},
+    {k:'impressions',l:'Impr.',    fmt_:v=>intf(v), hb:true,  col:'var(--text)'},
+    {k:'clicks',   l:'Clicks',     fmt_:v=>intf(v), hb:true,  col:'var(--text)'},
+    {k:'_cpc',     l:'CPC',        fmt_:v=>gbp(v),  hb:false, col:'var(--text)'},
+    {k:'_ctr',     l:'CTR',        fmt_:v=>fmt(v,2)+'%', hb:true, col:'var(--text)'},
+  ];
+  const defaultSel=['sales','roas','spend','purchases'];
+  const selKey='sel_'+c.id;
+  if(!window._metricSel[selKey])window._metricSel[selKey]=new Set(defaultSel);
+  const sel=window._metricSel[selKey];
 
-  const pctDiff=(cur,prv,hb)=>{
-    if(!hasPrev||!prv)return{cls:'fl',arrow:'',pct:null};
+  function toggleMetric(k){
+    if(sel.has(k)){if(sel.size>1)sel.delete(k);}else{sel.add(k);}
+    renderPerf();
+  }
+
+  /* ── computed values helper ── */
+  const cpc_of=s=>(s._cpc!=null&&s._cpc>0)?s._cpc:(s.cpc&&s.cpc>0)?s.cpc:((s.clicks&&s.spend)?s.spend/s.clicks:0);
+  const ctr_of=s=>(s._ctr!=null&&s._ctr>0)?s._ctr:(s.ctr&&s.ctr>0)?s.ctr:((s.impressions&&s.clicks)?s.clicks/s.impressions*100:0);
+  const acos_of=s=>(s.acos&&s.acos>0)?s.acos:(s.sales?s.spend/s.sales*100:0);
+
+  function valOf(s,k){
+    if(k==='_cpc')return cpc_of(s);
+    if(k==='_ctr')return ctr_of(s);
+    if(k==='acos')return acos_of(s);
+    return s[k]||0;
+  }
+
+  /* ── pct delta ── */
+  const delta=(cur,prv,hb)=>{
+    if(!hasPrev||!prv)return{cls:'fl',ar:'',pct:null};
     const p=((cur-prv)/Math.abs(prv))*100;
-    if(Math.abs(p)<0.5)return{cls:'fl',arrow:'→',pct:0};
+    if(Math.abs(p)<0.5)return{cls:'fl',ar:'→',pct:0};
     const good=(p>0)===hb;
-    return{cls:good?'up':'dn',arrow:p>0?'↑':'↓',pct:Math.abs(p)};
+    return{cls:good?'up':'dn',ar:p>0?'↑':'↓',pct:Math.abs(p)};
   };
 
-  const spk=(key,color,hb=true,w=72,hh=28)=>{
-    if(ss.length<2)return'';
-    const vals=ss.map(s=>s[key]||0);
+  /* ── sparkline ── */
+  const spk=(vals,col,hb,w=80,hh=32)=>{
+    if(vals.length<2)return'';
     const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
     const pts=vals.map((v,i)=>[i/(vals.length-1)*(w-4)+2,hh-4-((v-mn)/range)*(hh-8)]);
     const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
-    const lv=vals[vals.length-1],pv=vals[vals.length-2];
-    const tc=Math.abs(lv-pv)<0.001?'var(--text4)':((lv>pv)===hb?color:'var(--red)');
-    return `<svg width="${w}" height="${hh}" style="display:block;margin-top:5px"><path d="${d}" fill="none" stroke="${tc}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2.2" fill="${tc}"/></svg>`;
+    const lv=vals[vals.length-1],pv=vals[vals.length-2]||lv;
+    const tc=Math.abs(lv-pv)<0.0001?'var(--text4)':((lv>pv)===hb?col:'var(--red)');
+    return `<svg width="${w}" height="${hh}" style="display:block;margin-top:4px"><path d="${d}" fill="none" stroke="${tc}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2.4" fill="${tc}"/></svg>`;
   };
 
-  /* 4 hero KPIs */
-  const heroes=[
-    {l:'Sales',v:gbp(last.sales||0),col:'var(--green)',key:'sales',hb:true,d:pctDiff(last.sales||0,prev.sales||0,true)},
-    {l:'ROAS',v:fmt(last.roas||0,2),col:ragColor(c.rag),key:'roas',hb:true,d:pctDiff(last.roas||0,prev.roas||0,true)},
-    {l:'Spend',v:gbp(last.spend||0),col:'var(--blue)',key:'spend',hb:false,d:pctDiff(last.spend||0,prev.spend||0,false)},
-    {l:'Orders',v:intf(last.purchases||0),col:'var(--purple)',key:'purchases',hb:true,d:pctDiff(last.purchases||0,prev.purchases||0,true)},
-  ];
-
-  const heroHTML=`<div class="hero-grid" style="grid-template-columns:repeat(4,1fr)">
-    ${heroes.map(h=>`<div class="hero-cell">
-      <div class="sec-label">${h.l}</div>
-      <div class="hero-v" style="color:${h.col}">${h.v}</div>
-      ${h.d.pct!=null?`<div class="kd ${h.d.cls}">${h.d.arrow} ${fmt(h.d.pct,1)}% vs prev</div>`:'<div class="kd fl">First snapshot</div>'}
-      ${spk(h.key,h.col,h.hb)}
-    </div>`).join('')}
+  /* ── metric selector chips ── */
+  const selectorHtml=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);align-items:center">
+    <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-right:4px;white-space:nowrap">Show metrics:</span>
+    ${METRIC_OPTS.map(m=>`<button onclick="window._metricSel['${selKey}'][window._metricSel['${selKey}'].has('${m.k}')?'delete':'add']('${m.k}');renderPerf()"
+      style="border:1px solid ${sel.has(m.k)?'var(--blue)':'var(--border)'};background:${sel.has(m.k)?'var(--blue-bg)':'var(--bg2)'};color:${sel.has(m.k)?'var(--blue)':'var(--text3)'};font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:var(--font);transition:.15s">${m.l}</button>`).join('')}
   </div>`;
 
-  /* 8-metric secondary bar */
-  const acosVal=last.sales?(last.acos||last.spend/last.sales*100):0;
-  const prevAcos=prev.sales?(prev.acos||prev.spend/prev.sales*100):0;
-  const secMetrics=[
-    {l:'ACOS',v:acosVal>0?fmt(acosVal,1)+'%':'—',d:pctDiff(acosVal,prevAcos,false),col:acosVal>30?'var(--red)':acosVal>20?'var(--amber)':'var(--green)'},
-    {l:'CPC',v:compCpc>0?gbp(compCpc):'—',d:pctDiff(compCpc,prevCpc,false),col:'var(--text)'},
-    {l:'CTR',v:compCtr>0?fmt(compCtr,2)+'%':'—',d:pctDiff(compCtr,prevCtr,true),col:'var(--text)'},
-    {l:'Impressions',v:intf(last.impressions||0),d:pctDiff(last.impressions||0,prev.impressions||0,true),col:'var(--text)'},
-    {l:'Clicks',v:intf(last.clicks||0),d:pctDiff(last.clicks||0,prev.clicks||0,true),col:'var(--text)'},
-  ];
-  const secHTML=`<div style="display:flex;gap:0;margin-top:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden">
-    ${secMetrics.map(m=>`<div style="padding:9px 16px;border-right:1px solid var(--border);flex:1">
+  /* ── KPI tiles for selected metrics ── */
+  const selectedMetrics=METRIC_OPTS.filter(m=>sel.has(m.k));
+  if(!window._activeMetric)window._activeMetric='roas';
+  const heroHtml=`<div style="display:grid;grid-template-columns:repeat(${Math.min(selectedMetrics.length,4)},1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:10px">
+    ${selectedMetrics.map(m=>{
+      const cur=valOf(last,m.k), prv=valOf(prev,m.k);
+      const col=m.col||(m.k==='roas'?ragColor(c.rag):m.k==='acos'?(cur>30?'var(--red)':cur>20?'var(--amber)':'var(--green)'):'var(--text)');
+      const d=delta(cur,prv,m.hb);
+      const vals=ss.map(s=>valOf(s,m.k));
+      const isActive=window._activeMetric===m.k;
+      return `<div class="hero-cell" onclick="window._activeMetric='${m.k}';renderPerf()" style="cursor:pointer;outline:${isActive?'2px solid var(--blue)':''};outline-offset:-2px;position:relative">
+        ${isActive?'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--blue)"></div>':''}
+        <div class="sec-label" style="color:${isActive?'var(--blue)':'var(--text3)'}">${m.l}</div>
+        <div class="hero-v" style="color:${col}">${m.fmt_(cur)}</div>
+        ${d.pct!=null?`<div class="kd ${d.cls}">${d.ar} ${fmt(d.pct,1)}% vs prev</div>`:'<div class="kd fl">First snapshot</div>'}
+        ${spk(vals,col,m.hb)}
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  /* ── secondary stats bar (always visible) ── */
+  const allSecondary=[
+    {l:'ACOS',  v:acos_of(last)>0?fmt(acos_of(last),1)+'%':'—', col:acos_of(last)>30?'var(--red)':acos_of(last)>20?'var(--amber)':'var(--green)', d:delta(acos_of(last),acos_of(prev),false)},
+    {l:'CPC',   v:cpc_of(last)>0?gbp(cpc_of(last)):'—',   col:'var(--text)', d:delta(cpc_of(last),cpc_of(prev),false)},
+    {l:'CTR',   v:ctr_of(last)>0?fmt(ctr_of(last),2)+'%':'—', col:'var(--text)', d:delta(ctr_of(last),ctr_of(prev),true)},
+    {l:'Impr.', v:intf(last.impressions||0), col:'var(--text)', d:delta(last.impressions||0,prev.impressions||0,true)},
+    {l:'Clicks',v:intf(last.clicks||0), col:'var(--text)', d:delta(last.clicks||0,prev.clicks||0,true)},
+  ].filter(m=>!sel.has(m.k==='ACOS'?'acos':m.k==='CPC'?'_cpc':m.k==='CTR'?'_ctr':m.l.toLowerCase()));
+
+  const secHtml=allSecondary.length?`<div style="display:flex;gap:0;margin-bottom:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;flex-wrap:wrap">
+    ${allSecondary.map(m=>`<div style="padding:8px 16px;border-right:1px solid var(--border);min-width:90px">
       <div class="sec-label">${m.l}</div>
       <div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px;color:${m.col}">${m.v}</div>
-      ${m.d.pct!=null?`<div class="kd ${m.d.cls}" style="font-size:9.5px;margin-top:2px">${m.d.arrow} ${fmt(m.d.pct,1)}%</div>`:''}
+      ${m.d.pct!=null?`<div class="kd ${m.d.cls}" style="font-size:9px;margin-top:1px">${m.d.ar} ${fmt(m.d.pct,1)}%</div>`:''}
     </div>`).join('')}
-    ${hasPrev?`<div style="padding:9px 14px;color:var(--text4);font-size:10px;display:flex;align-items:center;flex-shrink:0">vs ${prev.date||'prev'}</div>`:''}
-  </div>`;
+    ${hasPrev?`<div style="padding:8px 14px;color:var(--text4);font-size:10px;display:flex;align-items:center;margin-left:auto;flex-shrink:0">vs ${prev.date||'prev period'}</div>`:''}
+  </div>`:'';
 
-  /* Targeting / Ad Groups toggle */
-  const dataSnap=[...ss].reverse().find(s=>(s.targeting&&s.targeting.length)||(s.adGroups&&s.adGroups.length))||last;
-  const tgts=dataSnap.targeting||[];
-  const ags=dataSnap.adGroups||[];
-  let tgtHTML='';
+  /* ── targeting / ad-groups toggle ── */
+  const dataSnap=[...ss].reverse().find(s=>(s.targeting&&s.targeting.length)||(s.adGroups&&s.adGroups.length))||null;
+  const tgts=dataSnap?.targeting||[];
+  const ags=dataSnap?.adGroups||[];
+  let tgtHtml='';
 
-  if(tgts.length||ags.length){
+  /* Always show the toggle — show empty state per tab if no CSV data */
+  {
     const leaks=tgts.filter(r=>r.spend>0&&r.sales===0).length;
     const startView=tgts.length?'targeting':'adgroups';
 
-    const tgtTable=tgts.length?`<div style="overflow-x:auto">
-      <table class="simple-tbl" style="min-width:720px">
-        <thead><tr>
-          <th style="text-align:left">Target / keyword</th>
-          <th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th>
-          <th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
-        </tr></thead>
-        <tbody>${tgts.map(r=>{
-          const rg=ragOf(r.roas,r.sales,r.spend);
-          const rl=r.spend>0&&r.sales===0;
-          const compR_cpc=r.cpc>0?r.cpc:(r.clicks?r.spend/r.clicks:0);
-          const compR_ctr=r.ctr>0?(r.ctr>1?r.ctr:r.ctr*100):0;
-          return `<tr ${rl?'class="trow-leak"':''}>
-            <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.kw||''}">${rl?'<span class="flagdot"></span>':''}${r.kw||'—'}</td>
-            <td><span class="mtag">${r.match||'—'}</span></td>
-            <td style="color:var(--text3)">${gbp(r.bid||0)}</td>
-            <td>${intf(r.imp||0)}</td>
-            <td>${intf(r.clicks||0)}</td>
-            <td>${compR_ctr>0?fmt(compR_ctr,2)+'%':'—'}</td>
-            <td>${compR_cpc>0?gbp(compR_cpc):'—'}</td>
-            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend||0)}</td>
-            <td>${gbp(r.sales||0)}</td>
-            <td>${intf(r.purch||0)}</td>
-            <td>${r.sales?fmt(r.acos||r.spend/r.sales*100,1)+'%':'—'}</td>
-            <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'NO SALE':r.roas>0?fmt(r.roas,2):'—'}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`:`<div style="padding:16px;color:var(--text3);font-size:12px;background:var(--bg2);border-radius:var(--r-sm)">No keyword/targeting rows in this snapshot. Drop the <b style="color:var(--blue)">Targeting CSV</b> in the + Snapshot tab.</div>`;
+    const tgtRows=tgts.map(r=>{
+      const rg=ragOf(r.roas,r.sales,r.spend);
+      const rl=r.spend>0&&r.sales===0;
+      const rc=r.cpc>0?r.cpc:(r.clicks?r.spend/r.clicks:0);
+      const rt=r.ctr>0?(r.ctr>1?r.ctr:r.ctr*100):(r.imp&&r.clicks?r.clicks/r.imp*100:0);
+      return `<tr ${rl?'class="trow-leak"':''}>
+        <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.kw||''}">${rl?'<span class="flagdot"></span>':''}${r.kw||'—'}</td>
+        <td>${matchTag(r.match||'—')}}</td>
+        <td style="color:var(--text3)">${r.bid>0?gbp(r.bid):'—'}</td>
+        <td>${intf(r.imp||0)}</td>
+        <td>${intf(r.clicks||0)}</td>
+        <td>${rt>0?fmt(rt,2)+'%':'—'}</td>
+        <td>${rc>0?gbp(rc):'—'}</td>
+        <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend||0)}</td>
+        <td>${gbp(r.sales||0)}</td>
+        <td>${intf(r.purch||0)}</td>
+        <td>${(r.sales||r.spend)?fmt(r.acos||r.spend/((r.sales||0.0001))*100,1)+'%':'—'}</td>
+        <td style="color:${ragColor(rg)};font-weight:700">${rg==='leak'?'<span class="rag r" style="font-size:9px">NO SALE</span>':r.roas>0?fmt(r.roas,2):'0.00'}</td>
+      </tr>`;
+    }).join('');
 
-    const agTable=ags.length?`<div style="overflow-x:auto">
-      <table class="simple-tbl" style="min-width:720px">
-        <thead><tr>
-          <th style="text-align:left">Ad name</th>
-          <th>ASIN</th><th>Impr</th><th>Clicks</th><th>CTR</th>
-          <th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
-        </tr></thead>
-        <tbody>${ags.map(r=>{
-          const rg=ragOf(r.roas,r.sales,r.spend);
-          const rl=r.spend>0&&r.sales===0;
-          const compA_cpc=r.cpc>0?r.cpc:(r.clicks?r.spend/r.clicks:0);
-          const compA_ctr=r.ctr>0?(r.ctr>1?r.ctr:r.ctr*100):0;
-          return `<tr ${rl?'class="trow-leak"':''}>
-            <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name||''}">${rl?'<span class="flagdot"></span>':''}${r.name||'—'}</td>
-            <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${r.asin||'—'}</td>
-            <td>${intf(r.imp||0)}</td>
-            <td>${intf(r.clicks||0)}</td>
-            <td>${compA_ctr>0?fmt(compA_ctr,2)+'%':'—'}</td>
-            <td>${compA_cpc>0?gbp(compA_cpc):'—'}</td>
-            <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend||0)}</td>
-            <td>${gbp(r.sales||0)}</td>
-            <td>${intf(r.purch||0)}</td>
-            <td>${r.sales?fmt(r.acos||r.spend/r.sales*100,1)+'%':'—'}</td>
-            <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas||0,2)}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`:`<div style="padding:16px;color:var(--text3);font-size:12px;background:var(--bg2);border-radius:var(--r-sm)">No ad-group rows. Drop the <b style="color:var(--blue)">Ad Groups CSV</b> in the + Snapshot tab.</div>`;
+    const agRows=ags.map(r=>{
+      const rg=ragOf(r.roas,r.sales,r.spend);
+      const rl=r.spend>0&&r.sales===0;
+      const rc=r.cpc>0?r.cpc:(r.clicks?r.spend/r.clicks:0);
+      const rt=r.ctr>0?(r.ctr>1?r.ctr:r.ctr*100):(r.imp&&r.clicks?r.clicks/r.imp*100:0);
+      return `<tr ${rl?'class="trow-leak"':''}>
+        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name||''}">${rl?'<span class="flagdot"></span>':''}${r.name||'—'}</td>
+        <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${r.asin||'—'}</td>
+        <td>${intf(r.imp||0)}</td>
+        <td>${intf(r.clicks||0)}</td>
+        <td>${rt>0?fmt(rt,2)+'%':'—'}</td>
+        <td>${rc>0?gbp(rc):'—'}</td>
+        <td ${rl?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend||0)}</td>
+        <td>${gbp(r.sales||0)}</td>
+        <td>${intf(r.purch||0)}</td>
+        <td>${(r.sales||r.spend)?fmt(r.acos||r.spend/((r.sales||0.0001))*100,1)+'%':'—'}</td>
+        <td style="color:${ragColor(rg)};font-weight:700">${fmt(r.roas||0,2)}</td>
+      </tr>`;
+    }).join('');
 
-    const tabBtn=(view,label,cnt)=>`<button onclick="showDataView('${view}')" data-view="${view}"
-        style="border:none;padding:7px 18px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600;background:${view===startView?'var(--blue)':'var(--bg4)'};color:${view===startView?'#fff':'var(--text3)'};transition:.15s">
-        ${label} <span style="opacity:.7;font-weight:400;font-size:11px">${cnt}</span></button>`;
+    const tabBtn=(view,label,cnt,active)=>`<button onclick="showDataView('${view}')" data-view="${view}"
+      style="border:none;padding:7px 18px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600;background:${active?'var(--blue)':'var(--bg4)'};color:${active?'#fff':'var(--text3)'};transition:.15s">
+      ${label} <span style="opacity:.7;font-weight:400;font-size:11px">${cnt}</span></button>`;
 
-    tgtHTML=`<div style="margin-top:16px">
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
-        <div style="display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:3px;gap:3px" id="data-toggle">
-          ${tabBtn('targeting','Targeting (keywords)',tgts.length)}
-          ${tabBtn('adgroups','Ad Groups',ags.length)}
+    tgtHtml=`<div style="margin-top:14px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border-bottom:1px solid var(--border);flex-wrap:wrap">
+        <div style="display:flex;background:var(--bg4);border:1px solid var(--border);border-radius:9px;padding:3px;gap:3px" id="data-toggle">
+          ${tabBtn('targeting','Targeting',tgts.length,startView==='targeting')}
+          ${tabBtn('adgroups','Ad Groups',ags.length,startView==='adgroups')}
         </div>
-        <span style="font-size:10.5px;color:var(--text4)">${dataSnap===last?'latest snapshot':'older snapshot'} · ${dataSnap.date||''}</span>
-        ${leaks?`<span style="font-size:11px;color:var(--amber);font-weight:600">⚠ ${leaks} spend leak${leaks>1?'s':''}</span>`:''}
+        <span style="font-size:10.5px;color:var(--text4)">${dataSnap===last?'latest snapshot':'data from'} · ${dataSnap?.date||''}</span>
+        ${leaks?`<span style="font-size:11px;color:var(--amber);font-weight:600">⚠ ${leaks} spend leak${leaks>1?'s':''} — wasted spend with £0 return</span>`:'<span style="font-size:10.5px;color:var(--green)">✓ No spend leaks</span>'}
       </div>
-      <div id="data-view-targeting" style="display:${startView==='targeting'?'block':'none'}">${tgtTable}</div>
-      <div id="data-view-adgroups" style="display:${startView==='adgroups'?'block':'none'}">${agTable}</div>
-    </div>`;
-  } else {
-    tgtHTML=`<div style="margin-top:16px;padding:14px 16px;background:var(--bg2);border:2px dashed var(--border);border-radius:var(--r-sm);color:var(--text3);font-size:12px;text-align:center">
-      <div style="font-size:20px;margin-bottom:8px">📊</div>
-      <div>No targeting or ad-group data yet.</div>
-      <div style="margin-top:6px">Open <b style="color:var(--blue)">+ Snapshot</b>, drop your <b>Targeting CSV</b> and <b>Ad Groups CSV</b>, set the date range, and save.</div>
+      <div id="data-view-targeting" style="display:${startView==='targeting'?'block':'none'};overflow-x:auto;max-height:40vh;overflow-y:auto">
+        ${tgts.length?`<table class="simple-tbl" style="min-width:820px">
+          <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+          <tbody>${tgtRows}</tbody></table>`
+        :'<div style="padding:20px 16px;color:var(--text3);font-size:12.5px;line-height:1.6">No keyword data for this snapshot — open <b>+ Snapshot</b>, set the same date range, drop your Targeting CSV and save to add keyword detail.</div>'}
+      </div>
+      <div id="data-view-adgroups" style="display:${startView==='adgroups'?'block':'none'};overflow-x:auto;max-height:40vh;overflow-y:auto">
+        ${ags.length?`<table class="simple-tbl" style="min-width:820px">
+          <thead><tr><th>Ad name</th><th>ASIN</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+          <tbody>${agRows}</tbody></table>`
+        :'<div style="padding:20px 16px;color:var(--text3);font-size:12.5px;line-height:1.6">No ad-group data for this snapshot — drop the Ad Groups CSV in <b>+ Snapshot</b> to add it.</div>'}
+      </div>
     </div>`;
   }
 
-  /* Full snapshot history table */
-  const histRows=ss.slice().reverse().map(s=>{
+  /* ── snapshot history — always shown ── */
+  /* Compute badges */
+  const bestRoas=ss.reduce((best,s)=>s.roas>best.roas?s:best,ss[0]);
+  const bestSales=ss.reduce((best,s)=>s.sales>best.sales?s:best,ss[0]);
+  const lowestAcos=ss.filter(s=>s.sales>0).reduce((best,s)=>(!best||acos_of(s)<acos_of(best))?s:best,null);
+  const highSpend=ss.reduce((best,s)=>s.spend>best.spend?s:best,ss[0]);
+
+  /* Sort by active metric */
+  const sortedSnaps=[...ss].sort((a,b)=>{
+    const k=window._activeMetric||'roas';
+    if(k==='_cpc')return cpc_of(b)-cpc_of(a);
+    if(k==='_ctr')return ctr_of(b)-ctr_of(a);
+    if(k==='acos')return acos_of(b)-acos_of(a);
+    return (b[k]||0)-(a[k]||0);
+  });
+
+  const histRows=sortedSnaps.map((s,ri)=>{
     const rg=ragOf(s.roas,s.sales,s.spend);
-    const isLast=s===ss[ss.length-1];
-    const sCpc=(s.cpc&&s.cpc>0)?s.cpc:((s.clicks&&s.spend)?s.spend/s.clicks:0);
-    const sCtr=(s.ctr&&s.ctr>0)?s.ctr:((s.impressions&&s.clicks)?s.clicks/s.impressions*100:0);
-    return `<tr ${isLast?'class="hist-current"':''}>
-      <td>${s.date}${isLast?' <span class="ctag" style="font-size:9px;padding:1px 5px">latest</span>':''}</td>
-      <td>${intf(s.impressions||0)}</td><td>${intf(s.clicks||0)}</td>
-      <td>${sCtr>0?fmt(sCtr,2)+'%':'—'}</td>
-      <td>${gbp(s.spend)}</td>
-      <td>${sCpc>0?gbp(sCpc):'—'}</td>
+    const isCurrent=s===ss[ss.length-1];
+    const sc=cpc_of(s), st=ctr_of(s), sa=acos_of(s);
+    const badges=[];
+    if(s===bestRoas&&ss.length>1)badges.push('<span style="font-size:9px;font-weight:700;padding:1px 5px;background:var(--green-bg);color:var(--green);border-radius:4px;border:1px solid var(--green)">Best ROAS</span>');
+    if(s===bestSales&&ss.length>1)badges.push('<span style="font-size:9px;font-weight:700;padding:1px 5px;background:var(--blue-bg);color:var(--blue);border-radius:4px;border:1px solid var(--blue)">Best Sales</span>');
+    if(lowestAcos&&s===lowestAcos&&ss.length>1)badges.push('<span style="font-size:9px;font-weight:700;padding:1px 5px;background:var(--amber-bg);color:var(--amber);border-radius:4px;border:1px solid var(--amber)">Lowest ACOS</span>');
+    if(s===highSpend&&ss.length>1)badges.push('<span style="font-size:9px;font-weight:700;padding:1px 5px;background:var(--red-bg);color:var(--red);border-radius:4px;border:1px solid var(--red)">High Spend</span>');
+    return `<tr ${isCurrent?'class="hist-current"':''} style="cursor:pointer" onclick="/* already on this snap */">
+      <td style="white-space:nowrap">${s.date||'—'}${isCurrent?' <span class="ctag" style="font-size:9px;padding:1px 5px;vertical-align:middle">latest</span>':''}${badges.length?` <span style="display:inline-flex;gap:4px;margin-left:6px">${badges.join('')}</span>`:''}</td>
+      <td>${intf(s.impressions||0)}</td>
+      <td>${intf(s.clicks||0)}</td>
+      <td>${st>0?fmt(st,2)+'%':'—'}</td>
+      <td style="${(s.spend>0&&s.sales===0)?'color:var(--amber);font-weight:600':''}">${gbp(s.spend)}</td>
+      <td>${sc>0?gbp(sc):'—'}</td>
       <td style="color:var(--green)">${gbp(s.sales)}</td>
       <td>${intf(s.purchases||0)}</td>
-      <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
-      <td style="color:${ragColor(rg)};font-weight:700">${fmt(s.roas||0,2)}</td>
+      <td>${sa>0?fmt(sa,1)+'%':'—'}</td>
+      <td style="color:${ragColor(rg)};font-weight:700">${s.roas>0?fmt(s.roas,2):'—'}</td>
     </tr>`;
   }).join('');
 
   document.getElementById('tab-performance').innerHTML=`
-    ${heroHTML}
-    ${secHTML}
-    ${tgtHTML}
-    <div style="margin-top:20px">
+    ${selectorHtml}
+    ${heroHtml}
+    ${secHtml}
+    ${tgtHtml}
+
+    <div style="margin-top:18px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="sec-label">All snapshots (${ss.length})</div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)">All snapshots (${ss.length})</div>
         <button class="btn-sm" onclick="switchTab('import')" style="color:var(--blue);border-color:rgba(91,157,255,.3)">+ Add snapshot</button>
       </div>
       <div style="overflow-x:auto">
         <table class="simple-tbl" style="min-width:680px">
-          <thead><tr>
-            <th>Period</th><th>Impr.</th><th>Clicks</th><th>CTR</th>
-            <th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
-          </tr></thead>
-          <tbody>${histRows||'<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text3)">No snapshots yet — add one with the button above.</td></tr>'}</tbody>
+          <thead><tr><th>Period</th><th>Impr.</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+          <tbody>${histRows||'<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text3)">No snapshots yet. Click + Add snapshot above.</td></tr>'}</tbody>
         </table>
       </div>
     </div>`;
+}
+
+function showDataView(view){
+  ['targeting','adgroups'].forEach(v=>{
+    const el=document.getElementById('data-view-'+v);
+    if(el)el.style.display=v===view?'block':'none';
+  });
+  document.querySelectorAll('#data-toggle button').forEach(btn=>{
+    const active=btn.dataset.view===view;
+    btn.style.background=active?'var(--blue)':'var(--bg4)';
+    btn.style.color=active?'#fff':'var(--text3)';
+  });
 }
 
 
@@ -1456,7 +1643,7 @@ function adGroupsHTML(targeting){
         <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
         <tbody>${rows.map(r=>{const rg2=ragOf(r.roas,r.sales,r.spend);return `<tr>
           <td>${rg2==="leak"?"<span class=\"flagdot\"></span>":""}${r.kw}</td>
-          <td style="text-align:right"><span class="mtag">${r.match}</span></td>
+          <td style="text-align:right">${matchTag(r.match)}}</td>
           <td style="text-align:right"><input class="bidinput" value="${fmt(r.bid,2)}"></td>
           <td>${intf(r.imp)}</td><td>${intf(r.clicks)}</td><td>${fmt(r.ctr,2)}%</td>
           <td style="${r.sales===0&&r.spend>0?'color:var(--amber);font-weight:600':''}">${gbp(r.spend)}</td>
@@ -1743,6 +1930,169 @@ function splitCsvLine(line){
   }
   out.push(cur);return out;
 }
+function handleCsvDropTo(type,e){
+  const file=e.dataTransfer.files[0];if(!file)return;
+  const r=new FileReader();r.onload=ev=>{parsePasteFor(type,ev.target.result);};r.readAsText(file);
+}
+function handleCsvFileTo(type,input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();r.onload=ev=>{parsePasteFor(type,ev.target.result);};r.readAsText(file);
+}
+
+/* ─── ROBUST CSV COLUMN MATCHER ─── */
+function colFind(row,candidates){
+  const keys=Object.keys(row);
+  for(const k of keys){if(candidates.some(c=>k.trim().toLowerCase()===c.trim().toLowerCase()))return k;}
+  for(const k of keys){if(candidates.some(c=>k.trim().toLowerCase().includes(c.trim().toLowerCase())))return k;}
+  return null;
+}
+function colNum(row,candidates,fallback=0){
+  const k=colFind(row,candidates);if(!k)return fallback;
+  const raw=String(row[k]||'').replace(/[£$%,]/g,'').trim();
+  const n=parseFloat(raw);return isNaN(n)?fallback:n;
+}
+function colStr(row,candidates,fallback=''){
+  const k=colFind(row,candidates);return k?(row[k]||'').trim():fallback;
+}
+
+function matchTag(match){
+  if(!match||match==='—')return'<span class="mtag" style="background:var(--bg4);color:var(--text3);border:1px solid var(--border)">—</span>';
+  const m=match.trim().toLowerCase();
+  const cls=m.includes('exact')?'mtag-exact':m.includes('phrase')?'mtag-phrase':m.includes('broad')?'mtag-broad':m.includes('close')?'mtag-close':m.includes('loose')?'mtag-loose':m.includes('auto')?'mtag-auto':'';
+  return`<span class="mtag ${cls}">${match}</span>`;
+}
+
+function parsePasteFor(type,text){
+  const parsed=parseCsv(text);
+  const previewEl=document.getElementById(type+'-preview');
+  const badgeEl=document.getElementById(type+'-badge');
+  if(!parsed||!parsed.rows.length){if(previewEl)previewEl.innerHTML='';if(badgeEl)badgeEl.textContent='';checkSnapReady();return;}
+
+  if(type==='tgt'){
+    const matchMap={'broad match':'Broad','phrase match':'Phrase','exact match':'Exact','broad':'Broad','phrase':'Phrase','exact':'Exact','targeting_expression_predefined_close_match':'Close Match','targeting_expression_predefined_loose_match':'Loose Match','targeting_expression_predefined_substitutes':'Substitutes','targeting_expression_predefined_complements':'Complements','close match':'Close Match','loose match':'Loose Match'};
+    const rows=parsed.rows.map(r=>{
+      const kw=colStr(r,['Keyword','keyword','Targeting expression','targeting_expression','Customer Search Term','customer_search_term','Target','target'],'');
+      if(!kw)return null;
+      const rawMatch=colStr(r,['Target match type','target_match_type','Match type','match_type','Match','match'],'');
+      const match=matchMap[rawMatch.toLowerCase()]||rawMatch||'—';
+      const bid=colNum(r,['Bid (GBP)','Bid (USD)','Bid','bid_gbp','bid'],0);
+      const imp=Math.round(colNum(r,['Impressions','impressions'],0));
+      const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
+      let rawCtr=colNum(r,['CTR','ctr','Click-Through Rate (CTR)'],0);
+      const ctr=rawCtr>1?rawCtr/100:rawCtr;
+      const spend=colNum(r,['Total cost (GBP)','Total cost (USD)','Total cost','Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','Cost (USD)','total_cost_gbp','total_cost'],0);
+      const sales=colNum(r,['Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales (GBP)','7 Day Total Sales (USD)','7 Day Total Sales','sales_gbp','sales'],0);
+      const purch=Math.round(colNum(r,['Purchases','purchases','7 Day Total Orders (#)','7 Day Total Orders','Orders','orders'],0));
+      let rawAcos=colNum(r,['ACOS','acos','Advertising Cost of Sales'],0);
+      const acos=rawAcos>1?rawAcos:(rawAcos>0&&rawAcos<=1?rawAcos*100:0)||(sales?spend/sales*100:0);
+      let rawRoas=colNum(r,['ROAS','roas'],0);
+      const roas=rawRoas>0?rawRoas:(spend>0?sales/spend:0);
+      const cpcCsv=colNum(r,['CPC (GBP)','CPC (USD)','CPC','cpc_gbp','cpc','Cost Per Click (CPC)'],0);
+      const cpc=cpcCsv>0?cpcCsv:(clicks?spend/clicks:0);
+      return{kw,match,bid,imp,clicks,ctr,spend,sales,purch,acos,roas,cpc};
+    }).filter(Boolean);
+    window._snapTgts=rows;
+    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch,cl:a.cl+r.clicks,im:a.im+r.imp}),{sp:0,sa:0,pu:0,cl:0,im:0});
+    const totRoas=tot.sp?tot.sa/tot.sp:0,totAcos=tot.sa?tot.sp/tot.sa*100:0,totCpc=tot.cl?tot.sp/tot.cl:(rows.length?rows.reduce((a,r)=>a+r.cpc,0)/rows.filter(r=>r.cpc>0).length||0:0),totCtr=tot.im?tot.cl/tot.im*100:0;
+    const roasCol=totRoas>=5?'var(--green)':totRoas>=4?'var(--amber)':totRoas>0?'var(--red)':'var(--text3)';
+    const tgtLeaks=rows.filter(r=>r.spend>0&&r.sales===0);
+    if(badgeEl)badgeEl.innerHTML=`<span style="color:var(--green);font-size:11px;font-weight:700">✓ ${rows.length} targets</span>`;
+    if(previewEl)previewEl.innerHTML=`<div style="background:var(--green-bg);border:1px solid var(--green);border-radius:var(--r-sm);padding:10px 12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="color:var(--green);font-weight:700;font-size:12.5px">✓ ${rows.length} targets parsed</span>
+        ${tgtLeaks.length?`<span style="color:var(--amber);font-size:10.5px">· ${tgtLeaks.length} spend leak${tgtLeaks.length>1?'s':''}</span>`:'<span style="color:var(--text3);font-size:10.5px">· no spend leaks</span>'}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
+        ${[['Spend',gbp(tot.sp),'var(--text)'],['Sales',gbp(tot.sa),'var(--green)'],['ROAS',fmt(totRoas,2),roasCol],['ACOS',totAcos>0?fmt(totAcos,1)+'%':'—','var(--text)'],['Orders',intf(tot.pu),'var(--text)'],['CPC',gbp(totCpc),'var(--text)']].map(([l,v,c])=>`<div style="background:var(--bg2);border-radius:5px;padding:5px 8px"><div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:700;margin-top:1px;color:${c}">${v}</div></div>`).join('')}
+      </div>
+      ${rows.length>0?`<div style="margin-top:8px;border-top:1px solid rgba(46,229,157,.2);padding-top:8px">
+        <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+          <thead><tr>
+            <th style="text-align:left;padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px">Keyword</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px">Match</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">Bid</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">Impr</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">Spend</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">Sales</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">ROAS</th>
+          </tr></thead>
+          <tbody>${rows.map(r=>{
+            const rg=ragOf(r.roas,r.sales,r.spend);
+            const leak=r.spend>0&&r.sales===0;
+            return`<tr style="border-top:1px solid rgba(255,255,255,.05)">
+              <td style="padding:4px 8px;font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.kw||'—'}</td>
+              <td style="padding:4px 8px">${matchTag(r.match||'—')}</td>
+              <td style="padding:4px 8px;text-align:right;color:var(--text3)">${r.bid>0?gbp(r.bid):'—'}</td>
+              <td style="padding:4px 8px;text-align:right">${intf(r.imp||0)}</td>
+              <td style="padding:4px 8px;text-align:right;${leak?'color:var(--amber);font-weight:600':''}">${gbp(r.spend||0)}</td>
+              <td style="padding:4px 8px;text-align:right;color:var(--green)">${gbp(r.sales||0)}</td>
+              <td style="padding:4px 8px;text-align:right;font-weight:700;color:${ragColor(rg)}">${leak?'NO SALE':r.roas>0?fmt(r.roas,2):'—'}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>`:''}
+    </div>`;
+  } else {
+    const rows=parsed.rows.map(r=>{
+      const name=colStr(r,['Ad name','ad_name','Ad Name','Ad group name','ad_group_name','Ad Group'],'');
+      if(!name)return null;
+      const imp=Math.round(colNum(r,['Impressions','impressions'],0));
+      const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
+      const spend=colNum(r,['Total cost (GBP)','Total cost (USD)','Total cost','Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','total_cost_gbp','total_cost'],0);
+      const sales=colNum(r,['Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales (GBP)','7 Day Total Sales','sales_gbp','sales'],0);
+      const purch=Math.round(colNum(r,['Purchases','purchases','7 Day Total Orders (#)','7 Day Total Orders','Orders'],0));
+      const cpcCsv=colNum(r,['CPC (GBP)','CPC (USD)','CPC','cpc_gbp','cpc'],0);
+      const cpc=cpcCsv>0?cpcCsv:(clicks?spend/clicks:0);
+      let rawCtr=colNum(r,['CTR','ctr','Click-Through Rate (CTR)'],0);
+      const ctr=rawCtr>1?rawCtr/100:rawCtr;
+      let rawAcos=colNum(r,['ACOS','acos'],0);
+      const acos=rawAcos>1?rawAcos:(rawAcos>0&&rawAcos<=1?rawAcos*100:0)||(sales?spend/sales*100:0);
+      let rawRoas=colNum(r,['ROAS','roas'],0);
+      const roas=rawRoas>0?rawRoas:(spend>0?sales/spend:0);
+      const asin=colStr(r,['ASIN','asin'],'');
+      return{name,imp,clicks,spend,sales,purch,cpc,ctr,acos,roas,asin};
+    }).filter(Boolean);
+    window._snapAgs=rows;
+    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch,cl:a.cl+r.clicks,im:a.im+r.imp}),{sp:0,sa:0,pu:0,cl:0,im:0});
+    const totRoas=tot.sp?tot.sa/tot.sp:0,totAcos=tot.sa?tot.sp/tot.sa*100:0,totCpc=tot.cl?tot.sp/tot.cl:0,totCtr=tot.im?tot.cl/tot.im*100:0;
+    const agRoasCol=totRoas>=5?'var(--green)':totRoas>=4?'var(--amber)':totRoas>0?'var(--red)':'var(--text3)';
+    if(badgeEl)badgeEl.innerHTML=`<span style="color:var(--green);font-size:11px;font-weight:700">✓ ${rows.length} ads</span>`;
+    if(previewEl)previewEl.innerHTML=`<div style="background:var(--green-bg);border:1px solid var(--green);border-radius:var(--r-sm);padding:10px 12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="color:var(--green);font-weight:700;font-size:12.5px">✓ ${rows.length} ad groups parsed</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
+        ${[['Spend',gbp(tot.sp),'var(--text)'],['Sales',gbp(tot.sa),'var(--green)'],['ROAS',fmt(totRoas,2),agRoasCol],['ACOS',totAcos>0?fmt(totAcos,1)+'%':'—','var(--text)'],['Orders',intf(tot.pu),'var(--text)'],['Impr',intf(tot.im),'var(--text)']].map(([l,v,c])=>`<div style="background:var(--bg2);border-radius:5px;padding:5px 8px"><div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:700;margin-top:1px;color:${c}">${v}</div></div>`).join('')}
+      </div>
+      ${rows.length>0?`<div style="margin-top:8px;border-top:1px solid rgba(46,229,157,.2);padding-top:8px">
+        <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+          <thead><tr>
+            <th style="text-align:left;padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px">Ad name</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px">ASIN</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">Impr</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">Spend</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">Sales</th>
+            <th style="padding:3px 8px;color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:right">ROAS</th>
+          </tr></thead>
+          <tbody>${rows.map(r=>{
+            const rg=ragOf(r.roas,r.sales,r.spend);
+            const leak=r.spend>0&&r.sales===0;
+            return`<tr style="border-top:1px solid rgba(255,255,255,.05)">
+              <td style="padding:4px 8px;font-weight:500;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name||'—'}</td>
+              <td style="padding:4px 8px;font-family:var(--mono);font-size:10px;color:var(--text3)">${r.asin||'—'}</td>
+              <td style="padding:4px 8px;text-align:right">${intf(r.imp||0)}</td>
+              <td style="padding:4px 8px;text-align:right;${leak?'color:var(--amber);font-weight:600':''}">${gbp(r.spend||0)}</td>
+              <td style="padding:4px 8px;text-align:right;color:var(--green)">${gbp(r.sales||0)}</td>
+              <td style="padding:4px 8px;text-align:right;font-weight:700;color:${ragColor(rg)}">${fmt(r.roas||0,2)}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>`:''}
+    </div>`;
+  }
+  checkSnapReady();
+}
+
 function parseCsv(text){
   const lines=(text||'').replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n').trim().split('\n');
   if(lines.length<2)return null;
@@ -1772,347 +2122,350 @@ function parseGbPeriod(s){
 
 /* ════════ SNAPSHOT TAB ════════ */
 function renderImport(){
-  document.getElementById('tab-import').innerHTML=`
-    <div style="margin-bottom:14px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:3px">Add a snapshot</div>
-      <div style="font-size:12px;color:var(--text3)">Amazon gives you two separate exports. Paste both below — <b style="color:var(--text2)">Targeting is the important one</b>, Ad Groups is the summary above it.</div>
+  document.getElementById('tab-import').innerHTML=`<div style="max-width:820px">
+
+    <!-- ── DATE RANGE ── -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:10px">Date range</div>
+
+      <!-- Quick presets -->
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
+        ${[['7','Last 7 days'],['14','Last 14 days'],['30','Last 30 days']].map(([n,l])=>`<button onclick="setSnapRange(${n})" class="btn ghost" style="font-size:10.5px;padding:3px 10px">${l}</button>`).join('')}
+        <button onclick="setSnapLastWeek()" class="btn ghost" style="font-size:10.5px;padding:3px 10px">Last week</button>
+        <button onclick="setSnapLastMonth()" class="btn ghost" style="font-size:10.5px;padding:3px 10px">Last month</button>
+      </div>
+
+      <!-- Date picker row -->
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px">Start date <span style="color:var(--red)">*</span></div>
+          <div style="position:relative">
+            <input class="input" id="csv-date-from" type="text" readonly placeholder="Select start date"
+              style="width:168px;cursor:pointer;padding-right:32px;font-size:13px"
+              onclick="openCal('from')" value="">
+            <span onclick="openCal('from')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text3);font-size:14px;pointer-events:none">&#128197;</span>
+          </div>
+        </div>
+        <div style="color:var(--text4);padding-bottom:8px;font-size:16px">→</div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px">End date <span style="color:var(--red)">*</span></div>
+          <div style="position:relative">
+            <input class="input" id="csv-date-to" type="text" readonly placeholder="Select end date"
+              style="width:168px;cursor:pointer;padding-right:32px;font-size:13px"
+              onclick="openCal('to')" value="">
+            <span onclick="openCal('to')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text3);font-size:14px;pointer-events:none">&#128197;</span>
+          </div>
+        </div>
+        <div id="period-label-display" style="padding-bottom:4px;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--blue);min-width:160px"></div>
+        <input type="hidden" id="csv-period">
+      </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <!-- ── CALENDAR POPUP ── -->
+    <div id="snap-cal-popup" style="display:none;position:absolute;z-index:500;margin-top:-4px;box-shadow:0 12px 40px rgba(0,0,0,.5)">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;width:320px">
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg2)">
+          <button onclick="calNav(-1)" style="border:none;background:var(--bg3);color:var(--text);width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center">&lsaquo;</button>
+          <div id="cal-header" style="font-size:13px;font-weight:700"></div>
+          <button onclick="calNav(1)" style="border:none;background:var(--bg3);color:var(--text);width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center">&rsaquo;</button>
+        </div>
+        <!-- Day labels -->
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:8px 8px 4px;background:var(--bg2)">
+          ${['M','T','W','T','F','S','S'].map(d=>`<div style="text-align:center;font-size:10px;font-weight:700;color:var(--text4);padding:3px 0">${d}</div>`).join('')}
+        </div>
+        <!-- Days grid -->
+        <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:4px 8px 10px;background:var(--bg2)"></div>
+        <!-- Footer -->
+        <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div id="cal-selected-display" style="font-size:11.5px;color:var(--text3)"></div>
+          <div style="display:flex;gap:6px">
+            <button onclick="calClear()" class="btn ghost" style="font-size:11px;padding:4px 10px">Clear</button>
+            <button onclick="calConfirm()" class="btn" style="font-size:11px;padding:4px 12px">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <!-- TARGETING (primary) -->
-      <div style="border:2px solid var(--blue);border-radius:var(--r);overflow:hidden">
-        <div style="background:var(--blue-bg);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+    <!-- ── CSV UPLOAD CARDS ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+
+      <!-- TARGETING -->
+      <div style="background:var(--bg2);border:2px solid var(--blue);border-radius:var(--r);overflow:hidden">
+        <div style="background:var(--blue-bg);padding:9px 13px;display:flex;align-items:center;justify-content:space-between">
           <div>
             <div style="font-size:12px;font-weight:700;color:var(--blue)">Targeting report</div>
-            <div style="font-size:10.5px;color:var(--text3);margin-top:1px">Keyword & target level — the important one</div>
+            <div style="font-size:10px;color:var(--text3)">Keywords &amp; targets — the important one</div>
           </div>
-          <div id="tgt-badge" style="font-size:10px;font-family:var(--mono);color:var(--text4)"></div>
+          <div id="tgt-badge"></div>
         </div>
-        <div style="padding:10px">
-          <div class="csv-drop" id="tgt-drop" onclick="document.getElementById('tgt-file').click()"
-            ondragover="event.preventDefault();this.classList.add('drag')"
-            ondragleave="this.classList.remove('drag')"
-            ondrop="event.preventDefault();this.classList.remove('drag');handleCsvDropTo('tgt',event)"
-            style="padding:14px;margin-bottom:8px">
-            <div style="font-size:11px">Drop CSV or click to browse</div>
+        <div style="padding:12px">
+          <div class="csv-drop" id="tgt-drop"
+            ondragover="event.preventDefault();this.style.borderColor='var(--blue)'"
+            ondragleave="this.style.borderColor=''"
+            ondrop="event.preventDefault();this.style.borderColor='';handleCsvDropTo('tgt',event)"
+            style="padding:20px 12px;text-align:center;margin-bottom:8px">
+            <div style="font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:8px">Drop CSV file here</div>
+            <div style="display:flex;gap:6px;justify-content:center">
+              <button onclick="document.getElementById('tgt-file').click()" class="btn" style="font-size:11px;padding:5px 14px">Browse file</button>
+              <button onclick="var el=document.getElementById('tgt-paste-area');el.style.display=el.style.display==='none'?'block':'none'" class="btn ghost" style="font-size:11px;padding:5px 12px">Paste CSV</button>
+            </div>
             <input type="file" id="tgt-file" accept=".csv" style="display:none" onchange="handleCsvFileTo('tgt',this)">
           </div>
-          <textarea class="input" id="tgt-paste" style="width:100%;min-height:80px;font-family:var(--mono);font-size:10.5px;resize:vertical" placeholder="…or paste targeting CSV text here" oninput="parsePasteFor('tgt',this.value)"></textarea>
-          <div id="tgt-preview" style="margin-top:8px"></div>
+          <div id="tgt-paste-area" style="display:none;margin-bottom:8px">
+            <textarea class="input" style="width:100%;min-height:72px;font-family:var(--mono);font-size:10.5px;resize:vertical" placeholder="Paste Targeting CSV text here…" oninput="parsePasteFor('tgt',this.value)"></textarea>
+          </div>
+          <div id="tgt-preview"></div>
         </div>
       </div>
 
-      <!-- AD GROUPS (secondary) -->
-      <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
-        <div style="background:var(--bg3);padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+      <!-- AD GROUPS -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+        <div style="background:var(--bg3);padding:9px 13px;display:flex;align-items:center;justify-content:space-between">
           <div>
             <div style="font-size:12px;font-weight:700;color:var(--text2)">Ad Groups report</div>
-            <div style="font-size:10.5px;color:var(--text3);margin-top:1px">Group summary — Close match, Loose match etc.</div>
+            <div style="font-size:10px;color:var(--text3)">Impressions, clicks &amp; ad-level data</div>
           </div>
-          <div id="ag-badge" style="font-size:10px;font-family:var(--mono);color:var(--text4)"></div>
+          <div id="ag-badge"></div>
         </div>
-        <div style="padding:10px">
-          <div class="csv-drop" id="ag-drop" onclick="document.getElementById('ag-file').click()"
-            ondragover="event.preventDefault();this.classList.add('drag')"
-            ondragleave="this.classList.remove('drag')"
-            ondrop="event.preventDefault();this.classList.remove('drag');handleCsvDropTo('ag',event)"
-            style="padding:14px;margin-bottom:8px">
-            <div style="font-size:11px">Drop CSV or click to browse</div>
+        <div style="padding:12px">
+          <div class="csv-drop" id="ag-drop"
+            ondragover="event.preventDefault();this.style.borderColor='var(--blue)'"
+            ondragleave="this.style.borderColor=''"
+            ondrop="event.preventDefault();this.style.borderColor='';handleCsvDropTo('ag',event)"
+            style="padding:20px 12px;text-align:center;margin-bottom:8px">
+            <div style="font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:8px">Drop CSV file here</div>
+            <div style="display:flex;gap:6px;justify-content:center">
+              <button onclick="document.getElementById('ag-file').click()" class="btn" style="font-size:11px;padding:5px 14px">Browse file</button>
+              <button onclick="var el=document.getElementById('ag-paste-area');el.style.display=el.style.display==='none'?'block':'none'" class="btn ghost" style="font-size:11px;padding:5px 12px">Paste CSV</button>
+            </div>
             <input type="file" id="ag-file" accept=".csv" style="display:none" onchange="handleCsvFileTo('ag',this)">
           </div>
-          <textarea class="input" id="ag-paste" style="width:100%;min-height:80px;font-family:var(--mono);font-size:10.5px;resize:vertical" placeholder="…or paste ad groups CSV text here" oninput="parsePasteFor('ag',this.value)"></textarea>
-          <div id="ag-preview" style="margin-top:8px"></div>
+          <div id="ag-paste-area" style="display:none;margin-bottom:8px">
+            <textarea class="input" style="width:100%;min-height:72px;font-family:var(--mono);font-size:10.5px;resize:vertical" placeholder="Paste Ad Groups CSV text here…" oninput="parsePasteFor('ag',this.value)"></textarea>
+          </div>
+          <div id="ag-preview"></div>
         </div>
       </div>
-
     </div>
 
-    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
-        <div>
-          <div class="label" style="margin-bottom:5px">Start date <span style="color:var(--red)">*</span></div>
-          <input class="input" id="csv-date-from" type="date" style="width:150px" oninput="updatePeriodLabel()">
-        </div>
-        <div>
-          <div class="label" style="margin-bottom:5px">End date <span style="color:var(--red)">*</span></div>
-          <input class="input" id="csv-date-to" type="date" style="width:150px" oninput="updatePeriodLabel()">
-        </div>
-        <div>
-          <div class="label" style="margin-bottom:5px">Period label</div>
-          <input class="input" id="csv-period" style="width:200px;color:var(--text3);font-family:var(--mono);font-size:11.5px" placeholder="Auto-generated from dates" readonly>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <button class="btn" id="save-snap-btn" onclick="saveSnapshot()" disabled style="opacity:.5">Save snapshot</button>
-          <div style="color:var(--text3);font-size:10.5px;text-align:center" id="save-snap-note">Select dates + paste a CSV</div>
-        </div>
+    <!-- ── SNAPSHOT TYPE + NOTES ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px">Snapshot type</div>
+        <select class="sel" id="snap-type" style="width:100%;font-size:12.5px">
+          <option value="regular">Regular Snapshot</option>
+          <option value="bid-change">Bid Change</option>
+          <option value="budget-change">Budget Change</option>
+          <option value="new-campaign">New Campaign</option>
+          <option value="keyword-expansion">Keyword Expansion</option>
+          <option value="prime-day">Prime Day</option>
+          <option value="black-friday">Black Friday</option>
+          <option value="testing">Testing Period</option>
+        </select>
       </div>
-    </div>`;
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px">Notes (optional — saved with snapshot)</div>
+        <input class="input" id="snap-notes" style="width:100%;font-size:12.5px" placeholder="e.g. Increased bids on exact match, new campaign launched…">
+      </div>
+    </div>
+
+    <!-- ── VALIDATION SUMMARY ── -->
+    <div id="snap-validation" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:10px">Snapshot summary</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <!-- Checklist -->
+        <div id="snap-checklist" style="display:flex;flex-direction:column;gap:7px"></div>
+        <!-- Data summary -->
+        <div id="snap-data-summary"></div>
+      </div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:12px;padding-top:12px;border-top:1px solid var(--border)">
+        <div id="save-snap-note" style="flex:1;font-size:12px"></div>
+        <button class="btn" id="save-snap-btn" onclick="saveSnapshot()" disabled style="opacity:.5;font-size:13px;padding:9px 24px">Save snapshot</button>
+      </div>
+    </div>
+
+  </div>`;
 
   window._snapTgts=null;
   window._snapAgs=null;
+  /* init calendar state */
+  window._calTarget=null;
+  window._calYear=new Date().getFullYear();
+  window._calMonth=new Date().getMonth();
+  window._calFromVal=null;
+  window._calToVal=null;
+  /* render validation on init */
+  updateSnapValidation();
 }
-
-function handleCsvDropTo(type,e){
-  const file=e.dataTransfer.files[0];if(!file)return;
-  const r=new FileReader();r.onload=ev=>{
-    document.getElementById(type+'-paste').value=ev.target.result;
-    parsePasteFor(type,ev.target.result);
-  };r.readAsText(file);
+/* ─── CALENDAR DATE PICKER ─── */
+function calDateToISO(d){ return d.toISOString().slice(0,10); }
+function calISOToDate(s){ return s?new Date(s+'T00:00:00'):null; }
+function calFmtDisplay(s){
+  if(!s)return'';
+  const d=calISOToDate(s);
+  return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 }
-function handleCsvFileTo(type,input){
-  const file=input.files[0];if(!file)return;
-  const r=new FileReader();r.onload=ev=>{
-    document.getElementById(type+'-paste').value=ev.target.result;
-    parsePasteFor(type,ev.target.result);
-  };r.readAsText(file);
-}
-
-/* ─── ROBUST CSV COLUMN MATCHER ─── */
-function colFind(row, candidates){
-  const keys=Object.keys(row);
-  for(const k of keys){
-    if(candidates.some(c=>k.trim().toLowerCase()===c.trim().toLowerCase()))return k;
+function openCal(target){
+  window._calTarget=target;
+  const existingVal=target==='from'?window._calFromVal:window._calToVal;
+  const base=existingVal?calISOToDate(existingVal):new Date();
+  window._calYear=base.getFullYear();
+  window._calMonth=base.getMonth();
+  const popup=document.getElementById('snap-cal-popup');
+  if(!popup)return;
+  const inp=document.getElementById(target==='from'?'csv-date-from':'csv-date-to');
+  if(inp){
+    const rect=inp.getBoundingClientRect();
+    const pb=inp.closest('.po-body')||document.body;
+    const pr=pb.getBoundingClientRect();
+    popup.style.left=Math.max(0,rect.left-pr.left)+'px';
+    popup.style.top=(rect.bottom-pr.top+6)+'px';
   }
-  for(const k of keys){
-    if(candidates.some(c=>k.trim().toLowerCase().includes(c.trim().toLowerCase())))return k;
-  }
-  return null;
-}
-function colNum(row, candidates, fallback=0){
-  const k=colFind(row,candidates);
-  if(!k)return fallback;
-  const raw=String(row[k]||'').replace(/[£$%,]/g,'').trim();
-  const n=parseFloat(raw);
-  return isNaN(n)?fallback:n;
-}
-function colStr(row, candidates, fallback=''){
-  const k=colFind(row,candidates);
-  return k?(row[k]||'').trim():fallback;
-}
-
-function parsePasteFor(type,text){
-  const parsed=parseCsv(text);
-  const previewEl=document.getElementById(type+'-preview');
-  const badgeEl=document.getElementById(type+'-badge');
-  if(!parsed||!parsed.rows.length){previewEl.innerHTML='';badgeEl.textContent='';checkSnapReady();return;}
-
-  if(type==='tgt'){
-    /* ── Targeting report: real Amazon column names ── */
-    const matchMap={
-      'broad match':'Broad','phrase match':'Phrase','exact match':'Exact',
-      'broad':'Broad','phrase':'Phrase','exact':'Exact',
-      'targeting_expression_predefined_close_match':'Close Match',
-      'targeting_expression_predefined_loose_match':'Loose Match',
-      'targeting_expression_predefined_substitutes':'Substitutes',
-      'targeting_expression_predefined_complements':'Complements',
-      'close match':'Close Match','loose match':'Loose Match',
+  popup.style.display='block';
+  renderCalGrid();
+  setTimeout(()=>{
+    const close=(e)=>{
+      if(!popup.contains(e.target)&&!e.target.closest('[onclick*="openCal"]')&&e.target.id!=='csv-date-from'&&e.target.id!=='csv-date-to'){
+        popup.style.display='none';document.removeEventListener('mousedown',close);
+      }
     };
-
-    const rows=parsed.rows.map(r=>{
-      // Keyword / target name
-      const kw=colStr(r,['Keyword','keyword','Targeting expression','targeting_expression','Customer Search Term','customer_search_term','Target','target'],'');
-      if(!kw)return null;
-
-      const rawMatch=colStr(r,['Target match type','target_match_type','Match type','match_type','Match','match'],'');
-      const match=matchMap[rawMatch.toLowerCase()]||rawMatch||'—';
-
-      const bid=colNum(r,['Bid (GBP)','Bid (USD)','Bid','bid_gbp','bid'],0);
-      const imp=Math.round(colNum(r,['Impressions','impressions'],0));
-      const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
-
-      // CTR: Amazon exports as decimal (0.0032) or percent (0.32%)
-      let rawCtr=colNum(r,['CTR','ctr','Click-Through Rate (CTR)'],0);
-      const ctr=rawCtr>1?rawCtr/100:rawCtr; // normalise to decimal
-
-      const spend=colNum(r,['Total cost (GBP)','Total cost (USD)','Total cost','Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','Cost (USD)','total_cost_gbp','total_cost'],0);
-      const sales=colNum(r,['Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales (GBP)','7 Day Total Sales (USD)','7 Day Total Sales','sales_gbp','sales'],0);
-      const purch=Math.round(colNum(r,['Purchases','purchases','7 Day Total Orders (#)','7 Day Total Orders','Orders','orders'],0));
-
-      let rawAcos=colNum(r,['ACOS','acos','Advertising Cost of Sales'],0);
-      const acos=rawAcos>1?rawAcos:(rawAcos>0&&rawAcos<=1?rawAcos*100:0)||(sales?spend/sales*100:0);
-
-      let rawRoas=colNum(r,['ROAS','roas'],0);
-      const roas=rawRoas>0?rawRoas:(spend>0?sales/spend:0);
-
-      const cpcCsv=colNum(r,['CPC (GBP)','CPC (USD)','CPC','cpc_gbp','cpc','Cost Per Click (CPC)'],0);
-      const cpc=cpcCsv>0?cpcCsv:(clicks?spend/clicks:0);
-
-      const adGroup=colStr(r,['Ad group name','ad_group_name','Ad Group','ad_group','Automatic targeting groups'],'Targeting');
-
-      return{kw,adGroup,match,bid,imp,clicks,ctr,spend,sales,purch,acos,roas,cpc};
-    }).filter(Boolean);
-
-    window._snapTgts=rows;
-    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch,cl:a.cl+r.clicks,im:a.im+r.imp}),{sp:0,sa:0,pu:0,cl:0,im:0});
-    const totRoas=tot.sp?tot.sa/tot.sp:0;
-    const totAcos=tot.sa?tot.sp/tot.sa*100:0;
-    const totCpc=tot.cl?tot.sp/tot.cl:0;
-    const totCtr=tot.im?tot.cl/tot.im*100:0;
-
-    badgeEl.innerHTML=`<span style="color:var(--green)">✓ ${rows.length} targets parsed</span>`;
-    previewEl.innerHTML=`
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
-        ${[
-          ['Spend',gbp(tot.sp)],
-          ['Sales',gbp(tot.sa)],
-          ['ROAS',fmt(totRoas,2)],
-          ['ACOS',totAcos>0?fmt(totAcos,1)+'%':'—'],
-          ['Orders',intf(tot.pu)],
-        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
-        ${[
-          ['Impressions',intf(tot.im)],
-          ['Clicks',intf(tot.cl)],
-          ['CTR',fmt(totCtr,2)+'%'],
-          ['CPC',gbp(totCpc)],
-        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
-      </div>
-      <div style="overflow-x:auto"><table class="simple-tbl" style="min-width:580px;font-size:11px">
-        <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr ${r.spend>0&&r.sales===0?'class="trow-leak"':''}>
-          <td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.kw}">${r.kw}</td>
-          <td><span class="mtag">${r.match}</span></td>
-          <td>${gbp(r.bid)}</td>
-          <td>${intf(r.imp)}</td>
-          <td>${gbp(r.cpc)}</td>
-          <td ${r.spend>0&&r.sales===0?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
-          <td>${gbp(r.sales)}</td>
-          <td>${intf(r.purch)}</td>
-          <td>${r.acos>0?fmt(r.acos,1)+'%':'—'}</td>
-          <td style="color:${ragColor(rg)};font-weight:600">${rg==='leak'?'—':fmt(r.roas,2)}</td>
-        </tr>`;}).join('')}</tbody>
-      </table></div>`;
-
-  } else {
-    /* ── Ad Groups report: real Amazon column names ── */
-    const rows=parsed.rows.map(r=>{
-      const name=colStr(r,['Ad name','ad_name','Ad Name','Ad group name','ad_group_name','Ad Group'],'');
-      if(!name)return null;
-
-      const imp=Math.round(colNum(r,['Impressions','impressions'],0));
-      const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
-      const spend=colNum(r,['Total cost (GBP)','Total cost (USD)','Total cost','Spend (GBP)','Spend (USD)','Spend','Cost (GBP)','total_cost_gbp','total_cost'],0);
-      const sales=colNum(r,['Sales (GBP)','Sales (USD)','Sales','7 Day Total Sales (GBP)','7 Day Total Sales','sales_gbp','sales'],0);
-      const purch=Math.round(colNum(r,['Purchases','purchases','7 Day Total Orders (#)','7 Day Total Orders','Orders'],0));
-
-      const cpcCsv=colNum(r,['CPC (GBP)','CPC (USD)','CPC','cpc_gbp','cpc'],0);
-      const cpc=cpcCsv>0?cpcCsv:(clicks?spend/clicks:0);
-
-      let rawCtr=colNum(r,['CTR','ctr','Click-Through Rate (CTR)'],0);
-      const ctr=rawCtr>1?rawCtr/100:rawCtr;
-
-      let rawAcos=colNum(r,['ACOS','acos'],0);
-      const acos=rawAcos>1?rawAcos:(rawAcos>0&&rawAcos<=1?rawAcos*100:0)||(sales?spend/sales*100:0);
-
-      let rawRoas=colNum(r,['ROAS','roas'],0);
-      const roas=rawRoas>0?rawRoas:(spend>0?sales/spend:0);
-
-      const asin=colStr(r,['ASIN','asin'],'');
-      const sku=colStr(r,['SKU','sku'],'');
-      const status=colStr(r,['Status','state','State'],'');
-
-      return{name,imp,clicks,spend,sales,purch,cpc,ctr,acos,roas,asin,sku,status};
-    }).filter(Boolean);
-
-    window._snapAgs=rows;
-    const tot=rows.reduce((a,r)=>({sp:a.sp+r.spend,sa:a.sa+r.sales,pu:a.pu+r.purch,cl:a.cl+r.clicks,im:a.im+r.imp}),{sp:0,sa:0,pu:0,cl:0,im:0});
-    const totRoas=tot.sp?tot.sa/tot.sp:0;
-    const totCpc=tot.cl?tot.sp/tot.cl:0;
-    const totCtr=tot.im?tot.cl/tot.im*100:0;
-    const totAcos=tot.sa?tot.sp/tot.sa*100:0;
-
-    badgeEl.innerHTML=`<span style="color:var(--text2)">✓ ${rows.length} ads parsed</span>`;
-    previewEl.innerHTML=`
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
-        ${[
-          ['Spend',gbp(tot.sp)],
-          ['Sales',gbp(tot.sa)],
-          ['ROAS',fmt(totRoas,2)],
-          ['ACOS',totAcos>0?fmt(totAcos,1)+'%':'—'],
-          ['Orders',intf(tot.pu)],
-        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:var(--r-sm);overflow:hidden;margin-bottom:8px">
-        ${[
-          ['Impressions',intf(tot.im)],
-          ['Clicks',intf(tot.cl)],
-          ['CTR',fmt(totCtr,2)+'%'],
-          ['CPC',gbp(totCpc)],
-        ].map(([l,v])=>`<div style="background:var(--bg2);padding:8px 10px"><div class="label">${l}</div><div style="font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px">${v}</div></div>`).join('')}
-      </div>
-      <div style="overflow-x:auto"><table class="simple-tbl" style="min-width:540px;font-size:11px">
-        <thead><tr><th>Ad name</th><th>ASIN</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>CPC</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${rows.map(r=>{const rg=ragOf(r.roas,r.sales,r.spend);return`<tr ${r.spend>0&&r.sales===0?'class="trow-leak"':''}>
-          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name}">${r.name}</td>
-          <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${r.asin||'—'}</td>
-          <td>${intf(r.imp)}</td><td>${intf(r.clicks)}</td>
-          <td>${fmt(r.ctr*100,2)}%</td>
-          <td>${gbp(r.cpc)}</td>
-          <td ${r.spend>0&&r.sales===0?'style="color:var(--amber);font-weight:600"':''}>${gbp(r.spend)}</td>
-          <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
-          <td>${r.acos>0?fmt(r.acos,1)+'%':'—'}</td>
-          <td style="color:${ragColor(rg)};font-weight:600">${fmt(r.roas,2)}</td>
-        </tr>`;}).join('')}</tbody>
-      </table></div>`;
+    document.addEventListener('mousedown',close);
+  },80);
+}
+function renderCalGrid(){
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const hdr=document.getElementById('cal-header');
+  const grid=document.getElementById('cal-grid');
+  if(!hdr||!grid)return;
+  hdr.textContent=MN[window._calMonth]+' '+window._calYear;
+  const first=new Date(window._calYear,window._calMonth,1);
+  let dow=first.getDay()-1;if(dow<0)dow=6;
+  const dim=new Date(window._calYear,window._calMonth+1,0).getDate();
+  const today=calDateToISO(new Date());
+  let cells='';
+  for(let i=0;i<dow;i++)cells+='<div></div>';
+  for(let d=1;d<=dim;d++){
+    const iso=window._calYear+'-'+String(window._calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const iF=iso===window._calFromVal,iT=iso===window._calToVal;
+    const inR=window._calFromVal&&window._calToVal&&iso>window._calFromVal&&iso<window._calToVal;
+    const isNow=iso===today,isSel=iF||iT;
+    const bg=isSel?'var(--blue)':inR?'rgba(91,157,255,.2)':'var(--bg3)';
+    const fc=isSel?'#fff':isNow?'var(--blue)':inR?'var(--blue)':'var(--text)';
+    cells+=`<button onclick="calPickDay('${iso}')" style="border:none;border-radius:7px;width:100%;aspect-ratio:1;font-size:12px;font-weight:${isSel||isNow?700:400};cursor:pointer;background:${bg};color:${fc};outline:${isNow&&!isSel?'1.5px solid var(--blue)':'none'};outline-offset:-2px">${d}</button>`;
   }
-  checkSnapReady();
+  grid.innerHTML=cells;
+  const disp=document.getElementById('cal-selected-display');
+  if(disp){const cur=window._calTarget==='from'?window._calFromVal:window._calToVal;disp.textContent=cur?(window._calTarget==='from'?'Start':'End')+': '+calFmtDisplay(cur):(window._calTarget==='from'?'Start':'End')+' date';}
+}
+function calPickDay(iso){
+  if(window._calTarget==='from'){window._calFromVal=iso;if(!window._calToVal)window._calTarget='to';}
+  else{if(window._calFromVal&&iso<window._calFromVal){window._calToVal=window._calFromVal;window._calFromVal=iso;}else window._calToVal=iso;}
+  renderCalGrid();
+}
+function calNav(dir){window._calMonth+=dir;if(window._calMonth>11){window._calMonth=0;window._calYear++;}if(window._calMonth<0){window._calMonth=11;window._calYear--;}renderCalGrid();}
+function calClear(){if(window._calTarget==='from')window._calFromVal=null;else window._calToVal=null;renderCalGrid();}
+function calConfirm(){
+  document.getElementById('snap-cal-popup').style.display='none';
+  const sf=(id,iso)=>{const el=document.getElementById(id);if(!el)return;el.value=iso?calFmtDisplay(iso):'';el.dataset.iso=iso||'';};
+  sf('csv-date-from',window._calFromVal);
+  sf('csv-date-to',window._calToVal);
+  updatePeriodLabel();
 }
 
+/* ─── DATE PRESETS ─── */
+function setSnapRange(days){
+  const to=new Date(),from=new Date(to);
+  from.setDate(from.getDate()-days+1);
+  window._calFromVal=calDateToISO(from);window._calToVal=calDateToISO(to);calConfirm();
+}
+function setSnapLastWeek(){
+  const t=new Date(),dow=t.getDay(),mon=new Date(t);
+  mon.setDate(t.getDate()-dow-(dow===0?6:1)-7);
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  window._calFromVal=calDateToISO(mon);window._calToVal=calDateToISO(sun);calConfirm();
+}
+function setSnapLastMonth(){
+  const t=new Date();
+  const f=new Date(t.getFullYear(),t.getMonth()-1,1);
+  const l=new Date(t.getFullYear(),t.getMonth(),0);
+  window._calFromVal=calDateToISO(f);window._calToVal=calDateToISO(l);calConfirm();
+}
+
+/* ─── PERIOD LABEL ─── */
 function updatePeriodLabel(){
-  const from=document.getElementById('csv-date-from')?.value;
-  const to=document.getElementById('csv-date-to')?.value;
+  const from=document.getElementById('csv-date-from')?.dataset?.iso||'';
+  const to=document.getElementById('csv-date-to')?.dataset?.iso||'';
   if(!from&&!to)return;
-  const fmtD=d=>{if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});};
+  const fD=d=>{if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});};
   let label='';
   if(from&&to){
     const fd=new Date(from+'T00:00:00'),td=new Date(to+'T00:00:00');
-    // same month+year: "1–7 Jun 2026"
     if(fd.getMonth()===td.getMonth()&&fd.getFullYear()===td.getFullYear()){
       label=fd.getDate()+'–'+td.getDate()+' '+td.toLocaleDateString('en-GB',{month:'short',year:'numeric'});
-    } else if(fd.getFullYear()===td.getFullYear()){
-      // same year: "25 May – 1 Jun 2026"
+    }else if(fd.getFullYear()===td.getFullYear()){
       label=fd.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' – '+td.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-    } else {
-      label=fmtD(from)+' – '+fmtD(to);
-    }
-  } else if(from){label=fmtD(from);}
-  else{label=fmtD(to);}
-  const inp=document.getElementById('csv-period');
-  if(inp)inp.value=label;
-  checkSnapReady();
+    }else{label=fD(from)+' – '+fD(to);}
+  }else{label=from?fD(from):fD(to);}
+  const inp=document.getElementById('csv-period');if(inp)inp.value=label;
+  const disp=document.getElementById('period-label-display');
+  if(disp)disp.innerHTML=label?`<span style="color:var(--blue)">${label}</span>`:'';
+  const dc=document.getElementById('snap-daycount');
+  if(dc&&from&&to){
+    const days=Math.round((new Date(to+'T00:00:00')-new Date(from+'T00:00:00'))/86400000)+1;
+    dc.textContent=days+' day'+(days!==1?'s':'');
+  }
+  updateSnapValidation();
 }
 
-function checkSnapReady(){
-  const btn=document.getElementById('save-snap-btn');
-  const note=document.getElementById('save-snap-note');
-  if(!btn)return;
+/* ─── VALIDATION ─── */
+function updateSnapValidation(){
   const hasTgt=window._snapTgts&&window._snapTgts.length>0;
   const hasAg=window._snapAgs&&window._snapAgs.length>0;
-  const hasCSV=hasTgt||hasAg;
+  const from=document.getElementById('csv-date-from')?.dataset?.iso||'';
+  const to=document.getElementById('csv-date-to')?.dataset?.iso||'';
+  const hasDates=from&&to;
   const period=(document.getElementById('csv-period')?.value||'').trim();
-  const hasDateFrom=(document.getElementById('csv-date-from')?.value||'').trim();
-  const hasDateTo=(document.getElementById('csv-date-to')?.value||'').trim();
-  const hasDates=hasDateFrom&&hasDateTo;
-  const ready=hasCSV&&hasDates;
-  btn.disabled=!ready;
-  btn.style.opacity=ready?'1':'0.5';
-  if(!hasDates&&hasCSV)note.textContent='⚠ Select start & end dates to save';
-  else if(!hasCSV&&hasDates)note.textContent='⚠ Paste or drop a CSV file';
-  else if(hasTgt&&hasAg)note.textContent='✓ Both reports ready — click to save';
-  else if(hasTgt)note.textContent='✓ Targeting ready · Ad Groups optional';
-  else if(hasAg)note.textContent='✓ Ad Groups ready · Targeting recommended';
-  else note.textContent='Select dates + paste a CSV';
-  note.style.color=ready?'var(--green)':(!hasCSV||!hasDates)?'var(--amber)':'var(--text3)';
+  const checks=[
+    [hasDates,'Date range selected',hasDates?period:'No dates set'],
+    [hasTgt,'Targeting CSV imported',hasTgt?window._snapTgts.length+' targets parsed':'Not imported yet'],
+    [hasAg,'Ad Groups CSV imported',hasAg?window._snapAgs.length+' ad groups parsed':'Not imported (optional)'],
+  ];
+  const cl=document.getElementById('snap-checklist');
+  if(cl)cl.innerHTML=checks.map(([ok,lbl,det])=>`<div style="display:flex;align-items:flex-start;gap:8px">
+    <span style="width:17px;height:17px;border-radius:50%;background:${ok?'var(--green)':'var(--bg4)'};border:1px solid ${ok?'var(--green)':'var(--border)'};display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${ok?'#000':'var(--text4)'};flex-shrink:0;margin-top:1px">${ok?'✓':'—'}</span>
+    <div><div style="font-size:12px;font-weight:600;color:${ok?'var(--text)':'var(--text3)'}">${lbl}</div><div style="font-size:11px;color:${ok?'var(--text3)':'var(--text4)'};margin-top:1px">${det}</div></div></div>`).join('');
+  const ds=document.getElementById('snap-data-summary');
+  if(ds){
+    const src=hasTgt?window._snapTgts:(hasAg?window._snapAgs:[]);
+    if(src.length){
+      const sp=src.reduce((a,r)=>a+(r.spend||0),0),sa=src.reduce((a,r)=>a+(r.sales||0),0),pu=src.reduce((a,r)=>a+(r.purch||0),0);
+      const roas=sp?sa/sp:0,acos=sa?sp/sa*100:0;
+      const roasCol=roas>=5?'var(--green)':roas>=4?'var(--amber)':roas>0?'var(--red)':'var(--text3)';
+      const typeLabels={'regular':'Regular Snapshot','bid-change':'Bid Change','budget-change':'Budget Change','new-campaign':'New Campaign','keyword-expansion':'Keyword Expansion','prime-day':'Prime Day','black-friday':'Black Friday','testing':'Testing Period'};
+      const typ=document.getElementById('snap-type')?.value||'regular';
+      const rows=[hasDates&&[period]?['Period',period]:null,hasTgt?['Targets',window._snapTgts.length]:null,hasAg?['Ad Groups',window._snapAgs.length]:null,sp>0?['Spend',gbp(sp)]:null,sa>0?['Sales',gbp(sa)]:null,roas>0?['ROAS',`<b style="color:${roasCol}">${fmt(roas,2)}</b>`]:null,acos>0?['ACOS',fmt(acos,1)+'%']:null,pu>0?['Orders',intf(pu)]:null,['Type',typeLabels[typ]||'Regular']].filter(Boolean);
+      ds.innerHTML=`<div style="display:flex;flex-direction:column;gap:5px">${rows.map(([l,v])=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:14px"><span style="font-size:11.5px;color:var(--text3)">${l}</span><span style="font-size:12px;font-weight:600">${v}</span></div>`).join('')}</div>`;
+    }else{ds.innerHTML='<div style="font-size:12px;color:var(--text4);font-style:italic">Import CSVs to see data summary</div>';}
+  }
+  const ready=(hasTgt||hasAg)&&hasDates;
+  const btn=document.getElementById('save-snap-btn');if(btn){btn.disabled=!ready;btn.style.opacity=ready?'1':'0.5';}
+  const note=document.getElementById('save-snap-note');
+  if(note){
+    if(ready)note.innerHTML='<span style="color:var(--green);font-weight:600">Ready to save</span>';
+    else if(!hasDates&&(hasTgt||hasAg))note.innerHTML='<span style="color:var(--amber)">Set date range first</span>';
+    else if(hasDates&&!hasTgt&&!hasAg)note.innerHTML='<span style="color:var(--amber)">Import at least one CSV</span>';
+    else note.innerHTML='';
+  }
 }
+function checkSnapReady(){updateSnapValidation();}
 
 async function saveSnapshot(){
   const tgts=window._snapTgts||[];
   const ags=window._snapAgs||[];
   if(!tgts.length&&!ags.length){return;}
-  const dateFrom=(document.getElementById('csv-date-from')?.value||'').trim();
-  const dateTo=(document.getElementById('csv-date-to')?.value||'').trim();
+  const dateFrom=(document.getElementById('csv-date-from')?.dataset?.iso||'').trim();
+  const dateTo=(document.getElementById('csv-date-to')?.dataset?.iso||'').trim();
   const period=(document.getElementById('csv-period')?.value||'').trim();
   if(!dateFrom||!dateTo){
     const note=document.getElementById('save-snap-note');
@@ -2177,89 +2530,308 @@ async function saveSnapshot(){
 /* ════════ INSIGHTS PAGE ════════ */
 function renderInsights(){
   const A=campaigns.filter(c=>c.status==='active');
-  /* leaks: campaign-level + keyword-level (spend>0, sales=0) OR roas below break-even */
+  const today=new Date(); today.setHours(0,0,0,0);
+
+  /* ── helper: get latest snap for a campaign ── */
+  const last=c=>c.snapshots[c.snapshots.length-1]||{};
+  const prev=c=>c.snapshots[c.snapshots.length-2]||null;
+  const cpc_c=s=>s.cpc>0?s.cpc:(s.clicks&&s.spend?s.spend/s.clicks:0);
+  const ctr_c=s=>s.ctr>0?s.ctr:(s.impressions&&s.clicks?s.clicks/s.impressions*100:0);
+  const acos_c=s=>s.acos>0?s.acos:(s.sales?s.spend/s.sales*100:0);
+
+  /* ── account totals ── */
+  const totSpend=A.reduce((a,c)=>a+c.spend,0);
+  const totSales=A.reduce((a,c)=>a+c.sales,0);
+  const totOrders=A.reduce((a,c)=>a+c.purchases,0);
+  const blendedRoas=totSpend?totSales/totSpend:0;
+  const blendedAcos=totSales?totSpend/totSales*100:0;
+
+  /* ── trend bar — 4 account-level sparklines ── */
+  const ns=Math.max(...A.map(c=>c.snapshots.length),2);
+  const periodLabels=[];
+  const buildSeries=key=>{
+    const out=[];
+    for(let i=0;i<Math.min(ns,8);i++){
+      let v=0;
+      A.forEach(c=>{const s=c.snapshots[c.snapshots.length-Math.min(ns,8)+i];if(s)v+=s[key]||0;});
+      out.push(v);
+      if(i===0&&A[0]){const s=A[0].snapshots[A[0].snapshots.length-Math.min(ns,8)];if(s)periodLabels[i]=s.date||'';}
+    }
+    return out;
+  };
+  const spendSeries=buildSeries('spend');
+  const salesSeries=buildSeries('sales');
+  const orderSeries=buildSeries('purchases');
+  const roasSeries=spendSeries.map((sp,i)=>sp>0?salesSeries[i]/sp:0);
+
+  const trendSpk=(vals,col,w=100,hh=36)=>{
+    if(vals.filter(v=>v>0).length<2)return'<div style="height:36px;display:flex;align-items:center;color:var(--text4);font-size:10px">Not enough data</div>';
+    const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
+    const pts=vals.map((v,i)=>[i/(vals.length-1)*(w-4)+2,hh-4-((v-mn)/range)*(hh-8)]);
+    const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    const lv=vals[vals.length-1],pv=vals[vals.length-2]||lv;
+    const tc=lv>=pv?col:'var(--red)';
+    const colId=col.split('').filter(c=>/[a-z]/i.test(c)).join('');
+    const area=d+` L${pts[pts.length-1][0]} ${hh} L${pts[0][0]} ${hh} Z`;
+    return `<svg width="${w}" height="${hh}" style="display:block"><defs><linearGradient id="tg${colId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tc}" stop-opacity=".25"/><stop offset="1" stop-color="${tc}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#tg${colId})" /><path d="${d}" fill="none" stroke="${tc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3" fill="${tc}"/></svg>`;
+  };
+
+  const pctChg=(arr)=>{const l=arr[arr.length-1],p=arr[arr.length-2]||0;if(!p)return null;return((l-p)/Math.abs(p))*100;};
+  const trendCard=(label,val,series,col,fmtFn)=>{
+    const p=pctChg(series);
+    const good=p>=0;
+    const delta=p!=null?`<span style="font-size:11px;font-weight:600;color:${good?'var(--green)':'var(--red)'}">${good?'↑':'↓'} ${Math.abs(p).toFixed(1)}%</span>`:'';
+    return `<div class="card" style="padding:14px 16px 10px">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:4px">${label}</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px">
+        <div style="font-family:var(--display);font-size:22px;font-weight:700;color:${col}">${fmtFn(val)}</div>
+        ${delta}
+      </div>
+      ${trendSpk(series,col)}
+    </div>`;
+  };
+
+  document.getElementById('ins-trend-bar').innerHTML=
+    trendCard('Total sales',totSales,salesSeries,'var(--green)',v=>gbp(v))+
+    trendCard('Total spend',totSpend,spendSeries,'var(--blue)',v=>gbp(v))+
+    trendCard('Blended ROAS',blendedRoas,roasSeries,blendedRoas>=5?'var(--green)':blendedRoas>=4?'var(--amber)':'var(--red)',v=>fmt(v,2))+
+    trendCard('Total orders',totOrders,orderSeries,'var(--purple)',v=>intf(v));
+
+  /* ── spend leaks ── */
   const leaks=[];
   A.forEach(c=>{
-    if(c.noSaleSpend)leaks.push({type:'Campaign',name:c.alias||c.name,sub:c.asin,spend:c.spend,sales:0,cid:c.id,reason:'0 sales'});
-    const last=c.snapshots[c.snapshots.length-1];
-    (last?.targeting||[]).forEach(t=>{if(t.spend>=0.5&&t.sales===0)leaks.push({type:'Target',name:t.kw,sub:c.alias+' · '+t.match,spend:t.spend,sales:0,cid:c.id,reason:'0 sales'});});
+    if(c.noSaleSpend)leaks.push({type:'Campaign',name:c.alias||c.name,sub:c.asin,spend:c.spend,sales:0,cid:c.id,roas:0});
+    const ls=last(c);
+    (ls.targeting||[]).forEach(t=>{
+      if(t.spend>=1&&t.sales===0)leaks.push({type:'Keyword',name:t.kw,sub:(c.alias||c.name)+' · '+(t.match||''),spend:t.spend,sales:0,cid:c.id,roas:0});
+    });
+    (ls.adGroups||[]).forEach(ag=>{
+      if(ag.spend>=1&&ag.sales===0)leaks.push({type:'Ad',name:ag.name,sub:(c.alias||c.name),spend:ag.spend,sales:0,cid:c.id,roas:0});
+    });
   });
   leaks.sort((a,b)=>b.spend-a.spend);
   const leakTotal=leaks.reduce((a,l)=>a+l.spend,0);
-  document.getElementById('leak-total').textContent=gbp(leakTotal)+' leaking';
-  document.getElementById('leak-list').innerHTML=leaks.length?leaks.slice(0,12).map(l=>`
-    <div class="leak" onclick="openCamp('${l.cid}')">
-      <span class="rag ${l.type==='Campaign'?'r':'flag'}" style="flex-shrink:0;font-size:9.5px">${l.type}</span>
-      <div class="bd">
-        <b>${l.name}</b>
-        <span>${l.sub} · ${l.reason}</span>
-      </div>
-      <div class="amt">
-        <div class="big">${gbp(l.spend)}</div>
-        <div class="sm">£0 sales · ROAS 0.00</div>
-      </div>
-    </div>`).join(''):'<div class="empty">No spend leaks — every active target is converting ✓</div>';
+  document.getElementById('leak-total').textContent=leaks.length?`${leaks.length} issues · ${gbp(leakTotal)} wasted`:'Clean ✓';
+  document.getElementById('leak-total').className=leaks.length?'rag flag':'rag g';
 
-  /* change scoreboard */
-  const allCh=A.flatMap(c=>c.changes.map(ch=>({...ch,cid:c.id})));
-  const wins=allCh.filter(c=>c.outcome==='win').length,loss=allCh.filter(c=>c.outcome==='loss').length,pend=allCh.filter(c=>c.outcome==='pending').length;
+  const typeCol={Campaign:'var(--red)',Keyword:'var(--amber)',Ad:'var(--amber)'};
+  document.getElementById('leak-list').innerHTML=leaks.length
+    ?leaks.slice(0,10).map(l=>`<div class="leak" onclick="openCamp('${l.cid}')">
+        <span style="font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;background:${typeCol[l.type]}22;color:${typeCol[l.type]};flex-shrink:0">${l.type}</span>
+        <div class="bd"><b>${l.name}</b><span style="font-size:10.5px;color:var(--text3)">${l.sub}</span></div>
+        <div class="amt">
+          <div class="big" style="font-size:13px">${gbp(l.spend)}</div>
+          <div class="sm">£0 return · ROAS 0.00</div>
+        </div>
+      </div>`).join('')
+    :'<div class="empty" style="padding:20px;text-align:center;color:var(--green)">✓ No spend leaks — every active target is converting</div>';
+
+  /* ── change scoreboard ── */
+  const allCh=A.flatMap(c=>c.changes.map((ch,i)=>({...ch,cid:c.id,cn:c.alias||c.name})));
+  const wins=allCh.filter(c=>c.outcome==='win').length;
+  const loss=allCh.filter(c=>c.outcome==='loss').length;
+  const pend=allCh.filter(c=>c.outcome==='pending').length;
   const tot=allCh.length||1;
+  const winRate=Math.round(wins/Math.max(wins+loss,1)*100);
   document.getElementById('scoreboard').innerHTML=`
-    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px">
-      <span style="font-family:var(--display);font-size:30px;font-weight:700;color:var(--green)">${Math.round(wins/Math.max(wins+loss,1)*100)}%</span>
-      <span class="muted" style="font-size:12px">win rate · ${wins} worked, ${loss} didn't, ${pend} watching</span>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+      <span style="font-family:var(--display);font-size:32px;font-weight:700;color:${winRate>=70?'var(--green)':winRate>=50?'var(--amber)':'var(--red)'}">${winRate}%</span>
+      <span style="color:var(--text3);font-size:12px">win rate</span>
     </div>
-    <div class="scorebar"><i style="width:${wins/tot*100}%;background:var(--green)"></i><i style="width:${loss/tot*100}%;background:var(--red)"></i><i style="width:${pend/tot*100}%;background:var(--amber)"></i></div>
-    <div style="display:flex;gap:16px;margin-top:10px;font-size:11px" class="muted">
-      <span><span style="color:var(--green)">●</span> Worked ${wins}</span><span><span style="color:var(--red)">●</span> Didn't ${loss}</span><span><span style="color:var(--amber)">●</span> Watching ${pend}</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+      <div style="background:var(--green-bg);border-radius:8px;padding:8px 10px;text-align:center">
+        <div style="font-size:10px;color:var(--green);font-weight:600;text-transform:uppercase">Worked</div>
+        <div style="font-family:var(--display);font-size:20px;font-weight:700;color:var(--green)">${wins}</div>
+      </div>
+      <div style="background:var(--red-bg);border-radius:8px;padding:8px 10px;text-align:center">
+        <div style="font-size:10px;color:var(--red);font-weight:600;text-transform:uppercase">Didn't work</div>
+        <div style="font-family:var(--display);font-size:20px;font-weight:700;color:var(--red)">${loss}</div>
+      </div>
+      <div style="background:var(--amber-bg);border-radius:8px;padding:8px 10px;text-align:center">
+        <div style="font-size:10px;color:var(--amber);font-weight:600;text-transform:uppercase">Watching</div>
+        <div style="font-family:var(--display);font-size:20px;font-weight:700;color:var(--amber)">${pend}</div>
+      </div>
     </div>
-    <div style="margin-top:14px">${allCh.filter(c=>c.outcome==='loss').slice(0,3).map(ch=>`
-      <div class="lrow" onclick="openCamp('${ch.cid}')"><div class="nm" style="font-size:11.5px">✕ ${ch.what}</div><div class="vv"><span class="muted" style="font-size:10px">${ch.outcomeNote||'reverting'}</span></div></div>`).join('')||'<div class="muted" style="font-size:11.5px">No failed changes to review.</div>'}</div>`;
+    <div style="height:6px;border-radius:4px;background:var(--bg4);overflow:hidden;display:flex;margin-bottom:12px">
+      <div style="width:${wins/tot*100}%;background:var(--green)"></div>
+      <div style="width:${loss/tot*100}%;background:var(--red)"></div>
+      <div style="width:${pend/tot*100}%;background:var(--amber)"></div>
+    </div>
+    ${allCh.length===0?'<div style="color:var(--text3);font-size:12px">No changes logged yet. Log your first change to start tracking what works.</div>'
+    :allCh.filter(c=>c.outcome==='win').slice(0,3).map(ch=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--green);font-size:13px;flex-shrink:0">✓</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500">${ch.what}</div>
+        <div style="font-size:10.5px;color:var(--text3)">${ch.cn} · ${ch.date}</div>
+        ${ch.outcomeNote?`<div style="font-size:10.5px;color:var(--text2);margin-top:2px">${ch.outcomeNote}</div>`:''}
+      </div>
+    </div>`).join('')}`;
 
-  /* movers */
+  /* ── ROAS movers ── */
   const withDelta=A.filter(c=>c.snapshots.length>=2).map(c=>{
-    const last2=c.snapshots[c.snapshots.length-1],prev2=c.snapshots[c.snapshots.length-2];
-    return{...c,d:last2.roas-prev2.roas,prev:prev2.roas,prevRag:ragOf(prev2.roas,prev2.sales,prev2.spend)};
+    const ls=last(c),pv=prev(c);
+    return{...c,d:ls.roas-(pv?.roas||0),prevRoas:pv?.roas||0,prevRag:ragOf(pv?.roas||0,pv?.sales||0,pv?.spend||0)};
   });
-  const moverRow=(c,showPrev=true)=>`<div class="lrow" onclick="openCamp('${c.id}')">
-    <div class="nm" style="font-size:12px">${c.alias||c.name}</div>
-    <div class="vv">
-      ${showPrev?`<span class="muted" style="font-size:10.5px">${fmt(c.prev,2)} →</span>`:''}
-      <b style="color:${ragColor(c.rag)}">${fmt(c.roas,2)}</b>
-      <span style="color:${c.d>=0?'var(--green)':'var(--red)'};font-weight:700">${c.d>=0?'+':''}${fmt(c.d,2)}</span>
+
+  const moverRow=c=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${c.id}')">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
+      <div style="font-size:10.5px;color:var(--text3)">${c.asin||''}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:11px;color:var(--text3)">${fmt(c.prevRoas,2)} <span style="color:var(--text4)">→</span> <b style="color:${ragColor(c.rag)}">${fmt(c.roas,2)}</b></div>
+      <div style="font-size:12px;font-weight:700;color:${c.d>=0?'var(--green)':'var(--red)'}">${c.d>=0?'+':''}${fmt(c.d,2)}</div>
     </div>
   </div>`;
-  document.getElementById('ins-up').innerHTML=withDelta.filter(c=>c.d>0.05).sort((a,b)=>b.d-a.d).slice(0,5).map(c=>moverRow(c)).join('')||'<div class="muted" style="padding:6px 0;font-size:12px">None improving this period.</div>';
-  document.getElementById('ins-down').innerHTML=withDelta.filter(c=>c.d<-0.05).sort((a,b)=>a.d-b.d).slice(0,5).map(c=>moverRow(c)).join('')||'<div class="muted" style="padding:6px 0;font-size:12px">None declining. ✓</div>';
-  /* new red: previously ROAS>=4 now ROAS<4 */
-  const newRed=withDelta.filter(c=>c.prev>=4&&c.roas<4);
-  document.getElementById('ins-newred').innerHTML=newRed.length?newRed.map(c=>`<div class="lrow" onclick="openCamp('${c.id}')">
-    <div class="nm" style="font-size:12px;color:var(--red)">${c.alias||c.name}</div>
-    <div class="vv"><span class="muted" style="font-size:10.5px">${fmt(c.prev,2)}</span><span style="color:var(--red);font-weight:700">→ ${fmt(c.roas,2)}</span></div>
-  </div>`).join(''):'<div class="muted" style="padding:6px 0;font-size:12px">No new red campaigns. ✓</div>';
 
-  /* reviews due (any change with review date) */
-  const reviews=A.flatMap(c=>c.changes.filter(ch=>ch.review).map(ch=>({c,ch}))).slice(0,6);
-  document.getElementById('ins-reviews').innerHTML=reviews.length?reviews.map(({c,ch})=>`<div class="lrow" onclick="openCamp('${c.id}')"><div class="nm" style="font-size:12px">${c.alias||c.name}</div><div class="vv"><span class="muted" style="font-size:10px">${ch.type}</span><span class="rag a" style="padding:2px 7px">${ch.review}</span></div></div>`).join(''):'<div class="muted" style="padding:6px 0">No reviews scheduled.</div>';
+  document.getElementById('ins-up').innerHTML=withDelta.filter(c=>c.d>0.05).sort((a,b)=>b.d-a.d).slice(0,5).map(moverRow).join('')
+    ||'<div style="padding:10px 0;font-size:12px;color:var(--text3)">No campaigns improved this period.</div>';
+  document.getElementById('ins-down').innerHTML=withDelta.filter(c=>c.d<-0.05).sort((a,b)=>a.d-b.d).slice(0,5).map(moverRow).join('')
+    ||'<div style="padding:10px 0;font-size:12px;color:var(--green)">✓ No ROAS declines this period.</div>';
 
-  /* spend table */
+  const newRed=withDelta.filter(c=>c.prevRoas>=4&&c.roas<4);
+  document.getElementById('ins-newred').innerHTML=newRed.length
+    ?newRed.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;border-left:3px solid var(--red);padding-left:10px" onclick="openCamp('${c.id}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;color:var(--red)">${c.alias||c.name}</div>
+          <div style="font-size:10.5px;color:var(--text3)">Was ${fmt(c.prevRoas,2)}× → now ${fmt(c.roas,2)}× ROAS</div>
+        </div>
+        <span style="font-size:10px;color:var(--red);font-weight:600">REVIEW →</span>
+      </div>`).join('')
+    :'<div style="padding:10px 0;font-size:12px;color:var(--green)">✓ No campaigns crossed into red.</div>';
+
+  /* ── keyword intelligence ── */
+  const allTgts=[];
+  A.forEach(c=>{
+    const ls=last(c);
+    (ls.targeting||[]).forEach(t=>{allTgts.push({...t,cn:c.alias||c.name,cid:c.id});});
+  });
+
+  const kwRow=(t,showAcos=true)=>{
+    const rg=ragOf(t.roas,t.sales,t.spend);
+    const rl=t.spend>0&&t.sales===0;
+    const rc=t.cpc>0?t.cpc:(t.clicks?t.spend/t.clicks:0);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${t.cid}')">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.kw||''}">${rl?'<span class="flagdot"></span>':''}${t.kw||'—'}</div>
+        <div style="font-size:10px;color:var(--text3)">${t.cn} · <span style="background:var(--bg4);padding:1px 5px;border-radius:3px">${t.match||'—'}</span></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;color:${rl?'var(--amber)':ragColor(rg)}">${rl?'—':fmt(t.roas,2)}</div>
+        <div style="font-size:10px;color:var(--text3)">${gbp(t.spend)} spend · ${gbp(t.sales)} sales</div>
+        ${showAcos&&t.sales?`<div style="font-size:10px;color:var(--text3)">ACOS ${fmt(t.acos||t.spend/t.sales*100,1)}%</div>`:''}
+      </div>
+    </div>`;
+  };
+
+  const topKw=allTgts.filter(t=>t.spend>0&&t.sales>0).sort((a,b)=>b.roas-a.roas).slice(0,8);
+  const worstKw=allTgts.filter(t=>t.spend>=1).sort((a,b)=>{
+    /* sort by: spend leaks first, then lowest ROAS */
+    if(a.sales===0&&b.sales>0)return-1;if(b.sales===0&&a.sales>0)return 1;
+    return(a.roas||0)-(b.roas||0);
+  }).slice(0,8);
+
+  document.getElementById('ins-top-kw').innerHTML=topKw.length
+    ?topKw.map(t=>kwRow(t)).join('')
+    :'<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">No keyword data yet. Import Targeting CSVs via + Snapshot.</div>';
+  document.getElementById('ins-worst-kw').innerHTML=worstKw.length
+    ?worstKw.map(t=>kwRow(t)).join('')
+    :'<div style="padding:20px;text-align:center;color:var(--green);font-size:12px">✓ No underperforming keywords found.</div>';
+
+  /* ── spend vs sales table ── */
   const maxSp=Math.max(...A.map(c=>c.spend),0.1);
-  document.getElementById('ins-spendtable').innerHTML=[...A].sort((a,b)=>b.spend-a.spend).slice(0,12).map(c=>`
-    <tr onclick="openCamp('${c.id}')"><td>${c.alias||c.name}</td><td${c.noSaleSpend?' style="color:var(--amber)"':''}>${gbp(c.spend)}</td><td>${gbp(c.sales)}</td><td>${c.sales?fmt(c.acos,1)+'%':'—'}</td>
-    <td style="color:${ragColor(c.rag)};font-weight:600">${c.noSaleSpend?'—':fmt(c.roas,2)}</td>
-    <td style="text-align:left"><div class="bar" style="width:100%"><i style="width:${c.spend/maxSp*100}%;background:${ragColor(c.rag)}"></i></div></td></tr>`).join('');
+  const cpc_fn=c=>cpc_c(last(c));
+  document.getElementById('ins-spendtable').innerHTML=[...A].sort((a,b)=>b.spend-a.spend).map(c=>{
+    const rg=ragOf(c.roas,c.sales,c.spend);
+    const hl=c.noSaleSpend;
+    const spPct=c.spend/totSpend*100;
+    return `<tr onclick="openCamp('${c.id}')" style="cursor:pointer">
+      <td><div style="font-size:12px;font-weight:500">${c.alias||c.name}</div><div style="font-size:10px;color:var(--text3)">${c.asin||''}</div></td>
+      <td ${hl?'style="color:var(--amber);font-weight:600"':''}>${gbp(c.spend)}</td>
+      <td style="color:var(--green)">${gbp(c.sales)}</td>
+      <td>${c.sales?fmt(acos_c(last(c)),1)+'%':'—'}</td>
+      <td style="color:${ragColor(rg)};font-weight:600">${hl?'<span class="rag flag" style="font-size:9px">NO SALE</span>':fmt(c.roas,2)}</td>
+      <td>${cpc_fn(c)>0?gbp(cpc_fn(c)):'—'}</td>
+      <td>${intf(c.purchases)}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;min-width:50px">
+          <div style="width:${spPct}%;height:100%;background:${ragColor(rg)};border-radius:3px"></div>
+        </div>
+        <span style="font-size:10px;color:var(--text3);flex-shrink:0">${fmt(spPct,1)}%</span>
+      </div></td>
+    </tr>`;
+  }).join('');
 
-  /* flags */
+  /* ── reviews due ── */
+  const reviews=A.flatMap(c=>c.changes.filter(ch=>ch.outcome==='pending').map(ch=>{
+    const rd=ch.review?new Date(ch.review+'T00:00:00'):null;
+    const diff=rd?Math.round((rd-today)/86400000):999;
+    return{...ch,cid:c.id,cn:c.alias||c.name,diff,rd};
+  })).sort((a,b)=>a.diff-b.diff);
+
+  document.getElementById('ins-reviews').innerHTML=reviews.length
+    ?reviews.slice(0,8).map(r=>{
+        const overdue=r.diff<=0, soon=r.diff<=7;
+        const col=overdue?'var(--red)':soon?'var(--amber)':'var(--text3)';
+        const label=overdue?`${Math.abs(r.diff)}d overdue`:r.diff===0?'TODAY':`in ${r.diff}d`;
+        return `<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${r.cid}')">
+          <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;margin-top:4px"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.what}</div>
+            <div style="font-size:10.5px;color:var(--text3)">${r.cn}</div>
+          </div>
+          <span style="font-size:10.5px;font-weight:700;color:${col};flex-shrink:0;white-space:nowrap">${label}</span>
+        </div>`;
+      }).join('')
+    :'<div style="padding:10px 0;font-size:12px;color:var(--text3)">No pending reviews.</div>';
+
+  /* ── account-level flags ── */
   const flags=[];
-  const leakC=A.filter(c=>c.noSaleSpend);
-  if(leakC.length)flags.push({c:'var(--amber)',t:`${leakC.length} campaign${leakC.length>1?'s':''} spending with zero sales — ${gbp(leakC.reduce((a,c)=>a+c.spend,0))} at risk. Top: ${leakC[0].alias}.`});
+  if(leaks.length){
+    const lSpend=leaks.reduce((a,l)=>a+l.spend,0);
+    flags.push({col:'var(--red)',icon:'🔴',title:`${leaks.length} spend leak${leaks.length>1?'s':''} draining ${gbp(lSpend)}`,body:`Money is being spent with zero return. Top culprit: <b>${leaks[0].name}</b> (${gbp(leaks[0].spend)}). Pause or add negative keywords immediately.`});
+  }
   const reds=A.filter(c=>c.rag==='r');
-  if(reds.length)flags.push({c:'var(--red)',t:`${reds.length} campaign${reds.length>1?'s':''} below 3.5× ROAS — review bids before they erode profit.`});
-  const big=withDelta.filter(c=>c.d<-1);
-  if(big.length)flags.push({c:'var(--amber)',t:`${big.length} sharp ROAS drop${big.length>1?'s':''} (>1.0×) since last snapshot: ${big.map(c=>c.alias).join(', ')}.`});
-  if(wins>loss)flags.push({c:'var(--green)',t:`Your changes are net-positive — ${wins} worked vs ${loss} that didn't. Keep documenting why.`});
-  document.getElementById('ins-flags').innerHTML=flags.map(f=>`<div style="display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--border)"><span style="color:${f.c};font-size:14px">●</span><span style="font-size:12.5px;color:var(--text2)">${f.t}</span></div>`).join('')||'<div class="muted">No flags — account looking healthy. ✓</div>';
+  if(reds.length){
+    flags.push({col:'var(--red)',icon:'📉',title:`${reds.length} campaign${reds.length>1?'s':''} below 4.0× ROAS`,body:`<b>${reds.map(c=>c.alias||c.name).join(', ')}</b> ${reds.length===1?'is':'are'} underperforming. Review bids, targeting match types, and negative keywords.`});
+  }
+  const bigDrops=withDelta.filter(c=>c.d<-1);
+  if(bigDrops.length){
+    flags.push({col:'var(--amber)',icon:'⚡',title:`${bigDrops.length} sharp ROAS drop${bigDrops.length>1?'s':''}`,body:`${bigDrops.map(c=>`<b>${c.alias||c.name}</b> dropped ${fmt(Math.abs(c.d),2)}×`).join(', ')}. Investigate spend spikes, new competition, or listing changes.`});
+  }
+  const newRedF=withDelta.filter(c=>c.prevRoas>=4&&c.roas<4);
+  if(newRedF.length){
+    flags.push({col:'var(--red)',icon:'🆘',title:`${newRedF.length} campaign${newRedF.length>1?'s':''} crossed into red`,body:`${newRedF.map(c=>`<b>${c.alias||c.name}</b>`).join(', ')} just dropped below 4.0× ROAS. Take action before spend accumulates further.`});
+  }
+  if(blendedRoas>=5){
+    flags.push({col:'var(--green)',icon:'✅',title:`Blended ROAS is ${fmt(blendedRoas,2)}× — above target`,body:`Account is in green territory. Focus on scaling your best-performing campaigns and cutting leaks.`});
+  }
+  if(wins>loss&&allCh.length>2){
+    flags.push({col:'var(--green)',icon:'🏆',title:`${winRate}% of your changes worked — positive track record`,body:`Keep logging every change so the pattern continues. Your optimisation decisions are net-positive.`});
+  }
+  const highAcos=A.filter(c=>acos_c(last(c))>30&&c.sales>0);
+  if(highAcos.length){
+    flags.push({col:'var(--amber)',icon:'💰',title:`${highAcos.length} campaign${highAcos.length>1?'s':''} with ACOS above 30%`,body:`${highAcos.map(c=>`<b>${c.alias||c.name}</b> at ${fmt(acos_c(last(c)),1)}%`).join(', ')}. Consider reducing bids or tightening match types.`});
+  }
+  const imprDrops=withDelta.filter(c=>{
+    const lsI=last(c).impressions||0, pvI=prev(c)?.impressions||0;
+    return pvI>50&&lsI<pvI*0.7;
+  });
+  if(imprDrops.length){
+    flags.push({col:'var(--amber)',icon:'👁',title:`${imprDrops.length} campaign${imprDrops.length>1?'s':''} with significant impression drop`,body:`${imprDrops.map(c=>`<b>${c.alias||c.name}</b> (-${fmt((1-(last(c).impressions||0)/(prev(c)?.impressions||1))*100,0)}%)`).join(', ')}. Check bids — you may be losing the auction.`});
+  }
+
+  document.getElementById('ins-flags').innerHTML=flags.length
+    ?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${flags.map(f=>`<div style="background:var(--bg2);border:1px solid var(--border);border-left:4px solid ${f.col};border-radius:var(--r-sm);padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+          <span style="font-size:14px">${f.icon}</span>
+          <span style="font-size:12.5px;font-weight:600">${f.title}</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--text3);line-height:1.5">${f.body}</div>
+      </div>`).join('')}</div>`
+    :'<div style="padding:14px;background:var(--green-bg);border-radius:var(--r-sm);color:var(--green);font-size:12.5px;text-align:center">✓ Account looking healthy — no flags to raise.</div>';
 }
+
 
 /* ════════ CHANGE LOG PAGE ════════ */
 function renderChangeLog(){
@@ -2379,63 +2951,319 @@ function allPeriods(){const set=new Set();campaigns.forEach(c=>c.snapshots.forEa
 function periodAgg(period){let spend=0,sales=0,orders=0,impr=0,n=0,leaks=0;
   campaigns.forEach(c=>{const s=c.snapshots.find(x=>x.date===period);if(!s)return;n++;spend+=s.spend;sales+=s.sales;orders+=s.purchases;impr+=s.impressions;if(s.spend>0&&s.sales===0)leaks++;});
   return{spend,sales,orders,impr,n,leaks,roas:spend?sales/spend:0};}
+/* Period lookup map */
+window._periodMap = {};
+function deletePeriod(safeP){ const p=window._periodMap[safeP]; if(p)deleteSnapshotPeriod(p); }
+
 function renderSnapshots(){
   const el=document.getElementById('snap-page-content');
   if(snapMode==='date'){
     const periods=allPeriods();
-    el.innerHTML=`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">${periods.map(p=>{const a=periodAgg(p);
-      const safeP=p.replace(/'/g,'').replace(/"/g,'&quot;');
-      return `<div class="snapcard" data-p="${safeP}">
-        <div class="sc-top" onclick="openSnapPeriod('${safeP}')" style="cursor:pointer">
-          <div class="sc-date">${p}</div>
-          <div style="display:flex;gap:7px;align-items:center">
-            ${a.leaks?`<span class="rag flag">${a.leaks} leak${a.leaks>1?'s':''}</span>`:''}
-            <span class="rag ${ragOf(a.roas,a.sales,a.spend)}"><span class="d"></span>${fmt(a.roas,1)}</span>
-            <button onclick="event.stopPropagation();deleteSnapshotPeriod('${safeP}')" style="background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);font-size:10px;padding:2px 7px;border-radius:5px;cursor:pointer;font-family:var(--font)" title="Delete snapshot">✕</button>
+    if(!periods.length){
+      el.innerHTML='<div class="empty" style="padding:48px;text-align:center;color:var(--text3)">No snapshots yet. Open a campaign, go to + Snapshot, and import your first CSV.</div>';
+      return;
+    }
+    window._periodMap={};
+    periods.forEach(p=>{window._periodMap[p.replace(/[^a-zA-Z0-9]/g,'_')]=p;});
+    el.innerHTML=periods.map(p=>{
+      const a=periodAgg(p);
+      const safeP=p.replace(/[^a-zA-Z0-9]/g,'_');
+      const rg=ragOf(a.roas,a.sales,a.spend);
+      return `<div class="snapcard" id="snapcard-${safeP}" style="margin-bottom:10px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)">
+        <!-- Period header row — click to toggle -->
+        <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:13px 16px;background:var(--panel);cursor:pointer;gap:12px" onclick="toggleSnapPeriod('${safeP}')">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div style="font-family:var(--display);font-size:15px;font-weight:700">${p}</div>
+            <div style="display:flex;gap:6px;align-items:center">
+              ${a.leaks?`<span class="rag flag" style="font-size:9px">${a.leaks} leak${a.leaks>1?'s':''}</span>`:''}
+              <span class="rag ${rg}"><span class="d"></span>${fmt(a.roas,2)}</span>
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap">
+              ${[['Spend',gbp(a.spend),'var(--text)'],['Sales',gbp(a.sales),'var(--green)'],['Orders',intf(a.orders),'var(--text)'],['Campaigns',a.n,'var(--text3)']].map(([l,v,c])=>`<div style="font-size:11px"><span style="color:var(--text3)">${l} </span><span style="font-weight:600;color:${c}">${v}</span></div>`).join('')}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button onclick=\"event.stopPropagation();deletePeriod('${safeP}')\"tyle="background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);font-size:10px;padding:3px 9px;border-radius:5px;cursor:pointer;font-family:var(--font)">Delete</button>
+            <span id="snap-chev-${safeP}" style="color:var(--text4);font-size:13px;transition:.2s;transform:rotate(0deg);display:inline-block">▼</span>
           </div>
         </div>
-        <div class="sc-body" onclick="openSnapPeriod('${safeP}')" style="cursor:pointer">
-          <div class="sc-m"><div class="l">Spend</div><div class="v">${gbp(a.spend)}</div></div>
-          <div class="sc-m"><div class="l">Sales</div><div class="v" style="color:var(--green)">${gbp(a.sales)}</div></div>
-          <div class="sc-m"><div class="l">Orders</div><div class="v">${intf(a.orders)}</div></div>
-          <div class="sc-m"><div class="l">Campaigns</div><div class="v">${a.n}</div></div>
-        </div></div>`;}).join('')}</div>`;
+        <!-- Expanded content -->
+        <div id="snap-exp-${safeP}" style="display:none;border-top:1px solid var(--border)">
+          ${renderSnapPeriodDetail(p)}
+        </div>
+      </div>`;
+    }).join('');
   } else {
-    el.innerHTML=`<div class="tablecard"><div class="tscroll"><table class="dt" style="min-width:760px">
-      <thead><tr><th>Campaign</th><th>Snapshots</th><th>Latest period</th><th>Spend</th><th>Sales</th><th>ROAS</th><th>Trend</th></tr></thead>
-      <tbody>${campaigns.map(c=>`<tr onclick="openCamp('${c.id}')">
-        <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta"><b>${c.alias||c.name}</b><span>${c.asin}</span></div></div></td>
-        <td>${c.snapshots.length}</td><td style="text-align:right;font-family:var(--mono);font-size:11px;color:var(--text3)">${c.snapshots[c.snapshots.length-1]?.date||'—'}</td>
-        <td>${gbp(c.spend)}</td><td>${gbp(c.sales)}</td><td style="color:${ragColor(c.rag)}">${c.noSaleSpend?'—':fmt(c.roas,2)}</td>
-        <td style="text-align:center">${c.snapshots.length>=2?spark(c.snapshots.map(s=>s.roas),ragColor(c.rag)):'<span class="muted">—</span>'}</td>
-      </tr>`).join('')}</tbody></table></div></div>`;
+    /* By campaign — full snapshot history per campaign */
+    el.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px">${campaigns.map(c=>{
+      const ss=c.snapshots;
+      const rg=ragOf(c.roas,c.sales,c.spend);
+      return `<div class="card" style="overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr auto;align-items:center;padding:13px 16px;cursor:pointer;gap:12px" onclick="toggleCampSnaps('${c.id}')">
+          <div style="display:flex;align-items:center;gap:12px">
+            ${monoTile(c.alias||c.name,34)}
+            <div>
+              <div style="font-size:13px;font-weight:600">${c.alias||c.name}</div>
+              <div style="font-size:10.5px;color:var(--text3)">${c.asin} · ${ss.length} snapshot${ss.length!==1?'s':''}</div>
+            </div>
+            <span class="rag ${rg}"><span class="d"></span>${fmt(c.roas,2)}</span>
+          </div>
+          <span id="camp-snap-chev-${c.id}" style="color:var(--text4);font-size:13px">▼</span>
+        </div>
+        <div id="camp-snap-exp-${c.id}" style="display:none;border-top:1px solid var(--border)">
+          ${renderCampSnapHistory(c)}
+        </div>
+      </div>`;
+    }).join('')}</div>`;
   }
 }
-function openSnapPeriod(period){
+
+function renderSnapPeriodDetail(period){
   const rows=campaigns.map(c=>({c,s:c.snapshots.find(x=>x.date===period)})).filter(x=>x.s);
-  const a=periodAgg(period);
-  document.getElementById('snap-po-title').innerHTML=`Snapshot · ${period}`;
-  document.getElementById('snap-po-sub').innerHTML=`<span class="chip">${a.n} campaigns</span><span class="chip">Spend ${gbp(a.spend)}</span><span class="chip">Sales ${gbp(a.sales)}</span><span class="chip">ROAS ${fmt(a.roas,2)}</span>${a.leaks?`<span class="chip" style="color:var(--amber)">${a.leaks} spend leak${a.leaks>1?'s':''}</span>`:''}`;
+  if(!rows.length)return'<div style="padding:16px;color:var(--text3);font-size:12px">No campaign data for this period.</div>';
   const sCpc=s=>s.cpc>0?s.cpc:(s.clicks&&s.spend?s.spend/s.clicks:0);
   const sCtr=s=>s.ctr>0?s.ctr:(s.impressions&&s.clicks?s.clicks/s.impressions*100:0);
-  document.getElementById('snap-po-body').innerHTML=`
-    <div style="display:flex;gap:8px;align-items:center;padding:0 0 12px;border-bottom:1px solid var(--border);margin-bottom:12px">
-      <button class="btn ghost" onclick="deleteSnapshotPeriod('${period.replace(/'/g,"\\'")}')" style="color:var(--red);border-color:rgba(255,93,108,.3);font-size:11px">🗑 Delete this snapshot</button>
-      <span style="font-size:11px;color:var(--text3)">Click a campaign row to open it</span>
-    </div>
-    <div class="tablecard"><div class="tscroll" style="max-height:60vh"><table class="dt" style="min-width:900px">
-    <thead><tr><th>Campaign</th><th>Impr.</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-    <tbody>${rows.sort((x,y)=>y.s.spend-x.s.spend).map(({c,s})=>{const hl=s.spend>0&&s.sales===0;const rg=ragOf(s.roas,s.sales,s.spend);return `<tr class="${hl?'flagrow':''}" onclick="closeSnap();openCamp('${c.id}')">
-      <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta"><b>${hl?'<span class="flagdot"></span>':''}${c.alias||c.name}</b><span>${c.asin}</span></div></div></td>
-      <td>${intf(s.impressions||0)}</td><td>${intf(s.clicks||0)}</td>
-      <td>${sCtr(s)>0?fmt(sCtr(s),2)+'%':'—'}</td>
-      <td${hl?' style="color:var(--amber);font-weight:600"':''}>${gbp(s.spend)}</td>
-      <td>${sCpc(s)>0?gbp(sCpc(s)):'—'}</td>
-      <td${hl?' style="color:var(--amber)"':''}>${gbp(s.sales)}</td><td>${intf(s.purchases||0)}</td>
-      <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
-      <td style="color:${ragColor(rg)};font-weight:600">${hl?'<span class="rag flag">NO SALE</span>':fmt(s.roas||0,2)}</td></tr>`;}).join('')}</tbody>
-  </table></div></div>`;
-  document.getElementById('snap-overlay').classList.add('open');document.body.style.overflow='hidden';
+  const safeP=period.replace(/[^a-zA-Z0-9]/g,'_');
+
+  return `<div style="overflow-x:auto">
+    <table class="dt" style="min-width:860px">
+      <thead><tr>
+        <th style="text-align:left">Campaign</th>
+        <th>Impr.</th><th>Clicks</th><th>CTR</th>
+        <th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
+        <th style="width:24px"></th>
+      </tr></thead>
+      <tbody>${rows.sort((x,y)=>y.s.spend-x.s.spend).map(({c,s})=>{
+        const hl=s.spend>0&&s.sales===0;
+        const rg=ragOf(s.roas,s.sales,s.spend);
+        const hasTgt=(s.targeting&&s.targeting.length>0);
+        const hasAg=(s.adGroups&&s.adGroups.length>0);
+        const rowId=`spd-${c.id}-${safeP}`;
+        return `<tr class="${hl?'flagrow':''}" onclick="toggleKwDetail('${rowId}')" style="cursor:pointer">
+          <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta">
+            <b>${hl?'<span class="flagdot"></span>':''}${c.alias||c.name}</b>
+            <span>${c.asin}${hasTgt||hasAg?` · <span style="color:var(--blue);font-size:9.5px">${hasTgt?s.targeting.length+' keywords':''}${hasTgt&&hasAg?' · ':''}${hasAg?s.adGroups.length+' ads':''}</span>`:' · <span style="color:var(--text4);font-size:9.5px">no CSV data</span>'}</span>
+          </div></div></td>
+          <td>${intf(s.impressions||0)}</td>
+          <td>${intf(s.clicks||0)}</td>
+          <td>${sCtr(s)>0?fmt(sCtr(s),2)+'%':'—'}</td>
+          <td ${hl?'style="color:var(--amber);font-weight:600"':''}>${gbp(s.spend)}</td>
+          <td>${sCpc(s)>0?gbp(sCpc(s)):'—'}</td>
+          <td ${hl?'style="color:var(--amber)"':''}>${gbp(s.sales)}</td>
+          <td>${intf(s.purchases||0)}</td>
+          <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
+          <td style="color:${ragColor(rg)};font-weight:700">${hl?'<span class="rag r" style="font-size:9px">NO SALE</span>':fmt(s.roas||0,2)}</td>
+          <td style="color:var(--text4);font-size:11px;text-align:center">${hasTgt||hasAg?'▼':''}</td>
+          <td style="text-align:right;white-space:nowrap">
+            <button onclick="event.stopPropagation();renamePeriod('${c.id}','${s.date}')" style="background:none;border:none;color:var(--text3);font-size:10.5px;cursor:pointer;padding:2px 6px;border-radius:4px" title="Rename period">✎</button>
+            <button onclick="event.stopPropagation();deleteOneCampSnap('${c.id}','${s.date}')" style="background:none;border:none;color:var(--red);font-size:10.5px;cursor:pointer;padding:2px 6px;border-radius:4px" title="Delete this snapshot">✕</button>
+          </td>
+        </tr>
+        ${hasTgt||hasAg?`<tr id="${rowId}" style="display:none">
+          <td colspan="11" style="padding:0;background:var(--bg3)">
+            <div style="padding:12px 16px">
+              <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center">
+                ${hasTgt?`<button onclick="snapKwTab('${rowId}','tgt')" data-view="tgt"
+                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font)">
+                  Targeting (${s.targeting.length})</button>`:''}
+                ${hasAg?`<button onclick="snapKwTab('${rowId}','ag')" data-view="ag"
+                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:${hasTgt?'var(--bg4)':'var(--blue)'};color:${hasTgt?'var(--text3)':'#fff'};cursor:pointer;font-family:var(--font)">
+                  Ad Groups (${s.adGroups.length})</button>`:''}
+              </div>
+              ${hasTgt?`<div id="${rowId}-tgt" style="overflow-x:auto;max-height:340px;overflow-y:auto">
+                <table class="simple-tbl" style="min-width:680px">
+                  <thead><tr><th>Keyword / target</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+                  <tbody>${s.targeting.map(t=>{
+                    const tRg=ragOf(t.roas,t.sales,t.spend);
+                    const tLeak=t.spend>0&&t.sales===0;
+                    return `<tr ${tLeak?'class="trow-leak"':''}>
+                      <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${tLeak?'<span class="flagdot"></span>':''}${t.kw||'—'}</td>
+                      <td>${matchTag(t.match||'—')}}</td>
+                      <td style="color:var(--text3)">${t.bid>0?gbp(t.bid):'—'}</td>
+                      <td>${intf(t.imp||0)}</td>
+                      <td>${intf(t.clicks||0)}</td>
+                      <td ${tLeak?'style="color:var(--amber);font-weight:600"':''}>${gbp(t.spend||0)}</td>
+                      <td>${gbp(t.sales||0)}</td>
+                      <td>${intf(t.purch||0)}</td>
+                      <td>${t.sales?fmt(t.acos||t.spend/t.sales*100,1)+'%':'—'}</td>
+                      <td style="color:${ragColor(tRg)};font-weight:700">${tLeak?'<span style="color:var(--amber)">NO SALE</span>':fmt(t.roas||0,2)}</td>
+                    </tr>`;
+                  }).join('')}</tbody>
+                </table></div>`:''}
+              ${hasAg?`<div id="${rowId}-ag" style="${hasTgt?'display:none;':''}overflow-x:auto;max-height:340px;overflow-y:auto">
+                <table class="simple-tbl" style="min-width:580px">
+                  <thead><tr><th>Ad name</th><th>ASIN</th><th>Impr</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
+                  <tbody>${s.adGroups.map(ag=>{
+                    const aRg=ragOf(ag.roas,ag.sales,ag.spend);
+                    return `<tr>
+                      <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ag.name||'—'}</td>
+                      <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${ag.asin||'—'}</td>
+                      <td>${intf(ag.imp||0)}</td><td>${intf(ag.clicks||0)}</td>
+                      <td>${gbp(ag.spend||0)}</td><td>${gbp(ag.sales||0)}</td>
+                      <td>${intf(ag.purch||0)}</td>
+                      <td>${ag.sales?fmt(ag.acos||ag.spend/ag.sales*100,1)+'%':'—'}</td>
+                      <td style="color:${ragColor(aRg)};font-weight:700">${fmt(ag.roas||0,2)}</td>
+                    </tr>`;
+                  }).join('')}</tbody>
+                </table></div>`:''}
+            </div>
+          </td>
+        </tr>`:''}`;
+      }).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+function renderCampSnapHistory(c){
+  const ss=c.snapshots;
+  if(!ss.length)return'<div style="padding:16px;color:var(--text3);font-size:12px">No snapshots yet.</div>';
+  const sCpc=s=>s.cpc>0?s.cpc:(s.clicks&&s.spend?s.spend/s.clicks:0);
+  const sCtr=s=>s.ctr>0?s.ctr:(s.impressions&&s.clicks?s.clicks/s.impressions*100:0);
+  return `<div style="overflow-x:auto">
+    <table class="dt" style="min-width:760px">
+      <thead><tr><th style="text-align:left">Period</th><th>Impr.</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th><th style="width:24px"></th></tr></thead>
+      <tbody>${[...ss].reverse().map((s,ri)=>{
+        const rg=ragOf(s.roas,s.sales,s.spend);
+        const hl=s.spend>0&&s.sales===0;
+        const isLatest=ri===0;
+        const hasTgt=(s.targeting&&s.targeting.length>0);
+        const hasAg=(s.adGroups&&s.adGroups.length>0);
+        const rowId=`csh-${c.id}-${ri}`;
+        return `<tr ${hl?'class="flagrow"':''} ${hasTgt||hasAg?`onclick="toggleKwDetail('${rowId}')" style="cursor:pointer"`:'style="cursor:default"'}>
+          <td style="white-space:nowrap">
+            ${s.date||'—'}
+            ${isLatest?'<span class="ctag" style="font-size:9px;padding:1px 5px;vertical-align:middle;margin-left:4px">latest</span>':''}
+            ${hasTgt||hasAg?`<span style="color:var(--blue);font-size:9.5px;margin-left:6px">${hasTgt?s.targeting.length+' kw':''}${hasTgt&&hasAg?' · ':''}${hasAg?s.adGroups.length+' ads':''}</span>`:''}
+          </td>
+          <td>${intf(s.impressions||0)}</td>
+          <td>${intf(s.clicks||0)}</td>
+          <td>${sCtr(s)>0?fmt(sCtr(s),2)+'%':'—'}</td>
+          <td ${hl?'style="color:var(--amber);font-weight:600"':''}>${gbp(s.spend)}</td>
+          <td>${sCpc(s)>0?gbp(sCpc(s)):'—'}</td>
+          <td style="color:var(--green)">${gbp(s.sales)}</td>
+          <td>${intf(s.purchases||0)}</td>
+          <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
+          <td style="color:${ragColor(rg)};font-weight:700">${fmt(s.roas||0,2)}</td>
+          <td style="color:var(--text4);font-size:11px;text-align:center">${hasTgt||hasAg?'▼':''}</td>
+        </tr>
+        ${hasTgt||hasAg?`<tr id="${rowId}" style="display:none">
+          <td colspan="11" style="padding:0;background:var(--bg3)">
+            <div style="padding:12px 16px">
+              <div style="display:flex;gap:6px;margin-bottom:10px">
+                ${hasTgt?`<button onclick="snapKwTab('${rowId}','tgt')" data-view="tgt"
+                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font)">
+                  Targeting (${s.targeting.length})</button>`:''}
+                ${hasAg?`<button onclick="snapKwTab('${rowId}','ag')" data-view="ag"
+                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:${hasTgt?'var(--bg4)':'var(--blue)'};color:${hasTgt?'var(--text3)':'#fff'};cursor:pointer;font-family:var(--font)">
+                  Ad Groups (${s.adGroups.length})</button>`:''}
+              </div>
+              ${hasTgt?`<div id="${rowId}-tgt" style="overflow-x:auto;max-height:300px;overflow-y:auto">
+                <table class="simple-tbl" style="min-width:640px">
+                  <thead><tr><th>Keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th></tr></thead>
+                  <tbody>${s.targeting.map(t=>{const tRg=ragOf(t.roas,t.sales,t.spend);const tL=t.spend>0&&t.sales===0;return`<tr ${tL?'class="trow-leak"':''}><td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${tL?'<span class="flagdot"></span>':''}${t.kw||'—'}</td><td>${matchTag(t.match||'—')}}</td><td>${t.bid>0?gbp(t.bid):'—'}</td><td>${intf(t.imp||0)}</td><td ${tL?'style="color:var(--amber);font-weight:600"':''}>${gbp(t.spend||0)}</td><td>${gbp(t.sales||0)}</td><td>${t.sales?fmt(t.acos||t.spend/t.sales*100,1)+'%':'—'}</td><td style="color:${ragColor(tRg)};font-weight:700">${tL?'NO SALE':fmt(t.roas||0,2)}</td></tr>`;}).join('')}</tbody>
+                </table></div>`:''}
+              ${hasAg?`<div id="${rowId}-ag" style="${hasTgt?'display:none;':''}overflow-x:auto;max-height:300px;overflow-y:auto">
+                <table class="simple-tbl" style="min-width:540px">
+                  <thead><tr><th>Ad name</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th></tr></thead>
+                  <tbody>${s.adGroups.map(ag=>{const aRg=ragOf(ag.roas,ag.sales,ag.spend);return`<tr><td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ag.name||'—'}</td><td>${intf(ag.imp||0)}</td><td>${gbp(ag.spend||0)}</td><td>${gbp(ag.sales||0)}</td><td>${ag.sales?fmt(ag.acos||ag.spend/ag.sales*100,1)+'%':'—'}</td><td style="color:${ragColor(aRg)};font-weight:700">${fmt(ag.roas||0,2)}</td></tr>`;}).join('')}</tbody>
+                </table></div>`:''}
+            </div>
+          </td>
+        </tr>`:''}`;
+      }).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+function toggleSnapPeriod(safeP){
+  const exp=document.getElementById('snap-exp-'+safeP);
+  const chev=document.getElementById('snap-chev-'+safeP);
+  if(!exp)return;
+  const open=exp.style.display!=='none';
+  exp.style.display=open?'none':'block';
+  if(chev)chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
+}
+
+function toggleCampSnaps(campId){
+  const exp=document.getElementById('camp-snap-exp-'+campId);
+  const chev=document.getElementById('camp-snap-chev-'+campId);
+  if(!exp)return;
+  const open=exp.style.display!=='none';
+  exp.style.display=open?'none':'block';
+  if(chev)chev.textContent=open?'▼':'▲';
+}
+
+function toggleKwDetail(rowId){
+  const row=document.getElementById(rowId);
+  if(!row)return;
+  const open=row.style.display!=='none';
+  row.style.display=open?'none':'table-row';
+}
+
+function snapKwTab(rowId, view){
+  const tgt=document.getElementById(rowId+'-tgt');
+  const ag=document.getElementById(rowId+'-ag');
+  if(tgt)tgt.style.display=view==='tgt'?'block':'none';
+  if(ag)ag.style.display=view==='ag'?'block':'none';
+  const row=document.getElementById(rowId);
+  if(row){
+    row.querySelectorAll('button[data-view]').forEach(btn=>{
+      const active=btn.dataset.view===view;
+      btn.style.background=active?'var(--blue)':'var(--bg4)';
+      btn.style.color=active?'#fff':'var(--text3)';
+    });
+  }
+}
+
+/* Stub — openSnapPeriod no longer needed, kept so no ref error */
+function openSnapPeriod(period){ toggleSnapPeriod(period.replace(/[^a-zA-Z0-9]/g,'_')); }
+
+
+
+function renamePeriod(campId, oldDate){
+  const newDate=prompt('Rename period "'+oldDate+'" to:', oldDate);
+  if(!newDate||newDate===oldDate)return;
+  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const s=c.snapshots.find(x=>x.date===oldDate);if(!s)return;
+  s.date=newDate;
+  renderSnapshots();
+  if(curCamp&&curCamp.id==campId)renderPerf();
+}
+
+function deleteOneCampSnap(campId, date){
+  if(!confirm('Delete the "'+date+'" snapshot for this campaign only?'))return;
+  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  c.snapshots=c.snapshots.filter(s=>s.date!==date);
+  const last=c.snapshots[c.snapshots.length-1]||{};
+  c.spend=last.spend||0;c.sales=last.sales||0;c.purchases=last.purchases||0;
+  c.roas=last.roas||0;c.acos=last.acos||0;
+  c.cpc=last.cpc>0?last.cpc:(last.clicks&&last.spend?last.spend/last.clicks:0);
+  c.rag=ragOf(c.roas,c.sales,c.spend);c.noSaleSpend=c.spend>0&&c.sales===0;
+  renderSnapshots();renderCampaigns();
+  if(curCamp&&curCamp.id==campId)renderPerf();
+}
+
+function deleteAllSnapshots(){
+  const count=campaigns.reduce((a,c)=>a+c.snapshots.length,0);
+  if(!confirm(`This will permanently delete all ${count} snapshots from ${campaigns.length} campaign${campaigns.length!==1?'s':''}. Your campaigns, changes, and settings will NOT be affected. Continue?`))return;
+  campaigns.forEach(c=>{
+    c.snapshots=[];
+    c.spend=0;c.sales=0;c.purchases=0;c.roas=0;c.acos=0;c.cpc=0;c.ctr=0;c.impressions=0;
+    c.rag=ragOf(0,0,0);c.noSaleSpend=false;
+  });
+  /* Clear from Supabase if connected */
+  if(SUPABASE_URL&&SUPABASE_KEY){
+    sbHeaders().then(hds=>{
+      campaigns.forEach(c=>{
+        if(c.id)fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}}).catch(e=>console.warn('Delete snap fail',e));
+      });
+    });
+  }
+  renderCampaigns();renderSnapshots();
+  /* Show feedback */
+  const s=document.getElementById('cfg-status');
+  if(s){s.textContent='✓ All '+count+' snapshots deleted. Campaigns intact.';s.style.color='var(--green)';}
+  alert('All snapshots deleted. Campaigns and changes are intact.');
 }
 
 function deleteSnapshotPeriod(period){
@@ -2470,7 +3298,8 @@ function saveSupabaseConfig(){
   if(!url||!key){document.getElementById('cfg-status').textContent='⚠ Both URL and key required';return;}
   SUPABASE_URL=url;SUPABASE_KEY=key;
   document.getElementById('cfg-status').textContent='Connecting…';
-  loadFromSupabase().then(()=>{
+  loadMatchColours();
+loadFromSupabase().then(()=>{
     document.getElementById('cfg-status').textContent='✓ Connected — '+campaigns.length+' campaigns loaded';
     document.getElementById('cfg-status').style.color='var(--green)';
   }).catch(e=>{
@@ -2494,6 +3323,53 @@ function saveAppSettings(){
   appSettings.maxAcos=document.getElementById('cfg-max-acos').value;
   appSettings.marketplace=document.getElementById('cfg-marketplace').value;
   const btn=event.target;btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save defaults',1400);
+}
+
+function applyMatchColours(){
+  const exact=document.getElementById('cfg-col-exact')?.value||'#2ee59d';
+  const phrase=document.getElementById('cfg-col-phrase')?.value||'#5b9dff';
+  const broad=document.getElementById('cfg-col-broad')?.value||'#ffb547';
+  const root=document.documentElement;
+  root.style.setProperty('--match-exact',exact);
+  root.style.setProperty('--match-exact-bg',exact+'26');
+  root.style.setProperty('--match-phrase',phrase);
+  root.style.setProperty('--match-phrase-bg',phrase+'26');
+  root.style.setProperty('--match-broad',broad);
+  root.style.setProperty('--match-broad-bg',broad+'26');
+}
+function saveMatchColours(){
+  const exact=document.getElementById('cfg-col-exact')?.value;
+  const phrase=document.getElementById('cfg-col-phrase')?.value;
+  const broad=document.getElementById('cfg-col-broad')?.value;
+  if(exact)localStorage.setItem('matchColExact',exact);
+  if(phrase)localStorage.setItem('matchColPhrase',phrase);
+  if(broad)localStorage.setItem('matchColBroad',broad);
+  applyMatchColours();
+  const s=document.getElementById('cfg-status');
+  if(s){s.textContent='Match colours saved';s.style.color='var(--green)';}
+  setTimeout(()=>{if(s)s.textContent='';},2000);
+}
+function loadMatchColours(){
+  const exact=localStorage.getItem('matchColExact');
+  const phrase=localStorage.getItem('matchColPhrase');
+  const broad=localStorage.getItem('matchColBroad');
+  if(exact){const el=document.getElementById('cfg-col-exact');if(el)el.value=exact;}
+  if(phrase){const el=document.getElementById('cfg-col-phrase');if(el)el.value=phrase;}
+  if(broad){const el=document.getElementById('cfg-col-broad');if(el)el.value=broad;}
+  applyMatchColours();
+}
+function setMatchPreset(name){
+  const presets={
+    default:['#2ee59d','#5b9dff','#ffb547'],
+    cool:['#b794ff','#00d4ff','#ff6eb4'],
+    warm:['#ff5d6c','#ffd93d','#2ee59d']
+  };
+  const [e,p,b]=presets[name]||presets.default;
+  const elE=document.getElementById('cfg-col-exact');
+  const elP=document.getElementById('cfg-col-phrase');
+  const elB=document.getElementById('cfg-col-broad');
+  if(elE)elE.value=e; if(elP)elP.value=p; if(elB)elB.value=b;
+  applyMatchColours();
 }
 
 function renderSettings(){
@@ -2580,9 +3456,9 @@ function populateDashPeriodSelectors(){
   if(!sel||!cmpSel)return;
   const prev=sel.value, prevCmp=cmpSel.value;
   sel.innerHTML='<option value="latest">Latest snapshot (per campaign)</option>'+
-    periods.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+    periods.map(p=>`<option value="${p.split('"').join('&quot;')}">${p}</option>`).join('');
   cmpSel.innerHTML='<option value="none">No comparison</option>'+
-    periods.map(p=>`<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+    periods.map(p=>`<option value="${p.split('"').join('&quot;')}">${p}</option>`).join('');
   if(prev&&[...sel.options].some(o=>o.value===prev))sel.value=prev;
   if(prevCmp&&[...cmpSel.options].some(o=>o.value===prevCmp))cmpSel.value=prevCmp;
   if(sel.value!=='latest'&&cmpSel.value==='none'&&periods.length>1){
@@ -2838,6 +3714,7 @@ async function saveGlobalChange(){
 }
 
 /* boot */
+loadMatchColours();
 loadFromSupabase().then(()=>{
   /* after data loads, render dashboard if it's the active page */
   if(document.getElementById('page-dashboard')?.classList.contains('active')){
