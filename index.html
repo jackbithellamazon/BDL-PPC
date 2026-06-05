@@ -393,8 +393,11 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   <!-- ROW 1: KPI strip -->
   <div id="dash-kpi-row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:10px"></div>
 
-  <!-- ROW 2: ACTION LIST -->
-  <div class="card" id="dash-action-list" style="overflow:hidden;margin-bottom:10px"></div>
+  <!-- ROW 2: ACTIONS + REVIEWS (split 50/50) -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+    <div class="card" id="dash-action-list" style="overflow:hidden"></div>
+    <div class="card" id="dash-reviews-list" style="overflow:hidden"></div>
+  </div>
 
   <!-- ROW 3: Best Performing | Worst Performing | Wasting Money -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
@@ -1124,26 +1127,50 @@ const campaigns=[];
 let SUPABASE_URL = 'https://ffbdazepqrsyurhouxif.supabase.co';
 let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmYmRhemVwcXJzeXVyaG91eGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTM5MjIsImV4cCI6MjA5MDQ2OTkyMn0.BAuodLUDGzO9A7IfoRRn0HZ1MgWOXNPeYKPDBNaNWeg';
 
+async function sbFetchAll(path, headers, pageSize=1000){
+  /* Fetches ALL rows from a Supabase REST endpoint using Range pagination.
+     Supabase returns Content-Range: 0-N/TOTAL — we keep fetching until done. */
+  let all=[], offset=0, done=false;
+  while(!done){
+    const res=await fetch(
+      SUPABASE_URL+path+(path.includes('?')?'&':'?')+'limit='+pageSize+'&offset='+offset,
+      {headers:{...headers,'Range-Unit':'items','Range':offset+'-'+(offset+pageSize-1),'Prefer':'count=exact'}}
+    );
+    if(!res.ok){
+      const errText=await res.text();
+      throw new Error('Fetch failed for '+path+' ('+res.status+'): '+errText);
+    }
+    const data=await res.json();
+    if(!Array.isArray(data)||data.length===0){done=true;break;}
+    all=all.concat(data);
+    /* If we got fewer rows than pageSize, we've reached the end */
+    if(data.length<pageSize){done=true;}else{offset+=pageSize;}
+    /* Safety: stop at 1,000,000 rows to prevent infinite loops */
+    if(all.length>=1000000){console.warn('sbFetchAll: hit 1M row safety cap for',path);done=true;}
+  }
+  return all;
+}
+
 async function loadFromSupabase(){
   if(!SUPABASE_URL||!SUPABASE_KEY){
-    /* No Supabase — show empty state prompting to connect */
     showNoSupabaseState();
     return;
   }
   try{
     const headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
-    const campRes=await fetch(SUPABASE_URL+'/rest/v1/campaigns?select=*&order=id',{headers});
-    if(!campRes.ok)throw new Error('campaigns fetch failed ('+campRes.status+')');
-    const campData=await campRes.json();
-    const snapRes=await fetch(SUPABASE_URL+'/rest/v1/snapshots?select=*&order=campaign_id,period',{headers});
-    const snapData=snapRes.ok?await snapRes.json():[];
-    const chRes=await fetch(SUPABASE_URL+'/rest/v1/changes?select=*&order=campaign_id',{headers});
-    const chData=chRes.ok?await chRes.json():[];
+
+    /* Paginated fetch of all three tables — handles unlimited rows */
+    const [campData, snapData, chData] = await Promise.all([
+      sbFetchAll('/rest/v1/campaigns?select=*&order=id', headers),
+      sbFetchAll('/rest/v1/snapshots?select=*&order=campaign_id,period', headers),
+      sbFetchAll('/rest/v1/changes?select=*&order=created_at.asc', headers)
+    ]);
+
     campaigns.length=0;
     /* Diagnostic: log snapshot schema so we know which columns exist */
     if(snapData.length>0){
       const snapCols=Object.keys(snapData[0]);
-      console.log('Supabase snapshot columns:',snapCols);
+      console.log('Supabase snapshot columns:',snapCols,'— total rows:',snapData.length);
       if(!snapCols.includes('targeting_json')){
         console.warn('⚠ targeting_json column MISSING from snapshots table — CSV data cannot be stored. Run the SQL migration in Settings to add it.');
         window._missingTargetingCol=true;
@@ -1151,9 +1178,16 @@ async function loadFromSupabase(){
         window._missingTargetingCol=false;
       }
     }
+    console.log('Loaded from Supabase — campaigns:',campData.length,'snapshots:',snapData.length,'changes:',chData.length);
     if(campData.length>0)console.log('Supabase campaign columns:',Object.keys(campData[0]));
+
+    /* Build a lookup map for snapshots and changes keyed by campaign_id for O(1) access */
+    const snapMap={}, chMap={};
+    snapData.forEach(s=>{if(!snapMap[s.campaign_id])snapMap[s.campaign_id]=[];snapMap[s.campaign_id].push(s);});
+    chData.forEach(ch=>{if(!chMap[ch.campaign_id])chMap[ch.campaign_id]=[];chMap[ch.campaign_id].push(ch);});
+
     campData.forEach(row=>{
-      const snaps=snapData.filter(s=>s.campaign_id===row.id).map(s=>{
+      const snaps=(snapMap[row.id]||[]).map(s=>{
         let _rawTj=null;
         try{_rawTj=s.targeting_json?JSON.parse(s.targeting_json):null;}catch(e){console.warn('targeting_json parse error for period',s.period,e);}
         const tgts=Array.isArray(_rawTj)?_rawTj:(_rawTj?.targeting||[]);
@@ -1168,7 +1202,7 @@ async function loadFromSupabase(){
         if(ags)sn.adGroups=ags;
         return sn;
       });
-      const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
+      const changes=(chMap[row.id]||[]).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
       const product=row.product_name||row.product||row.name||'Unnamed product';
       campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
     });
@@ -2694,29 +2728,41 @@ async function saveChangeEntry(){
   const review=document.getElementById('clf-review').value;
   const goal=document.getElementById('clf-goal').value.trim();
   const status=document.getElementById('clf-status');
+  const saveBtn=document.querySelector('#tab-changes .btn[onclick*="saveChangeEntry"]')||document.querySelector('#tab-changes button.btn');
 
   if(!date||!what||!why||!review){
     if(status){status.textContent='⚠ Date, what, why and review date are all required';status.style.color='var(--red)';}
     return;
   }
 
+  if(saveBtn){saveBtn.textContent='Saving…';saveBtn.disabled=true;}
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
-  c.changes.unshift(change); // newest first
 
-  /* Save to Supabase */
+  /* Save to Supabase first, then add to local array on success */
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
-      await sbInsert('changes',{
+      const saved=await sbInsert('changes',{
         campaign_id:c.id,type,date,what,why,goal:goal||null,
         outcome:'pending',outcome_note:null,
         review_date:review,created_at:new Date().toISOString()
       });
-      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
+      if(saved&&saved.id){
+        change._dbId=saved.id;
+        c.changes.unshift(change);
+        if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
+      } else {
+        if(status){status.textContent='⚠ Save may have failed — try again';status.style.color='var(--red)';}
+        if(saveBtn){saveBtn.textContent='Log change';saveBtn.disabled=false;}
+        return;
+      }
     }catch(e){
       console.error('Change save failed:',e);
-      if(status){status.textContent='Saved locally (Supabase failed)';status.style.color='var(--amber)';}
+      if(status){status.textContent='⚠ Supabase error: '+e.message;status.style.color='var(--red)';}
+      if(saveBtn){saveBtn.textContent='Log change';saveBtn.disabled=false;}
+      return;
     }
   } else {
+    c.changes.unshift(change);
     if(status){status.textContent='✓ Change saved';status.style.color='var(--green)';}
   }
 
@@ -2726,6 +2772,7 @@ async function saveChangeEntry(){
   document.getElementById('clf-goal').value='';
   document.getElementById('clf-review').value='';
   document.getElementById('clf-date').value=new Date().toISOString().slice(0,10);
+  if(saveBtn){saveBtn.textContent='Log change';saveBtn.disabled=false;}
 
   /* Update badge + list */
   document.getElementById('potab-changes').textContent=c.changes.length||'';
@@ -5626,6 +5673,7 @@ function renderDashPeriod(){
   renderDashCampBreakdown(period,cmpPeriod);
   renderDashSinceLast(period,cmpPeriod);
   renderDashActionList();
+  renderDashReviewsList();
   renderDashWhatsWorking();
   renderDashWorstPerforming();
   renderDashWastingMoney();
@@ -5670,6 +5718,7 @@ function renderDashActionList(){
   const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
   const maxAcos=parseFloat(document.getElementById('cfg-max-acos')?.value||30);
   if(!window._actionedKeys)window._actionedKeys=new Set();
+  /* Performance alerts only — NO review/scheduled items */
   const actions=[];
   A.forEach(c=>{
     const ls=c.snapshots[c.snapshots.length-1]||{};
@@ -5681,26 +5730,11 @@ function renderDashActionList(){
     if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>25&&c.roas>=T) actions.push({pri:2,type:'warn',tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
     (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0).forEach(t=>{actions.push({pri:1,type:'urgent',tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
     if(ls.impressions===0&&c.snapshots.length>0) actions.push({pri:3,type:'info',tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status in Amazon',key:c.id+'|noimpr'});
-    const today=new Date();today.setHours(0,0,0,0);
-    /* Scheduled review frequency — only show if no change-based review already flagged */
-    if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
-      const lastSnap=c.snapshots[c.snapshots.length-1];
-      const lastDate=lastSnap.date||'—';
-      /* Try to estimate days since last snapshot from today */
-      const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
-      /* Only fire if no pending change review already showing */
-      if(!hasPendingReview){
-        const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
-        actions.push({pri:3,type:'info',tag:'SCHEDULED',label:rfLabel+' review due — '+lastDate,camp:name,sub:'Review campaign performance and log any changes needed',cid:c.id,action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
-      }
-    }
-    (c.changes||[]).filter(ch=>ch.outcome==='pending'&&ch.review).forEach(ch=>{try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);if(diff<=3)actions.push({pri:2,type:'review',tag:diff<=0?'OVERDUE':'REVIEW DUE',label:(diff<=0?'Overdue: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work'});}catch(e){}});
   });
   actions.sort((a,b)=>a.pri-b.pri);
-  /* give every action a stable key if not already set */
   actions.forEach((a,i)=>{if(!a.key)a.key=a.cid+'|'+a.tag+'|'+i;});
-  const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)',review:'var(--purple)'};
-  const bgMap={urgent:'rgba(255,93,108,.1)',warn:'rgba(255,181,71,.08)',info:'rgba(91,157,255,.08)',review:'rgba(183,148,255,.1)'};
+  const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)'};
+  const bgMap={urgent:'rgba(255,93,108,.1)',warn:'rgba(255,181,71,.08)',info:'rgba(91,157,255,.08)'};
   const visible=actions.filter(a=>!window._actionedKeys.has(a.key));
   const dismissed=actions.length-visible.length;
   const count=visible.length;
@@ -5709,30 +5743,101 @@ function renderDashActionList(){
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">Action Required</span>
       ${count?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${urgentVisible?'var(--red-bg)':'var(--amber-bg)'};color:${urgentVisible?'var(--red)':'var(--amber)'};border:1px solid ${urgentVisible?'rgba(255,93,108,.3)':'rgba(255,181,71,.3)'}">${count} item${count!==1?'s':''}</span>`:'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>'}
-      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} marked done</span>`:''}
+      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} dismissed</span>`:''}
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      ${dismissed?`<button onclick="window._actionedKeys.clear();renderDashActionList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset all</button>`:''}
-      <span style="font-size:10.5px;color:var(--text4)">Click row to open · Mark Done to dismiss</span>
+      ${dismissed?`<button onclick="window._actionedKeys.clear();renderDashActionList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset</button>`:''}
+      <span style="font-size:10px;color:var(--text4)">Click to open</span>
     </div>
   </div>`;
-  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All campaigns healthy — no actions required.</div>';return;}
-  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All actions marked as done. Click Reset all to bring them back.</div>';return;}
-  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:280px">'+visible.slice(0,15).map(a=>{
-    const col=colMap[a.type];
-    const ek=JSON.stringify(a.key);
-    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:.12s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
-      <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:${bgMap[a.type]};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${a.cid}')">${a.tag}</div>
+  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">✓ No campaign alerts — all looking healthy.</div>';return;}
+  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All alerts dismissed. Click Reset to restore.</div>';return;}
+  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:300px">'+visible.slice(0,15).map(a=>{
+    const col=colMap[a.type]||'var(--blue)';
+    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);transition:.12s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
+      <div style="font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px;background:${bgMap[a.type]||'rgba(91,157,255,.08)'};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${a.cid}')">${a.tag}</div>
       <div style="min-width:0;cursor:pointer" onclick="openCamp('${a.cid}')">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
-          <span style="font-size:12.5px;font-weight:700;color:#f2f4f9">${a.label}</span>
-          <span style="font-size:11px;padding:2px 8px;border-radius:5px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${a.camp}</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:1px">
+          <span style="font-size:12px;font-weight:700;color:#f2f4f9">${a.label}</span>
+          <span style="font-size:10.5px;padding:1px 7px;border-radius:4px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${a.camp}</span>
         </div>
-        <div style="font-size:11px;color:#b8c4d8">${a.sub} <span style="color:#8892a8;font-style:italic"> — ${a.action}</span></div>
+        <div style="font-size:10.5px;color:#b8c4d8">${a.sub} <span style="color:#8892a8;font-style:italic"> — ${a.action}</span></div>
       </div>
-      <button onclick="dashMarkDone(this)" data-akey="${a.key.replace(/"/g,'&quot;')}" title="Dismiss this action" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
+      <button onclick="dashMarkDone(this)" data-akey="${a.key.replace(/"/g,'&quot;')}" title="Dismiss" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
     </div>`;
   }).join('')+'</div>';
+}
+
+function renderDashReviewsList(){
+  const el=document.getElementById('dash-reviews-list');if(!el)return;
+  const A=campaigns.filter(c=>c.status==='active');
+  if(!window._reviewedKeys)window._reviewedKeys=new Set();
+  const today=new Date();today.setHours(0,0,0,0);
+  const reviews=[];
+  A.forEach(c=>{
+    const name=c.alias||c.name;
+    /* Change-log review dates */
+    (c.changes||[]).filter(ch=>ch.outcome==='pending'&&ch.review).forEach(ch=>{
+      try{
+        const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);
+        const diff=Math.round((d-today)/86400000);
+        const key=c.id+'|chreview|'+ch.review+'|'+ch.what.slice(0,20);
+        reviews.push({pri:diff<=0?0:diff<=3?1:diff<=7?2:3,type:diff<=0?'overdue':diff<=3?'soon':'scheduled',tag:diff<=0?'OVERDUE':diff<=3?'DUE SOON':'REVIEW DUE',label:(diff<=0?'Overdue '+Math.abs(diff)+'d: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work',key,diff});
+      }catch(e){}
+    });
+    /* Scheduled frequency reviews */
+    if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
+      const lastSnap=c.snapshots[c.snapshots.length-1];
+      const lastDate=lastSnap.date||'—';
+      const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
+      const key=c.id+'|sched|'+rfLabel;
+      reviews.push({pri:4,type:'scheduled',tag:'SCHEDULED',label:rfLabel+' review — last: '+lastDate,camp:name,sub:'Review ROAS, ACOS and keywords then log any changes',cid:c.id,action:'Check campaign and log changes',key,diff:null});
+    }
+  });
+  reviews.sort((a,b)=>a.pri-b.pri);
+  reviews.forEach((r,i)=>{if(!r.key)r.key=r.cid+'|rev|'+i;});
+  const colMap={overdue:'var(--red)',soon:'var(--amber)',scheduled:'var(--blue)','review due':'var(--purple)'};
+  const bgMap={overdue:'rgba(255,93,108,.1)',soon:'rgba(255,181,71,.08)',scheduled:'rgba(91,157,255,.08)','review due':'rgba(183,148,255,.1)'};
+  const visible=reviews.filter(r=>!window._reviewedKeys.has(r.key));
+  const dismissed=reviews.length-visible.length;
+  const count=visible.length;
+  const hasOverdue=visible.some(r=>r.type==='overdue');
+  const hdr=`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">Reviews Due</span>
+      ${count?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${hasOverdue?'var(--red-bg)':'var(--purple-bg,rgba(183,148,255,.12))'};color:${hasOverdue?'var(--red)':'var(--purple,#b794ff)'};border:1px solid ${hasOverdue?'rgba(255,93,108,.3)':'rgba(183,148,255,.3)'}">${count} item${count!==1?'s':''}</span>`:'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>'}
+      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} dismissed</span>`:''}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      ${dismissed?`<button onclick="window._reviewedKeys.clear();renderDashReviewsList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset</button>`:''}
+      <span style="font-size:10px;color:var(--text4)">Click to open</span>
+    </div>
+  </div>`;
+  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">✓ No reviews scheduled or overdue.</div>';return;}
+  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All reviews dismissed. Click Reset to restore.</div>';return;}
+  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:300px">'+visible.slice(0,20).map(r=>{
+    const col=colMap[r.type]||'var(--blue)';
+    const bg=bgMap[r.type]||'rgba(91,157,255,.08)';
+    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);transition:.12s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
+      <div style="font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px;background:${bg};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${r.cid}')">${r.tag}</div>
+      <div style="min-width:0;cursor:pointer" onclick="openCamp('${r.cid}')">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:1px">
+          <span style="font-size:12px;font-weight:700;color:#f2f4f9">${r.label}</span>
+          <span style="font-size:10.5px;padding:1px 7px;border-radius:4px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${r.camp}</span>
+        </div>
+        <div style="font-size:10.5px;color:#b8c4d8">${r.sub} <span style="color:#8892a8;font-style:italic"> — ${r.action}</span></div>
+      </div>
+      <button onclick="dashReviewDone(this)" data-rkey="${r.key.replace(/"/g,'&quot;')}" title="Mark reviewed" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--purple,#b794ff)';this.style.color='var(--purple,#b794ff)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Done</button>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function dashReviewDone(btn){
+  const key=btn.getAttribute('data-rkey');
+  if(!key)return;
+  if(!window._reviewedKeys)window._reviewedKeys=new Set();
+  window._reviewedKeys.add(key);
+  renderDashReviewsList();
 }
 
 function dashMarkDone(btn){
@@ -6551,22 +6656,42 @@ async function saveGlobalChange(){
   const review=document.getElementById('gcl-review').value;
   const goal=document.getElementById('gcl-goal').value.trim();
   const status=document.getElementById('gcl-status');
+  const saveBtn=document.querySelector('#gcl-overlay .po-body button.btn:last-child');
   if(!date||!what||!why||!review){
     if(status){status.textContent='⚠ All fields marked * are required';status.style.color='var(--red)';}
     return;
   }
+  if(saveBtn){saveBtn.textContent='Saving…';saveBtn.disabled=true;}
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
-  c.changes.unshift(change);
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
-      await sbInsert('changes',{campaign_id:c.id,type,date,what,why,goal:goal||null,outcome:'pending',review_date:review,created_at:new Date().toISOString()});
-      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
-    }catch(e){if(status){status.textContent='Saved locally';status.style.color='var(--amber)';}}
+      const saved=await sbInsert('changes',{campaign_id:c.id,type,date,what,why,goal:goal||null,outcome:'pending',review_date:review,created_at:new Date().toISOString()});
+      if(saved&&saved.id){
+        /* Use DB-returned id so edits and markChange can find it reliably */
+        change._dbId=saved.id;
+        c.changes.unshift(change);
+        if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
+      } else {
+        /* Insert returned nothing — treat as failure */
+        if(status){status.textContent='⚠ Save may have failed — please check Change Log tab';status.style.color='var(--red)';}
+        if(saveBtn){saveBtn.textContent='Save change';saveBtn.disabled=false;}
+        return;
+      }
+    }catch(e){
+      console.error('Change save failed:',e);
+      if(status){status.textContent='⚠ Supabase error: '+e.message;status.style.color='var(--red)';}
+      if(saveBtn){saveBtn.textContent='Save change';saveBtn.disabled=false;}
+      return;
+    }
   } else {
+    c.changes.unshift(change);
     if(status){status.textContent='✓ Saved';status.style.color='var(--green)';}
   }
   renderCampaigns();renderChangeLog();
-  setTimeout(()=>{closeGlobalCL();},900);
+  setTimeout(()=>{
+    if(saveBtn){saveBtn.textContent='Save change';saveBtn.disabled=false;}
+    closeGlobalCL();
+  },900);
 }
 
 /* boot */
@@ -6579,6 +6704,7 @@ loadFromSupabase().then(()=>{
     renderDashAttention();
     renderDashReminders();
     renderDashRecentChanges();
+    renderDashReviewsList();
   }
   /* Warn if targeting_json column is missing */
   if(window._missingTargetingCol){
