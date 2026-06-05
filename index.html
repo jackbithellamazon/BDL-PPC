@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL PPC — Change Tracker</title>
+<title>BDL PPC — Change Tracker v20</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
   --bg:#090b11;--bg2:#0e1219;--bg3:#151a24;--bg4:#1c2230;--bg5:#252d3c;
   --panel:#0e1219;--panel2:#131820;
   --border:rgba(148,163,184,0.12);--border2:rgba(148,163,184,0.22);--border3:rgba(148,163,184,0.32);
-  --text:#f2f4f9;--text2:#d0d8e8;--text3:#a8b2c4;--text4:#6e7d96;
+  --text:#f2f4f9;--text2:#dde3ef;--text3:#b8c4d8;--text4:#8892a8;
   --green:#2ee59d;--green-bg:rgba(46,229,157,0.12);--green-dim:rgba(46,229,157,0.4);
   --amber:#ffb547;--amber-bg:rgba(255,181,71,0.12);
   --red:#ff5d6c;--red-bg:rgba(255,93,108,0.12);
@@ -34,7 +34,7 @@
   --shadow-lg:0 24px 60px rgba(0,0,0,0.65);
   --r:14px;--r-sm:10px;--r-xs:7px;
 }
-html,body{min-height:100%;color:var(--text);font-family:var(--font);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+html,body{min-height:100%;color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 body{background:
   radial-gradient(900px 500px at 12% -8%,rgba(91,157,255,0.10),transparent 60%),
   radial-gradient(800px 600px at 100% 0%,rgba(183,148,255,0.07),transparent 55%),
@@ -119,11 +119,11 @@ body{background:
 .tablecard{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--panel);box-shadow:var(--shadow-sm)}
 .tscroll{overflow:auto;max-height:none}
 table.dt{width:100%;border-collapse:collapse;min-width:1020px}
-table.dt thead th{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text);text-align:right;padding:12px 14px;border-bottom:1px solid var(--border2);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--bg3);z-index:2;transition:.12s}
+table.dt thead th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#dde3ef;text-align:right;padding:12px 14px;border-bottom:1px solid var(--border2);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--bg3);z-index:2;transition:.12s}
 table.dt thead th:first-child{text-align:left}
 table.dt thead th:hover{color:var(--text)}
 table.dt thead th.sorted{color:var(--blue)}
-table.dt tbody td{padding:11px 14px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;font-family:var(--mono);font-size:12px;color:var(--text)}
+table.dt tbody td{padding:12px 14px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;font-family:var(--mono);font-size:13px;color:#f2f4f9}
 table.dt tbody td:first-child{text-align:left;font-family:var(--font)}
 table.dt tbody tr{transition:.12s;cursor:pointer}
 table.dt tbody tr:hover{background:var(--bg2)}
@@ -283,20 +283,21 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .cle:last-child .tbar{display:none}
 .cle .body{flex:1;min-width:0}
 .cle .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.cle .what{font-weight:600;font-size:13px}
-.cle .why{font-size:12px;color:var(--text2);margin-top:3px}
-.cle .why b{color:var(--text2);font-weight:500}
-.cle .tags{display:flex;gap:7px;align-items:center;margin-top:7px;flex-wrap:wrap}
-.ctag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;background:var(--bg4);color:var(--text);font-weight:500}
+.cle .what{font-weight:700;font-size:13.5px;color:#f2f4f9}
+.cle .why{font-size:12.5px;color:#dde3ef;margin-top:4px;line-height:1.5}
+.cle .why b{color:#f2f4f9;font-weight:600}
+.cle .tags{display:flex;gap:7px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.ctag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:6px;background:var(--bg4);color:#dde3ef;font-weight:600}
 .ctag.type{color:var(--blue);background:var(--blue-bg)}
-.outcome{font-family:var(--mono);font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:7px;display:inline-flex;align-items:center;gap:5px}
+.outcome{font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 10px;border-radius:7px;display:inline-flex;align-items:center;gap:5px}
 .outcome.win{color:var(--green);background:var(--green-bg)}
 .outcome.loss{color:var(--red);background:var(--red-bg)}
 .outcome.pending{color:var(--amber);background:var(--amber-bg)}
-.cle .date{font-family:var(--mono);font-size:10.5px;color:var(--text4);white-space:nowrap}
+.outcome-clock{display:inline-block;width:12px;height:12px;vertical-align:middle;margin-right:4px;flex-shrink:0}
+.cle .date{font-family:var(--mono);font-size:11.5px;color:#dde3ef;white-space:nowrap;font-weight:600}
 
-.muted{color:var(--text2)}
-.empty{text-align:center;padding:34px;color:var(--text2);font-size:12.5px}
+.muted{color:#dde3ef}
+.empty{text-align:center;padding:34px;color:#dde3ef;font-size:13px}
 .asin-chip{font-family:var(--mono);font-size:10px;color:var(--purple);background:var(--purple-bg);padding:2px 7px;border-radius:6px;cursor:pointer}
 .asin-chip:hover{filter:brightness(1.15)}
 /* ── simplified popout layout ── */
@@ -313,11 +314,11 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .hist-current td{background:rgba(91,157,255,.05)}
 .trow-leak td{background:rgba(255,181,71,.04)}
 /* simple table — replaces the heavy .dt style inside popout */
-.simple-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
-.simple-tbl thead th{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text);text-align:center;padding:9px 12px;border-bottom:1px solid var(--border2);white-space:nowrap;background:var(--bg3);position:sticky;top:0;z-index:2}
+.simple-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.simple-tbl thead th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#d0d8e8;text-align:center;padding:10px 12px;border-bottom:2px solid var(--border2);white-space:nowrap;background:#131820;position:sticky;top:0;z-index:2}
 .simple-tbl thead th:first-child{text-align:left!important}
-.simple-tbl tbody td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);font-family:var(--mono);color:var(--text);font-size:12px}
-.simple-tbl tbody td:first-child{text-align:left!important;font-family:var(--font);color:var(--text)}
+.simple-tbl tbody td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--border);font-family:var(--mono);color:#f2f4f9;font-size:12.5px}
+.simple-tbl tbody td:first-child{text-align:left!important;font-family:var(--font);color:#f2f4f9;font-size:13px;font-weight:500}
 .simple-tbl tbody tr:last-child td{border-bottom:none}
 .simple-tbl tbody tr:hover td{background:var(--bg3)}
 /* csv import drop zone */
@@ -353,7 +354,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;PPC <span class="logo-ver">v2.0</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;PPC <span class="logo-ver">v20</span></div>
   <div class="nav" id="nav">
     <button class="nav-btn active" data-p="dashboard">Dashboard</button>
     <button class="nav-btn" data-p="campaigns">Campaigns</button>
@@ -386,66 +387,36 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     </div>
   </div>
 
-  <!-- ROW 1: KPI strip (ROAS hero + 4 tiles + health) -->
-  <div id="dash-kpi-row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:10px"></div>
+  <!-- OVERDUE REVIEWS BANNER (hidden when none) -->
+  <div id="dash-overdue-banner" style="display:none;margin-bottom:10px"></div>
 
-  <!-- ROW 2: ACTION LIST (full width — the most important thing on the page) -->
+  <!-- ROW 1: KPI strip -->
+  <div id="dash-kpi-row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:10px"></div>
+
+  <!-- ROW 2: ACTION LIST -->
   <div class="card" id="dash-action-list" style="overflow:hidden;margin-bottom:10px"></div>
 
-  <!-- ROW 3: Since Last | What's Working | Wasting Money -->
+  <!-- ROW 3: Best Performing | Worst Performing | Wasting Money -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
-    <div class="card" id="dash-since-last" style="overflow:hidden"></div>
     <div class="card" id="dash-whats-working" style="overflow:hidden"></div>
+    <div class="card" id="dash-worst-performing" style="overflow:hidden"></div>
     <div class="card" id="dash-wasting-money" style="overflow:hidden"></div>
   </div>
 
-  <!-- ROW 4: Campaign table + Quick Wins sidebar -->
-  <div style="display:grid;grid-template-columns:1fr 300px;gap:10px;margin-bottom:10px">
-    <div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:6px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);display:flex;align-items:center;gap:6px">
-            <span style="display:inline-block;width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,var(--blue),var(--purple))"></span>
-            All campaigns <small id="dash-camps-period-label" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3);font-size:11px"></small>
-          </div>
-          <div id="db-rag-filter" style="display:flex;gap:3px">
-            <button class="tog on" data-rag="all" style="font-size:10px;padding:3px 9px">All</button>
-            <button class="tog green" data-rag="g" style="font-size:10px;padding:3px 9px"><span class="d" style="background:var(--green)"></span>Green</button>
-            <button class="tog amber" data-rag="a" style="font-size:10px;padding:3px 9px"><span class="d" style="background:var(--amber)"></span>Amber</button>
-            <button class="tog red" data-rag="r" style="font-size:10px;padding:3px 9px"><span class="d" style="background:var(--red)"></span>Red</button>
-          </div>
-        </div>
-        <div style="display:flex;gap:4px">
-          <button class="tog on" id="db-sort-spend" onclick="setDashSort('spend',this)" style="font-size:10px;padding:3px 8px">Spend</button>
-          <button class="tog" id="db-sort-roas" onclick="setDashSort('roas',this)" style="font-size:10px;padding:3px 8px">ROAS</button>
-          <button class="tog" id="db-sort-sales" onclick="setDashSort('sales',this)" style="font-size:10px;padding:3px 8px">Sales</button>
-        </div>
-      </div>
-      <div class="tablecard"><div class="tscroll" style="max-height:380px">
-        <table class="dt" style="min-width:820px">
-          <thead><tr>
-            <th style="text-align:left">Campaign / Product</th>
-            <th>ROAS</th><th>Trend</th><th>Spend</th><th>Sales</th><th>Orders</th>
-            <th>ACOS</th><th>CPC</th><th>Status</th>
-          </tr></thead>
-          <tbody id="dash-camp-tbody"></tbody>
-        </table>
-      </div></div>
-    </div>
-    <div class="card" id="dash-quick-wins" style="overflow:hidden"></div>
-  </div>
-
-  <!-- ROW 5: Product overview + Movers + Recent Changes -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+  <!-- ROW 4: Products + Top Keywords -->
+  <div style="display:grid;grid-template-columns:480px 1fr;gap:10px;margin-bottom:10px">
     <div class="card" id="dash-product-overview" style="overflow:hidden"></div>
-    <div class="card" id="dash-movers-card" style="overflow:hidden"></div>
-    <div class="card" id="dash-recent-changes-card" style="overflow:hidden"></div>
+    <div class="card" id="dash-top-kw-card" style="overflow:hidden"></div>
   </div>
 
-  <!-- ROW 6: Top Keywords -->
-  <div class="card" id="dash-top-kw-card" style="overflow:hidden;margin-bottom:10px"></div>
-
-  <!-- hidden legacy -->
+  <!-- hidden legacy stubs (keep IDs so JS refs don't error) -->
+  <div id="dash-since-last" style="display:none"></div>
+  <div id="dash-quick-wins" style="display:none"></div>
+  <div id="dash-movers-card" style="display:none"></div>
+  <div id="dash-recent-changes-card" style="display:none"></div>
+  <div id="dash-camp-tbody" style="display:none"></div>
+  <div id="dash-camps-period-label" style="display:none"></div>
+  <div id="db-rag-filter" style="display:none"></div>
   <div id="dash-attention-card" style="display:none"></div>
   <div id="dash-score-card" style="display:none"></div>
   <div id="dash-snap-activity" style="display:none"></div>
@@ -521,120 +492,156 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 <div class="page" id="page-insights">
 
   <!-- PAGE HEADER -->
-  <div class="ph" style="margin-bottom:16px">
+  <div class="ph" style="margin-bottom:14px">
     <div>
       <h1>Insights</h1>
-      <div class="sub">trends, leaks, what's working and what isn't — updated every snapshot</div>
+      <div class="sub">Deep analysis — account-wide or per-campaign, with filters and trends</div>
     </div>
     <div class="ctrls">
+      <div style="display:inline-flex;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px">
+        <button class="tog on" id="ins-view-account" onclick="setInsightsView('account')" style="border:none;background:var(--bg4);font-size:11.5px;padding:6px 14px">Account overview</button>
+        <button class="tog" id="ins-view-campaign" onclick="setInsightsView('campaign')" style="border:none;background:none;font-size:11.5px;padding:6px 14px">Campaign view</button>
+      </div>
+      <select class="sel" id="ins-camp-filter" onchange="renderInsights()" style="min-width:180px">
+        <option value="all">All campaigns</option>
+      </select>
+      <select class="sel" id="ins-period-filter" onchange="renderInsights()" style="min-width:140px">
+        <option value="latest">Latest snapshot</option>
+      </select>
       <div id="ins-account-kpis" style="display:flex;gap:8px"></div>
     </div>
   </div>
 
-  <!-- ROW 1: Account trend sparklines (4 mini KPI trend cards) -->
-  <div id="ins-trend-bar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+  <!-- CAMPAIGN-SPECIFIC VIEW (hidden by default) -->
+  <div id="ins-campaign-view" style="display:none">
+    <div id="ins-camp-detail"></div>
+  </div>
 
-  <!-- ROW 2: Spend leaks (priority) + Change scoreboard -->
-  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-bottom:14px">
-    <div class="card">
-      <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:13px;font-weight:600">🔴 Spend leaks</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:2px">Campaigns &amp; keywords burning budget with zero return — fix these first</div>
+  <!-- ACCOUNT OVERVIEW VIEW -->
+  <div id="ins-account-view">
+    <!-- ROW 1: Account trend sparklines (4 mini KPI trend cards) -->
+    <div id="ins-trend-bar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px"></div>
+
+    <!-- ROW 2: Spend leaks (priority) + Change scoreboard -->
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="card">
+        <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:13px;font-weight:600">🔴 Spend leaks</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">Campaigns &amp; keywords burning budget with zero sales — fix these first</div>
+          </div>
+          <span class="rag flag" id="leak-total" style="flex-shrink:0"></span>
         </div>
-        <span class="rag flag" id="leak-total" style="flex-shrink:0"></span>
+        <div id="leak-list"></div>
       </div>
-      <div id="leak-list"></div>
+      <div class="card pad">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">🏆 Change scoreboard</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Do your optimisations actually work?</div>
+        <div id="scoreboard"></div>
+      </div>
     </div>
-    <div class="card pad">
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px">🏆 Change scoreboard</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Do your optimisations actually work?</div>
-      <div id="scoreboard"></div>
-    </div>
-  </div>
 
-  <!-- ROW 3: ROAS movers 3-col -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
-    <div class="card pad">
-      <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px">↗ Largest ROAS gains</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Top 5 vs previous snapshot</div>
-      <div id="ins-up"></div>
+    <!-- ROW 3: ROAS movers 3-col -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="card pad">
+        <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px">↗ Largest ROAS gains</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Top 5 vs previous snapshot</div>
+        <div id="ins-up"></div>
+      </div>
+      <div class="card pad">
+        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">↘ Largest ROAS drops</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Top 5 vs previous snapshot</div>
+        <div id="ins-down"></div>
+      </div>
+      <div class="card pad">
+        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">🆕 New red campaigns</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Crossed below 4.0× ROAS since last snapshot</div>
+        <div id="ins-newred"></div>
+      </div>
     </div>
-    <div class="card pad">
-      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">↘ Largest ROAS drops</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Top 5 vs previous snapshot</div>
-      <div id="ins-down"></div>
-    </div>
-    <div class="card pad">
-      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">🆕 New red campaigns</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Crossed below 4.0× ROAS since last snapshot</div>
-      <div id="ins-newred"></div>
-    </div>
-  </div>
 
-  <!-- ROW 4: Keyword-level intelligence -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-    <div class="card">
-      <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:600">🔑 Top performing keywords</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px">Highest ROAS targets across all campaigns</div>
+    <!-- ROW 4: Keyword-level intelligence -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="card">
+        <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:600">🔑 Top performing keywords</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">Highest ROAS targets across all campaigns</div>
+        </div>
+        <div id="ins-top-kw"></div>
       </div>
-      <div id="ins-top-kw"></div>
-    </div>
-    <div class="card">
-      <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:600">💸 Worst performing keywords</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px">Highest spend with worst return — pause candidates</div>
+      <div class="card">
+        <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:600">💸 Worst performing keywords</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">Highest spend with worst return — pause candidates</div>
+        </div>
+        <div id="ins-worst-kw"></div>
       </div>
-      <div id="ins-worst-kw"></div>
     </div>
-  </div>
 
-  <!-- ROW 5: Spend vs Sales full table + Reviews -->
-  <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:14px">
-    <div class="card">
-      <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:600">📊 Spend vs sales — all campaigns</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px">Ranked by spend · click any row to open campaign</div>
+    <!-- ROW 5: Spend vs Sales full table + Reviews -->
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="card">
+        <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
+          <div style="font-size:13px;font-weight:600">📊 Spend vs sales — all campaigns</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">Ranked by spend · click any row to open campaign</div>
+        </div>
+        <div style="overflow-x:auto;max-height:340px;overflow-y:auto">
+          <table class="dt" style="min-width:660px">
+            <thead><tr>
+              <th style="text-align:left">Campaign</th>
+              <th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th>
+              <th>CPC</th><th>Orders</th>
+              <th style="text-align:left;width:120px">Share</th>
+            </tr></thead>
+            <tbody id="ins-spendtable"></tbody>
+          </table>
+        </div>
       </div>
-      <div style="overflow-x:auto;max-height:340px;overflow-y:auto">
-        <table class="dt" style="min-width:660px">
-          <thead><tr>
-            <th style="text-align:left">Campaign</th>
-            <th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th>
-            <th>CPC</th><th>Orders</th>
-            <th style="text-align:left;width:120px">Share</th>
-          </tr></thead>
-          <tbody id="ins-spendtable"></tbody>
-        </table>
+      <div class="card pad">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">⏰ Reviews due</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Changes that need assessing</div>
+        <div id="ins-reviews"></div>
       </div>
     </div>
-    <div class="card pad">
-      <div style="font-size:13px;font-weight:600;margin-bottom:4px">⏰ Reviews due</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Changes that need assessing</div>
-      <div id="ins-reviews"></div>
-    </div>
-  </div>
 
-  <!-- ROW 6: Account flags -->
-  <div style="margin-bottom:14px">
-    <div class="sh" style="margin:0 0 10px"><div class="tt">Account-level flags &amp; recommendations</div></div>
-    <div id="ins-flags"></div>
+    <!-- ROW 6: Account flags -->
+    <div style="margin-bottom:14px">
+      <div class="sh" style="margin:0 0 10px"><div class="tt">Account-level flags &amp; recommendations</div></div>
+      <div id="ins-flags"></div>
+    </div>
+
+    <!-- ROW 7: What to do this week -->
+    <div style="margin-bottom:14px">
+      <div class="sh" style="margin:0 0 10px"><div class="tt">📋 What to do this week</div></div>
+      <div id="ins-todo-list"></div>
+    </div>
   </div>
 
 </div>
 
 <!-- ════════ CHANGE LOG ════════ -->
 <div class="page" id="page-changelog">
-  <div class="ph"><div><h1>Change Log</h1><div class="sub">every change we made, by campaign or product — with the result it drove</div></div>
+  <div class="ph"><div><h1>Change Log</h1><div class="sub">Complete history of every change — search, filter, and mark outcomes</div></div>
     <div class="ctrls">
-      <select class="sel" id="cl-scope" onchange="renderChangeLog()"><option value="campaign">Group by campaign</option><option value="asin">Group by product / ASIN</option><option value="type">Group by change type</option></select>
-      <select class="sel" id="cl-type-filter" onchange="renderChangeLog()"><option value="all">All types</option><option>PPC Bid</option><option>PPC Budget</option><option>PPC Keywords</option><option>Pricing</option><option>Listing</option><option>Stock</option></select>
+      <input class="input" id="cl-search" placeholder="Search changes, campaigns, notes…" style="width:220px" oninput="window._clPage=0;renderChangeLog()">
+      <select class="sel" id="cl-camp-filter" onchange="window._clPage=0;renderChangeLog()" style="min-width:150px">
+        <option value="all">All campaigns</option>
+      </select>
+      <select class="sel" id="cl-type-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All types</option><option>PPC Bid</option><option>PPC Budget</option><option>PPC Keywords</option><option>Pricing</option><option>Listing</option><option>Stock</option></select>
+      <select class="sel" id="cl-outcome-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All outcomes</option><option value="pending">Pending review</option><option value="overdue">Overdue</option><option value="win">Worked</option><option value="loss">Did not work</option></select>
+      <select class="sel" id="cl-date-filter" onchange="window._clPage=0;renderChangeLog()" style="min-width:130px"><option value="all">Any date</option><option value="7d">Last 7 days</option><option value="30d">Last 30 days</option><option value="90d">Last 90 days</option></select>
+      <select class="sel" id="cl-scope" onchange="window._clPage=0;renderChangeLog()">
+        <option value="flat">Flat list</option>
+        <option value="campaign">Group: campaign</option>
+        <option value="type">Group: type</option>
+        <option value="outcome">Group: outcome</option>
+      </select>
       <button class="btn" onclick="openGlobalChangeLog()">+ Log change</button>
     </div>
   </div>
-  <div id="cl-summary" class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px"></div>
+  <div id="cl-summary" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px"></div>
   <div id="cl-content"></div>
+  <div id="cl-pagination" style="display:flex;gap:8px;align-items:center;justify-content:center;padding:16px 0;margin-top:8px"></div>
 </div>
 
 <!-- ════════ SNAPSHOTS ════════ -->
@@ -670,7 +677,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <button class="btn" onclick="openProductEdit(null)">+ Add product</button>
     </div>
   </div>
-  <div class="grid" id="prod-grid" style="grid-template-columns:repeat(auto-fill,minmax(400px,1fr))"></div>
+  <div class="grid" id="prod-grid"></div>
 </div>
 
 <!-- ════════ PRODUCT EDIT MODAL ════════ -->
@@ -688,8 +695,9 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
 <!-- ════════ SETTINGS ════════ -->
 <div class="page" id="page-settings">
-  <div class="ph"><div><h1>Settings</h1><div class="sub">Account config, alert rules, bid defaults, data export</div></div></div>
+  <div class="ph"><div><h1>Settings</h1><div class="sub">Database connection, PPC targets, display preferences, and thresholds</div></div></div>
 
+  <!-- ROW 1: Supabase + Amazon account -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="card pad">
       <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">☁ Supabase connection</div></div>
@@ -701,11 +709,10 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <button class="btn" onclick="saveSupabaseConfig()">Save &amp; reconnect</button>
           <button class="btn ghost" onclick="testSupabaseConnection()">Test connection</button>
-          <button class="btn ghost" onclick="checkAndMigrateSchema()" title="Check if targeting_json / ad_groups_json columns exist and show SQL to add them if not">🔧 Check schema</button>
+          <button class="btn ghost" onclick="checkAndMigrateSchema()" title="Check if targeting_json / ad_groups_json columns exist">🔧 Check schema</button>
           <span id="cfg-status" style="font-size:11px;color:var(--text2)"></span>
         </div>
-        <div id="cfg-schema-info" style="display:none;margin-top:10px;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:11.5px;line-height:1.7">
-        </div>
+        <div id="cfg-schema-info" style="display:none;margin-top:10px;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:11.5px;line-height:1.7"></div>
       </div>
     </div>
     <div class="card pad">
@@ -727,9 +734,10 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     </div>
   </div>
 
+  <!-- ROW 2: PPC targets + Alert rules -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="card pad">
-      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🎯 PPC defaults</div></div>
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🎯 PPC targets &amp; bid defaults</div></div>
       <div style="display:grid;gap:9px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
           <div><div class="label" style="margin-bottom:4px">Target ROAS</div>
@@ -743,32 +751,60 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
           <div><div class="label" style="margin-bottom:4px">Max bid cap (£)</div>
             <input class="input" id="cfg-bid-cap" style="width:100%" type="number" step="0.01" placeholder="2.00" oninput="settingsDirty()"></div>
         </div>
-        <div><div class="label" style="margin-bottom:4px">Review frequency</div>
-          <select class="sel" id="cfg-review-freq" style="width:100%" onchange="settingsDirty()">
-            <option value="daily">Daily</option><option value="3days">Every 3 days</option>
-            <option value="weekly" selected>Weekly</option><option value="biweekly">Every 2 weeks</option>
-          </select></div>
-        <button class="btn ghost" onclick="saveAppSettings()">Save defaults</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <div><div class="label" style="margin-bottom:4px">Spend leak threshold (£)</div>
+            <input class="input" id="cfg-leak-threshold" style="width:100%" type="number" step="0.50" placeholder="1.00" value="1" oninput="settingsDirty()" title="Flag keyword as spend leak if spend exceeds this with zero sales"></div>
+          <div><div class="label" style="margin-bottom:4px">Default review interval</div>
+            <select class="sel" id="cfg-review-freq" style="width:100%" onchange="settingsDirty()">
+              <option value="daily">Daily</option><option value="3days">Every 3 days</option>
+              <option value="weekly" selected>Weekly</option><option value="biweekly">Every 2 weeks</option>
+            </select></div>
+        </div>
+        <button class="btn ghost" onclick="saveAppSettings()">Save targets</button>
       </div>
     </div>
     <div class="card pad">
       <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🔔 Alert rules</div><button class="btn-sm" onclick="addAlertRule()">+ Add rule</button></div>
       <div id="alert-rules-list"></div>
-      <div style="margin-top:10px;padding:9px 12px;background:var(--bg3);border-radius:var(--r-sm);font-size:11px;color:var(--text2)">Rules flag campaigns on Insights after each snapshot.</div>
+      <div style="margin-top:10px;padding:9px 12px;background:var(--bg3);border-radius:var(--r-sm);font-size:11px;color:var(--text2)">Rules flag campaigns on Insights and Dashboard after each snapshot.</div>
     </div>
   </div>
 
-  <div class="sh" style="margin:4px 0 10px">
-    <div class="tt">💷 Product price history</div>
-    <button class="btn-sm" onclick="addPriceEntry()">+ Log price change</button>
+  <!-- ROW 3: Campaign status rules -->
+  <div style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Active / Inactive campaign rules</div>
+    <div class="card pad">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:6px">Historical data for inactive campaigns</div>
+          <div style="font-size:11.5px;color:var(--text3);line-height:1.6;margin-bottom:10px">When a campaign is set to inactive or paused, its historical snapshot data is retained. It will still appear in the Snapshot Log and historical comparisons, but will be excluded from Insights and Dashboard totals unless you explicitly include it. This ensures your current-period metrics aren't distorted by campaigns that were active earlier in the month.</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px">
+              <input type="checkbox" id="cfg-include-inactive" style="width:14px;height:14px;cursor:pointer" onchange="settingsDirty()">
+              Include inactive campaigns in account totals
+            </label>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:6px">Campaign status on keyword pause</div>
+          <div style="font-size:11.5px;color:var(--text3);line-height:1.6;margin-bottom:10px">If you pause all keywords within a campaign, you can optionally auto-flag the campaign as inactive so it's clearly marked in the UI. Spend during the active period will still appear in its snapshots.</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px">
+              <input type="checkbox" id="cfg-auto-inactive" style="width:14px;height:14px;cursor:pointer" onchange="settingsDirty()">
+              Log a note when campaign goes inactive
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="card" style="margin-bottom:14px"><div id="price-history-list"></div></div>
 
+  <!-- ROW 4: Data export -->
   <div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px">📦 Data export</div></div>
   <div class="card pad" style="margin-bottom:14px">
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <div style="flex:1"><div style="font-size:12.5px;font-weight:600;margin-bottom:3px">Export everything</div>
-        <div style="font-size:11.5px;color:var(--text2)">All campaigns, snapshots, changes and price history.</div></div>
+        <div style="font-size:11.5px;color:var(--text2)">All campaigns, snapshots, changes and settings.</div></div>
       <div style="display:flex;gap:8px">
         <button class="btn ghost" onclick="exportData('json')">Export JSON</button>
         <button class="btn ghost" onclick="exportData('csv')">Export CSV</button>
@@ -776,17 +812,17 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     </div>
   </div>
 
-  <div class="card pad" style="display:flex;align-items:center;justify-content:space-between;gap:14px">
+  <div class="card pad" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px">
     <div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:2px">BDL PPC Manager <span style="font-family:var(--mono);font-size:10px;color:var(--text2);font-weight:400;margin-left:6px">v10 · Jun 2026</span></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:2px">BDL PPC Manager <span style="font-family:var(--mono);font-size:10px;color:var(--text2);font-weight:400;margin-left:6px">v20 · Jun 2026</span></div>
       <div style="font-size:11.5px;color:var(--text2)">Data stored in Supabase. Connected to ffbdazepqrsyurhouxif.</div>
     </div>
     <button class="btn ghost" style="color:var(--red);border-color:rgba(255,93,108,.3)" onclick="if(confirm('Reset ALL local data?'))resetAllData()">Reset local data</button>
   </div>
 
   <!-- PPC APPEARANCE -->
-  <div style="margin-top:20px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">PPC Appearance — Match Type Colours</div>
+  <div style="margin-top:4px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">PPC Appearance — Match type colours</div>
     <div class="card pad">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px">
         <div>
@@ -822,7 +858,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
   <!-- Display Preferences -->
   <div style="margin-top:20px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Display Preferences</div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Display preferences</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
       <div class="card pad">
         <div style="font-size:12px;font-weight:700;margin-bottom:10px">Default metrics shown</div>
@@ -875,10 +911,10 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   </div>
 
   <!-- Quick Filter Presets -->
-  <div style="margin-top:20px;margin-bottom:20px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Quick Filter Presets — Campaign Table</div>
+  <div style="margin-top:4px;margin-bottom:20px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Quick filter thresholds — Campaign table</div>
     <div class="card pad">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Choose which quick filters appear in the Campaigns toolbar.</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Set the numeric thresholds used by the quick-filter dropdown in the Campaigns table.</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="cfg-filter-presets">
         <!-- populated by renderSettings() -->
       </div>
@@ -898,20 +934,20 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   </div>
 
   <!-- DANGER ZONE -->
-  <div style="margin-top:24px">
+  <div style="margin-top:4px">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:7px">⚠ Danger zone</div>
     <div style="background:var(--red-bg);border:1px solid rgba(255,93,108,.3);border-radius:var(--r);padding:16px">
       <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin-bottom:12px">
         <div style="flex:1;min-width:200px">
           <div style="font-size:13px;font-weight:600;margin-bottom:3px">Delete all snapshots</div>
-          <div style="font-size:12px;color:var(--text3)">Wipes ALL snapshot data from every campaign. Campaigns, products, changes and settings are kept. Use this to start fresh imports without losing your campaign setup.</div>
+          <div style="font-size:12px;color:var(--text3)">Wipes ALL snapshot data from every campaign. Campaigns, products, changes and settings are kept.</div>
         </div>
         <button class="btn" onclick="deleteAllSnapshots()" style="background:var(--red);border-color:var(--red);flex-shrink:0">🗑 Delete all snapshots</button>
       </div>
       <div style="border-top:1px solid rgba(255,93,108,.2);margin-top:4px;padding-top:12px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start">
         <div style="flex:1;min-width:200px">
           <div style="font-size:13px;font-weight:600;margin-bottom:3px">Delete a specific period</div>
-          <div style="font-size:12px;color:var(--text3)">Remove one snapshot period from all campaigns. Go to the Snapshots tab, find the period card, and click Delete.</div>
+          <div style="font-size:12px;color:var(--text3)">Go to the Snapshots tab, find the period card, and click Delete.</div>
         </div>
         <button class="btn ghost" onclick="document.querySelectorAll('.nav-btn').forEach(b=>{if(b.dataset&&b.dataset.p==='snapshots')b.click()})">Go to Snapshots →</button>
       </div>
@@ -1018,6 +1054,16 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
           <div>
             <div class="label" style="margin-bottom:5px">Daily budget (£)</div>
             <input class="input" id="ac-budget" style="width:100%" type="number" step="0.50" placeholder="10.00">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Review frequency</div>
+            <select class="sel" id="ac-review-freq" style="width:100%">
+              <option value="7">Weekly (every 7 days)</option>
+              <option value="14" selected>Fortnightly (every 14 days)</option>
+              <option value="30">Monthly (every 30 days)</option>
+              <option value="3">Every 3 days</option>
+              <option value="0">No scheduled review</option>
+            </select>
           </div>
         </div>
         <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;font-size:11.5px;color:var(--text3)" id="ac-info">
@@ -1177,7 +1223,7 @@ async function loadFromSupabase(){
       });
       const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
       const product=row.product_name||row.product||row.name||'Unnamed product';
-      campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,snapshots:snaps,changes}));
+      campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
     });
     renderCampaigns();
     /* re-render dashboard if visible */
@@ -1345,11 +1391,28 @@ function openCamp(id){
   const ragPillHtml=c.rag==='leak'?'<span class="rag flag">SPEND LEAK</span>':`<span class="rag ${c.rag}"><span class="d"></span>${fmt(c.roas,2)} ROAS</span>`;
   document.getElementById('po-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:11px">${monoTile(campName,30)}<span style="display:flex;flex-direction:column;gap:3px"><span>${campName}</span><span style="font-size:12px;font-weight:400;color:var(--text3);font-family:var(--font)">${c.product||''}</span></span>${ragPillHtml}</span>`;
   const _ss=c.snapshots;
-  document.getElementById('po-sub').innerHTML=`<span class="chip" style="color:var(--purple);border-color:rgba(183,148,255,.3);background:var(--purple-bg)">ASIN&nbsp;${c.asin}</span><span class="chip" style="color:var(--text2)">SKU&nbsp;${c.sku||'—'}</span>${c.price?`<span class="chip">£${fmt(c.price,2)}</span>`:''}<span class="chip" style="color:${c.status==='active'?'var(--green)':'var(--text3)'};border-color:${c.status==='active'?'rgba(46,229,157,.3)':'var(--border)'}"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${c.status==='active'?'var(--green)':'var(--text4)'};margin-right:5px;box-shadow:${c.status==='active'?'0 0 5px var(--green)':'none'}"></span>${c.status}</span><span class="chip" style="color:var(--blue);border-color:rgba(91,157,255,.3);background:var(--blue-bg)">${_ss.length}&nbsp;snapshot${_ss.length!==1?'s':''}</span><span class="chip" style="color:${c.changes.length?'var(--amber)':'var(--text2)'};border-color:${c.changes.length?'rgba(255,181,71,.3)':'var(--border)'}">${c.changes.length}&nbsp;change${c.changes.length!==1?'s':''}</span>`;
+  /* Review frequency chip */
+  const _rf=c.reviewFreqDays;
+  let _reviewChip='';
+  if(_rf&&_rf>0){
+    /* Next review = last snapshot date + freq, or today + freq if no snapshots */
+    const lastSnapDate=_ss.length?_ss[_ss.length-1].date:null;
+    let nextReviewDate=null;
+    if(lastSnapDate){
+      // Try to parse the period label as a date — use the latest snapshot date
+      const _today=new Date();
+      nextReviewDate=new Date(_today.getTime()+_rf*86400000);
+    }
+    /* Check if any change has a pending review within freq */
+    const hasPendingChange=c.changes.some(ch=>ch.outcome==='pending'&&ch.review);
+    const _rfLabel=_rf===7?'Weekly':_rf===14?'Fortnightly':_rf===30?'Monthly':_rf===3?'Every 3 days':'Every '+_rf+'d';
+    _reviewChip=`<span class="chip" style="color:var(--blue);border-color:rgba(91,157,255,.3)">${_rfLabel} review${hasPendingChange?' — change pending':''}  </span>`;
+  }
+  document.getElementById('po-sub').innerHTML=`<span class="chip" style="color:var(--purple);border-color:rgba(183,148,255,.3);background:var(--purple-bg)">ASIN&nbsp;${c.asin}</span><span class="chip" style="color:var(--text2)">SKU&nbsp;${c.sku||'—'}</span>${c.price?`<span class="chip">£${fmt(c.price,2)}</span>`:''}<span class="chip" style="color:${c.status==='active'?'var(--green)':'var(--text3)'};border-color:${c.status==='active'?'rgba(46,229,157,.3)':'var(--border)'}"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${c.status==='active'?'var(--green)':'var(--text4)'};margin-right:5px;box-shadow:${c.status==='active'?'0 0 5px var(--green)':'none'}"></span>${c.status}</span><span class="chip" style="color:var(--blue);border-color:rgba(91,157,255,.3);background:var(--blue-bg)">${_ss.length}&nbsp;snapshot${_ss.length!==1?'s':''}</span><span class="chip" style="color:${c.changes.length?'var(--amber)':'var(--text2)'};border-color:${c.changes.length?'rgba(255,181,71,.3)':'var(--border)'}">${c.changes.length}&nbsp;change${c.changes.length!==1?'s':''}</span>${_reviewChip}`;
   document.getElementById('potab-changes').textContent=c.changes.length||'';
   renderPerf();renderChanges();renderProfit();renderNotes();renderImport();
   window._perfPeriod=null;
-  window._cmpSelA=null;window._cmpSelB=null;
+  window._cmpSelA=null;window._cmpSelB=null;window._cmpDataView=null;
   switchTab('performance');
   document.getElementById('camp-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
@@ -1405,6 +1468,7 @@ async function saveNewCampaign(){
   const status=document.getElementById('ac-status').value;
   const type=document.getElementById('ac-type').value;
   const budget=parseFloat(document.getElementById('ac-budget').value)||0;
+  const reviewFreq=parseInt(document.getElementById('ac-review-freq')?.value||14);
 
   if(!name||!product||!asin){
     document.getElementById('add-camp-status').textContent='⚠ Campaign name, product name and ASIN are required.';
@@ -1434,6 +1498,7 @@ async function saveNewCampaign(){
         price:price||null,
         daily_budget:budget||null,
         campaign_type:type,
+        review_freq_days:reviewFreq||null,
         created_at:new Date().toISOString(),
       };
       const saved=await sbInsert('campaigns',row);
@@ -1459,6 +1524,7 @@ async function saveNewCampaign(){
     price,
     dailyBudget:budget,
     campaignType:type,
+    reviewFreqDays:reviewFreq,
     snapshots:[],
     changes:[],
     notes:[],
@@ -1754,8 +1820,7 @@ function _doCompare(){
   const cpcA=sA.cpc>0?sA.cpc:(sA.clicks?sA.spend/sA.clicks:0);
   const cpcB=sB.cpc>0?sB.cpc:(sB.clicks?sB.spend/sB.clicks:0);
 
-  /* ── Big metric comparison rows ── */
-  const metRow=(label,vA,vB,fmtFn,hb,icon)=>{
+  const metRow=(label,vA,vB,fmtFn,hb)=>{
     const d=pct(vA,vB);
     const good=d==null?null:(hb?d>=0:d<=0);
     const noChange=d!=null&&Math.abs(d)<0.5;
@@ -1765,9 +1830,8 @@ function _doCompare(){
     const arrow=d==null?'—':noChange?'→ No change':good?(d>0?'↑ UP':'↓ DOWN'):(d>0?'↑ UP':'↓ DOWN');
     const arrowCol=d==null?'#6e7d96':noChange?'#8892a4':good?'#2ee59d':'#ff5d6c';
     return`<div style="display:grid;grid-template-columns:130px 1fr auto 1fr;align-items:center;gap:0;padding:14px 18px;border-bottom:1px solid rgba(148,163,184,0.08);background:${bgCol};transition:.15s">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:15px">${icon}</span>
-        <span style="font-size:12px;font-weight:700;color:#d0d8e8;letter-spacing:.2px">${label}</span>
+      <div>
+        <span style="font-size:12.5px;font-weight:700;color:#dde3ef;letter-spacing:.2px">${label}</span>
       </div>
       <!-- Period A -->
       <div style="text-align:right;padding-right:20px">
@@ -1804,75 +1868,134 @@ function _doCompare(){
     </div>
   </div>`;
 
-  /* ── Keyword comparison ── */
+  /* ── Keyword/Ad Group comparison ── */
   let kwCompare='';
-  if((sA.targeting||[]).length&&(sB.targeting||[]).length){
-    const allKw=[...new Set([...(sA.targeting||[]).map(t=>t.kw),...(sB.targeting||[]).map(t=>t.kw)])];
-    const kwRows=allKw.map(kw=>{
-      const tA=(sA.targeting||[]).find(t=>t.kw===kw);
-      const tB=(sB.targeting||[]).find(t=>t.kw===kw);
-      const roaA2=tA?.spend?tA.sales/tA.spend:0;
-      const roaB2=tB?.spend?tB.sales/tB.spend:0;
-      const d=pct(roaA2,roaB2);
-      const good=d==null?null:d>=0;
-      const col=d==null?'#6e7d96':Math.abs(d)<2?'#8892a4':good?'#2ee59d':'#ff5d6c';
-      return{kw,tA,tB,d,col,roaA2,roaB2,good};
-    }).sort((a,b)=>Math.abs(b.d||0)-Math.abs(a.d||0));
+  const hasTgtA=(sA.targeting||[]).length>0, hasTgtB=(sB.targeting||[]).length>0;
+  const hasAgA=(sA.adGroups||[]).length>0, hasAgB=(sB.adGroups||[]).length>0;
+  if((hasTgtA||hasTgtB)||(hasAgA||hasAgB)){
+    /* Build tabs state */
+    const showTgt=hasTgtA||hasTgtB;
+    const showAg=hasAgA||hasAgB;
+    const cmpView=window._cmpDataView||(showTgt?'tgt':'ag');
+    window._cmpDataView=cmpView;
 
-    const kwRowsHtml=kwRows.slice(0,15).map(r=>{
-      const rg=ragOf(r.roaA2,r.tA?.sales||0,r.tA?.spend||0);
-      const leak=r.tA?.spend>0&&r.tA?.sales===0;
-      const isNew=!r.tB,isGone=!r.tA;
-      return`<tr style="border-bottom:1px solid rgba(148,163,184,.06);${isGone?'opacity:.5':''}">
-        <td style="padding:9px 12px;font-size:12px;font-weight:600;color:#f2f4f9;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-          ${leak?'<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#ffb547;margin-right:5px;box-shadow:0 0 4px #ffb547;vertical-align:middle"></span>':''}${r.kw||'—'}
-          ${isNew?'<span style="font-size:9px;padding:1px 5px;background:rgba(46,229,157,.12);color:#2ee59d;border:1px solid rgba(46,229,157,.3);border-radius:4px;margin-left:5px">NEW</span>':''}
-          ${isGone?'<span style="font-size:9px;padding:1px 5px;background:rgba(255,93,108,.12);color:#ff5d6c;border:1px solid rgba(255,93,108,.3);border-radius:4px;margin-left:5px">GONE</span>':''}
-        </td>
-        <td style="padding:9px 12px;text-align:center">${matchTag(r.tA?.match||r.tB?.match||'—')}</td>
-        <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:${leak?'#ffb547':ragColor(rg)}">${r.tA?.spend?fmt(r.roaA2,2)+'×':'—'}</td>
-        <td style="padding:9px 12px;text-align:right;font-size:12px;color:#f2f4f9;font-family:monospace">${r.tA?gbp(r.tA.spend):'—'}</td>
-        <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${r.tA?gbp(r.tA.sales):'—'}</td>
-        <!-- change -->
-        <td style="padding:9px 16px;text-align:center">
-          <span style="font-size:12px;font-weight:800;color:${r.col}">${r.d!=null?(r.good?'↑ +':'↓ ')+Math.abs(r.d).toFixed(1)+'%':'NEW'}</span>
-        </td>
-        <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:#6e7d96">${r.tB?.spend?fmt(r.roaB2,2)+'×':'—'}</td>
-        <td style="padding:9px 12px;text-align:right;font-size:12px;color:#8892a4;font-family:monospace">${r.tB?gbp(r.tB.spend):'—'}</td>
-        <td style="padding:9px 12px;text-align:right;font-size:12px;color:#8892a4;font-family:monospace">${r.tB?gbp(r.tB.sales):'—'}</td>
-      </tr>`;
-    }).join('');
+    /* Targeting comparison */
+    let tgtRows='',agRows='';
+    if(showTgt){
+      const allKw=[...new Set([...(sA.targeting||[]).map(t=>t.kw),...(sB.targeting||[]).map(t=>t.kw)])];
+      const kwData=allKw.map(kw=>{
+        const tA=(sA.targeting||[]).find(t=>t.kw===kw);
+        const tB=(sB.targeting||[]).find(t=>t.kw===kw);
+        const roaA2=tA?.spend?tA.sales/tA.spend:0;
+        const roaB2=tB?.spend?tB.sales/tB.spend:0;
+        const d=pct(roaA2,roaB2);
+        const good=d==null?null:d>=0;
+        const col=d==null?'#6e7d96':Math.abs(d)<2?'#8892a4':good?'#2ee59d':'#ff5d6c';
+        return{kw,tA,tB,d,col,roaA2,roaB2,good};
+      }).sort((a,b)=>Math.abs(b.d||0)-Math.abs(a.d||0));
+      tgtRows=kwData.slice(0,15).map(r=>{
+        const rg=ragOf(r.roaA2,r.tA?.sales||0,r.tA?.spend||0);
+        const leak=r.tA?.spend>0&&r.tA?.sales===0;
+        const isNew=!r.tB,isGone=!r.tA;
+        return`<tr style="border-bottom:1px solid rgba(148,163,184,.06)${isGone?';opacity:.5':''}">
+          <td style="padding:9px 12px;font-size:12px;font-weight:600;color:#f2f4f9;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            ${leak?'<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#ffb547;margin-right:5px;box-shadow:0 0 4px #ffb547;vertical-align:middle"></span>':''}${r.kw||'—'}
+            ${isNew?'<span style="font-size:9px;padding:1px 5px;background:rgba(46,229,157,.12);color:#2ee59d;border:1px solid rgba(46,229,157,.3);border-radius:4px;margin-left:5px">NEW</span>':''}
+            ${isGone?'<span style="font-size:9px;padding:1px 5px;background:rgba(255,93,108,.12);color:#ff5d6c;border:1px solid rgba(255,93,108,.3);border-radius:4px;margin-left:5px">GONE</span>':''}
+          </td>
+          <td style="padding:9px 12px;text-align:center">${matchTag(r.tA?.match||r.tB?.match||'—')}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:${leak?'#ffb547':ragColor(rg)}">${r.tA?.spend?fmt(r.roaA2,2)+'×':'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#f2f4f9;font-family:monospace">${r.tA?gbp(r.tA.spend):'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${r.tA?gbp(r.tA.sales):'—'}</td>
+          <td style="padding:9px 16px;text-align:center"><span style="font-size:12px;font-weight:800;color:${r.col}">${r.d!=null?(r.good?'↑ +':'↓ ')+Math.abs(r.d).toFixed(1)+'%':'NEW'}</span></td>
+          <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:#6e7d96">${r.tB?.spend?fmt(r.roaB2,2)+'×':'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#8892a4;font-family:monospace">${r.tB?gbp(r.tB.spend):'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#8892a4;font-family:monospace">${r.tB?gbp(r.tB.sales):'—'}</td>
+        </tr>`;
+      }).join('');
+    }
+    if(showAg){
+      const allAgs=[...new Set([...(sA.adGroups||[]).map(a=>a.name),...(sB.adGroups||[]).map(a=>a.name)])];
+      agRows=allAgs.map(name=>{
+        const aA=(sA.adGroups||[]).find(a=>a.name===name);
+        const aB=(sB.adGroups||[]).find(a=>a.name===name);
+        const rA=aA?.spend?aA.sales/aA.spend:0,rB=aB?.spend?aB.sales/aB.spend:0;
+        const d=pct(rA,rB);const good=d==null?null:d>=0;
+        const col=d==null?'#6e7d96':Math.abs(d)<2?'#8892a4':good?'#2ee59d':'#ff5d6c';
+        return`<tr style="border-bottom:1px solid rgba(148,163,184,.06)">
+          <td style="padding:9px 12px;font-size:12px;font-weight:600;color:#f2f4f9;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name||'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:${ragColor(ragOf(rA,aA?.sales||0,aA?.spend||0))}">${aA?.spend?fmt(rA,2)+'×':'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#f2f4f9;font-family:monospace">${aA?gbp(aA.spend):'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${aA?gbp(aA.sales):'—'}</td>
+          <td style="padding:9px 16px;text-align:center"><span style="font-size:12px;font-weight:800;color:${col}">${d!=null?(good?'↑ +':'↓ ')+Math.abs(d).toFixed(1)+'%':'NEW'}</span></td>
+          <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:#6e7d96">${aB?.spend?fmt(rB,2)+'×':'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#8892a4;font-family:monospace">${aB?gbp(aB.spend):'—'}</td>
+          <td style="padding:9px 12px;text-align:right;font-size:12px;color:#8892a4;font-family:monospace">${aB?gbp(aB.sales):'—'}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    const toggleBar=`<div style="display:flex;gap:3px;padding:3px;background:#131820;border-radius:9px;width:fit-content;margin-bottom:14px">
+      ${showTgt?`<button onclick="window._cmpDataView='tgt';_doCompare()" style="padding:6px 16px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:${cmpView==='tgt'?'var(--blue)':'transparent'};color:${cmpView==='tgt'?'#fff':'#8892a4'}">Targeting${(sA.targeting||[]).length||( sB.targeting||[]).length?' ('+(Math.max((sA.targeting||[]).length,(sB.targeting||[]).length))+')':''}</button>`:''}
+      ${showAg?`<button onclick="window._cmpDataView='ag';_doCompare()" style="padding:6px 16px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:${cmpView==='ag'?'var(--blue)':'transparent'};color:${cmpView==='ag'?'#fff':'#8892a4'}">Ad Groups${(sA.adGroups||[]).length||(sB.adGroups||[]).length?' ('+(Math.max((sA.adGroups||[]).length,(sB.adGroups||[]).length))+')':''}</button>`:''}
+    </div>`;
+
+    const tblHeaders=cmpView==='tgt'
+      ?['Keyword','Match','ROAS A','Spend A','Sales A','Change','ROAS B','Spend B','Sales B']
+      :['Ad Group','ROAS A','Spend A','Sales A','Change','ROAS B','Spend B','Sales B'];
+    const tblRows=cmpView==='tgt'?tgtRows:agRows;
 
     kwCompare=`<div style="background:#0e1219;border:1px solid rgba(148,163,184,0.12);border-radius:14px;overflow:hidden;margin-top:16px">
-      <div style="padding:14px 18px;border-bottom:1px solid rgba(148,163,184,0.1);display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#d0d8e8;display:flex;align-items:center;gap:8px">
+      <div style="padding:14px 18px;border-bottom:1px solid rgba(148,163,184,0.1)">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#d0d8e8;margin-bottom:12px;display:flex;align-items:center;gap:8px">
           <span style="display:inline-block;width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#5b9dff,#b794ff)"></span>
-          Keyword comparison
+          Data comparison
         </div>
-        <span style="font-size:11px;color:#6e7d96">${allKw.length} keywords</span>
+        ${toggleBar}
       </div>
       <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;min-width:700px">
+        <table style="width:100%;border-collapse:collapse;min-width:600px">
           <thead><tr style="background:#131820">
-            ${['Keyword','Match','ROAS A','Spend A','Sales A','Change','ROAS B','Spend B','Sales B'].map((h,i)=>{const align=i<=1?'text-align:left':i===5?'text-align:center':'text-align:right';const col=i===5?'#8892a4':'#6e7d96';return`<th style="padding:8px 12px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:${col};${align};white-space:nowrap">${h}</th>`;}).join('')}
+            ${tblHeaders.map((h,i)=>{const align=i===0?'text-align:left':i===4?'text-align:center':'text-align:right';return`<th style="padding:8px 12px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:${i===4?'#8892a4':'#6e7d96'};${align};white-space:nowrap">${h}</th>`;}).join('')}
           </tr></thead>
-          <tbody>${kwRowsHtml}</tbody>
+          <tbody>${tblRows||'<tr><td colspan="9" style="padding:20px;text-align:center;color:#6e7d96">No data for selected view</td></tr>'}</tbody>
         </table>
       </div>
     </div>`;
   }
 
+  /* ── Auto-generated summary sentence ── */
+  const roaDelta=pct(roaA,roaB);
+  const salDelta=pct(sA.sales||0,sB.sales||0);
+  const spDelta=pct(sA.spend||0,sB.spend||0);
+  let insight='';
+  if(roaDelta!=null&&salDelta!=null&&spDelta!=null){
+    if(roaDelta>5&&salDelta>0)insight='ROAS and sales both improved — strong period. Consider scaling bids on top-performing keywords.';
+    else if(roaDelta>5&&salDelta<=0)insight='ROAS improved but sales fell — likely a lower-spend, higher-efficiency period. Check if impressions dropped.';
+    else if(roaDelta<=-5&&salDelta>0)insight='Sales grew but ROAS declined — spend increased faster than revenue. Review which keywords are burning budget without return.';
+    else if(roaDelta<=-5&&salDelta<=0)insight='Both ROAS and sales declined. Review bids, check for new competition, and look for spend leaks.';
+    else if(Math.abs(roaDelta)<=5)insight='Performance relatively stable between these two periods.';
+  }
+  const summaryHtml=insight?`<div style="background:rgba(91,157,255,.06);border:1px solid rgba(91,157,255,.2);border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px">
+    <span style="font-size:14px;flex-shrink:0">💡</span>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#dde3ef;margin-bottom:3px">${sB.date||'B'} → ${sA.date||'A'}</div>
+      <div style="font-size:12.5px;color:#b8c4d8">${insight}</div>
+    </div>
+  </div>`:'';
+
   body.innerHTML=`
+    ${summaryHtml}
     <div style="background:#0e1219;border:1px solid rgba(148,163,184,0.12);border-radius:14px;overflow:hidden;margin-bottom:4px">
       ${headerRow}
-      ${metRow('ROAS',roaA,roaB,v=>fmt(v,2)+'×',true,'📊')}
-      ${metRow('Sales',sA.sales||0,sB.sales||0,gbp,true,'💰')}
-      ${metRow('Spend',sA.spend||0,sB.spend||0,gbp,false,'💸')}
-      ${metRow('Orders',sA.purchases||0,sB.purchases||0,intf,true,'📦')}
-      ${metRow('ACOS',acosA,acosB,v=>fmt(v,1)+'%',false,'🎯')}
-      ${metRow('CPC',cpcA,cpcB,gbp,false,'🖱')}
-      ${metRow('Impressions',sA.impressions||0,sB.impressions||0,intf,true,'👁')}
-      ${metRow('Clicks',sA.clicks||0,sB.clicks||0,intf,true,'🔗')}
+      ${metRow('ROAS',roaA,roaB,v=>fmt(v,2)+'×',true)}
+      ${metRow('Sales',sA.sales||0,sB.sales||0,gbp,true)}
+      ${metRow('Spend',sA.spend||0,sB.spend||0,gbp,false)}
+      ${metRow('Orders',sA.purchases||0,sB.purchases||0,intf,true)}
+      ${metRow('ACOS',acosA,acosB,v=>fmt(v,1)+'%',false)}
+      ${metRow('CPC',cpcA,cpcB,gbp,false)}
+      ${metRow('Impressions',sA.impressions||0,sB.impressions||0,intf,true)}
+      ${metRow('Clicks',sA.clicks||0,sB.clicks||0,intf,true)}
     </div>
     ${kwCompare}`;
 }
@@ -2293,7 +2416,7 @@ function chartHover(e){const g=window._chart;if(!g)return;const svg=document.get
 function chartLeave(){const g=document.getElementById('cguide'),r=document.getElementById('cread');if(g)g.style.opacity=0;if(r)r.style.opacity=0;}
 function showTip(e,cid,k){
   const c=campaigns.find(x=>x.id===cid),ch=c.changes[k];const tip=document.getElementById('chart-tip');if(!tip)return;
-  const oc=ch.outcome==='win'?'<span class="outcome win">✓ Worked</span>':ch.outcome==='loss'?'<span class="outcome loss">✕ Didn\'t work</span>':'<span class="outcome pending">◷ Watching</span>';
+  const oc=ch.outcome==='win'?'<span class="outcome win">✓ Worked</span>':ch.outcome==='loss'?'<span class="outcome loss">✕ Didn\'t work</span>':'<span class="outcome pending"><svg class="outcome-clock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><polyline points="8,4.5 8,8 10.5,9.5"/></svg>Watching</span>';
   tip.innerHTML=`<b>${k+1}. ${ch.what}</b><div class="meta">${ch.type} · ${ch.date}</div><div style="color:var(--text2);font-size:11px;margin:4px 0">${ch.why}</div>${oc}${ch.outcomeNote?`<div class="meta" style="margin-top:4px;color:var(--text2)">${ch.outcomeNote}</div>`:''}`;
   const wrap=tip.closest('.chartwrap').getBoundingClientRect();
   tip.style.left=Math.min(e.clientX-wrap.left+12,wrap.width-250)+'px';tip.style.top=(e.clientY-wrap.top+12)+'px';tip.style.opacity=1;
@@ -2451,24 +2574,24 @@ function changeEntry(ch, campId, chIdx){
     ?'<span class="outcome win">✓ Worked</span>'
     :ch.outcome==='loss'
       ?'<span class="outcome loss">✕ Did not work</span>'
-      :'<span class="outcome pending">◷ Awaiting review</span>';
+      :'<span class="outcome pending"><svg class="outcome-clock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><polyline points="8,4.5 8,8 10.5,9.5"/></svg>Awaiting review</span>';
   const dotCol=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
 
   const reviewLabel=reviewDate
     ?(daysUntil===0?'<b style="color:var(--red)">Review due TODAY</b>'
       :daysUntil<0?`<b style="color:var(--red)">Review ${Math.abs(daysUntil)}d overdue</b>`
-      :daysUntil<=7?`<span style="color:var(--amber)">Review in ${daysUntil}d — ${ch.review}</span>`
-      :`<span style="color:var(--text3)">Review ${ch.review}</span>`)
-    :'<span style="color:var(--text4)">No review date</span>';
+      :daysUntil<=7?`<span style="color:var(--amber);font-weight:600">Review in ${daysUntil}d — ${fmtDateShort(ch.review)}</span>`
+      :`<span style="color:#dde3ef;font-weight:500">Review ${fmtDateShort(ch.review)}</span>`)
+    :'<span style="color:#b8c4d8">No review date set</span>';
 
   const completeBtn=(campId!=null&&chIdx!=null&&ch.outcome==='pending')
     ?`<div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:7px">Mark this change as reviewed:</div>
+        <div style="font-size:12px;color:#dde3ef;margin-bottom:7px;font-weight:500">Mark this change as reviewed:</div>
         <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
-          <textarea id="rn-${campId}-${chIdx}" placeholder="Review notes (optional)…" class="input" style="flex:1;min-width:180px;min-height:48px;font-size:11.5px;resize:vertical"></textarea>
+          <textarea id="rn-${campId}-${chIdx}" placeholder="Review notes — what actually happened?" class="input" style="flex:1;min-width:180px;min-height:48px;font-size:12px;resize:vertical"></textarea>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <button class="btn" style="background:var(--green);font-size:11px;padding:6px 12px" onclick="markChange(${campId},${chIdx},'win')">✓ Worked</button>
-            <button class="btn" style="background:var(--red);font-size:11px;padding:6px 12px" onclick="markChange(${campId},${chIdx},'loss')">✕ Did not work</button>
+            <button class="btn" style="background:var(--green);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange(${campId},${chIdx},'win')">✓ Worked</button>
+            <button class="btn" style="background:var(--red);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange(${campId},${chIdx},'loss')">✕ Did not work</button>
           </div>
         </div>
       </div>`
@@ -2481,11 +2604,11 @@ function changeEntry(ch, campId, chIdx){
     <div class="body">
       <div class="top">
         <div class="what">${ch.what}</div>
-        <div class="date">${ch.date}</div>
+        <div class="date">${fmtDate(ch.date)}</div>
       </div>
-      <div class="why" style="margin-top:4px"><b style="color:var(--text3)">Why:</b> ${ch.why}</div>
-      ${ch.goal?`<div class="why" style="margin-top:2px"><b style="color:var(--text3)">Goal:</b> ${ch.goal}</div>`:''}
-      ${ch.outcomeNote?`<div class="why" style="margin-top:2px;color:var(--text2)"><b style="color:var(--text3)">Outcome note:</b> ${ch.outcomeNote}</div>`:''}
+      <div class="why" style="margin-top:4px"><b>Why:</b> ${ch.why}</div>
+      ${ch.goal?`<div class="why" style="margin-top:2px"><b>Goal:</b> ${ch.goal}</div>`:''}
+      ${ch.outcomeNote?`<div class="why" style="margin-top:2px"><b>Result:</b> ${ch.outcomeNote}</div>`:''}
       <div class="tags" style="margin-top:7px">
         <span class="ctag type">${ch.type}</span>
         ${oc}
@@ -2636,10 +2759,11 @@ function colStr(row,candidates,fallback=''){
 }
 
 function matchTag(match){
-  if(!match||match==='—')return'<span class="mtag" style="background:var(--bg4);color:var(--text3);border:1px solid var(--border)">—</span>';
+  if(!match||match==='—'||match.trim()==='')return'<span class="mtag mtag-auto">AUTO</span>';
   const m=match.trim().toLowerCase();
   const cls=m.includes('exact')?'mtag-exact':m.includes('phrase')?'mtag-phrase':m.includes('broad')?'mtag-broad':m.includes('close')?'mtag-close':m.includes('loose')?'mtag-loose':m.includes('auto')?'mtag-auto':'';
-  return`<span class="mtag ${cls}">${match}</span>`;
+  const label=m.includes('close')?'CLOSE':m.includes('loose')?'LOOSE':match.toUpperCase();
+  return`<span class="mtag ${cls}">${label}</span>`;
 }
 
 function parsePasteFor(type,text){
@@ -3204,9 +3328,50 @@ async function saveSnapshot(){
 }
 
 
+let _insightsView='account';
+function setInsightsView(v){
+  _insightsView=v;
+  document.getElementById('ins-view-account').classList.toggle('on',v==='account');
+  document.getElementById('ins-view-account').style.background=v==='account'?'var(--bg4)':'none';
+  document.getElementById('ins-view-campaign').classList.toggle('on',v==='campaign');
+  document.getElementById('ins-view-campaign').style.background=v==='campaign'?'var(--bg4)':'none';
+  document.getElementById('ins-account-view').style.display=v==='account'?'block':'none';
+  document.getElementById('ins-campaign-view').style.display=v==='campaign'?'block':'none';
+  renderInsights();
+}
+
 function renderInsights(){
-  const A=campaigns.filter(c=>c.status==='active');
+  /* Populate campaign filter */
+  const cfEl=document.getElementById('ins-camp-filter');
+  if(cfEl){
+    const prev2=cfEl.value;
+    cfEl.innerHTML='<option value="all">All campaigns</option>'+
+      campaigns.filter(c=>c.status==='active').map(c=>`<option value="${c.id}" ${c.id==prev2?'selected':''}>${c.alias||c.name}</option>`).join('');
+    if(prev2)cfEl.value=prev2;
+  }
+  /* Populate period filter */
+  const pfEl=document.getElementById('ins-period-filter');
+  if(pfEl){
+    const prev3=pfEl.value;
+    const allPrs=[...new Set(campaigns.flatMap(c=>c.snapshots.map(s=>s.date)).filter(Boolean))].sort((a,b)=>parseGbPeriod(b)-parseGbPeriod(a));
+    pfEl.innerHTML='<option value="latest">Latest snapshot</option>'+allPrs.map(p=>`<option value="${p}" ${p===prev3?'selected':''}>${p}</option>`).join('');
+    if(prev3&&prev3!=='latest')pfEl.value=prev3;
+  }
+
+  const campFilter=document.getElementById('ins-camp-filter')?.value||'all';
+  const A=(campFilter==='all'?campaigns.filter(c=>c.status==='active'):campaigns.filter(c=>c.status==='active'&&c.id==campFilter));
   const today=new Date(); today.setHours(0,0,0,0);
+
+  /* Show/hide views */
+  const accView=document.getElementById('ins-account-view');
+  const campView=document.getElementById('ins-campaign-view');
+  if(accView)accView.style.display=_insightsView==='account'?'block':'none';
+  if(campView)campView.style.display=_insightsView==='campaign'?'block':'none';
+
+  if(_insightsView==='campaign'){
+    renderInsightsCampaignView(A,campFilter,today);
+    return;
+  }
 
   /* ── helper: get latest snap for a campaign ── */
   const last=c=>c.snapshots[c.snapshots.length-1]||{};
@@ -3276,13 +3441,13 @@ function renderInsights(){
   /* ── spend leaks ── */
   const leaks=[];
   A.forEach(c=>{
-    if(c.noSaleSpend)leaks.push({type:'Campaign',name:c.alias||c.name,sub:c.asin,spend:c.spend,sales:0,cid:c.id,roas:0});
+    if(c.noSaleSpend)leaks.push({type:'Campaign',name:c.alias||c.name,sub:c.asin,spend:c.spend,sales:0,cid:c.id,roas:0,imp:c.impressions||0,clicks:c.clicks||0});
     const ls=last(c);
     (ls.targeting||[]).forEach(t=>{
-      if(t.spend>=1&&t.sales===0)leaks.push({type:'Keyword',name:t.kw,sub:(c.alias||c.name)+' · '+(t.match||''),spend:t.spend,sales:0,cid:c.id,roas:0});
+      if(t.spend>=1&&t.sales===0)leaks.push({type:'Keyword',name:t.kw,sub:(c.alias||c.name)+' · '+(t.match||''),spend:t.spend,sales:0,cid:c.id,roas:0,imp:t.imp||0,clicks:t.clicks||0});
     });
     (ls.adGroups||[]).forEach(ag=>{
-      if(ag.spend>=1&&ag.sales===0)leaks.push({type:'Ad',name:ag.name,sub:(c.alias||c.name),spend:ag.spend,sales:0,cid:c.id,roas:0});
+      if(ag.spend>=1&&ag.sales===0)leaks.push({type:'Ad',name:ag.name,sub:(c.alias||c.name),spend:ag.spend,sales:0,cid:c.id,roas:0,imp:ag.imp||0,clicks:ag.clicks||0});
     });
   });
   leaks.sort((a,b)=>b.spend-a.spend);
@@ -3294,10 +3459,10 @@ function renderInsights(){
   document.getElementById('leak-list').innerHTML=leaks.length
     ?leaks.slice(0,10).map(l=>`<div class="leak" onclick="openCamp('${l.cid}')">
         <span style="font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;background:${typeCol[l.type]}22;color:${typeCol[l.type]};flex-shrink:0">${l.type}</span>
-        <div class="bd"><b>${l.name}</b><span style="font-size:10.5px;color:var(--text3)">${l.sub}</span></div>
+        <div class="bd"><b>${l.name}</b><span style="font-size:10.5px;color:var(--text3)">${l.sub}${l.imp>0?' · '+intf(l.imp)+' impressions':''}</span></div>
         <div class="amt">
           <div class="big" style="font-size:13px">${gbp(l.spend)}</div>
-          <div class="sm">£0 return · ROAS 0.00</div>
+          <div class="sm">£0 sales · zero return</div>
         </div>
       </div>`).join('')
     :'<div class="empty" style="padding:20px;text-align:center;color:var(--green)">✓ No spend leaks — every active target is converting</div>';
@@ -3506,32 +3671,286 @@ function renderInsights(){
         <div style="font-size:11.5px;color:var(--text3);line-height:1.5">${f.body}</div>
       </div>`).join('')}</div>`
     :'<div style="padding:14px;background:var(--green-bg);border-radius:var(--r-sm);color:var(--green);font-size:12.5px;text-align:center">✓ Account looking healthy — no flags to raise.</div>';
+
+  /* ── What to do this week ── */
+  const todoEl=document.getElementById('ins-todo-list');if(todoEl){
+    const todos=[];
+    /* Overdue reviews */
+    const overdueItems=campaigns.flatMap(c=>c.changes.filter(ch=>ch.outcome==='pending'&&ch.review).map(ch=>{
+      const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);
+      const diff=Math.round((d-today)/86400000);
+      return diff<0?{pri:0,icon:'🔴',cat:'Overdue review',text:`Mark "${ch.what}" as worked or didn't work`,sub:(c.alias||c.name)+' · '+Math.abs(diff)+'d overdue',cid:c.id}:null;
+    }).filter(Boolean));
+    todos.push(...overdueItems.slice(0,3));
+    /* Spend leaks */
+    leaks.slice(0,3).forEach(l=>todos.push({pri:1,icon:'⛔',cat:'Fix spend leak',text:`Pause or add negatives for "${l.name}"`,sub:gbp(l.spend)+' burned · zero sales',cid:l.cid}));
+    /* Scale winners */
+    A.forEach(c=>{(last(c).targeting||[]).filter(t=>t.roas>=6&&t.sales>0&&(t.match==='Exact'||t.match==='Phrase')).slice(0,1).forEach(t=>todos.push({pri:2,icon:'🚀',cat:'Scale opportunity',text:`Raise bid on "${t.kw}" (${t.match})`,sub:'ROAS '+fmt(t.roas,2)+'× — room to grow. Try +10–15%',cid:c.id}));});
+    /* High ACOS broads */
+    A.forEach(c=>{(last(c).targeting||[]).filter(t=>t.sales>0&&t.spend/t.sales*100>45&&t.match==='Broad').slice(0,1).forEach(t=>todos.push({pri:3,icon:'✂',cat:'Cut bid',text:`Reduce bid on "${t.kw}" (Broad)`,sub:'ACOS '+fmt(t.spend/t.sales*100,0)+'% — overpaying. Cut bid 15–20%',cid:c.id}));});
+    /* Reviews due soon */
+    campaigns.flatMap(c=>c.changes.filter(ch=>ch.outcome==='pending'&&ch.review).map(ch=>{
+      const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);
+      const diff=Math.round((d-today)/86400000);
+      return(diff>=0&&diff<=7)?{pri:4,icon:'⏰',cat:'Review due soon',text:`Review "${ch.what}"`,sub:(c.alias||c.name)+' · due '+fmtDateShort(ch.review),cid:c.id}:null;
+    }).filter(Boolean)).forEach(r=>todos.push(r));
+    todos.sort((a,b)=>a.pri-b.pri);
+    if(!todos.length){todoEl.innerHTML='<div style="padding:14px;background:var(--green-bg);border-radius:var(--r-sm);color:var(--green);font-size:12.5px;text-align:center">✓ Nothing urgent this week — keep monitoring.</div>';return;}
+    todoEl.innerHTML=`<div class="card" style="overflow:hidden">${todos.slice(0,10).map((t,i)=>`
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s" onclick="openCamp('${t.cid}')" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
+        <span style="font-size:13px;width:20px;text-align:center;flex-shrink:0;margin-top:1px">${t.icon}</span>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">${t.cat}</span>
+            <span style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:420px">${t.text}</span>
+          </div>
+          <div style="font-size:10.5px;color:var(--text3);margin-top:3px">${t.sub}</div>
+        </div>
+        <span style="font-size:9.5px;font-weight:700;color:var(--text4);flex-shrink:0;margin-top:2px">#${i+1}</span>
+      </div>`).join('')}</div>`;
+  }
 }
 
+function renderInsightsCampaignView(A,campFilter,today){
+  const el=document.getElementById('ins-camp-detail');if(!el)return;
+  if(!A.length){el.innerHTML='<div style="padding:48px;text-align:center;color:var(--text3)">No campaigns. Add campaigns first.</div>';return;}
+  const targetC=campFilter!=='all'?A[0]:null;
+  if(!targetC){
+    /* Show campaign picker grid */
+    el.innerHTML=`<div style="margin-bottom:12px;font-size:12.5px;color:var(--text3)">Select a campaign from the filter above to see deep insights, or pick one below:</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+    ${A.map(c=>{const rg=ragOf(c.roas,c.sales,c.spend);return`<div class="card" style="padding:14px;cursor:pointer;transition:.12s" onclick="document.getElementById('ins-camp-filter').value='${c.id}';renderInsights()" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">${monoTile(c.alias||c.name,30)}
+        <div><div style="font-size:12.5px;font-weight:600">${c.alias||c.name}</div><div style="font-size:10px;color:var(--text3)">${c.asin}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:var(--bg3);border-radius:6px;padding:6px 8px"><div style="font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">ROAS</div><div style="font-size:16px;font-weight:700;color:${ragColor(rg)}">${fmt(c.roas,2)}×</div></div>
+        <div style="background:var(--bg3);border-radius:6px;padding:6px 8px"><div style="font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Sales</div><div style="font-size:14px;font-weight:700">${gbp(c.sales)}</div></div>
+        <div style="background:var(--bg3);border-radius:6px;padding:6px 8px"><div style="font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Spend</div><div style="font-size:14px;font-weight:700">${gbp(c.spend)}</div></div>
+        <div style="background:var(--bg3);border-radius:6px;padding:6px 8px"><div style="font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">Changes</div><div style="font-size:14px;font-weight:700">${c.changes.length}</div></div>
+      </div>
+    </div>`;}).join('')}
+    </div>`;
+    return;
+  }
+  const c=targetC;
+  const last=c.snapshots[c.snapshots.length-1]||{};
+  const prev2=c.snapshots[c.snapshots.length-2]||null;
+  const rg=ragOf(c.roas,c.sales,c.spend);
+  const snapshotCount=c.snapshots.length;
+  const leakKws=(last.targeting||[]).filter(t=>t.spend>=0.5&&t.sales===0).sort((a,b)=>b.spend-a.spend);
+  const topKws=(last.targeting||[]).filter(t=>t.sales>0).sort((a,b)=>b.roas-a.roas).slice(0,8);
+  const worstKws=(last.targeting||[]).filter(t=>t.sales>0).sort((a,b)=>a.roas-b.roas).slice(0,5);
+  const pend=c.changes.filter(ch=>ch.outcome==='pending').length;
+  const wins=c.changes.filter(ch=>ch.outcome==='win').length;
+  const loss=c.changes.filter(ch=>ch.outcome==='loss').length;
+  const roasTrend=c.snapshots.map(s=>s.roas||0);
+  const salesTrend=c.snapshots.map(s=>s.sales||0);
+  const spendTrend=c.snapshots.map(s=>s.spend||0);
+  const trendSpkI=(vals,col,w=100,h=32)=>{if(vals.filter(v=>v>0).length<2)return'—';const mn=Math.min(...vals),mx=Math.max(...vals),r2=mx-mn||1;const pts=vals.map((v,i)=>[i/(vals.length-1)*(w-4)+2,h-4-((v-mn)/r2)*(h-8)]);const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');const lv=vals[vals.length-1],pv=vals[vals.length-2]||lv;const tc=lv>=pv?col:'var(--red)';return`<svg width="${w}" height="${h}" style="display:block"><path d="${d}" fill="none" stroke="${tc}" stroke-width="2" stroke-linecap="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3" fill="${tc}"/></svg>`;};
 
-/* ════════ CHANGE LOG PAGE ════════ */
+  el.innerHTML=`
+    <!-- Campaign header -->
+    <div class="card" style="padding:16px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px">${monoTile(c.alias||c.name,38)}
+        <div>
+          <div style="font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px">${c.alias||c.name} <span class="rag ${rg}"><span class="d"></span>${fmt(c.roas,2)}×</span></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.asin} · ${c.sku||'—'} · ${snapshotCount} snapshot${snapshotCount!==1?'s':''}</div>
+        </div>
+      </div>
+      <button class="btn ghost" onclick="openCamp('${c.id}')">Open campaign →</button>
+    </div>
+    <!-- KPI grid -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+      ${[
+        ['ROAS',fmt(c.roas,2)+'×',ragColor(rg),roasTrend],
+        ['Sales',gbp(c.sales),'var(--text)',salesTrend],
+        ['Spend',gbp(c.spend),'var(--text)',spendTrend],
+        ['ACOS',c.sales?fmt(c.acos||c.spend/c.sales*100,1)+'%':'—','var(--text)',null],
+      ].map(([l,v,col,series])=>`<div class="card" style="padding:12px 14px">
+        <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:4px">${l}</div>
+        <div style="font-size:20px;font-weight:700;color:${col};margin-bottom:4px">${v}</div>
+        ${series?trendSpkI(series,col):''}
+      </div>`).join('')}
+    </div>
+    <!-- Changes summary + keyword breakdown -->
+    <div style="display:grid;grid-template-columns:1fr 1.8fr;gap:12px;margin-bottom:12px">
+      <div class="card pad">
+        <div style="font-size:12.5px;font-weight:600;margin-bottom:10px">Change history</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+          <div style="background:var(--green-bg);border-radius:6px;padding:7px;text-align:center"><div style="font-size:9.5px;color:var(--green);font-weight:700;text-transform:uppercase">Worked</div><div style="font-size:20px;font-weight:700;color:var(--green)">${wins}</div></div>
+          <div style="background:var(--red-bg);border-radius:6px;padding:7px;text-align:center"><div style="font-size:9.5px;color:var(--red);font-weight:700;text-transform:uppercase">Didn't</div><div style="font-size:20px;font-weight:700;color:var(--red)">${loss}</div></div>
+          <div style="background:var(--amber-bg);border-radius:6px;padding:7px;text-align:center"><div style="font-size:9.5px;color:var(--amber);font-weight:700;text-transform:uppercase">Pending</div><div style="font-size:20px;font-weight:700;color:var(--amber)">${pend}</div></div>
+        </div>
+        ${c.changes.length?c.changes.slice(0,4).map(ch=>`<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;width:50px;text-align:center;padding:2px 4px;border-radius:4px;background:${ch.outcome==='win'?'var(--green-bg)':ch.outcome==='loss'?'var(--red-bg)':'var(--amber-bg)'};color:${ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)'};font-weight:600">${ch.outcome==='win'?'✓ Win':ch.outcome==='loss'?'✕ Loss':'⏱ Wait'}</span>
+          <div style="flex:1;min-width:0"><div style="font-size:11.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ch.what}</div><div style="font-size:10px;color:var(--text4)">${fmtDate(ch.date)}</div></div>
+        </div>`).join(''):'<div style="color:var(--text3);font-size:12px">No changes logged yet.</div>'}
+      </div>
+      <div class="card" style="overflow:hidden">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:12.5px;font-weight:600">Keyword breakdown — latest snapshot</div>
+          <span style="font-size:10.5px;color:var(--text3)">${(last.targeting||[]).length} targets</span>
+        </div>
+        ${topKws.length?`<div style="overflow-y:auto;max-height:320px">
+          <div style="padding:5px 14px 3px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--green)">Top performers</div>
+          ${topKws.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border)">
+            ${matchTag(t.match||'—')}
+            <span style="flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span>
+            <span style="font-size:11.5px;color:var(--text3)">${gbp(t.spend)} / ${gbp(t.sales)}</span>
+            <span style="font-size:13px;font-weight:800;color:${ragColor(ragOf(t.roas,t.sales,t.spend))}">${fmt(t.roas,2)}×</span>
+          </div>`).join('')}
+          ${leakKws.length?`<div style="padding:7px 14px 3px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--red)">Spending with zero sales</div>
+          ${leakKws.slice(0,5).map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border);background:rgba(255,93,108,.04)">
+            ${matchTag(t.match||'—')}
+            <span style="flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="flagdot"></span>${t.kw}</span>
+            <span style="font-size:11px;color:var(--text3)">${intf(t.imp||0)} impressions</span>
+            <span style="font-size:13px;font-weight:800;color:var(--red)">${gbp(t.spend)}</span>
+          </div>`).join('')}`:''}
+        </div>`:'<div style="padding:16px 14px;font-size:12px;color:var(--text3)">No keyword data — upload a Targeting CSV via + Snapshot.</div>'}
+      </div>
+    </div>`;
+}
+function fmtDate(d){if(!d)return'—';const p=d.split('-');if(p.length===3)return p[2]+'/'+p[1]+'/'+p[0];return d;}
+function fmtDateShort(d){if(!d)return'—';const p=d.split('-');if(p.length===3)return p[2]+'/'+p[1];return d;}
+if(!window._clPage)window._clPage=0;
+const CL_PAGE_SIZE=40;
+
 function renderChangeLog(){
-  const scope=document.getElementById('cl-scope').value, tf=document.getElementById('cl-type-filter').value;
-  const all=campaigns.flatMap(c=>c.changes.map((ch,i)=>({...ch,ch,c,idx:i}))).filter(x=>tf==='all'||x.type===tf);
-  /* summary */
-  const wins=all.filter(x=>x.outcome==='win').length,loss=all.filter(x=>x.outcome==='loss').length,pend=all.filter(x=>x.outcome==='pending').length;
+  /* Populate campaign filter */
+  const cfEl=document.getElementById('cl-camp-filter');
+  if(cfEl){
+    const prev=cfEl.value;
+    cfEl.innerHTML='<option value="all">All campaigns</option>'+
+      campaigns.map(c=>`<option value="${c.id}" ${c.id==prev?'selected':''}>${c.alias||c.name}</option>`).join('');
+    if(prev)cfEl.value=prev;
+  }
+
+  const scope=document.getElementById('cl-scope')?.value||'flat';
+  const tf=document.getElementById('cl-type-filter')?.value||'all';
+  const of2=document.getElementById('cl-outcome-filter')?.value||'all';
+  const campF=document.getElementById('cl-camp-filter')?.value||'all';
+  const dateF=document.getElementById('cl-date-filter')?.value||'all';
+  const srch=(document.getElementById('cl-search')?.value||'').toLowerCase();
+  const page=window._clPage||0;
   const today2=new Date();today2.setHours(0,0,0,0);
-  const overdue=all.filter(x=>x.outcome==='pending'&&x.review&&new Date((x.review||x.ch?.review||'')+'T00:00:00')<=today2).length;
+
+  let all=campaigns.flatMap(c=>c.changes.map((ch,i)=>({...ch,ch,c,cid:c.id,cname:c.alias||c.name,idx:i})));
+  /* filters */
+  if(campF!=='all')all=all.filter(x=>x.cid==campF);
+  if(tf!=='all')all=all.filter(x=>x.type===tf);
+  if(of2==='overdue')all=all.filter(x=>x.outcome==='pending'&&x.review&&new Date((x.review||'')+'T00:00:00')<=today2);
+  else if(of2!=='all')all=all.filter(x=>x.outcome===of2);
+  if(dateF!=='all'){const days=parseInt(dateF);all=all.filter(x=>{try{return(today2-new Date((x.date||'')+'T00:00:00'))<=days*86400000;}catch(e){return true;}});}
+  if(srch)all=all.filter(x=>(x.what||'').toLowerCase().includes(srch)||(x.why||'').toLowerCase().includes(srch)||(x.cname||'').toLowerCase().includes(srch)||(x.type||'').toLowerCase().includes(srch)||(x.goal||'').toLowerCase().includes(srch)||(x.outcomeNote||'').toLowerCase().includes(srch));
+  /* sort newest first */
+  all.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  /* summary (always from unfiltered totals) */
+  const allChanges=campaigns.flatMap(c=>c.changes);
+  const wins=allChanges.filter(x=>x.outcome==='win').length;
+  const loss=allChanges.filter(x=>x.outcome==='loss').length;
+  const pend=allChanges.filter(x=>x.outcome==='pending').length;
+  const total=wins+loss+pend;
+  const overdue=allChanges.filter(x=>x.outcome==='pending'&&x.review&&new Date((x.review||'')+'T00:00:00')<=today2).length;
+  const winRate=wins+loss>0?Math.round(wins/(wins+loss)*100):null;
   document.getElementById('cl-summary').innerHTML=[
-    {l:'Total changes logged',v:all.length,c:'var(--text)',s:'all time'},
-    {l:'Changes that worked',v:wins,c:'var(--green)',s:'post-review'},
+    {l:'Total logged',v:intf(total),c:'#f2f4f9',s:'all time'},
+    {l:'Worked',v:wins,c:'var(--green)',s:winRate!=null?winRate+'% win rate':'no results yet'},
     {l:'Did not work',v:loss,c:'var(--red)',s:'post-review'},
-    {l:'Awaiting review',v:pend,c:'var(--amber)',s:overdue?overdue+' overdue':'all pending'},
-  ].map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="v" style="color:${k.c}">${k.v}</div><div style="font-size:10px;color:var(--text4);margin-top:3px">${k.s}</div></div>`).join('');
-  /* group */
-  const groups={};
-  all.forEach(x=>{
-    const key=scope==='asin'?(x.c.product+' · '+x.c.asin):scope==='type'?x.type:(x.c.name);
-    (groups[key]=groups[key]||[]).push({...x,cid:x.c.id,idx:x.c.changes.indexOf(x.ch||x),ch:x.ch||x});
-  });
-  document.getElementById('cl-content').innerHTML=Object.entries(groups).map(([k,items])=>`
-    <div class="sh" style="margin:18px 0 10px"><div class="tt" style="font-size:13px">${k} <small>${items.length} change${items.length>1?'s':''}</small></div></div>
-    <div class="card pad"><div class="cl-list">${items.map(x=>changeEntry(x.ch||x,x.cid||x.c?.id,x.idx!=null?x.idx:null)).join('')}</div></div>`).join('')||'<div class="empty">No changes match this filter.</div>';
+    {l:'Pending review',v:pend,c:'var(--amber)',s:'awaiting assessment'},
+    {l:'Overdue',v:overdue,c:overdue?'var(--red)':'var(--text3)',s:overdue?'need reviewing now':'none overdue'},
+  ].map(k=>`<div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 14px;box-shadow:var(--shadow-sm)">
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#b8c4d8;margin-bottom:4px">${k.l}</div>
+    <div style="font-family:var(--display);font-size:22px;font-weight:700;color:${k.c};line-height:1">${k.v}</div>
+    <div style="font-size:10.5px;color:#dde3ef;margin-top:4px;font-weight:500">${k.s}</div>
+  </div>`).join('');
+
+  const totalItems=all.length;
+  const totalPages=Math.ceil(totalItems/CL_PAGE_SIZE);
+  const safePage=Math.min(page,Math.max(0,totalPages-1));
+  if(safePage!==page)window._clPage=safePage;
+
+  if(!totalItems){
+    document.getElementById('cl-content').innerHTML=`<div style="padding:48px;text-align:center;color:#dde3ef;font-size:13px">${srch||tf!=='all'||of2!=='all'||campF!=='all'?'No changes match your filters.':'No changes logged yet. Click + Log change to start tracking.'}</div>`;
+    document.getElementById('cl-pagination').innerHTML='';
+    return;
+  }
+
+  /* paginate */
+  const pageItems=all.slice(safePage*CL_PAGE_SIZE,(safePage+1)*CL_PAGE_SIZE);
+
+  /* Build compact change row for large lists */
+  const clCompactRow=(x)=>{
+    const ch=x.ch||x;
+    const ic={'PPC Bid':'⊙','PPC Budget':'£','PPC Keywords':'⌗','Pricing':'฿','Listing':'≣','Stock':'▣','Other':'•'}[ch.type]||'•';
+    const today3=new Date();today3.setHours(0,0,0,0);
+    const reviewDate=ch.review?new Date(ch.review+'T00:00:00'):null;
+    const reviewDue=reviewDate&&reviewDate<=today3&&ch.outcome==='pending';
+    const daysUntil=reviewDate?Math.round((reviewDate-today3)/86400000):null;
+    const dotCol=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
+    const ocLabel=ch.outcome==='win'?`<span class="outcome win" style="font-size:10px;padding:2px 8px">✓ Worked</span>`:ch.outcome==='loss'?`<span class="outcome loss" style="font-size:10px;padding:2px 8px">✕ Didn't work</span>`:`<span class="outcome pending" style="font-size:10px;padding:2px 8px"><svg style="width:10px;height:10px;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><polyline points="8,4.5 8,8 10.5,9.5"/></svg> ${reviewDue?'OVERDUE':'Pending'}</span>`;
+    const reviewLabel=reviewDate?( daysUntil===0?`<span style="font-size:10px;color:var(--red);font-weight:600">TODAY</span>`:daysUntil<0?`<span style="font-size:10px;color:var(--red);font-weight:600">${Math.abs(daysUntil)}d overdue</span>`:daysUntil<=7?`<span style="font-size:10px;color:var(--amber)">${fmtDateShort(ch.review)}</span>`:`<span style="font-size:10px;color:var(--text3)">${fmtDateShort(ch.review)}</span>`):'';
+    const campChip=x.cname?`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">${x.cname}</span>`:'';
+    const typeChip=`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,.2)">${ch.type}</span>`;
+    const markBtns=ch.outcome==='pending'?`<div style="display:flex;gap:4px;flex-shrink:0">
+      <button onclick="clQuickMark(${x.cid},${x.idx},'win',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--green-bg);border:1px solid rgba(46,229,157,.3);color:var(--green);cursor:pointer;font-family:var(--font);font-weight:600">✓ Worked</button>
+      <button onclick="clQuickMark(${x.cid},${x.idx},'loss',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">✕ Didn't</button>
+    </div>`:'';
+    return`<div style="display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:start${reviewDue?';background:rgba(255,93,108,.04);border-left:3px solid var(--red)':''}">
+      <div style="width:24px;height:24px;border-radius:6px;background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}44;display:grid;place-items:center;font-size:11px;flex-shrink:0">${ic}</div>
+      <div style="min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+          <span style="font-size:12.5px;font-weight:700;color:#f2f4f9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px">${ch.what}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          ${typeChip}${campChip}
+          <span style="font-size:10px;color:var(--text4)">${fmtDate(ch.date)}</span>
+          ${ocLabel}
+          ${reviewLabel?`<span style="font-size:10px;color:var(--text4)">Review:</span> ${reviewLabel}`:''}
+        </div>
+        ${ch.why?`<div style="font-size:11px;color:var(--text3);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:600px">${ch.why}</div>`:''}
+        ${ch.outcomeNote?`<div style="font-size:10.5px;color:var(--green);margin-top:2px">Result: ${ch.outcomeNote}</div>`:''}
+      </div>
+      ${markBtns}
+    </div>`;
+  };
+
+  if(scope==='flat'){
+    document.getElementById('cl-content').innerHTML=`<div class="card" style="overflow:hidden">${pageItems.map(x=>clCompactRow(x)).join('')}</div>`;
+  } else {
+    const groups={};
+    pageItems.forEach(x=>{
+      let key;
+      if(scope==='type')key=x.type||'Other';
+      else if(scope==='outcome')key=x.outcome==='win'?'✓ Worked':x.outcome==='loss'?'✕ Did not work':'◷ Pending review';
+      else key=x.cname||x.c?.alias||x.c?.name||'Unknown';
+      (groups[key]=groups[key]||[]).push(x);
+    });
+    document.getElementById('cl-content').innerHTML=Object.entries(groups).map(([k,items])=>`
+      <div class="sh" style="margin:14px 0 6px"><div class="tt" style="font-size:12.5px;color:#f2f4f9">${k} <small style="color:#b8c4d8">${items.length} change${items.length!==1?'s':''}</small></div></div>
+      <div class="card" style="overflow:hidden">${items.map(x=>clCompactRow(x)).join('')}</div>`).join('');
+  }
+
+  /* Pagination controls */
+  const totalLabel=`${intf(totalItems)} change${totalItems!==1?'s':''} ${srch||tf!=='all'||of2!=='all'||campF!=='all'?'(filtered)':'total'}`;
+  if(totalPages<=1){document.getElementById('cl-pagination').innerHTML=`<span style="font-size:12px;color:#b8c4d8">${totalLabel}</span>`;return;}
+  const paginHtml=`
+    <span style="font-size:11px;color:#b8c4d8">${totalLabel}</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button onclick="window._clPage=0;renderChangeLog()" ${safePage===0?'disabled':''} class="btn ghost" style="font-size:11px;padding:5px 10px">First</button>
+      <button onclick="window._clPage=Math.max(0,${safePage}-1);renderChangeLog()" ${safePage===0?'disabled':''} class="btn ghost" style="font-size:11px;padding:5px 12px">← Prev</button>
+      <span style="font-size:12px;font-weight:600;color:#f2f4f9;padding:0 8px">Page ${safePage+1} of ${totalPages}</span>
+      <button onclick="window._clPage=Math.min(${totalPages-1},${safePage}+1);renderChangeLog()" ${safePage>=totalPages-1?'disabled':''} class="btn ghost" style="font-size:11px;padding:5px 12px">Next →</button>
+      <button onclick="window._clPage=${totalPages-1};renderChangeLog()" ${safePage>=totalPages-1?'disabled':''} class="btn ghost" style="font-size:11px;padding:5px 10px">Last</button>
+    </div>`;
+  document.getElementById('cl-pagination').innerHTML=paginHtml;
+}
+
+function clQuickMark(campId,chIdx,outcome,btn){
+  btn.textContent='Saving…';btn.disabled=true;
+  markChange(campId,chIdx,outcome);
+  setTimeout(()=>renderChangeLog(),100);
 }
 
 /* ════════ PRODUCTS PAGE ════════ */
@@ -3646,19 +4065,14 @@ function renderProducts(){
     p.sp=p.camps.reduce((a,c)=>a+c.spend,0);
     p.sa=p.camps.reduce((a,c)=>a+c.sales,0);
     p.or=p.camps.reduce((a,c)=>a+c.purchases,0);
-    p.roas=p.sp?p.sa/p.sp:0;
-    p.acos=p.sa?p.sp/p.sa*100:0;
-    p.rg=ragOf(p.roas,p.sa,p.sp);
-    /* Trend: latest vs prev snapshot across all camps */
+    p.roas=p.sp?p.sa/p.sp:0;p.acos=p.sa?p.sp/p.sa*100:0;p.rg=ragOf(p.roas,p.sa,p.sp);
     const allSnaps=p.camps.flatMap(c=>c.snapshots).sort((a,b)=>parseGbPeriod(a.date)-parseGbPeriod(b.date));
     const latestP=[...new Set(allSnaps.map(s=>s.date))].sort((a,b)=>parseGbPeriod(b)-parseGbPeriod(a));
     if(latestP.length>=2){
-      const curS=allSnaps.filter(s=>s.date===latestP[0]);
-      const prvS=allSnaps.filter(s=>s.date===latestP[1]);
+      const curS=allSnaps.filter(s=>s.date===latestP[0]),prvS=allSnaps.filter(s=>s.date===latestP[1]);
       const curSp=curS.reduce((a,s)=>a+s.spend,0),curSa=curS.reduce((a,s)=>a+s.sales,0);
       const prvSp=prvS.reduce((a,s)=>a+s.spend,0),prvSa=prvS.reduce((a,s)=>a+s.sales,0);
-      const curR=curSp?curSa/curSp:0,prvR=prvSp?prvSa/prvSp:0;
-      p.trend=prvR?((curR-prvR)/Math.abs(prvR)*100):null;
+      p.trend=prvSp?((curSp?curSa/curSp:0)-(prvSp?prvSa/prvSp:0))/(prvSp?prvSa/prvSp:1)*100:null;
     } else p.trend=null;
     p.snapCount=[...new Set(p.camps.flatMap(c=>c.snapshots.map(s=>s.date)))].length;
     p.lastPeriod=[...new Set(allSnaps.map(s=>s.date))].sort((a,b)=>parseGbPeriod(b)-parseGbPeriod(a))[0]||'—';
@@ -3668,62 +4082,34 @@ function renderProducts(){
   else if(sortBy==='sales')filtered.sort((a,b)=>b.sa-a.sa);
 
   const subEl=document.getElementById('prod-sub');
-  if(subEl)subEl.textContent=filtered.length+' advertised product'+(filtered.length!==1?'s':'');
+  if(subEl)subEl.textContent=filtered.length+' advertised product'+(filtered.length!==1?'s':', click any to see campaigns');
   const grid=document.getElementById('prod-grid');
-  if(!filtered.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">No products match your search.</div>';return;}
+  if(!filtered.length){grid.innerHTML='<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--text3)">No products match your search.</div>';return;}
 
-  grid.innerHTML=filtered.map(p=>{
-    const rc=ragColor(p.rg);
-    const trendTag=p.trend!=null?`<span style="font-size:10.5px;font-weight:700;color:${Math.abs(p.trend)<2?'var(--text4)':p.trend>0?'var(--green)':'var(--red)'}">${p.trend>0?'↑':'↓'} ${Math.abs(p.trend).toFixed(1)}%</span>`:'';
-    /* Mini sparkline across snap periods */
-    const allSn2=p.camps.flatMap(c=>c.snapshots).sort((a,b)=>parseGbPeriod(a.date)-parseGbPeriod(b.date));
-    const byPeriod2={};allSn2.forEach(s=>{if(!byPeriod2[s.date])byPeriod2[s.date]={sp:0,sa:0};byPeriod2[s.date].sp+=s.spend;byPeriod2[s.date].sa+=s.sales;});
-    const roasHistory=Object.values(byPeriod2).map(x=>x.sp?x.sa/x.sp:0);
-    const spkHtml=(()=>{
-      if(roasHistory.filter(v=>v>0).length<2)return'';
-      const w=80,h=32,mn=Math.min(...roasHistory),mx=Math.max(...roasHistory),range=mx-mn||1;
-      const pts=roasHistory.map((v,i)=>[i/(roasHistory.length-1)*(w-4)+2,h-4-((v-mn)/range)*(h-8)]);
-      const d=pts.map((p2,i)=>(i?'L':'M')+p2[0].toFixed(1)+' '+p2[1].toFixed(1)).join(' ');
-      const lv=roasHistory[roasHistory.length-1],pv=roasHistory[roasHistory.length-2]||lv;
-      const tc=lv>=pv?'var(--green)':'var(--red)';
-      return`<svg width="${w}" height="${h}" style="display:block"><path d="${d}" fill="none" stroke="${tc}" stroke-width="1.6" stroke-linecap="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2.5" fill="${tc}"/></svg>`;
-    })();
-
-    return `<div class="card" style="overflow:hidden">
-      <!-- Product header -->
-      <div style="display:flex;gap:12px;padding:14px 16px;align-items:flex-start;border-bottom:1px solid var(--border)">
-        ${monoTile(p.product,44)}
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
-            <div>
-              <div style="font-weight:700;font-size:13.5px;line-height:1.3">${p.product||'—'}</div>
-              <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:3px">${p.asin} ${p.sku?'· '+p.sku:''}</div>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
-              ${trendTag}
-              ${spkHtml}
-              <button class="btn-sm" onclick="openProductEdit('${p.asin}')">✎</button>
-            </div>
-          </div>
-          <div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;align-items:center">
-            ${p.rg==='leak'?'<span class="rag flag">NO SALE</span>':`<span class="rag ${p.rg}"><span class="d"></span>${fmt(p.roas,2)}×</span>`}
-            ${p.price?`<span style="font-size:10px;color:var(--text3);background:var(--bg3);padding:2px 7px;border-radius:5px">£${fmt(p.price,2)}</span>`:''}
-            <span style="font-size:10px;color:var(--text3);background:var(--bg3);padding:2px 7px;border-radius:5px">${p.camps.length} campaign${p.camps.length!==1?'s':''}</span>
-            <span style="font-size:10px;color:var(--text3);background:var(--bg3);padding:2px 7px;border-radius:5px">${p.snapCount} period${p.snapCount!==1?'s':''}</span>
-            <span style="font-size:10px;color:var(--text3)">Last: ${p.lastPeriod}</span>
-          </div>
-        </div>
-      </div>
-      <!-- Metrics grid -->
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border)">
-        ${[['ROAS',fmt(p.roas,2)+'×',rc],['Sales',gbp(p.sa),'var(--text)'],['Spend',gbp(p.sp),'var(--text)'],['Orders',intf(p.or),'var(--text)'],['ACOS',p.sa?fmt(p.acos,1)+'%':'—','var(--text)']].map(([l,v,c])=>`<div style="background:var(--bg2);padding:9px 12px"><div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">${l}</div><div style="font-family:var(--display);font-size:14px;font-weight:700;color:${c};margin-top:2px">${v}</div></div>`).join('')}
-      </div>
-      <!-- Campaign pills -->
-      <div style="padding:10px 14px;display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid var(--border)">
-        ${p.camps.map(c=>{const cr=ragColor(c.rag);return`<span onclick="openCamp('${c.id}')" style="cursor:pointer;font-size:10.5px;font-weight:500;padding:3px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);display:inline-flex;align-items:center;gap:5px;transition:.15s" onmouseenter="this.style.borderColor='var(--border2)'" onmouseleave="this.style.borderColor='var(--border)'"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:${cr}"></span>${c.alias||c.name.split('—')[1]?.trim()||c.name}</span>`;}).join('')}
-      </div>
-    </div>`;
-  }).join('');
+  /* Mini-tile layout — 1 row per product, click opens popup */
+  grid.style.gridTemplateColumns='1fr';
+  grid.innerHTML=`<div class="tablecard"><table class="dt" style="min-width:700px">
+    <thead><tr>
+      <th style="text-align:left">Product</th>
+      <th>ROAS</th><th>Sales</th><th>Spend</th><th>Orders</th><th>ACOS</th><th>Campaigns</th><th>Periods</th><th style="width:60px"></th>
+    </tr></thead>
+    <tbody>${filtered.map(p=>{
+      const rc=ragColor(p.rg);
+      const tt=p.trend!=null?`<span style="font-size:10px;font-weight:700;color:${Math.abs(p.trend)<2?'var(--text4)':p.trend>0?'var(--green)':'var(--red)'}">${p.trend>0?'↑':'↓'}${Math.abs(p.trend).toFixed(0)}%</span>`:'';
+      const leakDot=p.camps.some(c=>c.noSaleSpend)?'<span class="flagdot"></span>':'';
+      return`<tr onclick="openProductPopup('${p.asin}')" style="cursor:pointer">
+        <td><div style="display:flex;align-items:center;gap:10px">${monoTile(p.product,30)}<div><div style="font-size:13px;font-weight:600">${leakDot}${p.product||'—'}</div><div style="font-size:10px;color:var(--text3);font-family:var(--mono)">${p.asin}${p.sku?' · '+p.sku:''}</div></div></div></td>
+        <td style="text-align:center"><span style="font-size:13px;font-weight:800;color:${rc}">${fmt(p.roas,2)}×</span>${tt?`<div style="margin-top:1px">${tt}</div>`:''}</td>
+        <td style="text-align:center">${gbp(p.sa)}</td>
+        <td style="text-align:center">${gbp(p.sp)}</td>
+        <td style="text-align:center">${intf(p.or)}</td>
+        <td style="text-align:center">${p.sa?fmt(p.acos,1)+'%':'—'}</td>
+        <td style="text-align:center">${p.camps.length}</td>
+        <td style="text-align:center">${p.snapCount} <span style="font-size:10px;color:var(--text4)">last: ${p.lastPeriod.replace(/[0-9]{4}/,'').trim()}</span></td>
+        <td style="text-align:right"><button class="btn-sm" onclick="event.stopPropagation();openProductEdit('${p.asin}')">Edit</button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
 }
 
 /* ── product edit modal ── */
@@ -4876,8 +5262,13 @@ async function checkAndMigrateSchema(){
     const cols=rows.length?Object.keys(rows[0]):[];
     const hasTj=cols.includes('targeting_json');
     const hasAg=cols.includes('ad_groups_json');
-    if(hasTj&&hasAg){
-      infoEl.innerHTML='<span style="color:var(--green);font-weight:700">✓ Schema is correct</span> — both <code>targeting_json</code> and <code>ad_groups_json</code> columns exist. CSV data will load normally.';
+    /* Also check campaigns table for review_freq_days */
+    const campRes=await fetch(url+'/rest/v1/campaigns?select=*&limit=1',{headers:hds});
+    const campRows=campRes.ok?await campRes.json():[];
+    const campCols=campRows.length?Object.keys(campRows[0]):[];
+    const hasReviewFreq=campCols.includes('review_freq_days');
+    if(hasTj&&hasAg&&hasReviewFreq){
+      infoEl.innerHTML='<span style="color:var(--green);font-weight:700">✓ Schema is up to date</span> — all required columns present.';
       document.getElementById('cfg-status').textContent='✓ Schema OK';
       document.getElementById('cfg-status').style.color='var(--green)';
       window._missingTargetingCol=false;
@@ -4887,6 +5278,7 @@ async function checkAndMigrateSchema(){
     const missing=[];
     if(!hasTj)missing.push('ALTER TABLE snapshots ADD COLUMN IF NOT EXISTS targeting_json text;');
     if(!hasAg)missing.push('ALTER TABLE snapshots ADD COLUMN IF NOT EXISTS ad_groups_json text;');
+    if(!hasReviewFreq)missing.push('ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS review_freq_days integer DEFAULT 14;');
     const sql=missing.join('\n');
     infoEl.innerHTML=`
       <div style="color:var(--amber);font-weight:700;margin-bottom:8px">⚠ Missing columns: ${[!hasTj?'targeting_json':'',!hasAg?'ad_groups_json':''].filter(Boolean).join(', ')}</div>
@@ -5021,15 +5413,16 @@ function renderSettings(){
       ['has-targeting','🎯 Has targeting CSV'],['has-ads','📦 Has ad group CSV']].map(([v,l])=>
       `<button class="tog on" data-flt="${v}" onclick="this.classList.toggle('on')" style="font-size:10.5px;padding:4px 10px">${l}</button>`).join('');
   }
-  renderPriceHistory();
+  /* Price history is now accessible from within the campaign profitability tab only */
 }
 
 function renderPriceHistory(){
+  const el=document.getElementById('price-history-list');if(!el)return; /* element removed from settings */
   const byAsin={};campaigns.forEach(c=>{byAsin[c.asin]=c.product;});
   const allAsins=Object.keys(byAsin);
-  if(!allAsins.length){document.getElementById('price-history-list').innerHTML='<div class="empty">No products loaded yet.</div>';return;}
+  if(!allAsins.length){el.innerHTML='<div class="empty">No products loaded yet.</div>';return;}
   const rows=allAsins.flatMap(asin=>(priceHistory[asin]||[]).map(e=>({asin,product:byAsin[asin],...e}))).sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('price-history-list').innerHTML=rows.length
+  el.innerHTML=rows.length
     ?`<table class="dt" style="min-width:560px"><thead><tr><th>Product</th><th>Date</th><th>Price</th><th>Reason</th><th></th></tr></thead><tbody>${
       rows.map((r,i)=>`<tr style="cursor:default"><td><div class="meta"><b>${r.product}</b><span>${r.asin}</span></div></td>
         <td>${r.date}</td><td>£${fmt(r.price,2)}</td><td style="text-align:left;color:var(--text3)">${r.reason||'—'}</td>
@@ -5073,7 +5466,13 @@ document.querySelectorAll('#nav .nav-btn').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+b.dataset.p).classList.add('active');
   if(b.dataset.p==='dashboard'){populateDashPeriodSelectors();renderDashPeriod();}
   if(b.dataset.p==='campaigns')renderCampaigns();
-  if(b.dataset.p==='insights')renderInsights();
+  if(b.dataset.p==='insights'){
+    if(!document.getElementById('ins-account-view').style.display){
+      document.getElementById('ins-account-view').style.display='block';
+      document.getElementById('ins-campaign-view').style.display='none';
+    }
+    renderInsights();
+  }
   if(b.dataset.p==='changelog')renderChangeLog();
   if(b.dataset.p==='snapshots')renderSnapshots();
   if(b.dataset.p==='products')renderProducts();
@@ -5148,12 +5547,14 @@ function renderDashPeriod(){
   renderDashSinceLast(period,cmpPeriod);
   renderDashActionList();
   renderDashWhatsWorking();
+  renderDashWorstPerforming();
   renderDashWastingMoney();
   renderDashQuickWins();
   renderDashMovers();
   renderDashProductOverview();
   renderDashRecentChanges();
   renderDashTopKeywords();
+  renderDashOverdueBanner();
   const lbl=document.getElementById('dash-camps-period-label');
   if(lbl)lbl.textContent=period==='latest'?'— latest snapshot per campaign':'— period: '+period;
   const cov=document.getElementById('dash-period-coverage');
@@ -5161,64 +5562,159 @@ function renderDashPeriod(){
 }
 
 
+function renderDashOverdueBanner(){
+  const el=document.getElementById('dash-overdue-banner');if(!el)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const overdue=campaigns.flatMap(c=>c.changes.filter(ch=>ch.outcome==='pending'&&ch.review).map(ch=>{
+    const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);
+    return{diff:Math.round((d-today)/86400000),what:ch.what,camp:c.alias||c.name,cid:c.id};
+  })).filter(r=>r.diff<0).sort((a,b)=>a.diff-b.diff);
+  if(!overdue.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML=`<div style="background:rgba(255,93,108,.08);border:1px solid rgba(255,93,108,.35);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red)"></div>
+      <span style="font-size:12px;font-weight:800;color:var(--red)">OVERDUE REVIEWS — ${overdue.length} change${overdue.length!==1?'s':''} need assessing</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;flex:1">
+      ${overdue.slice(0,4).map(r=>`<span onclick="openCamp('${r.cid}')" style="cursor:pointer;font-size:11px;background:rgba(255,93,108,.12);border:1px solid rgba(255,93,108,.3);color:#ff5d6c;padding:3px 10px;border-radius:6px;font-weight:600">${r.camp} · ${Math.abs(r.diff)}d overdue</span>`).join('')}
+      ${overdue.length>4?`<span style="font-size:11px;color:var(--red)">+${overdue.length-4} more</span>`:''}
+    </div>
+    <button onclick="document.querySelector('[data-p=changelog]').click()" style="background:var(--red);border:none;color:#fff;font-size:11.5px;font-weight:700;padding:6px 14px;border-radius:7px;cursor:pointer;flex-shrink:0;font-family:var(--font)">View Change Log →</button>
+  </div>`;
+}
+
 function renderDashActionList(){
   const el=document.getElementById('dash-action-list');if(!el)return;
   const A=campaigns.filter(c=>c.status==='active');
   const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
   const maxAcos=parseFloat(document.getElementById('cfg-max-acos')?.value||30);
+  if(!window._actionedKeys)window._actionedKeys=new Set();
   const actions=[];
   A.forEach(c=>{
     const ls=c.snapshots[c.snapshots.length-1]||{};
     const pv=c.snapshots[c.snapshots.length-2];
     const name=c.alias||c.name;
-    if(c.noSaleSpend||c.rag==='leak') actions.push({pri:0,type:'urgent',icon:'🔴',label:'NO SALES — pausing recommended',camp:name,sub:'£'+fmt(c.spend,2)+' spent · 0 sales',cid:c.id,action:'Review bids and targeting immediately'});
-    else if(c.roas>0&&c.roas<T) actions.push({pri:1,type:'warn',icon:'📉',label:'ROAS '+fmt(c.roas,2)+'× below '+fmt(T,1)+'× target',camp:name,sub:'Spend £'+fmt(c.spend,2)+' · Sales £'+fmt(c.sales,2),cid:c.id,action:'Lower bids or pause underperforming keywords'});
-    if(c.acos>maxAcos&&c.sales>0) actions.push({pri:2,type:'warn',icon:'⚠',label:'ACOS '+fmt(c.acos,1)+'% above '+maxAcos+'% target',camp:name,sub:'£'+fmt(c.spend,2)+' spend for £'+fmt(c.sales,2)+' sales',cid:c.id,action:'Review keyword bids and match types'});
-    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>25&&c.roas>=T) actions.push({pri:2,type:'warn',icon:'↘',label:'ROAS dropped '+dr.toFixed(0)+'% since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes'});}
-    (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0&&t.match==='Exact').forEach(t=>{actions.push({pri:1,type:'urgent',icon:'🎯',label:'Exact keyword wasting budget: "'+t.kw+'"',camp:name,sub:'£'+fmt(t.spend,2)+' · 0 sales',cid:c.id,action:'Add as negative or reduce bid'});});
-    if(ls.impressions===0&&c.snapshots.length>0) actions.push({pri:3,type:'info',icon:'👁',label:'No impressions this period',camp:name,sub:'Campaign may be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status'});
+    if(c.noSaleSpend||c.rag==='leak') actions.push({pri:0,type:'urgent',tag:'SPEND LEAK',label:'Zero sales — pausing recommended',camp:name,sub:gbp(c.spend)+' spent · no return',cid:c.id,action:'Pause campaign or add negative keywords immediately',key:c.id+'|leak'});
+    else if(c.roas>0&&c.roas<T) actions.push({pri:1,type:'warn',tag:'LOW ROAS',label:fmt(c.roas,2)+'× below '+fmt(T,1)+'× target',camp:name,sub:'Spend '+gbp(c.spend)+' · Sales '+gbp(c.sales),cid:c.id,action:'Lower bids or pause underperforming keywords',key:c.id+'|roas'});
+    if(c.acos>maxAcos&&c.sales>0) actions.push({pri:2,type:'warn',tag:'HIGH ACOS',label:fmt(c.acos,1)+'% above '+maxAcos+'% target',camp:name,sub:gbp(c.spend)+' spend for '+gbp(c.sales)+' sales',cid:c.id,action:'Review keyword bids and match types',key:c.id+'|acos'});
+    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>25&&c.roas>=T) actions.push({pri:2,type:'warn',tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
+    (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0).forEach(t=>{actions.push({pri:1,type:'urgent',tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
+    if(ls.impressions===0&&c.snapshots.length>0) actions.push({pri:3,type:'info',tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status in Amazon',key:c.id+'|noimpr'});
     const today=new Date();today.setHours(0,0,0,0);
-    (c.changes||[]).filter(ch=>ch.outcome==='pending'&&ch.review).forEach(ch=>{try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);if(diff<=3)actions.push({pri:2,type:'review',icon:'🔔',label:'Review due'+(diff<=0?' (OVERDUE)':' in '+diff+'d')+': '+ch.what,camp:name,sub:'Logged '+ch.date,cid:c.id,action:'Assess and log result'});}catch(e){}});
+    /* Scheduled review frequency — only show if no change-based review already flagged */
+    if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
+      const lastSnap=c.snapshots[c.snapshots.length-1];
+      const lastDate=lastSnap.date||'—';
+      /* Try to estimate days since last snapshot from today */
+      const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
+      /* Only fire if no pending change review already showing */
+      if(!hasPendingReview){
+        const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
+        actions.push({pri:3,type:'info',tag:'SCHEDULED',label:rfLabel+' review due — '+lastDate,camp:name,sub:'Review campaign performance and log any changes needed',cid:c.id,action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
+      }
+    }
+    (c.changes||[]).filter(ch=>ch.outcome==='pending'&&ch.review).forEach(ch=>{try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);if(diff<=3)actions.push({pri:2,type:'review',tag:diff<=0?'OVERDUE':'REVIEW DUE',label:(diff<=0?'Overdue: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work'});}catch(e){}});
   });
   actions.sort((a,b)=>a.pri-b.pri);
+  /* give every action a stable key if not already set */
+  actions.forEach((a,i)=>{if(!a.key)a.key=a.cid+'|'+a.tag+'|'+i;});
   const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)',review:'var(--purple)'};
-  const bgMap={urgent:'var(--red-bg)',warn:'var(--amber-bg)',info:'var(--blue-bg)',review:'var(--purple-bg)'};
-  const count=actions.length;
-  const hdr=`<div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+  const bgMap={urgent:'rgba(255,93,108,.1)',warn:'rgba(255,181,71,.08)',info:'rgba(91,157,255,.08)',review:'rgba(183,148,255,.1)'};
+  const visible=actions.filter(a=>!window._actionedKeys.has(a.key));
+  const dismissed=actions.length-visible.length;
+  const count=visible.length;
+  const urgentVisible=visible.some(a=>a.type==='urgent');
+  const hdr=`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
     <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)">Action List</span>
-      ${count?`<span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;background:${actions.some(a=>a.type==='urgent')?'var(--red-bg)':'var(--amber-bg)'};color:${actions.some(a=>a.type==='urgent')?'var(--red)':'var(--amber)'}">${count} item${count!==1?'s':''} need attention</span>`:'<span style="font-size:11px;font-weight:700;color:var(--green)">✓ Nothing urgent</span>'}
+      <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">Action Required</span>
+      ${count?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${urgentVisible?'var(--red-bg)':'var(--amber-bg)'};color:${urgentVisible?'var(--red)':'var(--amber)'};border:1px solid ${urgentVisible?'rgba(255,93,108,.3)':'rgba(255,181,71,.3)'}">${count} item${count!==1?'s':''}</span>`:'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>'}
+      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} marked done</span>`:''}
     </div>
-    <span style="font-size:10.5px;color:var(--text3)">Priority order · click any row to open campaign</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      ${dismissed?`<button onclick="window._actionedKeys.clear();renderDashActionList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset all</button>`:''}
+      <span style="font-size:10.5px;color:var(--text4)">Click row to open · Mark Done to dismiss</span>
+    </div>
   </div>`;
-  if(!count){el.innerHTML=hdr+'<div style="padding:16px;font-size:12.5px;color:var(--green)">✓ All campaigns healthy — no actions required right now.</div>';return;}
-  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:280px">'+actions.slice(0,12).map(a=>`
-    <div style="display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s" onclick="openCamp('${a.cid}')" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
-      <div style="width:28px;height:28px;border-radius:7px;background:${bgMap[a.type]};border:1px solid var(--border);display:grid;place-items:center;font-size:14px">${a.icon}</div>
-      <div style="min-width:0">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:12px;font-weight:700;color:${colMap[a.type]}">${a.label}</span>
-          <span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;background:var(--bg3);color:var(--text3)">${a.camp}</span>
+  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All campaigns healthy — no actions required.</div>';return;}
+  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All actions marked as done. Click Reset all to bring them back.</div>';return;}
+  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:280px">'+visible.slice(0,15).map(a=>{
+    const col=colMap[a.type];
+    const ek=JSON.stringify(a.key);
+    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:.12s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
+      <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:${bgMap[a.type]};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${a.cid}')">${a.tag}</div>
+      <div style="min-width:0;cursor:pointer" onclick="openCamp('${a.cid}')">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
+          <span style="font-size:12.5px;font-weight:700;color:#f2f4f9">${a.label}</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:5px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${a.camp}</span>
         </div>
-        <div style="font-size:10.5px;color:var(--text3);margin-top:1px">${a.sub}</div>
-        <div style="font-size:10px;color:var(--text4);font-style:italic">→ ${a.action}</div>
+        <div style="font-size:11px;color:#b8c4d8">${a.sub} <span style="color:#8892a8;font-style:italic"> — ${a.action}</span></div>
       </div>
-      <span style="color:var(--text4);font-size:12px">→</span>
-    </div>`).join('')+'</div>';
+      <button onclick="window._actionedKeys.add(${ek});renderDashActionList()" title="Dismiss this action" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
+    </div>`;
+  }).join('')+'</div>';
 }
 
 function renderDashWhatsWorking(){
   const el=document.getElementById('dash-whats-working');if(!el)return;
   const A=campaigns.filter(c=>c.status==='active'&&c.roas>0);
   const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
-  const best=[...A].sort((a,b)=>b.roas-a.roas).slice(0,4);
-  const bestKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.roas>=T&&t.sales>0).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>b.roas-a.roas).slice(0,4);
-  el.innerHTML=`<div style="padding:10px 14px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--green)">✅ What's working</span></div>
-  <div style="overflow-y:auto;max-height:360px">
-    ${best.map(c=>{const rg=ragOf(c.roas,c.sales,c.spend);const pv=c.snapshots[c.snapshots.length-2];const prvR=pv?.spend?pv.sales/pv.spend:0;const delta=prvR?((c.roas-prvR)/Math.abs(prvR)*100):null;
-    return`<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${c.id}')">${monoTile(c.alias||c.name,28)}<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div><div style="font-size:10px;color:var(--text3)">£${fmt(c.sales,2)} sales · £${fmt(c.spend,2)} spend</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:${ragColor(rg)}">${fmt(c.roas,2)}×</div>${delta!=null?`<div style="font-size:9.5px;font-weight:700;color:${delta>=0?'var(--green)':'var(--red)'}">${delta>=0?'↑':'↓'}${Math.abs(delta).toFixed(1)}%</div>`:''}</div></div>`;}).join('')}
-    ${bestKw.length?'<div style="padding:6px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Top keywords</div>':''}
-    ${bestKw.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 14px;border-bottom:1px solid var(--border)">${matchTag(t.match||'—')}<span style="flex:1;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span><span style="font-size:10px;color:var(--text3)">${t.cn}</span><span style="font-size:12px;font-weight:700;color:var(--green)">${fmt(t.roas,2)}×</span></div>`).join('')}
+  const best=[...A].sort((a,b)=>b.roas-a.roas).slice(0,5);
+  const bestKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.roas>=T&&t.sales>0).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>b.roas-a.roas).slice(0,5);
+  const hdr=`<div style="padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)"></div>
+    <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">Best Performing</span>
+  </div>`;
+  if(!best.length){el.innerHTML=hdr+'<div style="padding:14px;font-size:12px;color:var(--text3)">No active campaigns with data yet.</div>';return;}
+  el.innerHTML=hdr+`<div style="overflow-y:auto;max-height:420px">
+    <div style="padding:6px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)">Top campaigns by ROAS</div>
+    ${best.map((c,i)=>{const rg=ragOf(c.roas,c.sales,c.spend);const pv=c.snapshots[c.snapshots.length-2];const prvR=pv?.spend?pv.sales/pv.spend:0;const delta=prvR?((c.roas-prvR)/Math.abs(prvR)*100):null;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${c.id}')">
+      <div style="font-size:10px;font-weight:800;color:var(--text4);width:14px;text-align:center;flex-shrink:0">${i+1}</div>
+      ${monoTile(c.alias||c.name,28)}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:1px">${gbp(c.sales)} sales · ${gbp(c.spend)} spend</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:14px;font-weight:800;color:${ragColor(rg)}">${fmt(c.roas,2)}×</div>
+        ${delta!=null?`<div style="font-size:9.5px;font-weight:700;color:${delta>=0?'var(--green)':'var(--red)'}">${delta>=0?'↑':'↓'}${Math.abs(delta).toFixed(1)}%</div>`:''}
+      </div>
+    </div>`;}).join('')}
+    ${bestKw.length?`<div style="padding:8px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)">Top keywords</div>
+    ${bestKw.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${t.cid}')">${matchTag(t.match||'—')}<span style="flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span><span style="font-size:10px;color:var(--text3);white-space:nowrap">${t.cn}</span><span style="font-size:13px;font-weight:700;color:var(--green);margin-left:8px">${fmt(t.roas,2)}×</span></div>`).join('')}`:''}
+  </div>`;
+}
+
+function renderDashWorstPerforming(){
+  const el=document.getElementById('dash-worst-performing');if(!el)return;
+  const A=campaigns.filter(c=>c.status==='active');
+  const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
+  const worst=[...A].filter(c=>c.roas>0).sort((a,b)=>a.roas-b.roas).slice(0,5);
+  const leaks=A.filter(c=>c.noSaleSpend);
+  const worstKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.sales>0&&t.roas<T&&t.spend>1).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>a.roas-b.roas).slice(0,4);
+  const hdr=`<div style="padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red)"></div>
+    <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">Worst Performing</span>
+  </div>`;
+  if(!worst.length&&!leaks.length){el.innerHTML=hdr+'<div style="padding:14px;font-size:12px;color:var(--green)">No underperforming campaigns.</div>';return;}
+  el.innerHTML=hdr+`<div style="overflow-y:auto;max-height:420px">
+    ${leaks.length?`<div style="padding:6px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--red)">Spend leaks — zero return</div>
+    ${leaks.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);background:rgba(255,93,108,.04);cursor:pointer" onclick="openCamp('${c.id}')">
+      ${monoTile(c.alias||c.name,28)}
+      <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;color:var(--red);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div><div style="font-size:10.5px;color:var(--text3)">${gbp(c.spend)} wasted · no sales</div></div>
+      <span style="font-size:11px;font-weight:800;color:var(--red)">PAUSE</span>
+    </div>`).join('')}`:''}
+    ${worst.length?`<div style="padding:${leaks.length?8:6}px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)">Lowest ROAS campaigns</div>
+    ${worst.map((c,i)=>{const rg=ragOf(c.roas,c.sales,c.spend);const pv=c.snapshots[c.snapshots.length-2];const prvR=pv?.spend?pv.sales/pv.spend:0;const delta=prvR?((c.roas-prvR)/Math.abs(prvR)*100):null;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${c.id}')">
+      <div style="font-size:10px;font-weight:800;color:var(--text4);width:14px;text-align:center;flex-shrink:0">${i+1}</div>
+      ${monoTile(c.alias||c.name,28)}
+      <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div><div style="font-size:10.5px;color:var(--text3)">${gbp(c.sales)} sales · ${gbp(c.spend)} spend</div></div>
+      <div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:800;color:${ragColor(rg)}">${fmt(c.roas,2)}×</div>${delta!=null?`<div style="font-size:9.5px;font-weight:700;color:${delta<=0?'var(--red)':'var(--green)'}">${delta>=0?'↑':'↓'}${Math.abs(delta).toFixed(1)}%</div>`:''}</div>
+    </div>`;}).join('')}`:''}
+    ${worstKw.length?`<div style="padding:8px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)">Worst keywords (low ROAS)</div>
+    ${worstKw.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${t.cid}')">${matchTag(t.match||'—')}<span style="flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span><span style="font-size:10px;color:var(--text3);white-space:nowrap">${t.cn}</span><span style="font-size:13px;font-weight:700;color:var(--red);margin-left:8px">${fmt(t.roas,2)}×</span></div>`).join('')}`:''}
   </div>`;
 }
 
@@ -5227,16 +5723,53 @@ function renderDashWastingMoney(){
   const A=campaigns.filter(c=>c.status==='active');
   const maxAcos=parseFloat(document.getElementById('cfg-max-acos')?.value||30);
   const leakCamps=A.filter(c=>c.noSaleSpend||c.rag==='leak');
-  const leakKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.spend>=1&&t.sales===0).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>b.spend-a.spend).slice(0,5);
-  const highAcos=A.filter(c=>c.acos>maxAcos+5&&c.sales>0).sort((a,b)=>b.spend-a.spend).slice(0,3);
-  const hdr='<div style="padding:10px 14px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--red)">💸 Wasting money</span></div>';
-  if(!leakCamps.length&&!leakKw.length&&!highAcos.length){el.innerHTML=hdr+'<div style="padding:16px;font-size:12px;color:var(--green)">✓ No spend leaks detected.</div>';return;}
-  el.innerHTML=hdr+`<div style="overflow-y:auto;max-height:360px">
-    ${leakCamps.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);background:rgba(255,93,108,.04);cursor:pointer" onclick="openCamp('${c.id}')"><span style="font-size:16px">🔴</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--red)">LEAK: ${c.alias||c.name}</div><div style="font-size:10.5px;color:var(--text3)">£${fmt(c.spend,2)} spent · £0 sales</div></div><span style="font-size:11px;font-weight:800;color:var(--red)">£${fmt(c.spend,2)}</span></div>`).join('')}
-    ${leakKw.length?'<div style="padding:5px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;color:var(--red)">Leaking keywords</div>':''}
-    ${leakKw.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${t.cid}')"><span class="flagdot"></span>${matchTag(t.match||'—')}<div style="flex:1;min-width:0"><div style="font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</div><div style="font-size:10px;color:var(--text3)">${t.cn}</div></div><span style="font-size:11.5px;font-weight:700;color:var(--amber)">£${fmt(t.spend,2)}</span></div>`).join('')}
-    ${highAcos.length?'<div style="padding:5px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;color:var(--amber)">High ACOS</div>':''}
-    ${highAcos.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:6px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${c.id}')"><span style="font-size:14px">⚠</span><div style="flex:1;min-width:0"><div style="font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div><div style="font-size:10px;color:var(--text3)">ACOS ${fmt(c.acos,1)}% · ${fmt(c.roas,2)}× ROAS</div></div><span style="font-size:11px;font-weight:700;color:var(--amber)">${fmt(c.acos,1)}%</span></div>`).join('')}
+  const leakKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.spend>=0.5&&t.sales===0).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>b.spend-a.spend).slice(0,6);
+  const highAcosCamps=A.filter(c=>c.acos>maxAcos+5&&c.sales>0).sort((a,b)=>(b.spend/b.sales)-(a.spend/a.sales)).slice(0,3);
+  const totalWasted=leakCamps.reduce((a,c)=>a+c.spend,0)+leakKw.reduce((a,t)=>a+t.spend,0);
+  const hdr=`<div style="padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber)"></div>
+      <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">Wasting Money</span>
+    </div>
+    ${totalWasted>0?`<span style="font-size:12px;font-weight:800;color:var(--red)">${gbp(totalWasted)} wasted</span>`:''}
+  </div>`;
+  if(!leakCamps.length&&!leakKw.length&&!highAcosCamps.length){el.innerHTML=hdr+'<div style="padding:14px;font-size:12px;color:var(--green)">No waste detected — all spend returning sales.</div>';return;}
+  el.innerHTML=hdr+`<div style="overflow-y:auto;max-height:420px">
+    ${leakCamps.length?`<div style="padding:8px 14px 4px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--red)">Campaigns — zero sales</div>
+    ${leakCamps.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);background:rgba(255,93,108,.05);cursor:pointer" onclick="openCamp('${c.id}')">
+      ${monoTile(c.alias||c.name,28)}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:700;color:var(--red);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
+        <div style="font-size:11px;color:#b8c4d8;margin-top:1px">${gbp(c.spend)} burned · 0 sales · ${intf(c.impressions||0)} impressions</div>
+        <div style="font-size:11px;color:#8892a8;font-style:italic;margin-top:1px">Pause immediately or add negative keywords</div>
+      </div>
+      <span style="font-size:13px;font-weight:800;color:var(--red);flex-shrink:0">${gbp(c.spend)}</span>
+    </div>`).join('')}`:''}
+    ${leakKw.length?`<div style="padding:8px 14px 4px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--amber)">Keywords — spend with zero return</div>
+    ${leakKw.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${t.cid}')">
+      ${matchTag(t.match||'—')}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</div>
+        <div style="font-size:11px;color:#b8c4d8">${t.cn} · ${intf(t.imp||0)} impressions · 0 sales</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:12.5px;font-weight:800;color:var(--amber)">${gbp(t.spend)}</div>
+        <div style="font-size:9px;color:var(--text4)">wasted</div>
+      </div>
+    </div>`).join('')}`:''}
+    ${highAcosCamps.length?`<div style="padding:8px 14px 4px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--amber)">High ACOS — overpaying for sales</div>
+    ${highAcosCamps.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${c.id}')">
+      ${monoTile(c.alias||c.name,28)}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
+        <div style="font-size:11px;color:#b8c4d8">${gbp(c.spend)} spend · ${gbp(c.sales)} sales · ${intf(c.purchases||0)} orders</div>
+        <div style="font-size:11px;color:#8892a8;font-style:italic">Reduce bids or tighten match types</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:800;color:var(--amber)">${fmt(c.acos,1)}%</div>
+        <div style="font-size:9px;color:var(--text4)">ACOS</div>
+      </div>
+    </div>`).join('')}`:''}
   </div>`;
 }
 
@@ -5249,11 +5782,44 @@ function renderDashProductOverview(){
     const allSn=p.camps.flatMap(c=>c.snapshots).sort((a,b)=>parseGbPeriod(a.date)-parseGbPeriod(b.date));
     const ps=[...new Set(allSn.map(s=>s.date))].sort((a,b)=>parseGbPeriod(b)-parseGbPeriod(a));
     if(ps.length>=2){const cS=allSn.filter(s=>s.date===ps[0]),pS=allSn.filter(s=>s.date===ps[1]);const cR=cS.reduce((a,s)=>a+s.spend,0),cSa=cS.reduce((a,s)=>a+s.sales,0),pR=pS.reduce((a,s)=>a+s.spend,0),pSa=pS.reduce((a,s)=>a+s.sales,0);p.trend=pR?((cR?cSa/cR:0)-(pR?pSa/pR:0))/(pR?pSa/pR:1)*100:null;}else p.trend=null;
+    p.totalChanges=p.camps.reduce((a,c)=>a+(c.changes||[]).length,0);
+    p.pendingReviews=p.camps.reduce((a,c)=>a+(c.changes||[]).filter(ch=>ch.outcome==='pending').length,0);
+    p.winChanges=p.camps.reduce((a,c)=>a+(c.changes||[]).filter(ch=>ch.outcome==='win').length,0);
+    p.hasLeak=p.camps.some(c=>c.noSaleSpend);
+    p.activeCamps=p.camps.filter(c=>c.status==='active').length;
     return p;
-  }).sort((a,b)=>b.sp-a.sp);
-  el.innerHTML=`<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)">📦 Products</span><button onclick="document.querySelector('[data-p=products]').click()" style="background:none;border:none;color:var(--blue);font-size:10.5px;cursor:pointer;font-weight:600">View all →</button></div>
-  ${products.map(p=>{const rc=ragColor(p.rg);const tt=p.trend!=null?`<span style="font-size:9.5px;font-weight:700;color:${Math.abs(p.trend)<2?'var(--text4)':p.trend>0?'var(--green)':'var(--red)'}">${p.trend>0?'↑':'↓'}${Math.abs(p.trend).toFixed(0)}%</span>`:'';
-  return`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s" onclick="openProductPopup('${p.asin}')" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">${monoTile(p.product,30)}<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.product||'—'}</div><div style="font-size:10px;color:var(--text3);font-family:var(--mono)">${p.asin} · ${p.camps.length} campaign${p.camps.length!==1?'s':''}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:${rc}">${fmt(p.roas,2)}×</div><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end"><span style="font-size:10px;color:var(--text3)">£${fmt(p.sa,2)}</span>${tt}</div></div></div>`; }).join('')}`;
+  }).sort((a,b)=>b.roas-a.roas);
+  const totalProducts=products.length;
+  const totalCamps=campaigns.filter(c=>c.status==='active').length;
+  el.innerHTML=`<div style="padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">Products</span>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span style="font-size:10.5px;color:var(--text3)">${totalProducts} product${totalProducts!==1?'s':''} · ${totalCamps} active campaigns</span>
+      <button onclick="document.querySelector('[data-p=products]').click()" style="background:var(--bg3);border:1px solid var(--border);color:var(--blue);font-size:10px;padding:2px 8px;border-radius:5px;cursor:pointer;font-family:var(--font)">View all →</button>
+    </div>
+  </div>
+  <div style="overflow-y:auto;max-height:360px">
+  ${products.map(p=>{
+    const rc=ragColor(p.rg);
+    const tt=p.trend!=null?`<span style="font-size:10px;font-weight:700;color:${Math.abs(p.trend)<2?'var(--text4)':p.trend>0?'var(--green)':'var(--red)'}">${p.trend>0?'↑':'↓'}${Math.abs(p.trend).toFixed(0)}%</span>`:'';
+  return`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s" onclick="openProductPopup('${p.asin}')" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
+    ${monoTile(p.product,32)}
+    <div style="flex:1;min-width:0">
+      <div style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.hasLeak?'<span class="flagdot"></span>':''}${p.product||'—'}</div>
+      <div style="display:flex;gap:8px;margin-top:3px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:10px;color:var(--text3)">${p.activeCamps} campaign${p.activeCamps!==1?'s':''}</span>
+        <span style="font-size:10px;color:var(--text4)">·</span>
+        ${p.totalChanges?`<span style="font-size:10px;color:${p.pendingReviews?'var(--amber)':'var(--text3)'}">${p.totalChanges} change${p.totalChanges!==1?'s':''}${p.winChanges?' · '+p.winChanges+' worked':''}</span><span style="font-size:10px;color:var(--text4)">·</span>`:''}
+        <span style="font-size:10px;color:var(--text3)">${gbp(p.sa)} sales · ${gbp(p.sp)} spend</span>
+      </div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:15px;font-weight:800;color:${rc}">${fmt(p.roas,2)}×</div>
+      <div style="display:flex;align-items:center;gap:5px;justify-content:flex-end;margin-top:2px">${tt}${p.or?`<span style="font-size:9.5px;color:var(--text4)">${intf(p.or)} orders</span>`:''}</div>
+    </div>
+  </div>`;
+  }).join('')}
+  </div>`;
 }
 
 function renderDashMainChart(){/* removed */}
@@ -5663,55 +6229,40 @@ function renderDashKPIs(period,cmpPeriod){
     </div>`;
   };
 
-  /* ── health tile (spans cols 2-5, row 2) ── */
+  /* ── health tile (spans cols 2-4, row 2) ── */
   const healthHtml=`<div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;display:flex;align-items:center;gap:0;box-shadow:var(--shadow-sm)">
     <div style="flex:1;min-width:0">
       <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:6px">Campaign Health</div>
       <div style="display:flex;gap:4px">
-        <div onclick="gSel()" style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--green-bg);border:1px solid rgba(46,229,157,.2);border-radius:6px">
+        <div style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--green-bg);border:1px solid rgba(46,229,157,.2);border-radius:6px" onclick="document.querySelector('[data-p=campaigns]').click()">
           <div style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--green);line-height:1">${g}</div>
           <div style="font-size:8.5px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.3px;margin-top:2px">Green</div>
         </div>
-        <div onclick="aSel()" style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--amber-bg);border:1px solid rgba(255,181,71,.2);border-radius:6px">
+        <div style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--amber-bg);border:1px solid rgba(255,181,71,.2);border-radius:6px" onclick="document.querySelector('[data-p=campaigns]').click()">
           <div style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--amber);line-height:1">${a}</div>
           <div style="font-size:8.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.3px;margin-top:2px">Amber</div>
         </div>
-        <div onclick="rSel()" style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--red-bg);border:1px solid rgba(255,93,108,.2);border-radius:6px">
+        <div style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--red-bg);border:1px solid rgba(255,93,108,.2);border-radius:6px" onclick="document.querySelector('[data-p=campaigns]').click()">
           <div style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--red);line-height:1">${red}</div>
           <div style="font-size:8.5px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.3px;margin-top:2px">Red</div>
         </div>
       </div>
     </div>
-    <div style="width:1px;background:var(--border);margin:0 12px;align-self:stretch"></div>
-    <!-- Score mini -->
-    <div style="flex-shrink:0;text-align:center;min-width:72px">
-      <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:5px">Score</div>
-      <div style="position:relative;width:52px;height:52px;margin:0 auto">
-        <svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="none" stroke="var(--bg4)" stroke-width="3.5"/>${circ2(20,sc,scCol)}</svg>
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div style="font-family:var(--display);font-size:14px;font-weight:700;color:${scCol};line-height:1">${sc}</div>
-        </div>
-      </div>
-      <div style="font-size:9.5px;font-weight:700;color:${scCol};margin-top:3px">${scLabel}</div>
-    </div>
-    <div style="width:1px;background:var(--border);margin:0 12px;align-self:stretch"></div>
-    <!-- Win rate + snapshot activity -->
-    <div style="flex-shrink:0;min-width:90px">
-      ${winRate2!=null?`<div style="margin-bottom:6px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Win rate</div><div style="font-size:18px;font-weight:700;color:${winRate2>=70?'var(--green)':winRate2>=50?'var(--amber)':'var(--red)'}">${winRate2}%</div></div>`:''}
-      <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Last snapshot</div><div style="font-size:11px;font-weight:600;color:var(--text);margin-top:1px">${lastSnDate}</div></div>
-      <div style="margin-top:5px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Periods tracked</div><div style="font-size:11px;font-weight:600;color:var(--text);margin-top:1px">${periods2}</div></div>
+    <div style="width:1px;background:var(--border);margin:0 16px;align-self:stretch"></div>
+    <div style="flex-shrink:0;min-width:120px">
+      <div style="margin-bottom:6px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Last snapshot</div><div style="font-size:12px;font-weight:600;color:var(--text);margin-top:1px">${lastSnDate}</div></div>
+      <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Periods tracked</div><div style="font-size:12px;font-weight:600;color:var(--text);margin-top:1px">${periods2}</div></div>
     </div>
   </div>`;
 
-  /* Grid layout: col 1 = ROAS (row-span 2), cols 2-5 = tiles row 1, cols 2-5 = health row 2 */
-  el.style.gridTemplateColumns='1.6fr 1fr 1fr 1fr 1fr';
+  /* Grid layout: col 1 = ROAS (row-span 2), cols 2-4 = tiles row 1, cols 2-4 = health row 2 */
+  el.style.gridTemplateColumns='1.6fr 1fr 1fr 1fr';
   el.style.gridTemplateRows='auto auto';
   el.innerHTML=heroHtml+
     tile('Sales',gbp(cur.sales),'sales',true)+
     tile('Spend',gbp(cur.spend),'spend',false)+
     tile('Orders',intf(cur.purchases),'purchases',true)+
-    tile('CPC',cur.cpc>0?gbp(cur.cpc):'—','cpc',false)+
-    `<div style="grid-column:span 4">${healthHtml}</div>`;
+    `<div style="grid-column:span 3">${healthHtml}</div>`;
 }
 
 function renderDashCampBreakdown(period,cmpPeriod){
@@ -5868,7 +6419,7 @@ function renderDashRecentChanges(){
   const sectionHdr='<div style="padding:10px 14px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)">Recent Changes</span></div>';
   if(!all.length){el.innerHTML=sectionHdr+'<div style="padding:16px 14px;font-size:12px;color:var(--text3)">No changes logged yet.</div>';return;}
   el.innerHTML=sectionHdr+`<div style="overflow-y:auto;max-height:280px">${all.map(ch=>{
-    const oc=ch.outcome==='win'?'<span class="outcome win" style="font-size:9px">✓</span>':ch.outcome==='loss'?'<span class="outcome loss" style="font-size:9px">✕</span>':'<span class="outcome pending" style="font-size:9px">◷</span>';
+    const oc=ch.outcome==='win'?'<span class="outcome win" style="font-size:9px">✓</span>':ch.outcome==='loss'?'<span class="outcome loss" style="font-size:9px">✕</span>':'<span class="outcome pending" style="font-size:9px;padding:1px 5px"><svg style="width:9px;height:9px;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><polyline points="8,4.5 8,8 10.5,9.5"/></svg></span>';
     return`<div style="display:flex;align-items:flex-start;gap:9px;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${ch.id}')">
       <div style="font-size:12px;flex-shrink:0;margin-top:1px">${ch.type==='PPC Bid'?'📈':ch.type==='PPC Budget'?'💰':ch.type==='PPC Keywords'?'🔑':'📝'}</div>
       <div style="flex:1;min-width:0">
