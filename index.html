@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL PPC — Change Tracker v20</title>
+<title>BDL PPC — Change Tracker v29</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -355,7 +355,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;PPC <span class="logo-ver">v20</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;PPC <span class="logo-ver">v29</span></div>
   <div class="nav" id="nav">
     <button class="nav-btn active" data-p="dashboard">Dashboard</button>
     <button class="nav-btn" data-p="campaigns">Campaigns</button>
@@ -379,7 +379,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
     <div>
       <h1 style="font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.5px">Dashboard</h1>
-      <div style="color:var(--text3);font-size:12px;margin-top:1px" id="dash-sub">PPC command centre</div>
+      <div style="color:var(--text3);font-size:12px;margin-top:1px" id="dash-sub">PPC command centre <span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--green);background:var(--green-bg);border:1px solid var(--green-dim);border-radius:6px;padding:1px 7px;vertical-align:middle">v29 · UPDATED</span></div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <select class="sel" id="dash-period-sel" onchange="renderDashPeriod()" style="min-width:190px"><option value="latest">Latest snapshot</option></select>
@@ -394,7 +394,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   <!-- ROW 1: KPI strip -->
   <div id="dash-kpi-row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:10px"></div>
 
-  <!-- ROW 2: ACTION LIST -->
+  <!-- ROW 2: ACTION REQUIRED + DUE FOR REVIEW — one card, two columns -->
   <div class="card" id="dash-action-list" style="overflow:hidden;margin-bottom:10px"></div>
 
   <!-- ROW 3: Best Performing | Worst Performing | Wasting Money -->
@@ -404,11 +404,9 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     <div class="card" id="dash-wasting-money" style="overflow:hidden"></div>
   </div>
 
-  <!-- ROW 4: Products + Top Keywords -->
-  <div style="display:grid;grid-template-columns:460px 1fr;gap:10px;margin-bottom:10px">
-    <div class="card" id="dash-product-overview" style="overflow:hidden"></div>
-    <div class="card" id="dash-top-kw-card" style="overflow:hidden"></div>
-  </div>
+  <!-- hidden legacy stubs (keep IDs so JS refs don't error) -->
+  <div id="dash-product-overview" style="display:none"></div>
+  <div id="dash-top-kw-card" style="display:none"></div>
 
   <!-- hidden legacy stubs (keep IDs so JS refs don't error) -->
   <div id="dash-since-last" style="display:none"></div>
@@ -440,7 +438,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   </div>
 
   <!-- account KPI strip -->
-  <div class="grid" id="camp-kpis" style="grid-template-columns:repeat(7,1fr);margin-bottom:14px"></div>
+  <div class="grid" id="camp-kpis" style="grid-template-columns:repeat(5,1fr);margin-bottom:14px"></div>
 
   <!-- filter row -->
   <div class="ctrls" style="margin-bottom:12px">
@@ -449,7 +447,6 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <button class="tog green" data-rag="g"><span class="d" style="background:var(--green)"></span>Green</button>
       <button class="tog amber" data-rag="a"><span class="d" style="background:var(--amber)"></span>Amber</button>
       <button class="tog red" data-rag="r"><span class="d" style="background:var(--red)"></span>Red</button>
-      <button class="tog amber" data-rag="leak"><span class="d" style="background:var(--amber)"></span>Spend leak</button>
     </div>
     <!-- Quick filters -->
     <select class="sel" id="camp-quick-filter" style="min-width:165px;font-size:11.5px" onchange="renderCampaigns()">
@@ -993,11 +990,10 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
           <div>
             <div class="label" style="margin-bottom:5px">Campaign type</div>
             <select class="sel" id="ac-type" style="width:100%">
-              <option value="Auto">Auto</option>
-              <option value="Exact">Exact</option>
-              <option value="Phrase">Phrase</option>
-              <option value="Broad">Broad</option>
-              <option value="Manual">Manual</option>
+              <option value="Auto Targeting">Auto Targeting</option>
+              <option value="Keyword Targeting">Keyword Targeting</option>
+              <option value="Product Targeting">Product Targeting</option>
+              <option value="Category Targeting">Category Targeting</option>
             </select>
           </div>
           <div>
@@ -1288,7 +1284,7 @@ async function loadFromSupabase(){
         if(ags)sn.adGroups=ags;
         return sn;
       });
-      const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
+      const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({id:ch.id,type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
       const product=row.product_name||row.product||row.name||'Unnamed product';
       campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
     });
@@ -1384,8 +1380,6 @@ function campKpis(){
     {l:'Total spend',v:gbp(sum.spend),c:'var(--text)',s:series('spend'),sc:'var(--text3)'},
     {l:'Total sales',v:gbp(sum.sales),c:'var(--text)',s:series('sales'),sc:'var(--text3)'},
     {l:'Blended ROAS',v:fmt(roas,2),c:roas>=5?'var(--green)':roas>=4?'var(--amber)':'var(--red)',s:series('roas'),sc:roas>=5?'var(--green)':roas>=4?'var(--amber)':'var(--red)'},
-    {l:'Avg ACOS',v:fmt(acos,1)+'%',c:'var(--text)',s:series('acos'),sc:'var(--amber)'},
-    {l:'Spend leaks',v:leaks.length+' · '+gbp(leakSpend),c:leaks.length?'var(--amber)':'var(--text3)',s:null},
   ];
   const ragBox=`<div class="card kpi" style="padding:10px 12px">
     <div class="label" style="margin-bottom:8px">Campaign health</div>
@@ -1540,6 +1534,15 @@ function openEditCampaign(){
   document.getElementById('ec-sku').value=c.sku||'';
   document.getElementById('ec-price').value=c.price||'';
   document.getElementById('ec-status').value=c.status||'active';
+  /* Campaign type — normalise legacy values to new naming */
+  const typeEl=document.getElementById('ec-type');
+  if(typeEl){
+    const legacyMap={'Auto':'Auto Targeting','Manual':'Keyword Targeting','Exact':'Keyword Targeting','Phrase':'Keyword Targeting','Broad':'Keyword Targeting'};
+    const ct=c.campaignType||c.campaign_type||'';
+    const normalised=legacyMap[ct]||ct||'Auto Targeting';
+    typeEl.value=normalised;
+    if(!typeEl.value)typeEl.value='Auto Targeting';
+  }
   const freqEl=document.getElementById('ec-review-freq');
   if(freqEl){const rf=c.reviewFreqDays||14;const opts=[3,7,14,30,0];const closest=opts.reduce((p,cur)=>Math.abs(cur-rf)<Math.abs(p-rf)?cur:p);freqEl.value=String(closest);}
   document.getElementById('ec-status-msg').textContent='';
@@ -1559,43 +1562,49 @@ async function saveEditCampaign(){
   const sku=document.getElementById('ec-sku').value.trim();
   const price=parseFloat(document.getElementById('ec-price').value)||0;
   const status=document.getElementById('ec-status').value;
+  const campaignType=document.getElementById('ec-type')?.value||c.campaignType||'Auto Targeting';
   const reviewFreq=parseInt(document.getElementById('ec-review-freq').value)||0;
   if(!name){document.getElementById('ec-status-msg').textContent='⚠ Campaign name is required';document.getElementById('ec-status-msg').style.color='var(--red)';return;}
   const statusEl=document.getElementById('ec-status-msg');
   statusEl.textContent='Saving…';statusEl.style.color='var(--text3)';
-  /* Update in memory */
-  c.name=name;c.alias=alias||name;c.product=product;c.asin=asin||c.asin;c.sku=sku;c.price=price;c.status=status;c.reviewFreqDays=reviewFreq;
+  /* Update in memory immediately so UI reflects changes right away */
+  c.name=name;c.alias=alias||name;c.product=product;c.asin=asin||c.asin;c.sku=sku;c.price=price;c.status=status;c.reviewFreqDays=reviewFreq;c.campaignType=campaignType;
   /* Rebuild computed fields */
   const last=c.snapshots[c.snapshots.length-1]||{};
   c.rag=ragOf(c.roas,c.sales,c.spend);
   c.noSaleSpend=c.spend>0&&c.sales===0;
+  /* Refresh campaign table and popout header immediately — before Supabase round-trip */
+  renderCampaigns();
+  /* Re-open the campaign view so the header reflects the new name/status */
+  const campId=c.id;
+  closeEditCampaign();
+  openCamp(campId);
   /* Persist to Supabase — the single source of truth shared across all laptops */
-  const fields={name,alias:alias||name,product,asin:asin||c.asin,sku,price,status,reviewFreqDays:reviewFreq};
+  const fields={name,alias:alias||name,product,asin:asin||c.asin,sku,price,status,reviewFreqDays:reviewFreq,campaignType};
   let dbOk=false;
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
       const hds=await sbHeaders();
+      const patch=buildCampPatch(fields);
+      /* Also try to save campaign_type if the column exists */
+      if(!window._sbCampCols||window._sbCampCols.includes('campaign_type'))patch.campaign_type=campaignType;
       const res=await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{
         method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},
-        body:JSON.stringify(buildCampPatch(fields))
+        body:JSON.stringify(patch)
       });
       if(!res.ok){const e=await res.text();throw new Error(e);}
       dbOk=true;
-      statusEl.textContent='✓ Saved to Supabase — will show on every laptop';statusEl.style.color='var(--green)';
+      toast('✓ Saved to Supabase','ok');
     }catch(e){
-      statusEl.textContent='⚠ Could not save to Supabase — kept on this laptop only. '+(e.message||'').slice(0,90);statusEl.style.color='var(--amber)';
+      toast('⚠ Supabase save failed — kept on this laptop only','warn');
     }
   } else {
-    statusEl.textContent='Saved on this laptop only — no Supabase connection';statusEl.style.color='var(--amber)';
+    toast('Saved on this laptop only — no Supabase connection','warn');
   }
   /* DB accepted it -> it's authoritative, drop any stale local copy. DB refused -> keep a local fallback. */
   if(dbOk)lsClearEdit(c.id); else lsApplyEdit(c.id,fields);
   _dashDirty=true;
-  /* Refresh every surface that shows this campaign: the table, the open campaign view, and the dashboard */
-  renderCampaigns();
-  openCamp(c.id);
   renderDashboard();
-  setTimeout(()=>closeEditCampaign(),900);
 }
 
 async function confirmDeleteCampaign(){
@@ -1655,7 +1664,7 @@ function openAddCampaign(){
   /* clear form */
   ['ac-name','ac-product','ac-asin','ac-sku','ac-price','ac-budget'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('ac-status').value='active';
-  document.getElementById('ac-type').value='Auto';
+  document.getElementById('ac-type').value='Auto Targeting';
   document.getElementById('add-camp-status').textContent='';
   document.getElementById('ac-save-btn').textContent='Save campaign';
   document.getElementById('ac-save-btn').disabled=false;
@@ -3108,23 +3117,6 @@ async function saveChangeEntry(){
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
   c.changes.unshift(change); // newest first
 
-  /* Save to Supabase */
-  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
-    try{
-      await sbInsert('changes',{
-        campaign_id:c.id,type,date,what,why,goal:goal||null,
-        outcome:'pending',outcome_note:null,
-        review_date:review,created_at:new Date().toISOString()
-      });
-      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
-    }catch(e){
-      console.error('Change save failed:',e);
-      if(status){status.textContent='Saved locally (Supabase failed)';status.style.color='var(--amber)';}
-    }
-  } else {
-    if(status){status.textContent='✓ Change saved';status.style.color='var(--green)';}
-  }
-
   /* Reset form */
   document.getElementById('clf-what').value='';
   document.getElementById('clf-why').value='';
@@ -3132,12 +3124,26 @@ async function saveChangeEntry(){
   document.getElementById('clf-review').value='';
   document.getElementById('clf-date').value=new Date().toISOString().slice(0,10);
 
-  /* Update badge + list */
+  /* Refresh immediately */
   document.getElementById('potab-changes').textContent=c.changes.length||'';
   document.getElementById('change-list').innerHTML=c.changes.map((ch,i)=>changeEntry(ch,c.id,i)).join('');
   renderCampaigns();
   renderChangeLog();
-  setTimeout(()=>{if(status)status.textContent='';},3000);
+  if(status){status.textContent='✓ Change saved';status.style.color='var(--green)';setTimeout(()=>{if(status)status.textContent='';},2500);}
+
+  /* Save to Supabase in background */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      const saved=await sbInsert('changes',{
+        campaign_id:c.id,type,date,what,why,goal:goal||null,
+        outcome:'pending',outcome_note:null,
+        review_date:review,created_at:new Date().toISOString()
+      });
+      if(saved&&saved.id!=null){change.id=saved.id;}
+    }catch(e){
+      console.error('Change save failed:',e);
+    }
+  }
 }
 function changeEntry(ch, campId, chIdx){
   const ic={'PPC Bid':'⊙','PPC Budget':'£','PPC Keywords':'⌗','Pricing':'฿','Listing':'≣','Stock':'▣','Other':'•'}[ch.type]||'•';
@@ -3173,6 +3179,13 @@ function changeEntry(ch, campId, chIdx){
       </div>`
     :'';
 
+  const editDeleteBtns=(campId!=null&&chIdx!=null)
+    ?`<div style="display:flex;gap:5px;margin-top:7px">
+        <button onclick="openEditChangeLog(${campId},${chIdx})" style="font-size:10.5px;padding:3px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
+        <button onclick="deleteChangeLog(${campId},${chIdx})" style="font-size:10.5px;padding:3px 10px;border-radius:6px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑 Delete</button>
+      </div>`
+    :'';
+
   const hilite=reviewDue?'border-left:3px solid var(--red);background:rgba(255,93,108,.04);':'';
 
   return `<div class="cle" style="${hilite}padding-left:${reviewDue?'11px':'0'}">
@@ -3190,6 +3203,7 @@ function changeEntry(ch, campId, chIdx){
         ${oc}
         ${reviewLabel}
       </div>
+      ${editDeleteBtns}
       ${completeBtn}
     </div></div>`;
 }
@@ -4297,10 +4311,15 @@ function renderChangeLog(){
       `<span style="font-size:10px;color:var(--text3)">${fmtDateShort(ch.review)}</span>`):'';
     const campChip=x.cname?`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">${x.cname}</span>`:'';
     const typeChip=`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,.2)">${ch.type}</span>`;
-    const markBtns=ch.outcome==='pending'?`<div style="display:flex;gap:4px;flex-shrink:0">
+    const markBtns=ch.outcome==='pending'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap">
       <button onclick="clQuickMark(${x.cid},${x.idx},'win',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--green-bg);border:1px solid rgba(46,229,157,.3);color:var(--green);cursor:pointer;font-family:var(--font);font-weight:600">✓ Worked</button>
       <button onclick="clQuickMark(${x.cid},${x.idx},'loss',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">✕ Didn't</button>
-    </div>`:'';
+      <button onclick="openEditChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
+      <button onclick="deleteChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
+    </div>`:`<div style="display:flex;gap:4px;flex-shrink:0;align-items:flex-start">
+      <button onclick="openEditChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
+      <button onclick="deleteChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
+    </div>`;
     return`<div style="display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:start${reviewDue?';background:rgba(255,93,108,.04);border-left:3px solid var(--red)':''}">
       <div style="width:24px;height:24px;border-radius:6px;background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}44;display:grid;place-items:center;font-size:11px">${ic}</div>
       <div style="min-width:0">
@@ -4352,6 +4371,99 @@ function clQuickMark(campId,chIdx,outcome,btn){
   btn.textContent='…';btn.disabled=true;
   markChange(campId,chIdx,outcome);
   setTimeout(()=>renderChangeLog(),150);
+}
+
+/* ── Edit / Delete Change Log ── */
+function openEditChangeLog(campId,chIdx){
+  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const ch=c.changes[chIdx];if(!ch)return;
+  /* Populate the edit modal */
+  document.getElementById('ecl-camp-id').value=campId;
+  document.getElementById('ecl-ch-idx').value=chIdx;
+  document.getElementById('ecl-date').value=ch.date||'';
+  document.getElementById('ecl-type').value=ch.type||'PPC Bid';
+  document.getElementById('ecl-what').value=ch.what||'';
+  document.getElementById('ecl-why').value=ch.why||'';
+  document.getElementById('ecl-goal').value=ch.goal||'';
+  document.getElementById('ecl-review').value=ch.review||'';
+  document.getElementById('ecl-outcome').value=ch.outcome||'pending';
+  document.getElementById('ecl-status-msg').textContent='';
+  document.getElementById('edit-cl-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeEditChangeLog(){
+  document.getElementById('edit-cl-overlay').classList.remove('open');
+  document.body.style.overflow=curCamp?'hidden':'';
+}
+async function saveEditChangeLog(){
+  const campId=document.getElementById('ecl-camp-id').value;
+  const chIdx=parseInt(document.getElementById('ecl-ch-idx').value);
+  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const ch=c.changes[chIdx];if(!ch)return;
+  const origDate=ch.date||'';const origWhat=ch.what||'';
+  const date=document.getElementById('ecl-date').value;
+  const type=document.getElementById('ecl-type').value;
+  const what=document.getElementById('ecl-what').value.trim();
+  const why=document.getElementById('ecl-why').value.trim();
+  const goal=document.getElementById('ecl-goal').value.trim();
+  const review=document.getElementById('ecl-review').value;
+  const outcome=document.getElementById('ecl-outcome').value;
+  if(!date||!what||!why){document.getElementById('ecl-status-msg').textContent='⚠ Date, what, and why are required';document.getElementById('ecl-status-msg').style.color='var(--red)';return;}
+  /* Update in memory immediately */
+  ch.date=date;ch.type=type;ch.what=what;ch.why=why;ch.goal=goal;ch.review=review;ch.outcome=outcome;
+  /* Refresh UI immediately */
+  renderCampaigns();
+  renderChangeLog();
+  if(curCamp&&curCamp.id==campId)renderChanges();
+  closeEditChangeLog();
+  /* Supabase update */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      const hds=await sbHeaders();
+      const body=JSON.stringify({type,date,what,why,goal:goal||null,review_date:review||null,outcome});
+      let rowId=ch.id;
+      /* If we don't have a stored row id, look it up by the ORIGINAL date/what (before this edit) */
+      if(rowId==null){
+        const res=await fetch(SUPABASE_URL+'/rest/v1/changes?campaign_id=eq.'+c.id+'&date=eq.'+encodeURIComponent(origDate)+'&what=eq.'+encodeURIComponent(origWhat),{headers:hds});
+        if(res.ok){const rows=await res.json();rowId=rows[0]?.id;}
+      }
+      if(rowId!=null){
+        await fetch(SUPABASE_URL+'/rest/v1/changes?id=eq.'+rowId,{
+          method:'PATCH',headers:{...hds,'Prefer':'return=representation'},
+          body
+        }).then(async r=>{if(r.ok){const upd=await r.json();if(upd&&upd[0]&&upd[0].id!=null)ch.id=upd[0].id;}});
+        toast('✓ Change log updated','ok');
+      } else {
+        toast('Saved on this device — could not match the database row','warn');
+      }
+    }catch(e){toast('Saved locally — Supabase update failed','warn');}
+  } else {
+    toast('✓ Change log updated','ok');
+  }
+}
+async function deleteChangeLog(campId,chIdx){
+  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const ch=c.changes[chIdx];if(!ch)return;
+  if(!confirm('Delete this change log entry?\n\n"'+ch.what+'"\n\nThis cannot be undone.'))return;
+  /* Remove from Supabase */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      const hds=await sbHeaders();
+      let rowId=ch.id;
+      if(rowId==null){
+        const res=await fetch(SUPABASE_URL+'/rest/v1/changes?campaign_id=eq.'+c.id+'&date=eq.'+encodeURIComponent(ch.date)+'&what=eq.'+encodeURIComponent(ch.what),{headers:hds});
+        if(res.ok){const rows=await res.json();rowId=rows[0]?.id;}
+      }
+      if(rowId!=null){
+        await fetch(SUPABASE_URL+'/rest/v1/changes?id=eq.'+rowId,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
+      }
+    }catch(e){console.warn('deleteChangeLog Supabase fail',e);}
+  }
+  c.changes.splice(chIdx,1);
+  renderCampaigns();
+  renderChangeLog();
+  if(curCamp&&curCamp.id==campId)renderChanges();
+  toast('Change log deleted','ok');
 }
 
 /* ════════ PRODUCTS PAGE ════════ */
@@ -5725,9 +5837,7 @@ function renderDashPeriod(){
   renderDashWastingMoney();
   renderDashQuickWins();
   renderDashMovers();
-  renderDashProductOverview();
   renderDashRecentChanges();
-  renderDashTopKeywords();
   renderDashOverdueBanner();
   const lbl=document.getElementById('dash-camps-period-label');
   if(lbl)lbl.textContent=period==='latest'?'— latest snapshot per campaign':'— period: '+period;
@@ -5781,9 +5891,20 @@ function renderDashActionList(){
     if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
       const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
       if(!hasPendingReview){
-        const lastDate=c.snapshots[c.snapshots.length-1].date||'—';
-        const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
-        reviews.push({type:'review',pri:3,tag:'SCHEDULED',label:rfLabel+' review due — '+lastDate,camp:name,sub:'Review campaign performance and log any changes needed',cid:c.id,action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
+        /* Only add to "Due for Review" if actually due (within freq days of last snapshot) */
+        const lastSnap=c.snapshots[c.snapshots.length-1];
+        let daysSinceLast=null;
+        if(lastSnap?.date){
+          try{
+            const d=new Date(lastSnap.date.replace(/(\d+)[–-](\d+)\s+(\w+)/,'$1 $3').replace(/(\d+)\s+(\w+)\s+(\d{4})/,'$2 $1 $3'));
+            if(!isNaN(d)){daysSinceLast=Math.round((today-d)/86400000);}
+          }catch(e){}
+        }
+        /* Only show if the review is actually due or overdue (daysSince >= reviewFreqDays) */
+        if(daysSinceLast!=null&&daysSinceLast>=c.reviewFreqDays){
+          const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
+          reviews.push({type:'review',pri:3,tag:'SCHEDULED',label:rfLabel+' review due — '+lastSnap.date,camp:name,sub:'Review campaign performance and log any changes needed',cid:c.id,action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
+        }
       }
     }
     /* ── Due for Review: change follow-ups ── */
@@ -5797,43 +5918,57 @@ function renderDashActionList(){
   });
   actions.sort((a,b)=>a.pri-b.pri);reviews.sort((a,b)=>a.pri-b.pri);
   const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)',review:'var(--purple)'};
-  const bgMap={urgent:'rgba(255,93,108,.1)',warn:'rgba(255,181,71,.08)',info:'rgba(91,157,255,.08)',review:'rgba(183,148,255,.1)'};
+  const bgMap={urgent:'rgba(255,93,108,.14)',warn:'rgba(255,181,71,.12)',info:'rgba(91,157,255,.12)',review:'rgba(183,148,255,.14)'};
   const done=window._actionedKeys;
   const visA=actions.filter(a=>!done.has(a.key));
   const visR=reviews.filter(a=>!done.has(a.key));
   const dismissedCount=(actions.length-visA.length)+(reviews.length-visR.length);
-  const row=(a)=>{
+
+  const row=a=>{
     const col=colMap[a.type];
-    const kAttr=String(a.key).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-    return `<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:.12s" class="hrow">
-      <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:${bgMap[a.type]};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${a.cid}')">${a.tag}</div>
-      <div style="min-width:0;cursor:pointer" onclick="openCamp('${a.cid}')">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
-          <span style="font-size:12.5px;font-weight:700;color:#f2f4f9">${a.label}</span>
-          <span style="font-size:11px;padding:2px 8px;border-radius:5px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${a.camp}</span>
-        </div>
-        <div style="font-size:11px;color:#d4dff0">${a.sub} <span style="color:#8892a8;font-style:italic"> — ${a.action}</span></div>
+    const k=String(a.key).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return`<div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${a.cid}')" onmouseenter="this.style.background='var(--bg2)'" onmouseleave="this.style.background=''">
+      <span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:${bgMap[a.type]};color:${col};border:1px solid ${col}33;white-space:nowrap;flex-shrink:0;letter-spacing:.3px">${a.tag}</span>
+      <div style="flex:1;min-width:0;overflow:hidden">
+        <div style="font-size:11.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.label} <span style="font-size:10.5px;font-weight:500;color:var(--text3)">${a.camp}</span></div>
       </div>
-      <button data-k="${kAttr}" onclick="markActionDone(this.getAttribute('data-k'))" title="Mark done — stays dismissed after refresh" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
+      <button onclick="event.stopPropagation();markActionDone('${k}')" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:var(--text4);font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:5px;cursor:pointer;font-family:var(--font)" onmouseenter="this.style.color='var(--green)';this.style.borderColor='var(--green)'" onmouseleave="this.style.color='var(--text4)';this.style.borderColor='var(--border)'">Done</button>
     </div>`;
   };
-  const section=(title,accent,items,emptyMsg)=>{
-    const urgent=items.some(a=>a.type==='urgent'||a.tag==='OVERDUE');
-    const badge=items.length
-      ?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${urgent?'var(--red-bg)':accent+'22'};color:${urgent?'var(--red)':accent};border:1px solid ${accent}55">${items.length} item${items.length!==1?'s':''}</span>`
-      :'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>';
-    const hdr=`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px"><span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">${title}</span>${badge}</div>`;
-    if(!items.length)return hdr+`<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">${emptyMsg}</div>`;
-    return hdr+'<div style="overflow-y:auto;max-height:260px">'+items.slice(0,15).map(row).join('')+'</div>';
+
+  const col=(title,accent,items,empty)=>{
+    const hasUrgent=items.some(a=>a.type==='urgent'||a.tag==='OVERDUE');
+    const bc=hasUrgent?'var(--red)':accent;
+    const badge=items.length?`<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:${bc}22;color:${bc};border:1px solid ${bc}44">${items.length}</span>`:'';
+    return`<div style="display:flex;flex-direction:column;min-width:0">
+      <div style="padding:7px 12px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;background:var(--bg3)">
+        <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">${title}</span>${badge}
+      </div>
+      ${items.length
+        ?`<div style="overflow-y:auto;max-height:260px">${items.map(row).join('')}</div>`
+        :`<div style="padding:10px 12px;font-size:11.5px;color:var(--green)">✓ ${empty}</div>`}
+    </div>`;
   };
-  const topBar=`<div style="padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-    <span style="font-size:10.5px;color:var(--text4)">Click a row to open the campaign · Mark Done to dismiss (stays dismissed after refresh)</span>
-    ${dismissedCount?`<span style="display:flex;align-items:center;gap:8px"><span style="font-size:10.5px;color:var(--text3)">${dismissedCount} marked done</span><button onclick="resetActions()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset all</button></span>`:''}
-  </div>`;
-  el.innerHTML=topBar
-    +section('Action Required','var(--amber)',visA,'All campaigns healthy — no actions required.')
-    +'<div style="height:10px;background:transparent"></div>'
-    +section('Due for Review','var(--purple)',visR,'No reviews scheduled or due.');
+
+  const totalVis=visA.length+visR.length;
+  const hasUrgent=visA.some(a=>a.type==='urgent');
+  const topBadge=totalVis?`<span style="font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:12px;background:${hasUrgent?'var(--red-bg)':'rgba(255,181,71,.14)'};color:${hasUrgent?'var(--red)':'var(--amber)'};border:1px solid ${hasUrgent?'rgba(255,93,108,.4)':'rgba(255,181,71,.35)'}">${totalVis} item${totalVis!==1?'s':''}</span>`:`<span style="font-size:10.5px;font-weight:700;color:var(--green)">All clear ✓</span>`;
+
+  el.innerHTML=
+    `<div style="padding:8px 12px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="display:flex;align-items:center;gap:9px">
+        <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text)">Actions &amp; Reviews</span>
+        ${topBadge}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:10px;color:var(--text4)">Click row · Done to dismiss</span>
+        ${dismissedCount?`<button onclick="resetActions()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:9.5px;padding:2px 8px;border-radius:5px;cursor:pointer;font-family:var(--font)">Reset ${dismissedCount}</button>`:''}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-top:none">
+      <div style="border-right:1px solid var(--border)">${col('Action Required','var(--amber)',visA,'No action needed')}</div>
+      <div>${col('Due for Review','var(--purple)',visR,'Nothing due right now')}</div>
+    </div>`;
 }
 function renderDashWhatsWorking(){
   const el=document.getElementById('dash-whats-working');if(!el)return;
@@ -5861,8 +5996,6 @@ function renderDashWhatsWorking(){
         ${delta!=null?`<div style="font-size:9.5px;font-weight:700;color:${delta>=0?'var(--green)':'var(--red)'}">${delta>=0?'↑':'↓'}${Math.abs(delta).toFixed(1)}%</div>`:''}
       </div>
     </div>`;}).join('')}
-    ${bestKw.length?`<div style="padding:8px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)">Top keywords</div>
-    ${bestKw.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${t.cid}')">${matchTag(t.match||'—')}<span style="flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span><span style="font-size:10px;color:var(--text3);white-space:nowrap">${t.cn}</span><span style="font-size:13px;font-weight:700;color:var(--green);margin-left:8px">${fmt(t.roas,2)}×</span></div>`).join('')}`:''}
   </div>`;
 }
 
@@ -5893,8 +6026,6 @@ function renderDashWorstPerforming(){
       <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div><div style="font-size:10.5px;color:var(--text3)">${gbp(c.sales)} sales · ${gbp(c.spend)} spend</div></div>
       <div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:800;color:${ragColor(rg)}">${fmt(c.roas,2)}×</div>${delta!=null?`<div style="font-size:9.5px;font-weight:700;color:${delta<=0?'var(--red)':'var(--green)'}">${delta>=0?'↑':'↓'}${Math.abs(delta).toFixed(1)}%</div>`:''}</div>
     </div>`;}).join('')}`:''}
-    ${worstKw.length?`<div style="padding:8px 14px 2px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)">Worst keywords (low ROAS)</div>
-    ${worstKw.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openCamp('${t.cid}')">${matchTag(t.match||'—')}<span style="flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span><span style="font-size:10px;color:var(--text3);white-space:nowrap">${t.cn}</span><span style="font-size:13px;font-weight:700;color:var(--red);margin-left:8px">${fmt(t.roas,2)}×</span></div>`).join('')}`:''}
   </div>`;
 }
 
@@ -6519,16 +6650,19 @@ async function saveGlobalChange(){
   }
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
   c.changes.unshift(change);
+  /* Refresh UI immediately — before Supabase round-trip */
+  renderCampaigns();renderChangeLog();
+  if(curCamp&&curCamp.id==campId)renderChanges();
+  closeGlobalCL();
+  /* Supabase in background */
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
       await sbInsert('changes',{campaign_id:c.id,type,date,what,why,goal:goal||null,outcome:'pending',review_date:review,created_at:new Date().toISOString()});
-      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
-    }catch(e){if(status){status.textContent='Saved locally';status.style.color='var(--amber)';}}
+      toast('✓ Change saved to Supabase','ok');
+    }catch(e){toast('Change saved locally (Supabase failed)','warn');}
   } else {
-    if(status){status.textContent='✓ Saved';status.style.color='var(--green)';}
+    toast('✓ Change logged','ok');
   }
-  renderCampaigns();renderChangeLog();
-  setTimeout(()=>{closeGlobalCL();},900);
 }
 
 /* boot */
@@ -6751,15 +6885,26 @@ function toggleSnapExpand(){
             </select>
           </div>
         </div>
-        <div>
-          <div class="label" style="margin-bottom:5px">Review frequency</div>
-          <select class="sel" id="ec-review-freq" style="width:100%">
-            <option value="3">Every 3 days</option>
-            <option value="7">Weekly</option>
-            <option value="14">Fortnightly</option>
-            <option value="30">Monthly</option>
-            <option value="0">No scheduled review</option>
-          </select>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="label" style="margin-bottom:5px">Campaign type</div>
+            <select class="sel" id="ec-type" style="width:100%">
+              <option value="Auto Targeting">Auto Targeting</option>
+              <option value="Keyword Targeting">Keyword Targeting</option>
+              <option value="Product Targeting">Product Targeting</option>
+              <option value="Category Targeting">Category Targeting</option>
+            </select>
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Review frequency</div>
+            <select class="sel" id="ec-review-freq" style="width:100%">
+              <option value="3">Every 3 days</option>
+              <option value="7">Weekly</option>
+              <option value="14">Fortnightly</option>
+              <option value="30">Monthly</option>
+              <option value="0">No scheduled review</option>
+            </select>
+          </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;padding-top:4px">
           <button class="btn" onclick="saveEditCampaign()">Save changes</button>
@@ -6822,6 +6967,70 @@ function toggleSnapExpand(){
           <span id="gcl-status" style="font-size:11.5px;color:var(--text3);flex:1"></span>
           <button class="btn ghost" onclick="closeGlobalCL()">Cancel</button>
           <button class="btn" onclick="saveGlobalChange()">Save change</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ════════ EDIT CHANGE LOG MODAL ════════ -->
+<div class="overlay" id="edit-cl-overlay" onclick="if(event.target.id==='edit-cl-overlay')closeEditChangeLog()" style="z-index:400">
+  <div class="popout" style="max-width:560px;width:calc(100vw - 40px);max-height:90vh;overflow-y:auto;margin:auto">
+    <div class="po-header" style="padding:16px 20px">
+      <div class="po-title" style="font-size:14px">Edit Change Log</div>
+      <button class="close-btn" onclick="closeEditChangeLog()">✕</button>
+    </div>
+    <div style="padding:20px">
+      <input type="hidden" id="ecl-camp-id">
+      <input type="hidden" id="ecl-ch-idx">
+      <div style="display:grid;gap:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="label" style="margin-bottom:5px">Date made <span style="color:var(--red)">*</span></div>
+            <input class="input" id="ecl-date" type="date" style="width:100%">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Change type</div>
+            <select class="sel" id="ecl-type" style="width:100%">
+              <option value="PPC Bid">PPC Bid</option>
+              <option value="PPC Budget">PPC Budget</option>
+              <option value="PPC Keywords">PPC Keywords</option>
+              <option value="Pricing">Pricing</option>
+              <option value="Listing">Listing</option>
+              <option value="Stock">Stock</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">What was changed <span style="color:var(--red)">*</span></div>
+          <input class="input" id="ecl-what" style="width:100%" placeholder="e.g. Increased bid from £0.58 to £0.68">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Why / reason <span style="color:var(--red)">*</span></div>
+          <textarea class="input" id="ecl-why" style="width:100%;min-height:70px;resize:vertical" placeholder="Why was this changed?"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="label" style="margin-bottom:5px">Review date</div>
+            <input class="input" id="ecl-review" type="date" style="width:100%">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Goal / expected outcome</div>
+            <input class="input" id="ecl-goal" style="width:100%" placeholder="e.g. ACOS below 20%">
+          </div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Outcome</div>
+          <select class="sel" id="ecl-outcome" style="width:100%">
+            <option value="pending">Pending review</option>
+            <option value="win">Worked ✓</option>
+            <option value="loss">Did not work ✕</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding-top:4px">
+          <button class="btn" onclick="saveEditChangeLog()">Save changes</button>
+          <button class="btn ghost" onclick="closeEditChangeLog()">Cancel</button>
+          <span id="ecl-status-msg" style="font-size:11.5px;color:var(--text3)"></span>
         </div>
       </div>
     </div>
