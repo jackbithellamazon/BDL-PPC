@@ -13,7 +13,7 @@
   --bg:#090b11;--bg2:#0e1219;--bg3:#151a24;--bg4:#1c2230;--bg5:#252d3c;
   --panel:#0e1219;--panel2:#131820;
   --border:rgba(148,163,184,0.12);--border2:rgba(148,163,184,0.22);--border3:rgba(148,163,184,0.32);
-  --text:#f2f4f9;--text2:#dde3ef;--text3:#b8c4d8;--text4:#8892a8;
+  --text:#f2f4f9;--text2:#e8edf7;--text3:#c8d4e8;--text4:#a0aec0;
   --green:#2ee59d;--green-bg:rgba(46,229,157,0.12);--green-dim:rgba(46,229,157,0.4);
   --amber:#ffb547;--amber-bg:rgba(255,181,71,0.12);
   --red:#ff5d6c;--red-bg:rgba(255,93,108,0.12);
@@ -76,7 +76,7 @@ body{background:
 
 .ph{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:18px}
 .ph h1{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.5px}
-.ph .sub{color:var(--text2);font-size:12.5px;margin-top:3px}
+.ph .sub{color:var(--text);font-size:12.5px;margin-top:3px}
 .ctrls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
 .input::placeholder{color:var(--text3);font-weight:500}
@@ -104,7 +104,7 @@ body{background:
 .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm)}
 .card.pad{padding:18px 20px}
 .grid{display:grid;gap:12px}
-.label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)}
+.label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text)}
 
 /* RAG pills */
 .rag{font-family:var(--mono);font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
@@ -204,8 +204,9 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .lrow .vv{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px}
 
 /* ───── OVERLAY / POPOUT ───── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(4,6,10,0.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:200;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,6,10,0.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .overlay.open{display:flex;animation:fadeIn .2s}
+#edit-camp-overlay{z-index:300}
 .popout{background:var(--panel);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:1340px;margin:auto;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:popIn .3s cubic-bezier(.4,0,.2,1)}
 .po-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 18px 12px;border-bottom:1px solid var(--border)}
 .po-title{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -220,7 +221,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .po-tab.active{color:var(--text)}
 .po-tab.active::after{content:'';position:absolute;left:10px;right:10px;bottom:-1px;height:2.5px;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--purple))}
 .po-tab .badge{background:var(--red-bg);color:var(--red);font-size:9.5px;padding:1px 5px;border-radius:9px;margin-left:5px;font-weight:600}
-.po-body{padding:16px 22px 22px;flex:1;overflow-y:auto;min-height:0}
+.po-body{padding:16px 22px 22px;flex:1;overflow-y:auto;min-height:0;will-change:scroll-position;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .po-panel{display:none}.po-panel.active{display:block;animation:fadeIn .25s}
 
 /* hero kpis in popout */
@@ -296,8 +297,8 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .outcome-clock{display:inline-block;width:12px;height:12px;vertical-align:middle;margin-right:4px;flex-shrink:0}
 .cle .date{font-family:var(--mono);font-size:11.5px;color:#dde3ef;white-space:nowrap;font-weight:600}
 
-.muted{color:#dde3ef}
-.empty{text-align:center;padding:34px;color:#dde3ef;font-size:13px}
+.muted{color:#e8edf7}
+.empty{text-align:center;padding:34px;color:#e8edf7;font-size:13px}
 .asin-chip{font-family:var(--mono);font-size:10px;color:var(--purple);background:var(--purple-bg);padding:2px 7px;border-radius:6px;cursor:pointer}
 .asin-chip:hover{filter:brightness(1.15)}
 /* ── simplified popout layout ── */
@@ -315,7 +316,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .trow-leak td{background:rgba(255,181,71,.04)}
 /* simple table — replaces the heavy .dt style inside popout */
 .simple-tbl{width:100%;border-collapse:collapse;font-size:12px}
-.simple-tbl thead th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#d0d8e8;text-align:center;padding:10px 12px;border-bottom:2px solid var(--border2);white-space:nowrap;background:#131820;position:sticky;top:0;z-index:2}
+.simple-tbl thead th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#e0e8f4;text-align:center;padding:10px 12px;border-bottom:2px solid var(--border2);white-space:nowrap;background:var(--bg3);position:sticky;top:0;z-index:2}
 .simple-tbl thead th:first-child{text-align:left!important}
 .simple-tbl tbody td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--border);font-family:var(--mono);color:#f2f4f9;font-size:12.5px}
 .simple-tbl tbody td:first-child{text-align:left!important;font-family:var(--font);color:#f2f4f9;font-size:13px;font-weight:500}
@@ -374,70 +375,39 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 <!-- ════════ DASHBOARD ════════ -->
 <div class="page active" id="page-dashboard">
 
-  <!-- ── TOPBAR ── -->
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5b9dff22,#b794ff22);border:1px solid rgba(91,157,255,.25);display:grid;place-items:center;font-size:16px;flex-shrink:0">⚡</div>
-      <div>
-        <h1 style="font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.4px;line-height:1">Dashboard</h1>
-        <div style="color:var(--text3);font-size:11.5px;margin-top:2px" id="dash-sub">PPC command centre</div>
-      </div>
+  <!-- TOPBAR -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+    <div>
+      <h1 style="font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.5px">Dashboard</h1>
+      <div style="color:var(--text3);font-size:12px;margin-top:1px" id="dash-sub">PPC command centre</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <select class="sel" id="dash-period-sel" onchange="renderDashPeriod()" style="min-width:180px"><option value="latest">Latest snapshot</option></select>
-      <select class="sel" id="dash-compare-sel" onchange="renderDashPeriod()" style="min-width:150px"><option value="none">No comparison</option></select>
+      <select class="sel" id="dash-period-sel" onchange="renderDashPeriod()" style="min-width:190px"><option value="latest">Latest snapshot</option></select>
+      <select class="sel" id="dash-compare-sel" onchange="renderDashPeriod()" style="min-width:160px"><option value="none">No comparison</option></select>
       <span id="dash-period-coverage" style="font-size:11px;color:var(--text3)"></span>
     </div>
   </div>
 
-  <!-- OVERDUE REVIEWS BANNER -->
-  <div id="dash-overdue-banner" style="display:none;margin-bottom:14px"></div>
+  <!-- OVERDUE REVIEWS BANNER (hidden when none) -->
+  <div id="dash-overdue-banner" style="display:none;margin-bottom:10px"></div>
 
-  <!-- ── SECTION 1: KPIs ── -->
-  <div id="dash-kpi-row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:20px"></div>
+  <!-- ROW 1: KPI strip -->
+  <div id="dash-kpi-row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:10px"></div>
 
-  <!-- ── SECTION 2: ALERTS & REVIEWS — collapsible ── -->
-  <div style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer" onclick="dashToggleSection('dash-alerts-body',this)">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--text3)">Alerts &amp; Reviews</span>
-        <span id="dash-alerts-badge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--red-bg);color:var(--red);border:1px solid rgba(255,93,108,.25);display:none"></span>
-      </div>
-      <span style="font-size:10px;color:var(--text4);user-select:none" id="dash-alerts-chevron">▲ collapse</span>
-    </div>
-    <div id="dash-alerts-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="card" id="dash-action-list" style="overflow:hidden"></div>
-      <div class="card" id="dash-reviews-list" style="overflow:hidden"></div>
-    </div>
+  <!-- ROW 2: ACTION LIST -->
+  <div class="card" id="dash-action-list" style="overflow:hidden;margin-bottom:10px"></div>
+
+  <!-- ROW 3: Best Performing | Worst Performing | Wasting Money -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+    <div class="card" id="dash-whats-working" style="overflow:hidden"></div>
+    <div class="card" id="dash-worst-performing" style="overflow:hidden"></div>
+    <div class="card" id="dash-wasting-money" style="overflow:hidden"></div>
   </div>
 
-  <!-- ── SECTION 3: PERFORMANCE BREAKDOWN — collapsible ── -->
-  <div style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer" onclick="dashToggleSection('dash-perf-body',this)">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--text3)">Performance Breakdown</span>
-      </div>
-      <span style="font-size:10px;color:var(--text4);user-select:none" id="dash-perf-chevron">▲ collapse</span>
-    </div>
-    <div id="dash-perf-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-      <div class="card" id="dash-whats-working" style="overflow:hidden"></div>
-      <div class="card" id="dash-worst-performing" style="overflow:hidden"></div>
-      <div class="card" id="dash-wasting-money" style="overflow:hidden"></div>
-    </div>
-  </div>
-
-  <!-- ── SECTION 4: INTELLIGENCE — collapsible ── -->
-  <div style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer" onclick="dashToggleSection('dash-intel-body',this)">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--text3)">Intelligence</span>
-      </div>
-      <span style="font-size:10px;color:var(--text4);user-select:none" id="dash-intel-chevron">▼ expand</span>
-    </div>
-    <div id="dash-intel-body" style="display:none;grid-template-columns:460px 1fr;gap:10px">
-      <div class="card" id="dash-product-overview" style="overflow:hidden"></div>
-      <div class="card" id="dash-top-kw-card" style="overflow:hidden"></div>
-    </div>
+  <!-- ROW 4: Products + Top Keywords -->
+  <div style="display:grid;grid-template-columns:460px 1fr;gap:10px;margin-bottom:10px">
+    <div class="card" id="dash-product-overview" style="overflow:hidden"></div>
+    <div class="card" id="dash-top-kw-card" style="overflow:hidden"></div>
   </div>
 
   <!-- hidden legacy stubs (keep IDs so JS refs don't error) -->
@@ -484,15 +454,15 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     <!-- Quick filters -->
     <select class="sel" id="camp-quick-filter" style="min-width:165px;font-size:11.5px" onchange="renderCampaigns()">
       <option value="">Quick filter…</option>
-      <option value="high-spend">💸 High spend</option>
-      <option value="low-roas">📉 Low ROAS (&lt;4×)</option>
-      <option value="high-acos">⚠ High ACOS (&gt;30%)</option>
-      <option value="no-sales">🔴 No sales</option>
-      <option value="no-impressions">👁 No impressions</option>
-      <option value="has-targeting">🎯 Has targeting CSV</option>
-      <option value="has-ads">📦 Has ad group CSV</option>
-      <option value="recently-changed">✏ Recently changed</option>
-      <option value="has-notes">📝 Has notes</option>
+      <option value="high-spend">High spend</option>
+      <option value="low-roas">Low ROAS (&lt;4×)</option>
+      <option value="high-acos">High ACOS (&gt;30%)</option>
+      <option value="no-sales">No sales</option>
+      <option value="no-impressions">No impressions</option>
+      <option value="has-targeting">Has targeting CSV</option>
+      <option value="has-ads">Has ad group CSV</option>
+      <option value="recently-changed">Recently changed</option>
+      <option value="has-notes">Has notes</option>
     </select>
     <div class="sp"></div>
     <button class="tog" id="group-tog" onclick="toggleGroup()">Group by product</button>
@@ -542,7 +512,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     <div class="card">
       <div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
         <div>
-          <div style="font-size:13px;font-weight:600">🔴 Spend leaks</div>
+          <div style="font-size:13px;font-weight:600">Spend leaks</div>
           <div style="font-size:11px;color:var(--text2);margin-top:2px">Campaigns &amp; keywords burning budget with zero return — fix these first</div>
         </div>
         <span class="rag flag" id="leak-total" style="flex-shrink:0"></span>
@@ -586,7 +556,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     </div>
     <div class="card">
       <div style="padding:13px 16px;border-bottom:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:600">💸 Worst performing keywords</div>
+        <div style="font-size:13px;font-weight:600">Worst performing keywords</div>
         <div style="font-size:11px;color:var(--text2);margin-top:2px">Highest spend with worst return — pause candidates</div>
       </div>
       <div id="ins-worst-kw"></div>
@@ -744,7 +714,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="card pad">
-      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🎯 PPC defaults</div></div>
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">PPC defaults</div></div>
       <div style="display:grid;gap:9px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
           <div><div class="label" style="margin-bottom:4px">Target ROAS</div>
@@ -779,7 +749,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   </div>
   <div class="card" style="margin-bottom:14px"><div id="price-history-list"></div></div>
 
-  <div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px">📦 Data export</div></div>
+  <div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px">Data export</div></div>
   <div class="card pad" style="margin-bottom:14px">
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <div style="flex:1"><div style="font-size:12.5px;font-weight:600;margin-bottom:3px">Export everything</div>
@@ -1023,10 +993,11 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
           <div>
             <div class="label" style="margin-bottom:5px">Campaign type</div>
             <select class="sel" id="ac-type" style="width:100%">
-              <option value="Auto Campaign">Auto Campaign</option>
-              <option value="Keyword Targeting">Keyword Targeting Campaign</option>
-              <option value="Product Targeting">Product Targeting Campaign</option>
-              <option value="Category Targeting">Category Targeting Campaign</option>
+              <option value="Auto">Auto</option>
+              <option value="Exact">Exact</option>
+              <option value="Phrase">Phrase</option>
+              <option value="Broad">Broad</option>
+              <option value="Manual">Manual</option>
             </select>
           </div>
           <div>
@@ -1064,6 +1035,8 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
         <div class="po-sub" id="po-sub"></div>
       </div>
       <div class="po-hr">
+        <button class="btn-sm" id="btn-edit-camp" onclick="openEditCampaign()" style="color:var(--amber);border-color:rgba(255,181,71,.3)">✎ Edit</button>
+        <button class="btn-sm" id="btn-delete-camp" onclick="confirmDeleteCampaign()" style="color:var(--red);border-color:rgba(255,93,108,.25)">🗑 Delete</button>
         <button class="btn-sm" onclick="switchTab('changes')">+ Log change</button>
         <button class="btn-sm" onclick="switchTab('import')" style="color:var(--blue);border-color:rgba(91,157,255,.3)">+ Snapshot</button>
         <button class="close-btn" onclick="closePop()">✕</button>
@@ -1155,82 +1128,26 @@ const campaigns=[];
 let SUPABASE_URL = 'https://ffbdazepqrsyurhouxif.supabase.co';
 let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmYmRhemVwcXJzeXVyaG91eGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTM5MjIsImV4cCI6MjA5MDQ2OTkyMn0.BAuodLUDGzO9A7IfoRRn0HZ1MgWOXNPeYKPDBNaNWeg';
 
-async function sbFetchAll(path, headers, pageSize=1000){
-  /* Fetches ALL rows from a Supabase REST endpoint using Range pagination.
-     Supabase returns Content-Range: 0-N/TOTAL — we keep fetching until done. */
-  let all=[], offset=0, done=false;
-  while(!done){
-    const res=await fetch(
-      SUPABASE_URL+path+(path.includes('?')?'&':'?')+'limit='+pageSize+'&offset='+offset,
-      {headers:{...headers,'Range-Unit':'items','Range':offset+'-'+(offset+pageSize-1),'Prefer':'count=exact'}}
-    );
-    if(!res.ok){
-      const errText=await res.text();
-      throw new Error('Fetch failed for '+path+' ('+res.status+'): '+errText);
-    }
-    const data=await res.json();
-    if(!Array.isArray(data)||data.length===0){done=true;break;}
-    all=all.concat(data);
-    /* If we got fewer rows than pageSize, we've reached the end */
-    if(data.length<pageSize){done=true;}else{offset+=pageSize;}
-    /* Safety: stop at 1,000,000 rows to prevent infinite loops */
-    if(all.length>=1000000){console.warn('sbFetchAll: hit 1M row safety cap for',path);done=true;}
-  }
-  return all;
-}
-
 async function loadFromSupabase(){
   if(!SUPABASE_URL||!SUPABASE_KEY){
+    /* No Supabase — show empty state prompting to connect */
     showNoSupabaseState();
     return;
   }
   try{
     const headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
-
-    /* Paginated fetch of all three tables — handles unlimited rows */
-    const [campData, snapData, chData, settingsData] = await Promise.all([
-      sbFetchAll('/rest/v1/campaigns?select=*&order=id', headers),
-      sbFetchAll('/rest/v1/snapshots?select=*&order=campaign_id,period', headers),
-      sbFetchAll('/rest/v1/changes?select=*&order=created_at.asc', headers),
-      sbFetchAll('/rest/v1/settings?select=*', headers)
-    ]);
-
-    /* ── Apply settings from Supabase ── */
-    if(settingsData.length){
-      const settMap={};settingsData.forEach(r=>{settMap[r.id]=r.value;});
-      /* App settings (target ROAS, max ACOS, marketplace) */
-      if(settMap['app_settings']){
-        try{const s=JSON.parse(settMap['app_settings']);Object.assign(appSettings,s);
-          const trEl=document.getElementById('cfg-target-roas');if(trEl&&s.targetRoas)trEl.value=s.targetRoas;
-          const maEl=document.getElementById('cfg-max-acos');if(maEl&&s.maxAcos)maEl.value=s.maxAcos;
-        }catch(e){}
-      }
-      /* Display prefs */
-      if(settMap['display_prefs']){
-        try{const dp=JSON.parse(settMap['display_prefs']);window.displayPrefs=dp;
-          try{localStorage.setItem('bdl_display_prefs',JSON.stringify(dp));}catch(e){}
-        }catch(e){}
-      }
-      /* Match colours */
-      if(settMap['match_colours']){
-        try{const mc=JSON.parse(settMap['match_colours']);
-          if(mc.exact){localStorage.setItem('matchColExact',mc.exact);const el=document.getElementById('cfg-col-exact');if(el)el.value=mc.exact;}
-          if(mc.phrase){localStorage.setItem('matchColPhrase',mc.phrase);const el=document.getElementById('cfg-col-phrase');if(el)el.value=mc.phrase;}
-          if(mc.broad){localStorage.setItem('matchColBroad',mc.broad);const el=document.getElementById('cfg-col-broad');if(el)el.value=mc.broad;}
-          applyMatchColours();
-        }catch(e){}
-      }
-      /* Price history */
-      if(settMap['price_history']){
-        try{const ph=JSON.parse(settMap['price_history']);if(ph&&typeof ph==='object')priceHistory=ph;}catch(e){}
-      }
-    }
-
+    const campRes=await fetch(SUPABASE_URL+'/rest/v1/campaigns?select=*&order=id',{headers});
+    if(!campRes.ok)throw new Error('campaigns fetch failed ('+campRes.status+')');
+    const campData=await campRes.json();
+    const snapRes=await fetch(SUPABASE_URL+'/rest/v1/snapshots?select=*&order=campaign_id,period',{headers});
+    const snapData=snapRes.ok?await snapRes.json():[];
+    const chRes=await fetch(SUPABASE_URL+'/rest/v1/changes?select=*&order=campaign_id',{headers});
+    const chData=chRes.ok?await chRes.json():[];
     campaigns.length=0;
     /* Diagnostic: log snapshot schema so we know which columns exist */
     if(snapData.length>0){
       const snapCols=Object.keys(snapData[0]);
-      console.log('Supabase snapshot columns:',snapCols,'— total rows:',snapData.length);
+      console.log('Supabase snapshot columns:',snapCols);
       if(!snapCols.includes('targeting_json')){
         console.warn('⚠ targeting_json column MISSING from snapshots table — CSV data cannot be stored. Run the SQL migration in Settings to add it.');
         window._missingTargetingCol=true;
@@ -1238,22 +1155,17 @@ async function loadFromSupabase(){
         window._missingTargetingCol=false;
       }
     }
-    console.log('Loaded from Supabase — campaigns:',campData.length,'snapshots:',snapData.length,'changes:',chData.length);
     if(campData.length>0)console.log('Supabase campaign columns:',Object.keys(campData[0]));
-
-    /* Build a lookup map for snapshots and changes keyed by campaign_id for O(1) access */
-    const snapMap={}, chMap={};
-    snapData.forEach(s=>{if(!snapMap[s.campaign_id])snapMap[s.campaign_id]=[];snapMap[s.campaign_id].push(s);});
-    chData.forEach(ch=>{if(!chMap[ch.campaign_id])chMap[ch.campaign_id]=[];chMap[ch.campaign_id].push(ch);});
-
     campData.forEach(row=>{
-      const snaps=(snapMap[row.id]||[]).map(s=>{
+      const snaps=snapData.filter(s=>s.campaign_id===row.id).map(s=>{
         let _rawTj=null;
         try{_rawTj=s.targeting_json?JSON.parse(s.targeting_json):null;}catch(e){console.warn('targeting_json parse error for period',s.period,e);}
         const tgts=Array.isArray(_rawTj)?_rawTj:(_rawTj?.targeting||[]);
         let _rawAg=null;
         try{_rawAg=s.ad_groups_json?JSON.parse(s.ad_groups_json):null;}catch(e){}
-        const ags=Array.isArray(_rawTj)?[]:(_rawTj?.adGroups||(_rawAg||[]));
+        /* Fix: when targeting_json is old plain-array format, ALWAYS use ad_groups_json.
+           When it's the newer {targeting,adGroups} object, prefer its adGroups but fall back to ad_groups_json. */
+        const ags=Array.isArray(_rawTj)?(_rawAg||[]):(_rawTj?.adGroups||_rawAg||[]);
         const rawCpc=s.cpc||0, rawCtr=s.ctr||0;
         const builtCpc=rawCpc>0?rawCpc:((s.clicks&&s.spend)?(s.spend/s.clicks):0);
         const builtCtr=rawCtr>0?rawCtr:((s.impressions&&s.clicks)?(s.clicks/s.impressions*100):0);
@@ -1262,19 +1174,14 @@ async function loadFromSupabase(){
         if(ags)sn.adGroups=ags;
         return sn;
       });
-      const changes=(chMap[row.id]||[]).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
+      const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||''}));
       const product=row.product_name||row.product||row.name||'Unnamed product';
       campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
     });
     renderCampaigns();
     /* re-render dashboard if visible */
     if(document.getElementById('page-dashboard')?.classList.contains('active')){
-      populateDashPeriodSelectors();
-      renderDashPeriod();
-      renderDashAttention();
-      renderDashRecentChanges();
-      renderDashReviewsList();
-      initDashSections();
+      populateDashPeriodSelectors();renderDashPeriod();renderDashAttention();renderDashRecentChanges();
     }
   }catch(e){
     console.error('Supabase error:',e);
@@ -1344,14 +1251,12 @@ function activeList(){
 function campKpis(){
   const A=campaigns.filter(c=>c.status==='active');
   const sum=A.reduce((a,c)=>({spend:a.spend+c.spend,sales:a.sales+c.sales,orders:a.orders+c.purchases,impr:a.impr+c.impressions}),{spend:0,sales:0,orders:0,impr:0});
-  const roasActive=A.filter(c=>c.roas>0);
-  const roas=roasActive.length?roasActive.reduce((a,c)=>a+c.roas,0)/roasActive.length:0;
-  const acos=sum.sales?sum.spend/sum.sales*100:0;
+  const roas=sum.spend?sum.sales/sum.spend:0, acos=sum.sales?sum.spend/sum.sales*100:0;
   const leaks=A.filter(c=>c.noSaleSpend); const leakSpend=leaks.reduce((a,c)=>a+c.spend,0);
   /* account series across the 3 aligned snapshot indices, for sparklines */
   const ns=Math.max(...A.map(c=>c.snapshots.length),1);
-  const series=k=>{const out=[];for(let i=0;i<ns;i++){let sp=0,sa=0,or=0,im=0,roasSum=0,roasCnt=0;A.forEach(c=>{const s=c.snapshots[c.snapshots.length-ns+i];if(s){sp+=s.spend;sa+=s.sales;or+=s.purchases;im+=s.impressions;const sr=s.spend?s.sales/s.spend:0;if(sr>0){roasSum+=sr;roasCnt++;}}});
-    out.push(k==='spend'?sp:k==='sales'?sa:k==='orders'?or:k==='impr'?im:k==='roas'?(roasCnt?roasSum/roasCnt:0):k==='acos'?(sa?sp/sa*100:0):0);}return out;};
+  const series=k=>{const out=[];for(let i=0;i<ns;i++){let sp=0,sa=0,or=0,im=0;A.forEach(c=>{const s=c.snapshots[c.snapshots.length-ns+i];if(s){sp+=s.spend;sa+=s.sales;or+=s.purchases;im+=s.impressions;}});
+    out.push(k==='spend'?sp:k==='sales'?sa:k==='orders'?or:k==='impr'?im:k==='roas'?(sp?sa/sp:0):k==='acos'?(sa?sp/sa*100:0):0);}return out;};
   const gCount=A.filter(c=>c.roas>=5&&c.rag!=='leak').length;
   const aCount=A.filter(c=>c.roas>=4&&c.roas<5&&c.rag!=='leak').length;
   const rCount=A.filter(c=>c.roas<4&&c.roas>0&&c.rag!=='leak').length;
@@ -1501,9 +1406,109 @@ function openCamp(id){
   renderPerf();renderChanges();renderProfit();renderNotes();renderImport();
   window._perfPeriod=null;
   window._cmpSelA=null;window._cmpSelB=null;window._cmpDataView=null;
+  window._cmpDiffState=null;window._cmpMatchFilter=null;window._cmpMetrics=null;
   switchTab('performance');
   document.getElementById('camp-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
+
+/* ════════ EDIT / DELETE CAMPAIGN ════════ */
+function openEditCampaign(){
+  const c=curCamp;if(!c)return;
+  document.getElementById('ec-name').value=c.name||'';
+  document.getElementById('ec-alias').value=c.alias||c.name||'';
+  document.getElementById('ec-product').value=c.product||'';
+  document.getElementById('ec-asin').value=c.asin||'';
+  document.getElementById('ec-sku').value=c.sku||'';
+  document.getElementById('ec-price').value=c.price||'';
+  document.getElementById('ec-status').value=c.status||'active';
+  const freqEl=document.getElementById('ec-review-freq');
+  if(freqEl){const rf=c.reviewFreqDays||14;const opts=[3,7,14,30,0];const closest=opts.reduce((p,cur)=>Math.abs(cur-rf)<Math.abs(p-rf)?cur:p);freqEl.value=String(closest);}
+  document.getElementById('ec-status-msg').textContent='';
+  document.getElementById('edit-camp-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeEditCampaign(){
+  document.getElementById('edit-camp-overlay').classList.remove('open');
+  document.body.style.overflow='hidden'; /* camp overlay still open */
+}
+async function saveEditCampaign(){
+  const c=curCamp;if(!c)return;
+  const name=document.getElementById('ec-name').value.trim();
+  const alias=document.getElementById('ec-alias').value.trim();
+  const product=document.getElementById('ec-product').value.trim();
+  const asin=document.getElementById('ec-asin').value.trim().toUpperCase();
+  const sku=document.getElementById('ec-sku').value.trim();
+  const price=parseFloat(document.getElementById('ec-price').value)||0;
+  const status=document.getElementById('ec-status').value;
+  const reviewFreq=parseInt(document.getElementById('ec-review-freq').value)||0;
+  if(!name){document.getElementById('ec-status-msg').textContent='⚠ Campaign name is required';document.getElementById('ec-status-msg').style.color='var(--red)';return;}
+  const statusEl=document.getElementById('ec-status-msg');
+  statusEl.textContent='Saving…';statusEl.style.color='var(--text3)';
+  /* Update in memory */
+  c.name=name;c.alias=alias||name;c.product=product;c.asin=asin||c.asin;c.sku=sku;c.price=price;c.status=status;c.reviewFreqDays=reviewFreq;
+  /* Rebuild computed fields */
+  const last=c.snapshots[c.snapshots.length-1]||{};
+  c.rag=ragOf(c.roas,c.sales,c.spend);
+  c.noSaleSpend=c.spend>0&&c.sales===0;
+  /* Persist to Supabase */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      const hds=await sbHeaders();
+      const res=await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{
+        method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},
+        body:JSON.stringify({name,alias:alias||name,product,asin:asin||c.asin,sku,price:price||null,status,review_freq_days:reviewFreq||null})
+      });
+      if(!res.ok){const e=await res.text();throw new Error(e);}
+      statusEl.textContent='✓ Saved';statusEl.style.color='var(--green)';
+    }catch(e){
+      statusEl.textContent='Saved locally (Supabase error: '+e.message+')';statusEl.style.color='var(--amber)';
+    }
+  } else {
+    statusEl.textContent='✓ Saved locally';statusEl.style.color='var(--green)';
+  }
+  /* Refresh the campaign popout header */
+  const campName=c.alias||c.name;
+  const ragPillHtml=c.rag==='leak'?'<span class="rag flag">SPEND LEAK</span>':`<span class="rag ${c.rag}"><span class="d"></span>${fmt(c.roas,2)} ROAS</span>`;
+  document.getElementById('po-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:11px">${monoTile(campName,30)}<span style="display:flex;flex-direction:column;gap:3px"><span>${campName}</span><span style="font-size:12px;font-weight:400;color:var(--text3);font-family:var(--font)">${c.product||''}</span></span>${ragPillHtml}</span>`;
+  renderCampaigns();
+  setTimeout(()=>closeEditCampaign(),1200);
+}
+
+async function confirmDeleteCampaign(){
+  const c=curCamp;if(!c)return;
+  const campName=c.alias||c.name;
+  const snapCount=c.snapshots.length;
+  const changeCount=c.changes.length;
+  const msg=`Delete "${campName}"?\n\nThis will permanently remove:\n• ${snapCount} snapshot${snapCount!==1?'s':''}\n• ${changeCount} change${changeCount!==1?'s':''}\n• All associated data\n\nThis cannot be undone.`;
+  if(!confirm(msg))return;
+  await deleteCampaign(c.id);
+}
+async function deleteCampaign(campId){
+  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const campName=c.alias||c.name;
+  /* Remove from Supabase first */
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      const hds=await sbHeaders();
+      /* Delete snapshots first (FK constraint) */
+      await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
+      /* Delete changes */
+      await fetch(SUPABASE_URL+'/rest/v1/changes?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}}).catch(()=>{});
+      /* Delete campaign */
+      const res=await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
+      if(!res.ok)console.warn('Campaign delete response:',res.status);
+    }catch(e){console.error('Error deleting campaign from Supabase:',e);}
+  }
+  /* Remove from memory */
+  const idx=campaigns.findIndex(x=>x.id==campId);
+  if(idx>-1)campaigns.splice(idx,1);
+  /* Close the popout and refresh */
+  closePop();
+  renderCampaigns();
+  renderDashboard();
+  alert('"'+campName+'" has been deleted.');
+}
+
 function closePop(){document.getElementById('camp-overlay').classList.remove('open');document.body.style.overflow='';}
 
 /* ════════ SUPABASE WRITE HELPERS ════════ */
@@ -1661,7 +1666,7 @@ function renderCampTrends(){
 
   /* ── Rich line chart ── */
   const lineChart=(vals,col,fmtFn,h=110,showTarget=false)=>{
-    if(!vals.some(v=>v>0))return`<div style="height:${h}px;display:flex;align-items:center;justify-content:center;color:#6e7d96;font-size:12px">No data</div>`;
+    if(!vals.some(v=>v>0))return`<div style="height:${h}px;display:flex;align-items:center;justify-content:center;color:#c4cfe3;font-size:12px">No data</div>`;
     const w=520,pad=42,pR=14,pH=14,pB=28,iw=w-pad-pR,ih=h-pH-pB;
     const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
     const pts=vals.map((v,i)=>[pad+i/(Math.max(vals.length-1,1))*iw,pH+ih-((v-mn)/range)*ih]);
@@ -1720,17 +1725,17 @@ function renderCampTrends(){
       const leak=t.spend>0&&t.sales===0;
       return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(148,163,184,0.08)">
         <div style="width:10px;height:10px;border-radius:3px;background:${PIE_COLS[i%PIE_COLS.length]};flex-shrink:0"></div>
-        <span style="flex:1;font-size:12px;font-weight:500;color:#d0d8e8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span>
+        <span style="flex:1;font-size:12px;font-weight:500;color:#e0e8f4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</span>
         <span style="font-size:11px;font-weight:700;color:#f2f4f9;font-family:monospace">${gbp(t.spend)}</span>
-        <span style="font-size:10px;color:#8892a4;font-family:monospace;min-width:36px;text-align:right">${(t.spend/total*100).toFixed(0)}%</span>
+        <span style="font-size:10px;color:#c4cfe3;font-family:monospace;min-width:36px;text-align:right">${(t.spend/total*100).toFixed(0)}%</span>
         <span style="font-size:11px;font-weight:700;color:${leak?'#ffb547':ragColor(rg)};min-width:44px;text-align:right">${leak?'NO SALE':fmt(t.roas,2)+'×'}</span>
       </div>`;
     }).join('');
-    return`<div style="background:#0e1219;border:1px solid rgba(148,163,184,0.12);border-radius:14px;padding:18px 20px">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#d0d8e8;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+    return`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 20px">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#e0e8f4;margin-bottom:14px;display:flex;align-items:center;gap:8px">
         <span style="display:inline-block;width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#5b9dff,#b794ff)"></span>
         Keyword spend breakdown — latest snapshot
-        <span style="font-size:10px;font-weight:600;color:#6e7d96;text-transform:none;letter-spacing:0">${gbp(total)} total</span>
+        <span style="font-size:10px;font-weight:600;color:#c4cfe3;text-transform:none;letter-spacing:0">${gbp(total)} total</span>
       </div>
       <div style="display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:center">
         <div style="position:relative">
@@ -1759,10 +1764,10 @@ function renderCampTrends(){
       const up=k.d!=null?(k.hb?k.d>=0:k.d<=0):null;
       const dc=k.d==null?'':Math.abs(k.d)<0.5?'#6e7d96':up?'#2ee59d':'#ff5d6c';
       const arrow=k.d==null?'':Math.abs(k.d)<0.5?'→':k.d>0?'↑':'↓';
-      return`<div style="background:#0e1219;padding:14px 14px 12px">
-        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#8892a4;margin-bottom:6px">${k.l}</div>
+      return`<div style="background:var(--bg2);padding:14px 14px 12px">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#c4cfe3;margin-bottom:6px">${k.l}</div>
         <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:${k.col};line-height:1.1">${k.v}</div>
-        ${k.d!=null?`<div style="font-size:10px;font-weight:700;color:${dc};margin-top:5px;display:flex;align-items:center;gap:3px">${arrow} ${Math.abs(k.d).toFixed(1)}% vs prev</div>`:`<div style="font-size:9px;color:#6e7d96;margin-top:5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px">BASELINE</div>`}
+        ${k.d!=null?`<div style="font-size:10px;font-weight:700;color:${dc};margin-top:5px;display:flex;align-items:center;gap:3px">${arrow} ${Math.abs(k.d).toFixed(1)}% vs prev</div>`:`<div style="font-size:9px;color:#c4cfe3;margin-top:5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px">BASELINE</div>`}
       </div>`;
     }).join('')}
   </div>`;
@@ -1773,10 +1778,10 @@ function renderCampTrends(){
     const dp=pv?((lv-pv)/Math.abs(pv)*100):null;
     const tc=lv>=pv?col:'#ff5d6c';
     const up=dp!=null?(col==='#ff5d6c'?dp<=0:dp>=0):null;
-    return`<div style="background:#0e1219;border:1px solid rgba(148,163,184,0.12);border-radius:14px;padding:18px 20px;overflow:hidden">
+    return`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:hidden">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
         <div>
-          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#8892a4">${title}</div>
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#c4cfe3">${title}</div>
           <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:${tc};margin-top:4px;line-height:1">${fmtFn(lv)}</div>
         </div>
         ${dp!=null?`<div style="background:${up?'rgba(46,229,157,.12)':'rgba(255,93,108,.12)'};border:1px solid ${up?'rgba(46,229,157,.25)':'rgba(255,93,108,.25)'};padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;color:${up?'#2ee59d':'#ff5d6c'};white-space:nowrap">${dp>0?'↑':'↓'} ${Math.abs(dp).toFixed(1)}%</div>`:''}
@@ -1799,15 +1804,15 @@ function renderCampTrends(){
       </td>
       <td style="padding:9px 12px;text-align:right;font-size:14px;font-weight:800;color:${rc2};font-family:monospace">${fmt(sr,2)}×</td>
       <td style="padding:9px 12px;text-align:right;font-size:12px;font-weight:700;color:#f2f4f9;font-family:monospace">${gbp(s.sales||0)}</td>
-      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${gbp(s.spend||0)}</td>
-      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${intf(s.purchases||0)}</td>
-      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${s.sales?fmt(s.spend/s.sales*100,1)+'%':'—'}</td>
-      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${intf(s.impressions||0)}</td>
-      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#d0d8e8;font-family:monospace">${intf(s.clicks||0)}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#e0e8f4;font-family:monospace">${gbp(s.spend||0)}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#e0e8f4;font-family:monospace">${intf(s.purchases||0)}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#e0e8f4;font-family:monospace">${s.sales?fmt(s.spend/s.sales*100,1)+'%':'—'}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#e0e8f4;font-family:monospace">${intf(s.impressions||0)}</td>
+      <td style="padding:9px 12px;text-align:right;font-size:12px;color:#e0e8f4;font-family:monospace">${intf(s.clicks||0)}</td>
     </tr>`;
   }).join('');
 
-  el.innerHTML=`<div style="padding:20px 22px;overflow-y:auto;max-height:calc(95vh - 120px)">
+  el.innerHTML=`<div style="padding:20px 22px">
     ${kpiStrip}
 
     <!-- Charts: ROAS hero full width, then 3 smaller -->
@@ -1823,17 +1828,17 @@ function renderCampTrends(){
     <!-- Keyword spend pie + snapshot table side by side -->
     <div style="display:grid;grid-template-columns:${allTgts.length>=2?'1fr 1fr':'1fr'};gap:14px;margin-bottom:14px">
       ${pieHtml}
-      <div style="background:#0e1219;border:1px solid rgba(148,163,184,0.12);border-radius:14px;overflow:hidden">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden">
         <div style="padding:16px 18px 12px;border-bottom:1px solid rgba(148,163,184,0.1)">
-          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#d0d8e8;display:flex;align-items:center;gap:8px">
+          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#e0e8f4;display:flex;align-items:center;gap:8px">
             <span style="display:inline-block;width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#5b9dff,#b794ff)"></span>
             All snapshots ranked by ROAS
           </div>
         </div>
         <div style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse;min-width:520px">
-            <thead><tr style="background:#131820">
-              ${['Period','ROAS','Sales','Spend','Orders','ACOS','Impr.','Clicks'].map((h,i)=>`<th style="padding:8px 12px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#8892a4;${i>0?'text-align:right':'text-align:left'};white-space:nowrap">${h}</th>`).join('')}
+            <thead><tr style="background:var(--bg3)">
+              ${['Period','ROAS','Sales','Spend','Orders','ACOS','Impr.','Clicks'].map((h,i)=>`<th style="padding:8px 12px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#c4cfe3;${i>0?'text-align:right':'text-align:left'};white-space:nowrap">${h}</th>`).join('')}
             </tr></thead>
             <tbody>${snapTableRows}</tbody>
           </table>
@@ -1848,7 +1853,7 @@ function renderCampCompare(){
   const el=document.getElementById('tab-compare');if(!el||!curCamp)return;
   const ss=curCamp.snapshots;
   if(ss.length<2){
-    el.innerHTML='<div style="padding:48px;text-align:center;color:#6e7d96;font-size:13px">Need at least 2 snapshots to compare. Add more via + Snapshot.</div>';
+    el.innerHTML='<div style="padding:48px;text-align:center;color:#c4cfe3;font-size:13px">Need at least 2 snapshots to compare. Add more via + Snapshot.</div>';
     return;
   }
 
@@ -1862,24 +1867,25 @@ function renderCampCompare(){
 
   /* ── Render shell on first call or if not yet in DOM ── */
   if(!document.getElementById('cmp-sel-a')){
-    el.innerHTML=`<div style="padding:20px 22px;overflow-y:auto;max-height:calc(95vh - 120px)" id="cmp-outer">
-      <!-- Selector bar -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
-        <div style="background:#0e1219;border:1px solid rgba(148,163,184,0.15);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;flex:1;min-width:300px">
+    el.innerHTML=`<div style="padding:16px 18px" id="cmp-outer">
+      <!-- Selector bar — matches reference: B/Older left, arrow, A/Newer, Show old/new button right -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+        <div style="background:#0b0e15;border:1px solid rgba(148,163,184,0.14);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:14px;flex:1;min-width:340px">
           <div style="flex:1">
-            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#5b9dff;margin-bottom:6px">Period A (newer)</div>
-            <select id="cmp-sel-a" style="width:100%;background:#151a24;border:1px solid rgba(91,157,255,.35);color:#f2f4f9;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;font-family:inherit;cursor:pointer;outline:none" onchange="window._cmpSelA=+this.value;_doCompare()">
-              ${selHtml('cmp-sel-a',window._cmpSelA)}
-            </select>
-          </div>
-          <div style="font-size:20px;color:#6e7d96;font-weight:300;flex-shrink:0">vs</div>
-          <div style="flex:1">
-            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#8892a4;margin-bottom:6px">Period B (older)</div>
-            <select id="cmp-sel-b" style="width:100%;background:#151a24;border:1px solid rgba(148,163,184,.2);color:#f2f4f9;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;font-family:inherit;cursor:pointer;outline:none" onchange="window._cmpSelB=+this.value;_doCompare()">
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#5a6880;margin-bottom:6px">SNAPSHOT B / OLDER</div>
+            <select id="cmp-sel-b" class="sel" style="width:100%;font-size:13px;font-weight:600;color:#c8d4e8" onchange="window._cmpSelB=+this.value;_doCompare()">
               ${selHtml('cmp-sel-b',window._cmpSelB)}
             </select>
           </div>
+          <div style="color:#4a5568;font-size:18px;flex-shrink:0;padding-bottom:2px">→</div>
+          <div style="flex:1">
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#5b9dff;margin-bottom:6px">SNAPSHOT A / NEWER</div>
+            <select id="cmp-sel-a" class="sel" style="width:100%;font-size:13px;font-weight:700;color:#e8edf7" onchange="window._cmpSelA=+this.value;_doCompare()">
+              ${selHtml('cmp-sel-a',window._cmpSelA)}
+            </select>
+          </div>
         </div>
+        <button id="cmp-show-on-btn" onclick="window._cmpShowOldNew=!window._cmpShowOldNew;_doCompare()" style="font-size:11px;font-weight:600;padding:10px 16px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:transparent;color:#7a8eaa;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;height:fit-content;align-self:flex-end">Show old/new inside difference card</button>
       </div>
       <div id="cmp-body"></div>
     </div>`;
@@ -1892,6 +1898,49 @@ function renderCampCompare(){
   }
 
   _doCompare();
+}
+
+/* ─── Format product/category targeting expression for display ─── */
+function fmtTargetLabel(kw,match){
+  if(!kw||kw==='—')return match&&match!=='—'?'['+match+' target]':'[Unknown target]';
+  /* Amazon product targeting expressions */
+  let label=kw;
+  /* asin="B07XXXXX" → ASIN: B07XXXXX */
+  label=label.replace(/asin="?([A-Z0-9]+)"?/gi,'ASIN: $1');
+  /* category="Grocery" → Category: Grocery */
+  label=label.replace(/category="?([^"]+)"?/gi,'Category: $1');
+  /* keyword="polyfilla" → Keyword: polyfilla */
+  label=label.replace(/keyword="?([^"]+)"?/gi,'Keyword: $1');
+  /* keyword-group="category" → Category group */
+  label=label.replace(/keyword-group="?([^"]+)"?/gi,(m,g)=>g.charAt(0).toUpperCase()+g.slice(1)+' group');
+  /* asin-group or asin-list patterns */
+  label=label.replace(/asin-group="?([^"]+)"?/gi,'ASIN group: $1');
+  label=label.replace(/asin-list="?([^"]+)"?/gi,'ASIN list: $1');
+  /* targeting_expression_predefined_close_match → Close Match */
+  label=label.replace(/targeting_expression_predefined_close_match/gi,'Close Match');
+  label=label.replace(/targeting_expression_predefined_loose_match/gi,'Loose Match');
+  label=label.replace(/targeting_expression_predefined_substitutes/gi,'Substitutes');
+  label=label.replace(/targeting_expression_predefined_complements/gi,'Complements');
+  /* [Broad] / [Exact] etc from our fallback */
+  label=label.replace(/^\[(.+)\]$/,'$1 target');
+  return label;
+}
+
+function isProductTarget(kw,match){
+  if(!kw)return false;
+  const lkw=(kw||'').toLowerCase();
+  const lm=(match||'').toLowerCase();
+  return lkw.includes('asin=')
+    ||lkw.includes('category=')
+    ||lkw.includes('keyword=')
+    ||lkw.startsWith('[')
+    ||lm.includes('product')
+    ||lm.includes('category')
+    ||lm.includes('auto')
+    ||lm.includes('close')
+    ||lm.includes('loose')
+    ||lm.includes('substitute')
+    ||lm.includes('complement');
 }
 
 function _doCompare(){
@@ -1907,302 +1956,546 @@ function _doCompare(){
   const cpcA=sA.cpc>0?sA.cpc:(sA.clicks?sA.spend/sA.clicks:0);
   const cpcB=sB.cpc>0?sB.cpc:(sB.clicks?sB.spend/sB.clicks:0);
 
-  /* ── Campaign summary rows ── */
-  const metRow=(label,vA,vB,fmtFn,hb)=>{
-    const d=pct(vA,vB);
-    const good=d==null?null:(hb?d>=0:d<=0);
+  /* ── 3-panel card layout helpers ── */
+  // PPC-aware colour logic per spec
+  if(!window._cmpShowOldNew)window._cmpShowOldNew=false;
+
+  const _ppcColour=(label,vA2,vB2,d)=>{
+    // d = pct change (vA relative to vB). null if no baseline.
+    if(d==null||Math.abs(d)<0.5)return null; // no change
+    const up=d>0;
+    const lc=label.toLowerCase();
+    // Always good when up: sales, orders, roas, cvr, ctr (context)
+    if(lc==='sales'||lc==='orders'||lc==='roas'||lc==='cvr')return up?'#2ee59d':'#ff5d6c';
+    // Always good when down: acos, cpc
+    if(lc==='acos'||lc==='cpc')return up?'#ff5d6c':'#2ee59d';
+    // Spend: good if sales also improved, neutral/amber otherwise
+    if(lc==='spend'){
+      const salD=pct(sA.sales||0,sB.sales||0);
+      const roaD=pct(sA.spend?sA.sales/sA.spend:0, sB.spend?sB.sales/sB.spend:0);
+      if(up){
+        // spend up + sales up + roas stable/up = neutral (not bad)
+        if(salD!=null&&salD>0&&(roaD==null||roaD>=-5))return 'rgba(255,181,71,0.9)'; // amber
+        // spend up + no sales = red
+        return '#ff5d6c';
+      }
+      return '#2ee59d'; // spend down is good
+    }
+    // Impressions, clicks, ctr — context, use neutral amber
+    return up?'rgba(255,181,71,0.9)':'rgba(255,181,71,0.9)';
+  };
+
+  // Build metric list
+  const _panelMetrics=(smx2,roaA2,roaB2,cpcA2,cpcB2)=>{
+    const rows=[];
+    if(smx2.roas)rows.push({l:'ROAS',vA:roaA2,vB:roaB2,fn:v=>fmt(v,2)+'×'});
+    if(smx2.sales)rows.push({l:'Sales',vA:sA.sales||0,vB:sB.sales||0,fn:gbp});
+    if(smx2.spend)rows.push({l:'Spend',vA:sA.spend||0,vB:sB.spend||0,fn:gbp});
+    if(smx2.orders)rows.push({l:'Orders',vA:sA.purchases||0,vB:sB.purchases||0,fn:intf});
+    if(smx2.impressions)rows.push({l:'Impressions',vA:sA.impressions||0,vB:sB.impressions||0,fn:intf});
+    if(smx2.clicks)rows.push({l:'Clicks',vA:sA.clicks||0,vB:sB.clicks||0,fn:intf});
+    if(smx2.cpc)rows.push({l:'CPC',vA:cpcA2,vB:cpcB2,fn:gbp});
+    return rows;
+  };
+
+  // Side card row — bullet + label left, value right, matching reference
+  const _sideRowV2=(label,val)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(148,163,184,0.07)">
+      <div style="display:flex;align-items:center;gap:9px">
+        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:rgba(148,163,184,0.25);flex-shrink:0"></span>
+        <span style="font-size:13px;font-weight:400;color:#8faabf">${label}</span>
+      </div>
+      <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:#d8e4f0;letter-spacing:-.3px">${val}</span>
+    </div>`;
+
+  // Diff row — reference layout: bullet | label | bar-fills-middle | number right
+  const _diffRowV2=(label,vA2,vB2,fn,showOldNew)=>{
+    const d=pct(vA2,vB2);
     const noChange=d!=null&&Math.abs(d)<0.5;
-    const col=d==null?'#6e7d96':noChange?'#8892a4':good?'#2ee59d':'#ff5d6c';
-    const bgCol=d==null?'transparent':noChange?'rgba(148,163,184,.04)':good?'rgba(46,229,157,.06)':'rgba(255,93,108,.06)';
-    const barW=d==null?0:Math.min(Math.abs(d)/60*100,100);
-    const arrow=d==null?'—':noChange?'→':good?(d>0?'↑ UP':'↓ DOWN'):(d>0?'↑ UP':'↓ DOWN');
-    const arrowCol=d==null?'#6e7d96':noChange?'#8892a4':good?'#2ee59d':'#ff5d6c';
-    return`<div style="display:grid;grid-template-columns:130px 1fr auto 1fr;align-items:center;gap:0;padding:11px 18px;border-bottom:1px solid rgba(148,163,184,0.08);background:${bgCol}">
-      <div style="font-size:12px;font-weight:700;color:#dde3ef">${label}</div>
-      <div style="text-align:right;padding-right:20px">
-        <div style="font-family:monospace;font-size:15px;font-weight:800;color:#f2f4f9">${fmtFn(vA)}</div>
-      </div>
-      <div style="text-align:center;padding:0 14px;min-width:130px">
-        <div style="font-size:12px;font-weight:800;color:${arrowCol};white-space:nowrap">${arrow}</div>
-        ${d!=null&&!noChange?`<div style="font-size:10.5px;font-weight:700;color:${col};margin-top:1px">${d>0?'+':''}${d.toFixed(1)}%</div>`:''}
-        <div style="height:3px;background:rgba(148,163,184,.1);border-radius:3px;margin-top:5px;overflow:hidden">
-          <div style="width:${barW}%;height:100%;background:${col};border-radius:3px"></div>
+    const col=_ppcColour(label,vA2,vB2,d)||'rgba(148,163,184,0.4)';
+    const dotCol=(!noChange&&d!=null)?col:'rgba(148,163,184,0.3)';
+    const absDiff=vA2-vB2;
+    const absStr=absDiff>=0?`+${fn(Math.abs(absDiff))}`:`−${fn(Math.abs(absDiff))}`;
+    const pctTxt=d!=null?`${d>0?'+':''}${d.toFixed(1)}%`:null;
+    // Bar: scales relative to the biggest possible move, max 92% of available space
+    const barPct=(!noChange&&d!=null)?Math.max(6,Math.min(92,Math.abs(d)*0.9)):0;
+    const barCol=col.startsWith('rgba(255,181')?'rgba(255,181,71,0.7)':col;
+    const numBlock=!noChange&&d!=null
+      ?`<div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${col};letter-spacing:-.4px;line-height:1.15;white-space:nowrap">${absStr}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:${col};opacity:.7;margin-top:1px;text-align:right">${pctTxt}</div>
+        ${showOldNew?`<div style="font-family:var(--mono);font-size:9px;color:#3a4a5e;margin-top:2px;text-align:right">${fn(vB2)} → ${fn(vA2)}</div>`:''}`
+      :`<div style="font-family:var(--mono);font-size:13px;color:rgba(148,163,184,0.35)">—</div>`;
+    return`<div style="padding:10px 0;border-bottom:1px solid rgba(148,163,184,0.07)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;flex-shrink:0;background:${dotCol}"></span>
+        <span style="font-size:13px;font-weight:400;color:#8faabf;min-width:76px;flex-shrink:0">${label}</span>
+        <div style="flex:1;min-width:0;overflow:hidden">
+          ${!noChange&&d!=null?`<div style="height:3px;background:rgba(148,163,184,0.08);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:${barPct}%;background:${barCol};border-radius:2px"></div>
+          </div>`:'<div style="height:3px"></div>'}
         </div>
-      </div>
-      <div style="text-align:left;padding-left:20px">
-        <div style="font-family:monospace;font-size:15px;font-weight:800;color:#8892a4">${fmtFn(vB)}</div>
+        <div style="text-align:right;flex-shrink:0;min-width:80px">${numBlock}</div>
       </div>
     </div>`;
   };
 
-  const headerRow=`<div style="display:grid;grid-template-columns:130px 1fr auto 1fr;gap:0;padding:8px 18px 7px;background:#131820;border-bottom:2px solid rgba(148,163,184,0.15)">
-    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#6e7d96">Metric</div>
-    <div style="text-align:right;padding-right:20px"><div style="font-size:11px;font-weight:800;color:#5b9dff">${sA.date||'Period A'}</div><div style="font-size:9px;color:#6e7d96;margin-top:1px">NEWER ←</div></div>
-    <div style="text-align:center;padding:0 14px;min-width:130px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#6e7d96">Change</div>
-    <div style="padding-left:20px"><div style="font-size:11px;font-weight:800;color:#8892a4">${sB.date||'Period B'}</div><div style="font-size:9px;color:#6e7d96;margin-top:1px">→ OLDER</div></div>
-  </div>`;
-
-  /* ── Summary sentence ── */
+  /* ── Detailed insight analysis ── */
   const roaDelta=pct(roaA,roaB);
   const salDelta=pct(sA.sales||0,sB.sales||0);
-  let insight='';
+  const spendDelta=pct(sA.spend||0,sB.spend||0);
+  const ordDelta=pct(sA.purchases||0,sB.purchases||0);
+  const impDelta=pct(sA.impressions||0,sB.impressions||0);
+  const clkDelta=pct(sA.clicks||0,sB.clicks||0);
+  const cpcDeltaIns=pct(cpcA,cpcB);
+  const pctStr=(v)=>v==null?null:`${v>0?'+':''}${v.toFixed(1)}%`;
+
+  const changes=[];
+  if(roaDelta!=null&&Math.abs(roaDelta)>=1)changes.push({k:'ROAS',d:roaDelta,hb:true,a:`${fmt(roaA,2)}×`,b:`${fmt(roaB,2)}×`,ps:pctStr(roaDelta)});
+  if(salDelta!=null&&Math.abs(salDelta)>=1)changes.push({k:'Sales',d:salDelta,hb:true,a:gbp(sA.sales),b:gbp(sB.sales),ps:pctStr(salDelta)});
+  if(spendDelta!=null&&Math.abs(spendDelta)>=1)changes.push({k:'Spend',d:spendDelta,hb:false,a:gbp(sA.spend),b:gbp(sB.spend),ps:pctStr(spendDelta)});
+  if(ordDelta!=null&&Math.abs(ordDelta)>=1)changes.push({k:'Orders',d:ordDelta,hb:true,a:intf(sA.purchases),b:intf(sB.purchases),ps:pctStr(ordDelta)});
+  if(impDelta!=null&&Math.abs(impDelta)>=5)changes.push({k:'Impressions',d:impDelta,hb:true,a:intf(sA.impressions),b:intf(sB.impressions),ps:pctStr(impDelta)});
+  if(clkDelta!=null&&Math.abs(clkDelta)>=5)changes.push({k:'Clicks',d:clkDelta,hb:true,a:intf(sA.clicks),b:intf(sB.clicks),ps:pctStr(clkDelta)});
+  if(cpcDeltaIns!=null&&Math.abs(cpcDeltaIns)>=3)changes.push({k:'CPC',d:cpcDeltaIns,hb:false,a:gbp(cpcA),b:gbp(cpcB),ps:pctStr(cpcDeltaIns)});
+
+  let verdict='',verdictCol='var(--text2)',action='';
   if(roaDelta!=null&&salDelta!=null){
-    if(roaDelta>5&&salDelta>0)insight='ROAS and sales both improved — strong period. Consider scaling bids on top-performing keywords.';
-    else if(roaDelta>5&&salDelta<=0)insight='ROAS improved but sales fell — likely lower spend, higher efficiency. Check if impressions dropped.';
-    else if(roaDelta<=-5&&salDelta>0)insight='Sales grew but ROAS declined — spend increased faster than revenue. Review keywords burning budget without return.';
-    else if(roaDelta<=-5&&salDelta<=0)insight='Both ROAS and sales declined. Review bids, check for new competition, and look for spend leaks.';
-    else if(Math.abs(roaDelta)<=5)insight='Performance relatively stable between these two periods.';
+    if(roaDelta>=5&&salDelta>=10){verdict='Strong improvement';verdictCol='var(--green)';
+      action=cpcDeltaIns!=null&&cpcDeltaIns<-5?'CPC fell — scale bids on top keywords to capture more volume.':'Scale bids on the highest-performing keywords while ROAS holds.';}
+    else if(roaDelta>=5&&salDelta<0){verdict='Efficiency up, volume down';verdictCol='var(--amber)';
+      action=impDelta!=null&&impDelta<-10?'Impressions dropped sharply — check budget or bid levels.':'ROAS improved but revenue fell. Raise bids to recover volume.';}
+    else if(roaDelta<=-5&&salDelta>=10){verdict='Revenue up, efficiency down';verdictCol='var(--amber)';
+      action='Spend grew faster than revenue. Review keywords with lowest ROAS and cut bids.';}
+    else if(roaDelta<=-5&&salDelta<=-5){verdict='Performance declined';verdictCol='var(--red)';
+      action='ROAS and sales both fell. Check for new competition and spend leaks in the targets below.';}
+    else if(Math.abs(roaDelta)<5&&Math.abs(salDelta)<5){verdict='Stable';verdictCol='var(--text2)';
+      action='No significant movement. Continue monitoring.';}
+    else{verdict='Mixed results';verdictCol='var(--amber)';action='Metrics moved in different directions — review the breakdown below.';}
   }
-  const summaryHtml=insight?`<div style="background:rgba(91,157,255,.06);border:1px solid rgba(91,157,255,.2);border-radius:10px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px">
-    <span style="font-size:13px;flex-shrink:0">💡</span>
-    <div>
-      <div style="font-size:11.5px;font-weight:700;color:#dde3ef;margin-bottom:2px">${sB.date||'B'} → ${sA.date||'A'}</div>
-      <div style="font-size:12px;color:#b8c4d8">${insight}</div>
+
+  const changeRows=changes.sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).map(c=>{
+    const good=c.hb?c.d>=0:c.d<=0;const noChange=Math.abs(c.d)<1;
+    const col=noChange?'var(--text4)':good?'var(--green)':'var(--red)';
+    const rowBg=noChange?'transparent':good?'rgba(20,50,35,0.45)':'rgba(50,18,20,0.45)';
+    const ico=noChange?'–':good?'↑':'↓';
+    return`<div style="display:flex;align-items:baseline;gap:10px;padding:4px 12px;background:${rowBg}">
+      <span style="font-size:10.5px;font-weight:800;color:${col};width:10px;text-align:center;flex-shrink:0">${ico}</span>
+      <span style="font-size:11.5px;font-weight:600;color:var(--text3);flex:1;min-width:70px">${c.k}</span>
+      <span style="font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text)">${c.a}</span>
+      <span style="font-family:var(--mono);font-size:10.5px;font-weight:700;color:${col}">(${c.ps})</span>
+      <span style="font-family:var(--mono);font-size:10.5px;color:var(--text4)">was ${c.b}</span>
+    </div>`;
+  }).join('');
+
+  // Build a compact 2-sentence explanation from the top changes
+  const topChanges=changes.sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,3);
+  const changeSummary=topChanges.length
+    ?topChanges.map(ch=>{
+        const good=ch.hb?ch.d>=0:ch.d<=0;
+        const dir=ch.d>0?'up':'down';
+        return`${ch.k} ${dir} ${Math.abs(ch.d).toFixed(1)}% (${ch.a})`;
+      }).join(', ')
+    :'no major changes';
+  const twoSentence=`${changeSummary}. ${action}`;
+
+  const summaryHtml=verdict?`<div style="background:#0b0e15;border:1px solid rgba(148,163,184,0.14);border-radius:10px;overflow:hidden;margin-bottom:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 14px;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:baseline;gap:10px;flex-shrink:0">
+        <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text4)">PERFORMANCE ANALYSIS</span>
+        <span style="font-size:12px;font-weight:700;color:${verdictCol}">${verdict}</span>
+      </div>
+      <div style="font-size:11.5px;color:#c8d4e8;line-height:1.6;flex:1;min-width:200px">${twoSentence}</div>
+      <span style="font-size:10px;color:var(--text4);font-family:var(--mono);flex-shrink:0">${sB.date||'B'} → ${sA.date||'A'}</span>
     </div>
   </div>`:'';
 
-  /* ── Detailed data comparison: Ad Groups + Targeting ── */
+    /* ── Detailed data comparison: compact diff view ── */
   const hasTgtA=(sA.targeting||[]).length>0, hasTgtB=(sB.targeting||[]).length>0;
   const hasAgA=(sA.adGroups||[]).length>0, hasAgB=(sB.adGroups||[]).length>0;
 
-  let detailHtml='';
-  if((hasTgtA||hasTgtB)||(hasAgA||hasAgB)){
-    const showTgt=hasTgtA||hasTgtB;
-    const showAg=hasAgA||hasAgB;
-    const cmpView=window._cmpDataView||(showTgt?'tgt':'ag');
-    window._cmpDataView=cmpView;
+  /* ── State ── */
+  if(!window._cmpDiffState)window._cmpDiffState={
+    view:'diff', // 'diff' | 'sbs'
+    dataTab:'tgt', // 'tgt' | 'ag'
+    metrics:{sales:true,spend:true,orders:true,roas:true,acos:true,cpc:true,impr:false,clicks:false,ctr:false,cvr:false},
+    filter:'all', // all|worse|improved|leak|highimpact|nosales|efficiencydrop|newsales|nochange
+    matchFilter:'all',
+    thresholds:{spend:0,sales:0,orders:0,roas:0},
+    expanded:{} // key→bool
+  };
+  const ds=window._cmpDiffState;
+  // auto-select best tab based on available data
+  if((hasTgtA||hasTgtB)&&ds.dataTab==='tgt'){}
+  else if((hasAgA||hasAgB)&&ds.dataTab==='ag'){}
+  else if(hasTgtA||hasTgtB)ds.dataTab='tgt';
+  else if(hasAgA||hasAgB)ds.dataTab='ag';
 
-    /* ── Shared column header builder ── */
-    const detailHeader=(cols)=>`<thead><tr style="background:#131820">${cols.map((c,i)=>`<th style="padding:7px 10px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:${c.col||'#6e7d96'};text-align:${c.align||'right'};white-space:nowrap;border-bottom:2px solid rgba(148,163,184,.12)">${c.l}</th>`).join('')}</tr></thead>`;
+  /* ── Helper: diff colour with PPC awareness ── */
+  const diffCol=(vA,vB,hb,spendContext)=>{
+    if(vA==null&&vB==null)return'var(--text2)';
+    const diff=(vA||0)-(vB||0);
+    if(Math.abs(diff)<0.001)return'var(--text2)';
+    // Spend: good only if ROAS also improved, else amber
+    if(spendContext==='spend'){
+      return diff>0?'var(--amber)':'var(--green)';
+    }
+    return hb?(diff>0?'var(--green)':'var(--red)'):(diff<0?'var(--green)':'var(--red)');
+  };
+  const diffSign=(v,fmt2,hb,spendContext)=>{
+    if(v==null||v===0)return{text:'—',col:'var(--text2)'};
+    const col=diffCol(v,0,hb,spendContext);
+    const sign=v>0?'+':'';
+    return{text:sign+fmt2(v),col};
+  };
 
-    /* ── Delta cell helper ── */
-    const deltaCell=(vA,vB,hb,fmtFn)=>{
-      const d=vA==null||vB==null?null:pct(vA,vB);
-      const good=d==null?null:(hb?d>=0:d<=0);
-      const noChange=d!=null&&Math.abs(d)<1;
-      const col=d==null?'#6e7d96':noChange?'#8892a4':good?'#2ee59d':'#ff5d6c';
-      const sign=d==null?'':d>0?'+':'';
-      return`<td style="padding:6px 10px;text-align:center">
-        <span style="font-size:11.5px;font-weight:800;color:${col}">${d==null?'—':noChange?'→':sign+d.toFixed(1)+'%'}</span>
+  /* ── Safe key for use in HTML attribute values (onclick, etc.) ── */
+  const safeKey=(k)=>(k||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+
+  /* ── Status + action logic ── */
+  const getStatus=(tA,tB,roaA2,roaB2)=>{
+    const spendA=tA?.spend||0, spendB=tB?.spend||0;
+    const salesA=tA?.sales||0, salesB=tB?.sales||0;
+    const ordA=tA?.purch||0, ordB=tB?.purch||0;
+    const acosA2=salesA?spendA/salesA*100:null, acosB2=salesB?spendB/salesB*100:null;
+    const spendDiff=spendA-spendB;
+    const salesDiff=salesA-salesB;
+    if(spendA>0&&salesA===0)return{s:'Spend Leak',c:'var(--amber)',bg:'rgba(255,181,71,.12)',a:'Reduce / Pause'};
+    if(!tB&&salesA>0)return{s:'New Sales',c:'var(--green)',bg:'rgba(46,229,157,.12)',a:'Keep / Monitor'};
+    if(salesB===0&&salesA>0)return{s:'New Sales',c:'var(--green)',bg:'rgba(46,229,157,.12)',a:'Keep / Monitor'};
+    if(salesDiff===0&&spendDiff===0&&ordA===ordB)return{s:'No Change',c:'var(--text2)',bg:'rgba(148,163,184,.08)',a:'Monitor'};
+    if(spendDiff>0&&roaA2<roaB2-0.5)return{s:'Efficiency Drop',c:'var(--red)',bg:'rgba(255,93,108,.1)',a:'Review Bid'};
+    if(salesDiff<0&&ordA<ordB)return{s:'Worsened',c:'var(--red)',bg:'rgba(255,93,108,.1)',a:'Review Target'};
+    if(salesDiff>0&&(roaA2>=roaB2||roaB2===0))return{s:'Improved',c:'var(--green)',bg:'rgba(46,229,157,.1)',a:'Keep / Monitor'};
+    if(salesDiff>0)return{s:'Improved',c:'var(--green)',bg:'rgba(46,229,157,.1)',a:'Keep / Monitor'};
+    if(spendDiff>0&&salesDiff<=0)return{s:'Worsened',c:'var(--red)',bg:'rgba(255,93,108,.1)',a:'Review Target'};
+    return{s:'Monitor',c:'var(--text2)',bg:'rgba(148,163,184,.08)',a:'Monitor'};
+  };
+
+  /* ── Filter logic ── */
+  const passesFilter=(item,st)=>{
+    const tA=item.tA||item.aA, tB=item.tB||item.aB;
+    const spendA=tA?.spend||0,salesA=tA?.sales||0,ordA=tA?.purch||0;
+    const spendB=tB?.spend||0,salesB=tB?.sales||0,ordB=tB?.purch||0;
+    const roaA2=item.roaA2!==undefined?item.roaA2:(spendA?salesA/spendA:0);
+    const roaB2=item.roaB2!==undefined?item.roaB2:(spendB?salesB/spendB:0);
+    const th=ds.thresholds;
+    if(Math.abs(spendA-spendB)<(th.spend||0))return false;
+    if(Math.abs(salesA-salesB)<(th.sales||0))return false;
+    if(Math.abs(ordA-ordB)<(th.orders||0))return false;
+    if(Math.abs(roaA2-roaB2)<(th.roas||0))return false;
+    const f=ds.filter;
+    if(f==='all')return true;
+    if(f==='leak')return spendA>0&&salesA===0;
+    if(f==='nosales')return spendA>0&&salesA===0;
+    if(f==='newsales')return salesB===0&&salesA>0;
+    if(f==='nochange')return Math.abs(spendA-spendB)<0.01&&Math.abs(salesA-salesB)<0.01;
+    if(f==='improved')return st?.s==='Improved'||st?.s==='New Sales';
+    if(f==='worse')return st?.s==='Worsened'||st?.s==='Spend Leak'||st?.s==='Efficiency Drop';
+    if(f==='efficiencydrop')return st?.s==='Efficiency Drop';
+    if(f==='highimpact')return Math.abs(salesA-salesB)>10||Math.abs(spendA-spendB)>5||Math.abs(roaA2-roaB2)>1;
+    return true;
+  };
+
+  /* ── Build row data for targets ── */
+  const buildTgtRows=()=>{
+    // Key includes match type so "polyfilla" Exact/Phrase/Broad each get their own row
+    const mkKey=(t,i)=>t.kw&&t.kw!=='—'?(t.kw+'||'+(t.match||'—')):(t.match+'__'+i);
+    const _allTgtsA=(sA.targeting||[]).map((t,i)=>({...t,_key:mkKey(t,i)}));
+    const _allTgtsB=(sB.targeting||[]).map((t,i)=>({...t,_key:mkKey(t,i)}));
+    const allKw=[...new Set([..._allTgtsA.map(t=>t._key),..._allTgtsB.map(t=>t._key)])];
+    return allKw.map(kw=>{
+      const tA=_allTgtsA.find(t=>t._key===kw);
+      const tB=_allTgtsB.find(t=>t._key===kw);
+      const match=tA?.match||tB?.match||'—';
+      const origKw=tA?.kw||tB?.kw||'';
+      const roaA2=tA?.spend?tA.sales/tA.spend:0;
+      const roaB2=tB?.spend?tB.sales/tB.spend:0;
+      const displayLabel=fmtTargetLabel(origKw,match);
+      return{kw,displayLabel,match,tA,tB,roaA2,roaB2};
+    });
+  };
+  const buildAgRows=()=>{
+    const allAgs=[...new Set([...(sA.adGroups||[]).map(a=>a.name),...(sB.adGroups||[]).map(a=>a.name)])];
+    return allAgs.map(name=>{
+      const aA=(sA.adGroups||[]).find(a=>a.name===name);
+      const aB=(sB.adGroups||[]).find(a=>a.name===name);
+      const roaA2=aA?.spend?aA.sales/aA.spend:0;
+      const roaB2=aB?.spend?aB.sales/aB.spend:0;
+      return{displayLabel:name,match:null,tA:aA,tB:aB,aA,aB,roaA2,roaB2};
+    });
+  };
+
+  const rawRows=ds.dataTab==='tgt'?buildTgtRows():buildAgRows();
+  // match filter for tgt mode
+  const matchFilteredRows=ds.dataTab==='tgt'&&ds.matchFilter!=='all'
+    ?rawRows.filter(r=>r.match===ds.matchFilter)
+    :rawRows;
+  const statusMap=new Map(matchFilteredRows.map(r=>[r.kw||r.displayLabel,getStatus(r.tA,r.tB,r.roaA2,r.roaB2)]));
+  const filteredRows=matchFilteredRows.filter(r=>passesFilter(r,statusMap.get(r.kw||r.displayLabel)));
+
+  /* ── Compact diff row renderer ── */
+  const mx=ds.metrics;
+  const renderDiffRow=(r,idx)=>{
+    const tA=r.tA,tB=r.tB;
+    const key=r.kw||r.displayLabel;
+    const expanded=ds.expanded[key];
+    const spendA=tA?.spend||0,spendB=tB?.spend||0;
+    const salesA=tA?.sales||0,salesB=tB?.sales||0;
+    const ordA=tA?.purch||0,ordB=tB?.purch||0;
+    const roaA2=spendA?salesA/spendA:0,roaB2=spendB?salesB/spendB:0;
+    const acosA=salesA?spendA/salesA*100:null,acosB=salesB?spendB/salesB*100:null;
+    const cpcA2=tA?.cpc>0?tA.cpc:(tA?.clicks&&spendA?spendA/tA.clicks:0);
+    const cpcB2=tB?.cpc>0?tB.cpc:(tB?.clicks&&spendB?spendB/tB.clicks:0);
+    const impA=tA?.imp||0,impB=tB?.imp||0;
+    const clkA=tA?.clicks||0,clkB=tB?.clicks||0;
+    const ctrA=impA?clkA/impA*100:0,ctrB=impB?clkB/impB*100:0;
+    const cvrA=clkA?ordA/clkA*100:0,cvrB=clkB?ordB/clkB*100:0;
+    const st=statusMap.get(key)||{s:'Monitor',c:'var(--text2)',bg:'transparent',a:'Monitor'};
+
+    const dSales=salesA-salesB,dSpend=spendA-spendB,dOrd=ordA-ordB;
+    const dRoas=roaA2-roaB2,dAcos=acosA!=null&&acosB!=null?acosA-acosB:null;
+    const dCpc=cpcA2-cpcB2,dImp=impA-impB,dClk=clkA-clkB,dCtr=ctrA-ctrB,dCvr=cvrA-cvrB;
+
+    const pctSec=(pctVal)=>pctVal!=null&&Math.abs(pctVal)>0.1?`<div style="font-size:9.5px;color:var(--text2);margin-top:1px">${pctVal>0?'+':''}${pctVal.toFixed(1)}%</div>`:'';
+    const pctOf=(a,b)=>b?((a-b)/Math.abs(b)*100):null;
+
+    // PPC-aware diff cell
+    const dCell=(diff,hb,fmtFn,pctPair,spendCtx)=>{
+      if(diff==null)return`<td style="padding:6px 10px;text-align:right;font-family:var(--mono);font-size:12.5px;color:var(--text2)">—</td>`;
+      const isLeakSpend=spendCtx&&salesA===0&&spendA>0;
+      const col=Math.abs(diff)<0.005?'var(--text2)':isLeakSpend?'var(--red)':spendCtx?'var(--text)':hb?(diff>0?'var(--green)':'var(--red)'):(diff<0?'var(--green)':'var(--red)');
+      const sign=diff>0?'+':'';
+      const p=pctPair?pctOf(pctPair[0],pctPair[1]):null;
+      return`<td style="padding:6px 10px;text-align:right">
+        <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${col}">${Math.abs(diff)<0.005?'—':sign+fmtFn(diff)}</div>
+        ${Math.abs(diff)>0.005?pctSec(p):''}
       </td>`;
     };
 
-    /* ─── TARGETING comparison (keywords/auto targets) ─── */
-    /* Renders each keyword/target as its own vertical metRow-style table — same layout as the campaign-level comparison above */
-    let tgtHtml='';
-    if(showTgt){
-      /* Build unique target list using kw+match as the key — prevents same keyword
-         with different match types (Exact vs Phrase) from collapsing into one entry */
-      const seen=new Set();
-      const allTargets=[];
-      [...(sA.targeting||[]),...(sB.targeting||[])].forEach(t=>{
-        const key=(t.kw||'')+'|||'+(t.match||'—');
-        if(!seen.has(key)){seen.add(key);allTargets.push({kw:t.kw||'',match:t.match||'—'});}
-      });
+    const expandedDetail=expanded?`<tr id="exp-${idx}">
+      <td colspan="99" style="padding:0;background:var(--bg3);border-bottom:1px solid var(--border2)">
+        <div style="padding:12px 16px 12px 48px">
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+            ${[
+              ['Sales',gbp(salesB),gbp(salesA),gbp(dSales),dSales>=0?'var(--green)':'var(--red)'],
+              ['Spend',gbp(spendB),gbp(spendA),gbp(dSpend),salesA===0&&spendA>0?'var(--red)':'var(--text)'],
+              ['Orders',ordB,ordA,dOrd>=0?'+'+dOrd:String(dOrd),dOrd>=0?'var(--green)':'var(--red)'],
+              ['ROAS',fmt(roaB2,2)+'×',fmt(roaA2,2)+'×',(dRoas>=0?'+':'')+fmt(dRoas,2)+'×',dRoas>=0?'var(--green)':'var(--red)'],
+              acosA!=null?['ACOS',acosB!=null?fmt(acosB,1)+'%':'—',fmt(acosA,1)+'%',dAcos!=null?(dAcos<=0?'+':'')+fmt(-dAcos,1)+'% impr':null,dAcos!=null?(dAcos<=0?'var(--green)':'var(--red)'):'var(--text2)']:null,
+              cpcA2>0||cpcB2>0?['CPC',gbp(cpcB2),gbp(cpcA2),(dCpc<=0?'+':'')+gbp(Math.abs(dCpc)),dCpc<=0?'var(--green)':'var(--red)']:null,
+              impA>0||impB>0?['Impressions',intf(impB),intf(impA),(dImp>=0?'+':'')+intf(dImp),dImp>=0?'var(--green)':'var(--red)']:null,
+              clkA>0||clkB>0?['Clicks',intf(clkB),intf(clkA),(dClk>=0?'+':'')+intf(dClk),dClk>=0?'var(--green)':'var(--red)']:null,
+              ctrA>0||ctrB>0?['CTR',fmt(ctrB,2)+'%',fmt(ctrA,2)+'%',(dCtr>=0?'+':'')+fmt(dCtr,2)+'%',dCtr>=0?'var(--green)':'var(--red)']:null,
+              cvrA>0||cvrB>0?['CVR',fmt(cvrB,2)+'%',fmt(cvrA,2)+'%',(dCvr>=0?'+':'')+fmt(dCvr,2)+'%',dCvr>=0?'var(--green)':'var(--red)']:null,
+            ].filter(Boolean).map(([label,vOld,vNew,diff2,col2])=>`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 11px">
+              <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:5px">${label}</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:2px">${vOld} → ${vNew}</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${col2}">${diff2||'—'}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </td>
+    </tr>`:'';
 
-      /* Group by match type */
-      const matchGroups={};
-      allTargets.forEach(({kw,match})=>{
-        /* Match on BOTH kw and match type so Exact and Phrase are never confused */
-        const tA=(sA.targeting||[]).find(t=>t.kw===kw&&(t.match||'—')===match);
-        const tB=(sB.targeting||[]).find(t=>t.kw===kw&&(t.match||'—')===match);
-        if(!matchGroups[match])matchGroups[match]=[];
-        const roaA2=tA?.spend?tA.sales/tA.spend:0;
-        const roaB2=tB?.spend?tB.sales/tB.spend:0;
-        const d=pct(roaA2,roaB2);
-        matchGroups[match].push({kw,tA,tB,d,roaA2,roaB2,match});
-      });
-      Object.values(matchGroups).forEach(g=>g.sort((a,b)=>Math.abs(b.d||0)-Math.abs(a.d||0)));
+    const rBg=idx%2===0?'transparent':'rgba(148,163,184,.02)';
+    return`<tr style="border-bottom:1px solid var(--border);background:${rBg}" id="row-${idx}">
+      <td style="padding:7px 10px;width:32px;text-align:center">
+        <button onclick="window._cmpDiffState.expanded['${safeKey(key)}']=!window._cmpDiffState.expanded['${safeKey(key)}'];_doCompare()" style="width:22px;height:22px;border-radius:5px;background:var(--bg4);border:1px solid var(--border2);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;line-height:1;display:grid;place-items:center">${expanded?'−':'+'}</button>
+      </td>
+      <td style="padding:7px 10px;min-width:160px;max-width:240px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.displayLabel||'—'}</div>
+      </td>
+      <td style="padding:7px 10px;text-align:center">${r.match?matchTag(r.match):''}</td>
+      ${mx.sales?dCell(dSales,true,gbp,[salesA,salesB],false):''}
+      ${mx.spend?dCell(dSpend,false,gbp,[spendA,spendB],'spend'):''}
+      ${mx.orders?dCell(dOrd,true,v=>v>=0?'+'+v:String(v),null,false):''}
+      ${mx.roas?dCell(dRoas,true,v=>fmt(v,2)+'×',null,false):''}
+      ${mx.acos&&(acosA!=null||acosB!=null)?dCell(dAcos,false,v=>fmt(v,1)+'%',null,false):`${mx.acos?'<td style="padding:6px 10px;text-align:right;color:var(--text2)">—</td>':''}`}
+      ${mx.cpc?(cpcA2>0||cpcB2>0)?dCell(dCpc,false,v=>gbp(v),[cpcA2,cpcB2],false):`<td style="padding:6px 10px;text-align:right;color:var(--text2)">—</td>`:''}
+      ${mx.impr?dCell(dImp,true,v=>v>=0?'+'+intf(v):String(intf(v)),null,false):''}
+      ${mx.clicks?dCell(dClk,true,v=>v>=0?'+'+intf(v):String(intf(v)),null,false):''}
+      ${mx.ctr?dCell(dCtr,true,v=>fmt(v,2)+'%',null,false):''}
+      ${mx.cvr?dCell(dCvr,true,v=>fmt(v,2)+'%',null,false):''}
+      <td style="padding:6px 10px;text-align:center;white-space:nowrap">
+        <span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;background:${st.bg};color:${st.c};border:1px solid ${st.c}33;white-space:nowrap">${st.s}</span>
+      </td>
+      <td style="padding:6px 10px;text-align:center;white-space:nowrap">
+        <span style="font-size:11px;padding:2px 9px;border-radius:20px;background:var(--bg4);border:1px solid var(--border2);color:var(--text2);white-space:nowrap">${st.a}</span>
+      </td>
+    </tr>${expandedDetail}`;
+  };
 
-      /* Match type filter */
-      const matchTypes=Object.keys(matchGroups).sort();
-      const mf=window._cmpMatchFilter||'all';
-      const activeGroups=mf==='all'?matchGroups:{[mf]:matchGroups[mf]||[]};
-      const totalTargetCount=allTargets.length;
+  const noDataMsg=`<div style="padding:28px;text-align:center;color:var(--text);font-size:12.5px;background:var(--bg2);border:1px dashed var(--border2);border-radius:10px">
+    No ${ds.dataTab==='tgt'?'keyword/targeting':'ad group'} CSV data found for these snapshots.
+    <div style="font-size:11.5px;margin-top:6px;color:var(--text2)">Upload a Targeting or Ad Group CSV via + Snapshot.</div>
+  </div>`;
 
-      const filterBtns=`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px">
-        ${['all',...matchTypes].map(m=>{
-          const active=mf===m;
-          const cnt=m==='all'?totalTargetCount:(matchGroups[m]||[]).length;
-          return`<button onclick="window._cmpMatchFilter='${m}';_doCompare()" style="border:1.5px solid ${active?'var(--blue)':'rgba(148,163,184,.2)'};background:${active?'rgba(91,157,255,.15)':'transparent'};color:${active?'#5b9dff':'#8892a4'};font-size:11px;font-weight:700;padding:4px 12px;border-radius:6px;cursor:pointer;font-family:inherit">${m==='all'?'All targets':m} <span style="font-size:9px;opacity:.75">(${cnt})</span></button>`;
+  /* ── Table column headers based on metric selection ── */
+  const visibleCols=[
+    {l:'Target / Ad Group',align:'left',always:true},
+    {l:'Match',align:'center',always:true},
+    {l:'Sales Diff',align:'right',key:'sales'},
+    {l:'Spend Diff',align:'right',key:'spend'},
+    {l:'Orders',align:'right',key:'orders'},
+    {l:'ROAS Diff',align:'right',key:'roas'},
+    {l:'ACOS Diff',align:'right',key:'acos'},
+    {l:'CPC Diff',align:'right',key:'cpc'},
+    {l:'Impr.',align:'right',key:'impr'},
+    {l:'Clicks',align:'right',key:'clicks'},
+    {l:'CTR',align:'right',key:'ctr'},
+    {l:'CVR',align:'right',key:'cvr'},
+    {l:'Status',align:'center',always:true},
+    {l:'Action',align:'center',always:true},
+  ].filter(c=>c.always||mx[c.key]);
+
+  const theadRow=`<thead><tr style="background:var(--bg3)">
+    <th style="width:32px;padding:7px 6px;border-bottom:2px solid var(--border2)"></th>
+    ${visibleCols.map(c=>`<th style="padding:7px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);text-align:${c.align};white-space:nowrap;border-bottom:2px solid var(--border2);position:sticky;top:0;background:var(--bg3);z-index:2">${c.l}</th>`).join('')}
+  </tr></thead>`;
+
+  /* ── Match type filter for tgt mode ── */
+  const matchTypes2=ds.dataTab==='tgt'?[...new Set(rawRows.map(r=>r.match).filter(Boolean))].sort():[];
+  const matchFilterBar=ds.dataTab==='tgt'&&matchTypes2.length>1?`<div style="display:flex;gap:4px;flex-wrap:wrap">
+    ${['all',...matchTypes2].map(m=>{
+      const active=ds.matchFilter===m;
+      const cnt=m==='all'?rawRows.length:rawRows.filter(r=>r.match===m).length;
+      return`<button onclick="window._cmpDiffState.matchFilter='${m}';_doCompare()" style="border:1.5px solid ${active?'var(--blue)':'var(--border)'};background:${active?'rgba(91,157,255,.14)':'transparent'};color:${active?'var(--blue)':'var(--text2)'};font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;cursor:pointer;font-family:inherit">${m==='all'?'All':m} (${cnt})</button>`;
+    }).join('')}
+  </div>`:'';
+
+  /* ── Quick filter chips ── */
+  const filterChips=[
+    {k:'all',l:'All'},
+    {k:'improved',l:'Improved'},
+    {k:'worse',l:'Worse'},
+    {k:'leak',l:'Spend Leaks'},
+    {k:'highimpact',l:'High Impact'},
+    {k:'newsales',l:'New Sales'},
+    {k:'efficiencydrop',l:'Efficiency Drops'},
+    {k:'nochange',l:'No Change'},
+  ];
+
+  /* ── Metric toggles ── */
+  const metChips2=[
+    {k:'sales',l:'Sales'},{k:'spend',l:'Spend'},{k:'orders',l:'Orders'},
+    {k:'roas',l:'ROAS'},{k:'acos',l:'ACOS'},{k:'cpc',l:'CPC'},
+    {k:'impr',l:'Impr.'},{k:'clicks',l:'Clicks'},{k:'ctr',l:'CTR'},{k:'cvr',l:'CVR'},
+  ];
+
+  const hasNoData=(ds.dataTab==='tgt'&&!hasTgtA&&!hasTgtB)||(ds.dataTab==='ag'&&!hasAgA&&!hasAgB);
+  const tgtCount=hasTgtA||hasTgtB?Math.max((sA.targeting||[]).length,(sB.targeting||[]).length):0;
+  const agCount=hasAgA||hasAgB?Math.max((sA.adGroups||[]).length,(sB.adGroups||[]).length):0;
+
+  let detailHtml=`<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-top:14px">
+
+    <!-- HEADER: tabs + row count -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg3);border-bottom:1px solid var(--border2);flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="display:inline-flex;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:2px;gap:2px">
+          ${(hasTgtA||hasTgtB)?`<button onclick="window._cmpDiffState.dataTab='tgt';window._cmpDiffState.matchFilter='all';_doCompare()" style="padding:5px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:${ds.dataTab==='tgt'?'var(--blue)':'transparent'};color:${ds.dataTab==='tgt'?'#fff':'var(--text2)'};transition:.15s">Targets / Keywords${tgtCount?' ('+tgtCount+')':''}</button>`:''}
+          ${(hasAgA||hasAgB)?`<button onclick="window._cmpDiffState.dataTab='ag';_doCompare()" style="padding:5px 14px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:${ds.dataTab==='ag'?'var(--blue)':'transparent'};color:${ds.dataTab==='ag'?'#fff':'var(--text2)'};transition:.15s">Ad Groups${agCount?' ('+agCount+')':''}</button>`:''}
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2)">${filteredRows.length} row${filteredRows.length!==1?'s':''} shown</div>
+    </div>
+
+    <!-- TOOLBAR: quick filters + metric toggles + thresholds -->
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;gap:8px">
+
+      <!-- Quick filters -->
+      <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);white-space:nowrap;margin-right:2px">Filter:</span>
+        ${filterChips.map(fc=>{
+          const active=ds.filter===fc.k;
+          return`<button onclick="window._cmpDiffState.filter='${fc.k}';_doCompare()" style="font-size:11px;font-weight:${active?700:500};padding:3px 10px;border-radius:20px;cursor:pointer;font-family:inherit;border:1.5px solid ${active?'var(--blue)':'var(--border)'};background:${active?'rgba(91,157,255,.14)':'transparent'};color:${active?'var(--blue)':'var(--text2)'};transition:.12s">${fc.l}</button>`;
         }).join('')}
-      </div>`;
-
-      /* Vertical metRow builder — mirrors the campaign-level comparison style */
-      const tgtMetRow=(label,vA,vB,fmtFn,hb)=>{
-        const d=vA==null||vB==null?null:pct(vA,vB);
-        const good=d==null?null:(hb?d>=0:d<=0);
-        const noChange=d!=null&&Math.abs(d)<0.5;
-        const col=d==null?'#6e7d96':noChange?'#8892a4':good?'#2ee59d':'#ff5d6c';
-        const bgCol=d==null?'transparent':noChange?'rgba(148,163,184,.04)':good?'rgba(46,229,157,.06)':'rgba(255,93,108,.06)';
-        const barW=d==null?0:Math.min(Math.abs(d)/60*100,100);
-        const arrow=d==null?'—':noChange?'→':good?(d>0?'↑ UP':'↓ DOWN'):(d>0?'↑ UP':'↓ DOWN');
-        return`<div style="display:grid;grid-template-columns:110px 1fr auto 1fr;align-items:center;gap:0;padding:9px 14px;border-bottom:1px solid rgba(148,163,184,0.07);background:${bgCol}">
-          <div style="font-size:11.5px;font-weight:700;color:#dde3ef">${label}</div>
-          <div style="text-align:right;padding-right:16px"><div style="font-family:monospace;font-size:14px;font-weight:800;color:#f2f4f9">${vA!=null?fmtFn(vA):'—'}</div></div>
-          <div style="text-align:center;padding:0 12px;min-width:110px">
-            <div style="font-size:11.5px;font-weight:800;color:${col};white-space:nowrap">${arrow}</div>
-            ${d!=null&&!noChange?`<div style="font-size:10px;font-weight:700;color:${col};margin-top:1px">${d>0?'+':''}${d.toFixed(1)}%</div>`:''}
-            <div style="height:2px;background:rgba(148,163,184,.1);border-radius:2px;margin-top:4px;overflow:hidden"><div style="width:${barW}%;height:100%;background:${col};border-radius:2px"></div></div>
-          </div>
-          <div style="text-align:left;padding-left:16px"><div style="font-family:monospace;font-size:14px;font-weight:800;color:#8892a4">${vB!=null?fmtFn(vB):'—'}</div></div>
-        </div>`;
-      };
-
-      const tgtHeaderRow=`<div style="display:grid;grid-template-columns:110px 1fr auto 1fr;gap:0;padding:7px 14px 6px;background:#131820;border-bottom:2px solid rgba(148,163,184,0.15)">
-        <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#6e7d96">Metric</div>
-        <div style="text-align:right;padding-right:16px"><div style="font-size:10.5px;font-weight:800;color:#5b9dff">${sA.date||'Period A'}</div><div style="font-size:8.5px;color:#6e7d96;margin-top:1px">NEWER ←</div></div>
-        <div style="text-align:center;padding:0 12px;min-width:110px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#6e7d96">Change</div>
-        <div style="padding-left:16px"><div style="font-size:10.5px;font-weight:800;color:#8892a4">${sB.date||'Period B'}</div><div style="font-size:8.5px;color:#6e7d96;margin-top:1px">→ OLDER</div></div>
-      </div>`;
-
-      const kwCards=Object.entries(activeGroups).flatMap(([match,items])=>{
-        if(!items||!items.length)return[];
-        const groupLabel=`<div style="padding:10px 0 6px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#8892a4;display:flex;align-items:center;gap:6px">${matchTag(match)} <span>${match} — ${items.length} target${items.length!==1?'s':''}</span></div>`;
-        const cards=items.map(r=>{
-          const tA=r.tA,tB=r.tB;
-          const leak=tA?.spend>0&&tA?.sales===0;
-          const isNew=!tB,isGone=!tA;
-          const rg=ragOf(r.roaA2,tA?.sales||0,tA?.spend||0);
-          const cpcA2=tA?.cpc>0?tA.cpc:(tA?.clicks?tA.spend/tA.clicks:0);
-          const cpcB2=tB?.cpc>0?tB.cpc:(tB?.clicks?tB.spend/tB.clicks:0);
-          const badges=[
-            isNew?'<span style="font-size:9px;padding:1px 6px;background:rgba(46,229,157,.12);color:#2ee59d;border:1px solid rgba(46,229,157,.3);border-radius:4px">NEW</span>':'',
-            isGone?'<span style="font-size:9px;padding:1px 6px;background:rgba(255,93,108,.12);color:#ff5d6c;border:1px solid rgba(255,93,108,.3);border-radius:4px">GONE</span>':'',
-            leak?'<span style="font-size:9px;padding:1px 6px;background:rgba(255,181,71,.12);color:#ffb547;border:1px solid rgba(255,181,71,.3);border-radius:4px">SPEND LEAK</span>':''
-          ].filter(Boolean).join(' ');
-          return`<div style="background:#0e1219;border:1px solid rgba(148,163,184,.12);border-radius:10px;overflow:hidden;margin-bottom:10px">
-            <div style="padding:9px 14px;background:#131820;border-bottom:1px solid rgba(148,163,184,.1);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <span style="font-size:12.5px;font-weight:700;color:${leak?'#ffb547':'#f2f4f9'}">${r.kw||'—'}</span>
-              ${badges}
-              <span style="font-size:10px;margin-left:auto;color:${leak?'#ffb547':ragColor(rg)};font-weight:700">${tA?.spend?fmt(r.roaA2,2)+'× ROAS':''}</span>
-            </div>
-            ${tgtHeaderRow}
-            ${tgtMetRow('ROAS',tA?.spend?r.roaA2:null,tB?.spend?r.roaB2:null,v=>fmt(v,2)+'×',true)}
-            ${tgtMetRow('Sales',tA?.sales??null,tB?.sales??null,gbp,true)}
-            ${tgtMetRow('Spend',tA?.spend??null,tB?.spend??null,gbp,false)}
-            ${tgtMetRow('Orders',tA?tA.purch||0:null,tB?tB.purch||0:null,intf,true)}
-            ${tgtMetRow('Impressions',tA?tA.imp||0:null,tB?tB.imp||0:null,intf,true)}
-            ${tgtMetRow('Clicks',tA?tA.clicks||0:null,tB?tB.clicks||0:null,intf,true)}
-            ${tgtMetRow('CPC',cpcA2>0?cpcA2:null,cpcB2>0?cpcB2:null,gbp,false)}
-          </div>`;
-        }).join('');
-        return groupLabel+cards;
-      }).join('');
-
-      tgtHtml=`<div style="margin-bottom:14px">${filterBtns}
-        <div style="max-height:600px;overflow-y:auto;padding-right:2px">${kwCards||'<div style="padding:20px;text-align:center;color:#6e7d96">No targeting data for this view</div>'}</div>
-      </div>`;
-    }
-
-    /* ─── AD GROUPS comparison (Auto targeting types: Close Match, Loose Match etc) ─── */
-    let agHtml='';
-    if(showAg){
-      const allAgs=[...new Set([...(sA.adGroups||[]).map(a=>a.name),...(sB.adGroups||[]).map(a=>a.name)])];
-
-      const agMetRow=(label,vA,vB,fmtFn,hb)=>{
-        const d=vA==null||vB==null?null:pct(vA,vB);
-        const good=d==null?null:(hb?d>=0:d<=0);
-        const noChange=d!=null&&Math.abs(d)<0.5;
-        const col=d==null?'#6e7d96':noChange?'#8892a4':good?'#2ee59d':'#ff5d6c';
-        const bgCol=d==null?'transparent':noChange?'rgba(148,163,184,.04)':good?'rgba(46,229,157,.06)':'rgba(255,93,108,.06)';
-        const barW=d==null?0:Math.min(Math.abs(d)/60*100,100);
-        const arrow=d==null?'—':noChange?'→':good?(d>0?'↑ UP':'↓ DOWN'):(d>0?'↑ UP':'↓ DOWN');
-        return`<div style="display:grid;grid-template-columns:110px 1fr auto 1fr;align-items:center;gap:0;padding:9px 14px;border-bottom:1px solid rgba(148,163,184,0.07);background:${bgCol}">
-          <div style="font-size:11.5px;font-weight:700;color:#dde3ef">${label}</div>
-          <div style="text-align:right;padding-right:16px"><div style="font-family:monospace;font-size:14px;font-weight:800;color:#f2f4f9">${vA!=null?fmtFn(vA):'—'}</div></div>
-          <div style="text-align:center;padding:0 12px;min-width:110px">
-            <div style="font-size:11.5px;font-weight:800;color:${col};white-space:nowrap">${arrow}</div>
-            ${d!=null&&!noChange?`<div style="font-size:10px;font-weight:700;color:${col};margin-top:1px">${d>0?'+':''}${d.toFixed(1)}%</div>`:''}
-            <div style="height:2px;background:rgba(148,163,184,.1);border-radius:2px;margin-top:4px;overflow:hidden"><div style="width:${barW}%;height:100%;background:${col};border-radius:2px"></div></div>
-          </div>
-          <div style="text-align:left;padding-left:16px"><div style="font-family:monospace;font-size:14px;font-weight:800;color:#8892a4">${vB!=null?fmtFn(vB):'—'}</div></div>
-        </div>`;
-      };
-
-      const agHdrRow=`<div style="display:grid;grid-template-columns:110px 1fr auto 1fr;gap:0;padding:7px 14px 6px;background:#131820;border-bottom:2px solid rgba(148,163,184,0.15)">
-        <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#6e7d96">Metric</div>
-        <div style="text-align:right;padding-right:16px"><div style="font-size:10.5px;font-weight:800;color:#5b9dff">${sA.date||'Period A'}</div><div style="font-size:8.5px;color:#6e7d96;margin-top:1px">NEWER ←</div></div>
-        <div style="text-align:center;padding:0 12px;min-width:110px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#6e7d96">Change</div>
-        <div style="padding-left:16px"><div style="font-size:10.5px;font-weight:800;color:#8892a4">${sB.date||'Period B'}</div><div style="font-size:8.5px;color:#6e7d96;margin-top:1px">→ OLDER</div></div>
-      </div>`;
-
-      const agCards=allAgs.map(name=>{
-        const aA=(sA.adGroups||[]).find(a=>a.name===name);
-        const aB=(sB.adGroups||[]).find(a=>a.name===name);
-        const rA=aA?.spend?aA.sales/aA.spend:0,rB=aB?.spend?aB.sales/aB.spend:0;
-        const leak=aA?.spend>0&&aA?.sales===0;
-        const isNew=!aB,isGone=!aA;
-        const rg=ragOf(rA,aA?.sales||0,aA?.spend||0);
-        const cpcA3=aA?.cpc>0?aA.cpc:(aA?.clicks?aA.spend/aA.clicks:0);
-        const cpcB3=aB?.cpc>0?aB.cpc:(aB?.clicks?aB.spend/aB.clicks:0);
-        const badges=[
-          isNew?'<span style="font-size:9px;padding:1px 6px;background:rgba(46,229,157,.12);color:#2ee59d;border:1px solid rgba(46,229,157,.3);border-radius:4px">NEW</span>':'',
-          isGone?'<span style="font-size:9px;padding:1px 6px;background:rgba(255,93,108,.12);color:#ff5d6c;border:1px solid rgba(255,93,108,.3);border-radius:4px">GONE</span>':'',
-          leak?'<span style="font-size:9px;padding:1px 6px;background:rgba(255,181,71,.12);color:#ffb547;border:1px solid rgba(255,181,71,.3);border-radius:4px">SPEND LEAK</span>':''
-        ].filter(Boolean).join(' ');
-        return`<div style="background:#0e1219;border:1px solid rgba(148,163,184,.12);border-radius:10px;overflow:hidden;margin-bottom:10px">
-          <div style="padding:9px 14px;background:#131820;border-bottom:1px solid rgba(148,163,184,.1);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:12.5px;font-weight:700;color:${leak?'#ffb547':'#f2f4f9'}">${name||'—'}</span>
-            ${badges}
-            <span style="font-size:10px;margin-left:auto;color:${leak?'#ffb547':ragColor(rg)};font-weight:700">${aA?.spend?fmt(rA,2)+'× ROAS':''}</span>
-          </div>
-          ${agHdrRow}
-          ${agMetRow('ROAS',aA?.spend?rA:null,aB?.spend?rB:null,v=>fmt(v,2)+'×',true)}
-          ${agMetRow('Sales',aA?.sales??null,aB?.sales??null,gbp,true)}
-          ${agMetRow('Spend',aA?.spend??null,aB?.spend??null,gbp,false)}
-          ${agMetRow('Orders',aA?aA.purch||0:null,aB?aB.purch||0:null,intf,true)}
-          ${agMetRow('Impressions',aA?aA.imp||0:null,aB?aB.imp||0:null,intf,true)}
-          ${agMetRow('Clicks',aA?aA.clicks||0:null,aB?aB.clicks||0:null,intf,true)}
-          ${agMetRow('CPC',cpcA3>0?cpcA3:null,cpcB3>0?cpcB3:null,gbp,false)}
-        </div>`;
-      }).join('');
-
-      agHtml=`<div>
-        <div style="max-height:600px;overflow-y:auto;padding-right:2px">${agCards||'<div style="padding:20px;text-align:center;color:#6e7d96">No ad group data for this view</div>'}</div>
-      </div>`;
-    }
-
-    /* ── Tab toggle bar ── */
-    const tabBar=`<div style="display:flex;gap:2px;padding:3px;background:#0e1219;border-radius:9px;width:fit-content;margin-bottom:14px">
-      ${showTgt?`<button onclick="window._cmpDataView='tgt';window._cmpMatchFilter='all';_doCompare()" style="padding:6px 18px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:${cmpView==='tgt'?'var(--blue)':'transparent'};color:${cmpView==='tgt'?'#fff':'#8892a4'}">Keywords / Targets ${(sA.targeting||[]).length||(sB.targeting||[]).length?'('+Math.max((sA.targeting||[]).length,(sB.targeting||[]).length)+')':''}</button>`:''}
-      ${showAg?`<button onclick="window._cmpDataView='ag';_doCompare()" style="padding:6px 18px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;background:${cmpView==='ag'?'var(--blue)':'transparent'};color:${cmpView==='ag'?'#fff':'#8892a4'}">Ad Groups ${(sA.adGroups||[]).length||(sB.adGroups||[]).length?'('+Math.max((sA.adGroups||[]).length,(sB.adGroups||[]).length)+')':''}</button>`:''}
-    </div>`;
-
-    const noDataMsg=`<div style="padding:24px;text-align:center;color:#6e7d96;font-size:12.5px;border:1px dashed rgba(148,163,184,.2);border-radius:10px">
-      No ${cmpView==='tgt'?'keyword/targeting':'ad group'} CSV data for one or both of these snapshots.<br>
-      <span style="font-size:11px;margin-top:4px;display:block">Upload a CSV in + Snapshot to enable this comparison.</span>
-    </div>`;
-
-    detailHtml=`<div style="background:#0e1219;border:1px solid rgba(148,163,184,.12);border-radius:14px;overflow:hidden;margin-top:14px">
-      <div style="padding:13px 18px;border-bottom:1px solid rgba(148,163,184,.1);display:flex;align-items:center;gap:8px">
-        <span style="display:inline-block;width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#5b9dff,#b794ff)"></span>
-        <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#d0d8e8">Detailed comparison</span>
-        <span style="font-size:10.5px;color:#6e7d96;margin-left:4px">— ${cmpView==='tgt'?'keywords & targets':'ad groups'}</span>
       </div>
-      <div style="padding:14px 16px">
-        ${tabBar}
-        ${cmpView==='tgt'?(tgtHtml||noDataMsg):(agHtml||noDataMsg)}
+
+      <!-- Metrics + match filter row -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);white-space:nowrap;margin-right:2px">Metrics:</span>
+        ${metChips2.map(mc=>{
+          const on=mx[mc.k];
+          return`<button onclick="window._cmpDiffState.metrics['${mc.k}']=!window._cmpDiffState.metrics['${mc.k}'];_doCompare()" style="font-size:11px;font-weight:${on?600:400};padding:3px 10px;border-radius:5px;cursor:pointer;font-family:inherit;border:1.5px solid ${on?'var(--blue)':'var(--border)'};background:${on?'rgba(91,157,255,.12)':'transparent'};color:${on?'var(--blue)':'var(--text2)'};transition:.12s">${on?'✓ ':''} ${mc.l}</button>`;
+        }).join('')}
+        ${matchTypes2.length>1?`<span style="width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0"></span>${matchFilterBar}`:''}
       </div>
-    </div>`;
-  } else {
-    detailHtml=`<div style="margin-top:14px;padding:20px;text-align:center;color:#6e7d96;font-size:12.5px;background:#0e1219;border:1px dashed rgba(148,163,184,.15);border-radius:12px">
-      No keyword or ad group CSV data found for these snapshots.<br>
-      <span style="font-size:11px;margin-top:4px;display:block">Upload targeting and ad group CSVs via + Snapshot to enable detailed comparison.</span>
-    </div>`;
-  }
+
+      <!-- Thresholds -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);white-space:nowrap;margin-right:2px">Min Δ:</span>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)">Spend £<input type="number" min="0" step="0.5" value="${ds.thresholds.spend||''}" placeholder="0" oninput="window._cmpDiffState.thresholds.spend=+this.value||0;_doCompare()" style="width:52px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:11px;padding:2px 6px;border-radius:5px;font-family:var(--mono)"></label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)">Sales £<input type="number" min="0" step="0.5" value="${ds.thresholds.sales||''}" placeholder="0" oninput="window._cmpDiffState.thresholds.sales=+this.value||0;_doCompare()" style="width:52px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:11px;padding:2px 6px;border-radius:5px;font-family:var(--mono)"></label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)">Orders<input type="number" min="0" step="1" value="${ds.thresholds.orders||''}" placeholder="0" oninput="window._cmpDiffState.thresholds.orders=+this.value||0;_doCompare()" style="width:42px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:11px;padding:2px 6px;border-radius:5px;font-family:var(--mono)"></label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)">ROAS<input type="number" min="0" step="0.1" value="${ds.thresholds.roas||''}" placeholder="0" oninput="window._cmpDiffState.thresholds.roas=+this.value||0;_doCompare()" style="width:42px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:11px;padding:2px 6px;border-radius:5px;font-family:var(--mono)"></label>
+        <button onclick="window._cmpDiffState.thresholds={spend:0,sales:0,orders:0,roas:0};_doCompare()" style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:inherit">Reset</button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div style="overflow-x:auto">
+      ${hasNoData?noDataMsg:`<table style="width:100%;border-collapse:collapse;min-width:700px">
+        ${theadRow}
+        <tbody>${filteredRows.length?filteredRows.map((r,i)=>renderDiffRow(r,i)).join(''):'<tr><td colspan="20" style="padding:24px;text-align:center;color:var(--text2);font-size:12.5px">No rows match current filters.</td></tr>'}</tbody>
+      </table>`}
+    </div>
+  </div>`;
+
+  /* ── Summary metric selector state ── */
+  if(!window._cmpMetrics)window._cmpMetrics={roas:true,sales:true,spend:true,orders:true,impressions:true,clicks:true,cpc:false};
+  const smx=window._cmpMetrics;
+  const smChip=(k,label,on)=>`<button onclick="window._cmpMetrics['${k}']=!window._cmpMetrics['${k}'];_doCompare()" style="font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:5px;cursor:pointer;font-family:inherit;border:1px solid ${on?'rgba(91,157,255,.5)':'rgba(148,163,184,0.2)'};background:${on?'rgba(91,157,255,.14)':'transparent'};color:${on?'var(--blue)':'#8899b8'};">${on?'✓ ':''}${label}</button>`;
+  const metricSelector=`<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px;padding:6px 10px;background:#0b0e15;border:1px solid rgba(148,163,184,0.12);border-radius:8px">
+    <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#5a6880;margin-right:3px;white-space:nowrap">SHOW:</span>
+    ${smChip('roas','ROAS',smx.roas)}
+    ${smChip('sales','Sales',smx.sales)}
+    ${smChip('spend','Spend',smx.spend)}
+    ${smChip('orders','Orders',smx.orders)}
+    ${smChip('impressions','Impressions',smx.impressions)}
+    ${smChip('clicks','Clicks',smx.clicks)}
+    ${smChip('cpc','CPC',smx.cpc)}
+  </div>`;
+
+  const _pm=_panelMetrics(smx,roaA,roaB,cpcA,cpcB);
+  const _showON=window._cmpShowOldNew;
+
+  const olderCard=`<div style="flex:1;min-width:190px;background:#0c0f16;border:1px solid rgba(148,163,184,0.13);border-radius:12px;padding:18px 20px;position:relative;box-sizing:border-box">
+    <div style="position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(148,163,184,0.1);border:1px solid rgba(148,163,184,0.18);display:grid;place-items:center;font-size:11px;font-weight:800;color:#5a6880;font-family:var(--mono)">B</div>
+    <div style="margin-bottom:16px;padding-right:34px">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:#4a5568;margin-bottom:5px">Older Snapshot</div>
+      <div style="font-size:18px;font-weight:700;color:#c8d4e8;letter-spacing:-.4px;line-height:1.1">${sB.date||'Period B'}</div>
+    </div>
+    ${_pm.map(m=>_sideRowV2(m.l,m.fn(m.vB))).join('')}
+  </div>`;
+
+  const diffCard=`<div style="flex:1.5;min-width:260px;background:#0b1018;border:1px solid rgba(148,163,184,0.18);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;box-sizing:border-box">
+    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#2ee59d,#5b9dff,#ffb547,#ff5d6c)"></div>
+    <div style="margin-bottom:16px;padding-top:3px">
+      <div style="font-size:15px;font-weight:700;color:#dde5f4;letter-spacing:-.2px">Difference</div>
+      <div style="font-size:11px;color:#4a5a70;margin-top:3px">${sB.date||'B'} → ${sA.date||'A'} actual movement</div>
+    </div>
+    ${_pm.map(m=>_diffRowV2(m.l,m.vA,m.vB,m.fn,_showON)).join('')}
+  </div>`;
+
+  const newerCard=`<div style="flex:1;min-width:190px;background:#0c0f16;border:1px solid rgba(91,157,255,0.2);border-radius:12px;padding:18px 20px;position:relative;box-sizing:border-box">
+    <div style="position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(91,157,255,0.1);border:1px solid rgba(91,157,255,0.25);display:grid;place-items:center;font-size:11px;font-weight:800;color:#5b9dff;font-family:var(--mono)">A</div>
+    <div style="margin-bottom:16px;padding-right:34px">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:rgba(91,157,255,0.65);margin-bottom:5px">Newer Snapshot</div>
+      <div style="font-size:18px;font-weight:700;color:#e4ecff;letter-spacing:-.4px;line-height:1.1">${sA.date||'Period A'}</div>
+    </div>
+    ${_pm.map(m=>_sideRowV2(m.l,m.fn(m.vA))).join('')}
+  </div>`;
+
+  // Update Show old/new button style after render
+  setTimeout(()=>{const b=document.getElementById('cmp-show-on-btn');if(b){b.style.background=window._cmpShowOldNew?'rgba(91,157,255,0.12)':'transparent';b.style.color=window._cmpShowOldNew?'#5b9dff':'#7a8eaa';b.style.borderColor=window._cmpShowOldNew?'rgba(91,157,255,0.4)':'rgba(148,163,184,0.2)';}},0);
 
   body.innerHTML=`
     ${summaryHtml}
-    <div style="background:#0e1219;border:1px solid rgba(148,163,184,0.12);border-radius:14px;overflow:hidden;margin-bottom:4px">
-      ${headerRow}
-      ${metRow('ROAS',roaA,roaB,v=>fmt(v,2)+'×',true)}
-      ${metRow('Sales',sA.sales||0,sB.sales||0,gbp,true)}
-      ${metRow('Spend',sA.spend||0,sB.spend||0,gbp,false)}
-      ${metRow('Orders',sA.purchases||0,sB.purchases||0,intf,true)}
-      ${metRow('Impressions',sA.impressions||0,sB.impressions||0,intf,true)}
-      ${metRow('Clicks',sA.clicks||0,sB.clicks||0,intf,true)}
-      ${metRow('CPC',cpcA,cpcB,gbp,false)}
+    ${metricSelector}
+    <div style="display:flex;gap:12px;margin-bottom:16px;align-items:stretch;flex-wrap:wrap">
+      ${olderCard}
+      ${diffCard}
+      ${newerCard}
     </div>
     ${detailHtml}`;
 }
@@ -2275,7 +2568,7 @@ function renderPerf(){
   /* ── historical snapshot banner ── */
   const isViewingLatest=activeI===ss.length-1;
   const histBannerHtml=(!isViewingLatest&&ss.length>1)?`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--purple-bg);border:1px solid rgba(183,148,255,.35);border-radius:var(--r-sm);padding:8px 14px;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-    <span style="font-size:12px;font-weight:600;color:var(--purple)">📅 Viewing historical snapshot: <b>${last.date||''}</b></span>
+    <span style="font-size:12px;font-weight:600;color:var(--purple)">Viewing historical snapshot: <b>${last.date||''}</b></span>
     <button onclick="window._perfPeriod=null;renderPerf()" style="background:var(--purple);border:none;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:var(--font)">← Back to latest</button>
   </div>`:'';
 
@@ -2507,7 +2800,8 @@ async function numbersTabUploadCsv(type, campId, period, input){
     const matchMap={'broad match':'Broad','phrase match':'Phrase','exact match':'Exact','broad':'Broad','phrase':'Phrase','exact':'Exact','targeting_expression_predefined_close_match':'Close Match','targeting_expression_predefined_loose_match':'Loose Match','close match':'Close Match','loose match':'Loose Match'};
     if(type==='tgt'){
       s.targeting=parsed.rows.map(row=>{
-        const kw=colStr(row,['Keyword','keyword','Targeting expression','targeting_expression','Target','target'],'');if(!kw)return null;
+        let kw=colStr(row,['Keyword','keyword','Targeting expression','targeting_expression','Resolved expression','resolved_expression','Target','target','Expression','expression'],'');
+        if(!kw){const exprR=colStr(row,['Resolved targeting expression','resolved_targeting_expression'],'');const tType=colStr(row,['Targeting type','targeting_type','Type'],'');if(exprR)kw=exprR;else if(tType&&tType.toLowerCase()!=='keyword')kw='['+tType+']';else return null;}
         const rawMatch=colStr(row,['Target match type','target_match_type','Match type','match_type','Match','match'],'');
         const match=matchMap[rawMatch.toLowerCase()]||rawMatch||'—';
         const bid=colNum(row,['Bid (GBP)','Bid (USD)','Bid','bid'],0);
@@ -2802,41 +3096,29 @@ async function saveChangeEntry(){
   const review=document.getElementById('clf-review').value;
   const goal=document.getElementById('clf-goal').value.trim();
   const status=document.getElementById('clf-status');
-  const saveBtn=document.querySelector('#tab-changes .btn[onclick*="saveChangeEntry"]')||document.querySelector('#tab-changes button.btn');
 
   if(!date||!what||!why||!review){
     if(status){status.textContent='⚠ Date, what, why and review date are all required';status.style.color='var(--red)';}
     return;
   }
 
-  if(saveBtn){saveBtn.textContent='Saving…';saveBtn.disabled=true;}
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
+  c.changes.unshift(change); // newest first
 
-  /* Save to Supabase first, then add to local array on success */
+  /* Save to Supabase */
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
-      const saved=await sbInsert('changes',{
+      await sbInsert('changes',{
         campaign_id:c.id,type,date,what,why,goal:goal||null,
         outcome:'pending',outcome_note:null,
         review_date:review,created_at:new Date().toISOString()
       });
-      if(saved&&saved.id){
-        change._dbId=saved.id;
-        c.changes.unshift(change);
-        if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
-      } else {
-        if(status){status.textContent='⚠ Save may have failed — try again';status.style.color='var(--red)';}
-        if(saveBtn){saveBtn.textContent='Log change';saveBtn.disabled=false;}
-        return;
-      }
+      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
     }catch(e){
       console.error('Change save failed:',e);
-      if(status){status.textContent='⚠ Supabase error: '+e.message;status.style.color='var(--red)';}
-      if(saveBtn){saveBtn.textContent='Log change';saveBtn.disabled=false;}
-      return;
+      if(status){status.textContent='Saved locally (Supabase failed)';status.style.color='var(--amber)';}
     }
   } else {
-    c.changes.unshift(change);
     if(status){status.textContent='✓ Change saved';status.style.color='var(--green)';}
   }
 
@@ -2846,7 +3128,6 @@ async function saveChangeEntry(){
   document.getElementById('clf-goal').value='';
   document.getElementById('clf-review').value='';
   document.getElementById('clf-date').value=new Date().toISOString().slice(0,10);
-  if(saveBtn){saveBtn.textContent='Log change';saveBtn.disabled=false;}
 
   /* Update badge + list */
   document.getElementById('potab-changes').textContent=c.changes.length||'';
@@ -2874,7 +3155,7 @@ function changeEntry(ch, campId, chIdx){
       :daysUntil<0?`<b style="color:var(--red)">Review ${Math.abs(daysUntil)}d overdue</b>`
       :daysUntil<=7?`<span style="color:var(--amber);font-weight:600">Review in ${daysUntil}d — ${fmtDateShort(ch.review)}</span>`
       :`<span style="color:#dde3ef;font-weight:500">Review ${fmtDateShort(ch.review)}</span>`)
-    :'<span style="color:#b8c4d8">No review date set</span>';
+    :'<span style="color:#d4dff0">No review date set</span>';
 
   const completeBtn=(campId!=null&&chIdx!=null&&ch.outcome==='pending')
     ?`<div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
@@ -3053,8 +3334,13 @@ function colStr(row,candidates,fallback=''){
 function matchTag(match){
   if(!match||match==='—'||match.trim()==='')return'<span class="mtag mtag-auto">AUTO</span>';
   const m=match.trim().toLowerCase();
+  /* Product/category/keyword targeting types */
+  if(m.includes('product'))return`<span class="mtag" style="background:rgba(183,148,255,.14);color:var(--purple);border:1px solid rgba(183,148,255,.3)">PROD</span>`;
+  if(m.includes('category'))return`<span class="mtag" style="background:rgba(52,224,208,.14);color:var(--teal);border:1px solid rgba(52,224,208,.3)">CAT</span>`;
+  if(m.includes('substitute'))return`<span class="mtag" style="background:rgba(255,181,71,.14);color:var(--amber);border:1px solid rgba(255,181,71,.3)">SUB</span>`;
+  if(m.includes('complement'))return`<span class="mtag" style="background:rgba(255,122,138,.14);color:var(--coral);border:1px solid rgba(255,122,138,.3)">COMP</span>`;
   const cls=m.includes('exact')?'mtag-exact':m.includes('phrase')?'mtag-phrase':m.includes('broad')?'mtag-broad':m.includes('close')?'mtag-close':m.includes('loose')?'mtag-loose':m.includes('auto')?'mtag-auto':'';
-  const label=m.includes('close')?'CLOSE':m.includes('loose')?'LOOSE':match.toUpperCase();
+  const label=m.includes('close')?'CLOSE':m.includes('loose')?'LOOSE':match.length>8?match.slice(0,6).toUpperCase()+'…':match.toUpperCase();
   return`<span class="mtag ${cls}">${label}</span>`;
 }
 
@@ -3067,10 +3353,18 @@ function parsePasteFor(type,text){
   if(type==='tgt'){
     const matchMap={'broad match':'Broad','phrase match':'Phrase','exact match':'Exact','broad':'Broad','phrase':'Phrase','exact':'Exact','targeting_expression_predefined_close_match':'Close Match','targeting_expression_predefined_loose_match':'Loose Match','targeting_expression_predefined_substitutes':'Substitutes','targeting_expression_predefined_complements':'Complements','close match':'Close Match','loose match':'Loose Match'};
     const rows=parsed.rows.map(r=>{
-      const kw=colStr(r,['Keyword','keyword','Targeting expression','targeting_expression','Customer Search Term','customer_search_term','Target','target'],'');
-      if(!kw)return null;
+      let kw=colStr(r,['Keyword','keyword','Targeting expression','targeting_expression','Resolved expression','resolved_expression','Customer Search Term','customer_search_term','Target','target','Expression','expression'],'');
       const rawMatch=colStr(r,['Target match type','target_match_type','Match type','match_type','Match','match'],'');
       const match=matchMap[rawMatch.toLowerCase()]||rawMatch||'—';
+      /* For product/category targeting, kw may be empty — use targeting expression or a descriptive fallback */
+      if(!kw){
+        /* Try to build a label from the targeting type/expression */
+        const exprResolved=colStr(r,['Resolved targeting expression','resolved_targeting_expression','Targeting expression resolved'],'');
+        const targType=colStr(r,['Targeting type','targeting_type','Type','type'],'');
+        if(exprResolved)kw=exprResolved;
+        else if(targType&&targType.toLowerCase()!=='keyword')kw='['+targType+']';
+        else return null; /* truly empty row with no useful data */
+      }
       const bid=colNum(r,['Bid (GBP)','Bid (USD)','Bid','bid_gbp','bid'],0);
       const imp=Math.round(colNum(r,['Impressions','impressions'],0));
       const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
@@ -3968,7 +4262,7 @@ function renderChangeLog(){
     {l:'Pending review',v:pend,c:'var(--amber)',s:'awaiting assessment'},
     {l:'Overdue',v:overdue,c:overdue?'var(--red)':'var(--text3)',s:overdue?'need reviewing now':'none overdue'},
   ].map(k=>`<div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 14px;box-shadow:var(--shadow-sm)">
-    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#b8c4d8;margin-bottom:4px">${k.l}</div>
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#d4dff0;margin-bottom:4px">${k.l}</div>
     <div style="font-family:var(--display);font-size:22px;font-weight:700;color:${k.c};line-height:1">${k.v}</div>
     <div style="font-size:10.5px;color:#dde3ef;margin-top:4px">${k.s}</div>
   </div>`).join('');
@@ -4003,16 +4297,13 @@ function renderChangeLog(){
       `<span style="font-size:10px;color:var(--text3)">${fmtDateShort(ch.review)}</span>`):'';
     const campChip=x.cname?`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">${x.cname}</span>`:'';
     const typeChip=`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,.2)">${ch.type}</span>`;
-    const markBtns=ch.outcome==='pending'?`<div style="display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+    const markBtns=ch.outcome==='pending'?`<div style="display:flex;gap:4px;flex-shrink:0">
       <button onclick="clQuickMark(${x.cid},${x.idx},'win',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--green-bg);border:1px solid rgba(46,229,157,.3);color:var(--green);cursor:pointer;font-family:var(--font);font-weight:600">✓ Worked</button>
       <button onclick="clQuickMark(${x.cid},${x.idx},'loss',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">✕ Didn't</button>
-      <button onclick="clEditEntry(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg4);border:1px solid var(--border);color:var(--text3);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
-    </div>`:`<div style="display:flex;gap:4px;flex-shrink:0">
-      <button onclick="clEditEntry(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg4);border:1px solid var(--border);color:var(--text3);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
-    </div>`;
+    </div>`:'';
     return`<div style="display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:start${reviewDue?';background:rgba(255,93,108,.04);border-left:3px solid var(--red)':''}">
       <div style="width:24px;height:24px;border-radius:6px;background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}44;display:grid;place-items:center;font-size:11px">${ic}</div>
-      <div style="min-width:0;cursor:pointer" onclick="clOpenDetail(${x.cid},${x.idx})">
+      <div style="min-width:0">
         <div style="font-size:12.5px;font-weight:700;color:#f2f4f9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:400px;margin-bottom:4px">${ch.what}</div>
         <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
           ${typeChip}${campChip}
@@ -4022,7 +4313,6 @@ function renderChangeLog(){
         </div>
         ${ch.why?`<div style="font-size:11px;color:var(--text3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${ch.why}</div>`:''}
         ${ch.outcomeNote?`<div style="font-size:10.5px;color:var(--green);margin-top:2px">Result: ${ch.outcomeNote}</div>`:''}
-        <div style="font-size:9.5px;color:var(--text4);margin-top:3px">Click to view full details</div>
       </div>
       ${markBtns}
     </div>`;
@@ -4040,14 +4330,14 @@ function renderChangeLog(){
       (groups[key]=groups[key]||[]).push(x);
     });
     document.getElementById('cl-content').innerHTML=Object.entries(groups).map(([k,items])=>`
-      <div class="sh" style="margin:12px 0 6px"><div class="tt" style="font-size:12.5px;color:#f2f4f9">${k} <small style="color:#b8c4d8">${items.length} change${items.length!==1?'s':''}</small></div></div>
+      <div class="sh" style="margin:12px 0 6px"><div class="tt" style="font-size:12.5px;color:#f2f4f9">${k} <small style="color:#d4dff0">${items.length} change${items.length!==1?'s':''}</small></div></div>
       <div class="card" style="overflow:hidden">${items.map(x=>clCompactRow(x)).join('')}</div>`).join('');
   }
 
   const totalLabel=`${intf(totalItems)} change${totalItems!==1?'s':''} ${srch||tf!=='all'||of2!=='all'||campF!=='all'||dateF!=='all'?'(filtered)':'total'}`;
-  if(totalPages<=1){document.getElementById('cl-pagination').innerHTML=`<span style="font-size:12px;color:#b8c4d8">${totalLabel}</span>`;return;}
+  if(totalPages<=1){document.getElementById('cl-pagination').innerHTML=`<span style="font-size:12px;color:#d4dff0">${totalLabel}</span>`;return;}
   const paginHtml=`
-    <span style="font-size:11px;color:#b8c4d8">${totalLabel}</span>
+    <span style="font-size:11px;color:#d4dff0">${totalLabel}</span>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="window._clPage=0;renderChangeLog()" ${safePage===0?'disabled':''} class="btn ghost" style="font-size:11px;padding:5px 10px">First</button>
       <button onclick="window._clPage=Math.max(0,${safePage}-1);renderChangeLog()" ${safePage===0?'disabled':''} class="btn ghost" style="font-size:11px;padding:5px 12px">← Prev</button>
@@ -4062,129 +4352,6 @@ function clQuickMark(campId,chIdx,outcome,btn){
   btn.textContent='…';btn.disabled=true;
   markChange(campId,chIdx,outcome);
   setTimeout(()=>renderChangeLog(),150);
-}
-
-function clOpenDetail(campId,chIdx){
-  const c=campaigns.find(x=>x.id==campId);
-  if(!c)return;
-  const ch=c.changes[chIdx];
-  if(!ch)return;
-  const dotCol=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
-  const ocLabel=ch.outcome==='win'?'✓ Worked':ch.outcome==='loss'?'✕ Did not work':'◷ Pending review';
-  const field=(label,val)=>val?`<div style="margin-bottom:12px"><div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:4px">${label}</div><div style="font-size:13px;color:#f2f4f9;line-height:1.5">${val}</div></div>`:'';
-  const overlay=document.createElement('div');
-  overlay.id='cl-detail-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  overlay.onclick=e=>{if(e.target===overlay)overlay.remove();};
-  overlay.innerHTML=`<div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="font-size:14px;font-weight:700;color:#f2f4f9;margin-bottom:2px">${ch.what}</div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <span style="font-size:10px;padding:2px 8px;border-radius:5px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,.2)">${ch.type}</span>
-          <span style="font-size:10px;padding:2px 8px;border-radius:5px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">${c.alias||c.name}</span>
-          <span style="font-size:10px;padding:2px 7px;border-radius:5px;background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}44">${ocLabel}</span>
-        </div>
-      </div>
-      <button onclick="document.getElementById('cl-detail-overlay').remove()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px 8px;line-height:1">✕</button>
-    </div>
-    <div style="padding:20px">
-      ${field('Date made',fmtDate(ch.date))}
-      ${field('What was changed',ch.what)}
-      ${field('Reason / why',ch.why)}
-      ${field('Goal / expected outcome',ch.goal)}
-      ${field('Review date',ch.review?fmtDate(ch.review):null)}
-      ${field('Outcome',ocLabel)}
-      ${field('Outcome notes',ch.outcomeNote)}
-      <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--border);margin-top:4px">
-        <button onclick="document.getElementById('cl-detail-overlay').remove();clEditEntry(${campId},${chIdx})" style="font-size:12px;padding:6px 14px;border-radius:7px;background:var(--bg4);border:1px solid var(--border);color:#dde3ef;cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit this entry</button>
-        <button onclick="document.getElementById('cl-detail-overlay').remove()" style="font-size:12px;padding:6px 14px;border-radius:7px;background:var(--blue);border:none;color:#fff;cursor:pointer;font-family:var(--font);font-weight:600">Close</button>
-      </div>
-    </div>
-  </div>`;
-  document.body.appendChild(overlay);
-}
-
-function clEditEntry(campId,chIdx){
-  const c=campaigns.find(x=>x.id==campId);
-  if(!c)return;
-  const ch=c.changes[chIdx];
-  if(!ch)return;
-  /* Reuse the global changelog modal but pre-fill it for editing */
-  const sel=document.getElementById('gcl-camp');
-  sel.innerHTML=campaigns.map(cc=>`<option value="${cc.id}" ${cc.id==campId?'selected':''}>${cc.alias||cc.name}</option>`).join('');
-  sel.value=campId;sel.disabled=true;
-  document.getElementById('gcl-date').value=ch.date||'';
-  document.getElementById('gcl-type').value=ch.type||'PPC Bid';
-  document.getElementById('gcl-what').value=ch.what||'';
-  document.getElementById('gcl-why').value=ch.why||'';
-  document.getElementById('gcl-review').value=ch.review||'';
-  document.getElementById('gcl-goal').value=ch.goal||'';
-  const titleEl=document.querySelector('#gcl-overlay .po-title');
-  if(titleEl)titleEl.textContent='Edit change';
-  const saveBtn=document.querySelector('#gcl-overlay .po-body button.btn:last-child');
-  if(saveBtn){saveBtn.textContent='Save edits';saveBtn.onclick=()=>saveEditedChange(campId,chIdx);}
-  document.getElementById('gcl-status').textContent='';
-  document.getElementById('gcl-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  /* Store edit context so we can restore the modal on close */
-  window._clEditMode={campId,chIdx};
-  setTimeout(()=>document.getElementById('gcl-what').focus(),50);
-}
-
-async function saveEditedChange(campId,chIdx){
-  const c=campaigns.find(x=>x.id==campId);
-  if(!c)return;
-  const date=document.getElementById('gcl-date').value;
-  const type=document.getElementById('gcl-type').value;
-  const what=document.getElementById('gcl-what').value.trim();
-  const why=document.getElementById('gcl-why').value.trim();
-  const review=document.getElementById('gcl-review').value;
-  const goal=document.getElementById('gcl-goal').value.trim();
-  const status=document.getElementById('gcl-status');
-  const saveBtn=document.querySelector('#gcl-overlay .po-body button.btn:last-child');
-  if(!date||!what||!why||!review){
-    if(status){status.textContent='⚠ All fields marked * are required';status.style.color='var(--red)';}
-    return;
-  }
-  if(saveBtn){saveBtn.textContent='Saving…';saveBtn.disabled=true;}
-  /* Update local array first, preserving outcome */
-  const existing=c.changes[chIdx];
-  c.changes[chIdx]={...existing,type,date,what,why,goal,review};
-  /* PATCH Supabase */
-  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
-    try{
-      const hds=await sbHeaders();
-      const payload={type,date,what,why,goal:goal||null,review_date:review,updated_at:new Date().toISOString()};
-      /* Find by stored _dbId if available, otherwise look up by campaign + what + original date */
-      let rowId=existing._dbId||null;
-      if(!rowId){
-        const lookup=await fetch(SUPABASE_URL+'/rest/v1/changes?campaign_id=eq.'+c.id+'&what=eq.'+encodeURIComponent(existing.what||what)+'&select=id&limit=1',{headers:hds});
-        if(lookup.ok){const rows=await lookup.json();rowId=rows[0]?.id||null;}
-      }
-      if(rowId){
-        await fetch(SUPABASE_URL+'/rest/v1/changes?id=eq.'+rowId,{method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},body:JSON.stringify(payload)});
-        if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
-      } else {
-        /* Row not found — insert as new */
-        await sbInsert('changes',{campaign_id:c.id,type,date,what,why,goal:goal||null,outcome:existing.outcome||'pending',review_date:review,created_at:new Date().toISOString()});
-        if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
-      }
-    }catch(e){
-      console.error('saveEditedChange Supabase fail:',e);
-      if(status){status.textContent='⚠ Local only — Supabase failed';status.style.color='var(--amber)';}
-    }
-  } else {
-    if(status){status.textContent='✓ Updated locally';status.style.color='var(--green)';}
-  }
-  renderCampaigns();renderChangeLog();
-  /* Restore modal to "add" mode */
-  const titleEl=document.querySelector('#gcl-overlay .po-title');
-  if(titleEl)titleEl.textContent='Log a change';
-  if(saveBtn){saveBtn.textContent='Save change';saveBtn.onclick=saveGlobalChange;saveBtn.disabled=false;}
-  document.getElementById('gcl-camp').disabled=false;
-  window._clEditMode=null;
-  setTimeout(()=>closeGlobalCL(),900);
 }
 
 /* ════════ PRODUCTS PAGE ════════ */
@@ -4219,7 +4386,7 @@ function openProductPopup(asin){
     const area=d+` L${pts[pts.length-1][0]} ${h} L${pts[0][0]} ${h} Z`;
     const lv=vals[vals.length-1],pv2=vals[vals.length-2]||lv;
     const tc=lv>=pv2?col:'var(--red)';
-    return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block"><defs><linearGradient id="ppg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tc}" stop-opacity=".2"/><stop offset="1" stop-color="${tc}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#ppg)"/><path d="${d}" fill="none" stroke="${tc}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="4" fill="${tc}" stroke="#0d1117" stroke-width="2"/></svg>`;
+    return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block"><defs><linearGradient id="ppg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tc}" stop-opacity=".2"/><stop offset="1" stop-color="${tc}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#ppg)"/><path d="${d}" fill="none" stroke="${tc}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="4" fill="${tc}" stroke="var(--panel)" stroke-width="2"/></svg>`;
   };
   const rc=ragColor(rg);
 
@@ -4384,28 +4551,18 @@ function openProductEdit(asin){
   document.getElementById('prod-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeProdEdit(){document.getElementById('prod-overlay').classList.remove('open');document.body.style.overflow='';}
-async function saveProdEdit(btnOrAsin){
+function saveProdEdit(btnOrAsin){
   const asin=typeof btnOrAsin==='string'?btnOrAsin:(btnOrAsin?.dataset?.asin||'');
+  /* TODO: write to Supabase products table */
   const name=document.getElementById('pf-name').value.trim();
   const newAsin=document.getElementById('pf-asin').value.trim();
   const sku=document.getElementById('pf-sku').value.trim();
   const price=parseFloat(document.getElementById('pf-price').value)||0;
   const status=document.getElementById('pf-status').value;
   if(!name||!newAsin){alert('Product name and ASIN are required.');return;}
-  /* Update local campaigns array */
+  /* update local campaigns array until Supabase sync */
   campaigns.filter(c=>c.asin===(asin||newAsin)).forEach(c=>{c.product=name;c.sku=sku||c.sku;c.price=price||c.price;c.status=status;});
-  /* PATCH Supabase for every campaign with this ASIN */
-  if(SUPABASE_URL&&SUPABASE_KEY){
-    try{
-      const hds=await sbHeaders();
-      const payload={product_name:name,sku:sku||null,price:price||null,status,updated_at:new Date().toISOString()};
-      const targetCamps=campaigns.filter(c=>c.asin===(asin||newAsin)&&c.id);
-      await Promise.all(targetCamps.map(c=>
-        fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},body:JSON.stringify(payload)})
-      ));
-    }catch(e){console.error('saveProdEdit Supabase fail:',e);}
-  }
-  closeProdEdit();renderProducts();renderCampaigns();
+  closeProdEdit();renderProducts();
 }
 
 /* ════════ SNAPSHOTS PAGE (condensed) ════════ */
@@ -5269,7 +5426,8 @@ function snapModalReplaceCsv(campId,type,input){
     if(type==='tgt'){
       const matchMap={'broad match':'Broad','phrase match':'Phrase','exact match':'Exact','broad':'Broad','phrase':'Phrase','exact':'Exact','targeting_expression_predefined_close_match':'Close Match','targeting_expression_predefined_loose_match':'Loose Match','close match':'Close Match','loose match':'Loose Match'};
       window._snapEditBuf[campId].tgts=parsed.rows.map(row=>{
-        const kw=colStr(row,['Keyword','keyword','Targeting expression','targeting_expression','Target','target'],'');if(!kw)return null;
+        let kw=colStr(row,['Keyword','keyword','Targeting expression','targeting_expression','Resolved expression','resolved_expression','Target','target','Expression','expression'],'');
+        if(!kw){const exprR=colStr(row,['Resolved targeting expression','resolved_targeting_expression'],'');const tType=colStr(row,['Targeting type','targeting_type','Type'],'');if(exprR)kw=exprR;else if(tType&&tType.toLowerCase()!=='keyword')kw='['+tType+']';else return null;}
         const rawMatch=colStr(row,['Target match type','target_match_type','Match type','match_type','Match','match'],'');
         const match=matchMap[rawMatch.toLowerCase()]||rawMatch||'—';
         const bid=colNum(row,['Bid (GBP)','Bid (USD)','Bid','bid'],0);
@@ -5549,24 +5707,11 @@ function testSupabaseConnection(){
     .catch(e=>{document.getElementById('cfg-status').textContent='Failed: '+e.message;});
 }
 
-async function saveAppSettings(){
+function saveAppSettings(){
   appSettings.targetRoas=document.getElementById('cfg-target-roas').value;
   appSettings.maxAcos=document.getElementById('cfg-max-acos').value;
   appSettings.marketplace=document.getElementById('cfg-marketplace').value;
-  const btn=event.target;btn.textContent='Saving…';btn.disabled=true;
-  if(SUPABASE_URL&&SUPABASE_KEY){
-    try{
-      const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/settings?on_conflict=id',{
-        method:'POST',
-        headers:{...hds,'Prefer':'resolution=merge-duplicates,return=minimal'},
-        body:JSON.stringify({id:'app_settings',key:'app_settings',value:JSON.stringify(appSettings),updated_at:new Date().toISOString()})
-      });
-      btn.textContent='Saved ✓';
-    }catch(e){btn.textContent='Saved locally ✓';}
-  } else {btn.textContent='Saved ✓';}
-  btn.disabled=false;
-  setTimeout(()=>btn.textContent='Save defaults',1400);
+  const btn=event.target;btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save defaults',1400);
 }
 
 function applyMatchColours(){
@@ -5581,7 +5726,7 @@ function applyMatchColours(){
   root.style.setProperty('--match-broad',broad);
   root.style.setProperty('--match-broad-bg',broad+'26');
 }
-async function saveMatchColours(){
+function saveMatchColours(){
   const exact=document.getElementById('cfg-col-exact')?.value;
   const phrase=document.getElementById('cfg-col-phrase')?.value;
   const broad=document.getElementById('cfg-col-broad')?.value;
@@ -5590,21 +5735,7 @@ async function saveMatchColours(){
   if(broad)localStorage.setItem('matchColBroad',broad);
   applyMatchColours();
   const s=document.getElementById('cfg-status');
-  if(s){s.textContent='Saving…';s.style.color='var(--text3)';}
-  if(SUPABASE_URL&&SUPABASE_KEY){
-    try{
-      const hds=await sbHeaders();
-      const value=JSON.stringify({exact,phrase,broad});
-      await fetch(SUPABASE_URL+'/rest/v1/settings?on_conflict=id',{
-        method:'POST',
-        headers:{...hds,'Prefer':'resolution=merge-duplicates,return=minimal'},
-        body:JSON.stringify({id:'match_colours',key:'match_colours',value,updated_at:new Date().toISOString()})
-      });
-      if(s){s.textContent='✓ Match colours saved';s.style.color='var(--green)';}
-    }catch(e){if(s){s.textContent='✓ Saved locally';s.style.color='var(--amber)';}}
-  } else {
-    if(s){s.textContent='✓ Match colours saved (local)';s.style.color='var(--green)';}
-  }
+  if(s){s.textContent='Match colours saved';s.style.color='var(--green)';}
   setTimeout(()=>{if(s)s.textContent='';},2000);
 }
 function loadMatchColours(){
@@ -5631,7 +5762,7 @@ function setMatchPreset(name){
 }
 
 
-async function saveDisplayPrefs(){
+function saveDisplayPrefs(){
   const prefs={
     metrics:[...document.querySelectorAll('#cfg-metrics-toggle .tog.on')].map(b=>b.dataset.metric),
     defaultSort:document.getElementById('cfg-default-sort')?.value||'spend',
@@ -5647,20 +5778,7 @@ async function saveDisplayPrefs(){
   window.displayPrefs=prefs;
   try{localStorage.setItem('bdl_display_prefs',JSON.stringify(prefs));}catch(e){}
   const s=document.getElementById('cfg-status');
-  if(s){s.textContent='Saving…';s.style.color='var(--text3)';}
-  if(SUPABASE_URL&&SUPABASE_KEY){
-    try{
-      const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/settings?on_conflict=id',{
-        method:'POST',
-        headers:{...hds,'Prefer':'resolution=merge-duplicates,return=minimal'},
-        body:JSON.stringify({id:'display_prefs',key:'display_prefs',value:JSON.stringify(prefs),updated_at:new Date().toISOString()})
-      });
-      if(s){s.textContent='✓ Saved';s.style.color='var(--green)';setTimeout(()=>{s.textContent='';},1800);}
-    }catch(e){if(s){s.textContent='✓ Saved locally';s.style.color='var(--amber)';setTimeout(()=>{s.textContent='';},1800);}}
-  } else {
-    if(s){s.textContent='✓ Saved';s.style.color='var(--green)';setTimeout(()=>{s.textContent='';},1800);}
-  }
+  if(s){s.textContent='✓ Saved';s.style.color='var(--green)';setTimeout(()=>{s.textContent='';},1800);}
 }
 function loadDisplayPrefs(){
   try{
@@ -5724,7 +5842,7 @@ function addPriceEntry(preAsin){
   document.getElementById('price-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
 function closePriceModal(){document.getElementById('price-overlay').classList.remove('open');document.body.style.overflow='';}
-async function savePriceEntry(){
+function savePriceEntry(){
   const asin=document.getElementById('pc-asin').value;
   const price=parseFloat(document.getElementById('pc-price').value);
   const date=document.getElementById('pc-date').value;
@@ -5735,34 +5853,19 @@ async function savePriceEntry(){
   priceHistory[asin].sort((a,b)=>a.date.localeCompare(b.date));
   /* also update c.price on matching campaigns */
   campaigns.filter(c=>c.asin===asin).forEach(c=>c.price=price);
-  await _savePriceHistoryToSupabase();
   closePriceModal();renderPriceHistory();
 }
-async function deletePriceEntry(asin,date){
+function deletePriceEntry(asin,date){
   if(!confirm('Remove this price entry?'))return;
   if(priceHistory[asin])priceHistory[asin]=priceHistory[asin].filter(e=>e.date!==date);
-  await _savePriceHistoryToSupabase();
   renderPriceHistory();
-}
-async function _savePriceHistoryToSupabase(){
-  if(!SUPABASE_URL||!SUPABASE_KEY)return;
-  try{
-    const hds=await sbHeaders();
-    const value=JSON.stringify(priceHistory);
-    /* Upsert into settings table with id='price_history' */
-    await fetch(SUPABASE_URL+'/rest/v1/settings?on_conflict=id',{
-      method:'POST',
-      headers:{...hds,'Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify({id:'price_history',key:'price_history',value,updated_at:new Date().toISOString()})
-    });
-  }catch(e){console.error('Price history Supabase save fail:',e);}
 }
 
 /* ════════ NAV ════════ */
 document.querySelectorAll('#nav .nav-btn').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#nav .nav-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+b.dataset.p).classList.add('active');
-  if(b.dataset.p==='dashboard'){initDashSections();populateDashPeriodSelectors();renderDashPeriod();}
+  if(b.dataset.p==='dashboard'){populateDashPeriodSelectors();renderDashPeriod();}
   if(b.dataset.p==='campaigns')renderCampaigns();
   if(b.dataset.p==='insights')renderInsights();
   if(b.dataset.p==='changelog')renderChangeLog();
@@ -5838,7 +5941,6 @@ function renderDashPeriod(){
   renderDashCampBreakdown(period,cmpPeriod);
   renderDashSinceLast(period,cmpPeriod);
   renderDashActionList();
-  renderDashReviewsList();
   renderDashWhatsWorking();
   renderDashWorstPerforming();
   renderDashWastingMoney();
@@ -5883,7 +5985,6 @@ function renderDashActionList(){
   const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
   const maxAcos=parseFloat(document.getElementById('cfg-max-acos')?.value||30);
   if(!window._actionedKeys)window._actionedKeys=new Set();
-  /* Performance alerts only — NO review/scheduled items */
   const actions=[];
   A.forEach(c=>{
     const ls=c.snapshots[c.snapshots.length-1]||{};
@@ -5895,203 +5996,58 @@ function renderDashActionList(){
     if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>25&&c.roas>=T) actions.push({pri:2,type:'warn',tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
     (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0).forEach(t=>{actions.push({pri:1,type:'urgent',tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
     if(ls.impressions===0&&c.snapshots.length>0) actions.push({pri:3,type:'info',tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status in Amazon',key:c.id+'|noimpr'});
+    const today=new Date();today.setHours(0,0,0,0);
+    /* Scheduled review frequency — only show if no change-based review already flagged */
+    if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
+      const lastSnap=c.snapshots[c.snapshots.length-1];
+      const lastDate=lastSnap.date||'—';
+      /* Try to estimate days since last snapshot from today */
+      const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
+      /* Only fire if no pending change review already showing */
+      if(!hasPendingReview){
+        const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
+        actions.push({pri:3,type:'info',tag:'SCHEDULED',label:rfLabel+' review due — '+lastDate,camp:name,sub:'Review campaign performance and log any changes needed',cid:c.id,action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
+      }
+    }
+    (c.changes||[]).filter(ch=>ch.outcome==='pending'&&ch.review).forEach(ch=>{try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);if(diff<=3)actions.push({pri:2,type:'review',tag:diff<=0?'OVERDUE':'REVIEW DUE',label:(diff<=0?'Overdue: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work'});}catch(e){}});
   });
   actions.sort((a,b)=>a.pri-b.pri);
+  /* give every action a stable key if not already set */
   actions.forEach((a,i)=>{if(!a.key)a.key=a.cid+'|'+a.tag+'|'+i;});
-  const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)'};
-  const bgMap={urgent:'rgba(255,93,108,.1)',warn:'rgba(255,181,71,.08)',info:'rgba(91,157,255,.08)'};
+  const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)',review:'var(--purple)'};
+  const bgMap={urgent:'rgba(255,93,108,.1)',warn:'rgba(255,181,71,.08)',info:'rgba(91,157,255,.08)',review:'rgba(183,148,255,.1)'};
   const visible=actions.filter(a=>!window._actionedKeys.has(a.key));
   const dismissed=actions.length-visible.length;
   const count=visible.length;
   const urgentVisible=visible.some(a=>a.type==='urgent');
-  /* Update section badge */
-  _dashUpdateAlertsBadge();
   const hdr=`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">Action Required</span>
       ${count?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${urgentVisible?'var(--red-bg)':'var(--amber-bg)'};color:${urgentVisible?'var(--red)':'var(--amber)'};border:1px solid ${urgentVisible?'rgba(255,93,108,.3)':'rgba(255,181,71,.3)'}">${count} item${count!==1?'s':''}</span>`:'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>'}
-      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} dismissed</span>`:''}
+      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} marked done</span>`:''}
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      ${dismissed?`<button onclick="window._actionedKeys.clear();renderDashActionList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset</button>`:''}
-      <span style="font-size:10px;color:var(--text4)">Click to open</span>
+      ${dismissed?`<button onclick="window._actionedKeys.clear();renderDashActionList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset all</button>`:''}
+      <span style="font-size:10.5px;color:var(--text4)">Click row to open · Mark Done to dismiss</span>
     </div>
   </div>`;
-  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">✓ No campaign alerts — all looking healthy.</div>';return;}
-  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All alerts dismissed. Click Reset to restore.</div>';return;}
-  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:300px">'+visible.slice(0,15).map(a=>{
-    const col=colMap[a.type]||'var(--blue)';
-    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);transition:.12s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
-      <div style="font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px;background:${bgMap[a.type]||'rgba(91,157,255,.08)'};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${a.cid}')">${a.tag}</div>
+  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All campaigns healthy — no actions required.</div>';return;}
+  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All actions marked as done. Click Reset all to bring them back.</div>';return;}
+  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:280px">'+visible.slice(0,15).map(a=>{
+    const col=colMap[a.type];
+    const ek=JSON.stringify(a.key);
+    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:.12s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
+      <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:${bgMap[a.type]};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${a.cid}')">${a.tag}</div>
       <div style="min-width:0;cursor:pointer" onclick="openCamp('${a.cid}')">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:1px">
-          <span style="font-size:12px;font-weight:700;color:#f2f4f9">${a.label}</span>
-          <span style="font-size:10.5px;padding:1px 7px;border-radius:4px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${a.camp}</span>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
+          <span style="font-size:12.5px;font-weight:700;color:#f2f4f9">${a.label}</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:5px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${a.camp}</span>
         </div>
-        <div style="font-size:10.5px;color:#b8c4d8">${a.sub} <span style="color:#8892a8;font-style:italic"> — ${a.action}</span></div>
+        <div style="font-size:11px;color:#d4dff0">${a.sub} <span style="color:#8892a8;font-style:italic"> — ${a.action}</span></div>
       </div>
-      <button onclick="dashMarkDone(this)" data-akey="${a.key.replace(/"/g,'&quot;')}" title="Dismiss" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
+      <button onclick="window._actionedKeys.add(${ek});renderDashActionList()" title="Dismiss this action" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
     </div>`;
   }).join('')+'</div>';
-}
-
-function renderDashReviewsList(){
-  const el=document.getElementById('dash-reviews-list');if(!el)return;
-  const A=campaigns.filter(c=>c.status==='active');
-  if(!window._reviewedKeys)window._reviewedKeys=new Set();
-  const today=new Date();today.setHours(0,0,0,0);
-  const reviews=[];
-  A.forEach(c=>{
-    const name=c.alias||c.name;
-    /* Change-log review dates */
-    (c.changes||[]).filter(ch=>ch.outcome==='pending'&&ch.review).forEach(ch=>{
-      try{
-        const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);
-        const diff=Math.round((d-today)/86400000);
-        const key=c.id+'|chreview|'+ch.review+'|'+ch.what.slice(0,20);
-        reviews.push({pri:diff<=0?0:diff<=3?1:diff<=7?2:3,type:diff<=0?'overdue':diff<=3?'soon':'scheduled',tag:diff<=0?'OVERDUE':diff<=3?'DUE SOON':'REVIEW DUE',label:(diff<=0?'Overdue '+Math.abs(diff)+'d: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work',key,diff});
-      }catch(e){}
-    });
-    /* Scheduled frequency reviews */
-    if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
-      const lastSnap=c.snapshots[c.snapshots.length-1];
-      const lastDate=lastSnap.date||'—';
-      const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
-      const key=c.id+'|sched|'+rfLabel;
-      reviews.push({pri:4,type:'scheduled',tag:'SCHEDULED',label:rfLabel+' review — last: '+lastDate,camp:name,sub:'Review ROAS, ACOS and keywords then log any changes',cid:c.id,action:'Check campaign and log changes',key,diff:null});
-    }
-  });
-  reviews.sort((a,b)=>a.pri-b.pri);
-  reviews.forEach((r,i)=>{if(!r.key)r.key=r.cid+'|rev|'+i;});
-  const colMap={overdue:'var(--red)',soon:'var(--amber)',scheduled:'var(--blue)','review due':'var(--purple)'};
-  const bgMap={overdue:'rgba(255,93,108,.1)',soon:'rgba(255,181,71,.08)',scheduled:'rgba(91,157,255,.08)','review due':'rgba(183,148,255,.1)'};
-  const visible=reviews.filter(r=>!window._reviewedKeys.has(r.key));
-  const dismissed=reviews.length-visible.length;
-  const count=visible.length;
-  const hasOverdue=visible.some(r=>r.type==='overdue');
-  const hdr=`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-    <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">Reviews Due</span>
-      ${count?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${hasOverdue?'var(--red-bg)':'var(--purple-bg,rgba(183,148,255,.12))'};color:${hasOverdue?'var(--red)':'var(--purple,#b794ff)'};border:1px solid ${hasOverdue?'rgba(255,93,108,.3)':'rgba(183,148,255,.3)'}">${count} item${count!==1?'s':''}</span>`:'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>'}
-      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} dismissed</span>`:''}
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      ${dismissed?`<button onclick="window._reviewedKeys.clear();renderDashReviewsList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset</button>`:''}
-      <span style="font-size:10px;color:var(--text4)">Click to open</span>
-    </div>
-  </div>`;
-  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">✓ No reviews scheduled or overdue.</div>';return;}
-  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All reviews dismissed. Click Reset to restore.</div>';return;}
-  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:300px">'+visible.slice(0,20).map(r=>{
-    const col=colMap[r.type]||'var(--blue)';
-    const bg=bgMap[r.type]||'rgba(91,157,255,.08)';
-    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);transition:.12s" onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
-      <div style="font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:5px;background:${bg};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${r.cid}')">${r.tag}</div>
-      <div style="min-width:0;cursor:pointer" onclick="openCamp('${r.cid}')">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:1px">
-          <span style="font-size:12px;font-weight:700;color:#f2f4f9">${r.label}</span>
-          <span style="font-size:10.5px;padding:1px 7px;border-radius:4px;background:var(--bg3);color:#dde3ef;white-space:nowrap">${r.camp}</span>
-        </div>
-        <div style="font-size:10.5px;color:#b8c4d8">${r.sub} <span style="color:#8892a8;font-style:italic"> — ${r.action}</span></div>
-      </div>
-      <button onclick="dashReviewDone(this)" data-rkey="${r.key.replace(/"/g,'&quot;')}" title="Mark reviewed" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--purple,#b794ff)';this.style.color='var(--purple,#b794ff)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Done</button>
-    </div>`;
-  }).join('')+'</div>';
-  setTimeout(_dashUpdateAlertsBadge,50);
-}
-
-function dashReviewDone(btn){
-  const key=btn.getAttribute('data-rkey');
-  if(!key)return;
-  if(!window._reviewedKeys)window._reviewedKeys=new Set();
-  window._reviewedKeys.add(key);
-  renderDashReviewsList();
-  setTimeout(_dashUpdateAlertsBadge,50);
-}
-
-function _dashUpdateAlertsBadge(){
-  /* Count total visible alerts + overdue reviews for the section header badge */
-  const badge=document.getElementById('dash-alerts-badge');
-  if(!badge)return;
-  const actionEl=document.getElementById('dash-action-list');
-  const reviewEl=document.getElementById('dash-reviews-list');
-  /* Count action items (urgent tags in the rendered list) */
-  const actionCount=(actionEl?.querySelectorAll('[data-akey]')?.length||0);
-  const reviewCount=(reviewEl?.querySelectorAll('[data-rkey]')?.length||0);
-  const total=actionCount+reviewCount;
-  if(total>0){
-    badge.textContent=total+' item'+(total!==1?'s':'');
-    badge.style.display='';
-  } else {
-    badge.style.display='none';
-  }
-}
-
-/* Section collapse state keys — stored in localStorage */
-const _DASH_SECTION_KEYS={
-  'dash-alerts-body':'dash_sec_alerts',
-  'dash-perf-body':'dash_sec_perf',
-  'dash-intel-body':'dash_sec_intel'
-};
-const _DASH_SECTION_DEFAULTS={
-  'dash-alerts-body':true,   /* open by default */
-  'dash-perf-body':true,     /* open by default */
-  'dash-intel-body':false    /* collapsed by default */
-};
-
-function _dashSectionIsOpen(bodyId){
-  const key=_DASH_SECTION_KEYS[bodyId];
-  if(!key)return true;
-  const stored=localStorage.getItem(key);
-  if(stored===null)return _DASH_SECTION_DEFAULTS[bodyId]!==false;
-  return stored==='1';
-}
-
-function initDashSections(){
-  Object.keys(_DASH_SECTION_KEYS).forEach(bodyId=>{
-    const body=document.getElementById(bodyId);
-    if(!body)return;
-    const open=_dashSectionIsOpen(bodyId);
-    const chevronMap={
-      'dash-alerts-body':'dash-alerts-chevron',
-      'dash-perf-body':'dash-perf-chevron',
-      'dash-intel-body':'dash-intel-chevron'
-    };
-    const chevron=document.getElementById(chevronMap[bodyId]);
-    if(open){
-      body.style.display='grid';
-      if(chevron)chevron.textContent='▲ collapse';
-    } else {
-      body.style.display='none';
-      if(chevron)chevron.textContent='▼ expand';
-    }
-  });
-}
-
-function dashToggleSection(bodyId, headerEl){
-  const body=document.getElementById(bodyId);
-  if(!body)return;
-  const isOpen=body.style.display==='grid';
-  const chevronId=headerEl.querySelector('[id$="-chevron"]')?.id;
-  const chevron=chevronId?document.getElementById(chevronId):headerEl.querySelector('[id$="-chevron"]');
-  const key=_DASH_SECTION_KEYS[bodyId];
-  if(isOpen){
-    body.style.display='none';
-    if(chevron)chevron.textContent='▼ expand';
-    if(key)localStorage.setItem(key,'0');
-  } else {
-    body.style.display='grid';
-    if(chevron)chevron.textContent='▲ collapse';
-    if(key)localStorage.setItem(key,'1');
-  }
-}
-
-function dashMarkDone(btn){
-  const key=btn.getAttribute('data-akey');
-  if(!key)return;
-  if(!window._actionedKeys)window._actionedKeys=new Set();
-  window._actionedKeys.add(key);
-  renderDashActionList();
 }
 
 function renderDashWhatsWorking(){
@@ -6100,9 +6056,9 @@ function renderDashWhatsWorking(){
   const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
   const best=[...A].sort((a,b)=>b.roas-a.roas).slice(0,5);
   const bestKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.roas>=T&&t.sales>0).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>b.roas-a.roas).slice(0,5);
-  const hdr=`<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
-    <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);flex-shrink:0"></div>
-    <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--text2)">Best Performing</span>
+  const hdr=`<div style="padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)"></div>
+    <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">Best Performing</span>
   </div>`;
   if(!best.length){el.innerHTML=hdr+'<div style="padding:14px;font-size:12px;color:var(--text3)">No active campaigns with data yet.</div>';return;}
   el.innerHTML=hdr+`<div style="overflow-y:auto;max-height:420px">
@@ -6132,9 +6088,9 @@ function renderDashWorstPerforming(){
   const worst=[...A].filter(c=>c.roas>0).sort((a,b)=>a.roas-b.roas).slice(0,5);
   const leaks=A.filter(c=>c.noSaleSpend);
   const worstKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.sales>0&&t.roas<T&&t.spend>1).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>a.roas-b.roas).slice(0,4);
-  const hdr=`<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
-    <div style="width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red);flex-shrink:0"></div>
-    <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--text2)">Worst Performing</span>
+  const hdr=`<div style="padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red)"></div>
+    <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">Worst Performing</span>
   </div>`;
   if(!worst.length&&!leaks.length){el.innerHTML=hdr+'<div style="padding:14px;font-size:12px;color:var(--green)">No underperforming campaigns.</div>';return;}
   el.innerHTML=hdr+`<div style="overflow-y:auto;max-height:420px">
@@ -6165,12 +6121,12 @@ function renderDashWastingMoney(){
   const leakKw=A.flatMap(c=>{const ls=c.snapshots[c.snapshots.length-1]||{};return(ls.targeting||[]).filter(t=>t.spend>=0.5&&t.sales===0).map(t=>({...t,cn:c.alias||c.name,cid:c.id}));}).sort((a,b)=>b.spend-a.spend).slice(0,6);
   const highAcosCamps=A.filter(c=>c.acos>maxAcos+5&&c.sales>0).sort((a,b)=>(b.spend/b.sales)-(a.spend/a.sales)).slice(0,3);
   const totalWasted=leakCamps.reduce((a,c)=>a+c.spend,0)+leakKw.reduce((a,t)=>a+t.spend,0);
-  const hdr=`<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px">
+  const hdr=`<div style="padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px">
     <div style="display:flex;align-items:center;gap:8px">
-      <div style="width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 5px var(--amber);flex-shrink:0"></div>
-      <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--text2)">Wasting Money</span>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber)"></div>
+      <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">Wasting Money</span>
     </div>
-    ${totalWasted>0?`<span style="font-size:11.5px;font-weight:800;color:var(--red)">${gbp(totalWasted)} wasted</span>`:''}
+    ${totalWasted>0?`<span style="font-size:12px;font-weight:800;color:var(--red)">${gbp(totalWasted)} wasted</span>`:''}
   </div>`;
   if(!leakCamps.length&&!leakKw.length&&!highAcosCamps.length){el.innerHTML=hdr+'<div style="padding:14px;font-size:12px;color:var(--green)">No waste detected — all spend returning sales.</div>';return;}
   el.innerHTML=hdr+`<div style="overflow-y:auto;max-height:420px">
@@ -6179,7 +6135,7 @@ function renderDashWastingMoney(){
       ${monoTile(c.alias||c.name,28)}
       <div style="flex:1;min-width:0">
         <div style="font-size:12.5px;font-weight:700;color:var(--red);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
-        <div style="font-size:11px;color:#b8c4d8;margin-top:1px">${gbp(c.spend)} burned · 0 sales · ${intf(c.impressions||0)} impressions</div>
+        <div style="font-size:11px;color:#d4dff0;margin-top:1px">${gbp(c.spend)} burned · 0 sales · ${intf(c.impressions||0)} impressions</div>
         <div style="font-size:11px;color:#8892a8;font-style:italic;margin-top:1px">Pause immediately or add negative keywords</div>
       </div>
       <span style="font-size:13px;font-weight:800;color:var(--red);flex-shrink:0">${gbp(c.spend)}</span>
@@ -6189,7 +6145,7 @@ function renderDashWastingMoney(){
       ${matchTag(t.match||'—')}
       <div style="flex:1;min-width:0">
         <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.kw}</div>
-        <div style="font-size:11px;color:#b8c4d8">${t.cn} · ${intf(t.imp||0)} impressions · 0 sales</div>
+        <div style="font-size:11px;color:#d4dff0">${t.cn} · ${intf(t.imp||0)} impressions · 0 sales</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div style="font-size:12.5px;font-weight:800;color:var(--amber)">${gbp(t.spend)}</div>
@@ -6201,7 +6157,7 @@ function renderDashWastingMoney(){
       ${monoTile(c.alias||c.name,28)}
       <div style="flex:1;min-width:0">
         <div style="font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
-        <div style="font-size:11px;color:#b8c4d8">${gbp(c.spend)} spend · ${gbp(c.sales)} sales · ${intf(c.purchases||0)} orders</div>
+        <div style="font-size:11px;color:#d4dff0">${gbp(c.spend)} spend · ${gbp(c.sales)} sales · ${intf(c.purchases||0)} orders</div>
         <div style="font-size:11px;color:#8892a8;font-style:italic">Reduce bids or tighten match types</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
@@ -6438,7 +6394,7 @@ function renderDashChartsStrip(){
         <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tc}" stop-opacity=".18"/><stop offset="1" stop-color="${tc}" stop-opacity="0"/></linearGradient></defs>
         <path d="${area}" fill="url(#${gradId})"/>
         <path d="${d}" fill="none" stroke="${tc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="3.5" fill="${tc}" stroke="#0d1117" stroke-width="1.5"/>
+        <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="3.5" fill="${tc}" stroke="var(--panel)" stroke-width="1.5"/>
       </svg>
     </div>`;
   };
@@ -6619,10 +6575,10 @@ function renderDashKPIs(period,cmpPeriod){
   const lastSnDate=allSn.length?[...new Set(allSn.map(s=>s.date).filter(Boolean))].sort().reverse()[0]:'—';
   const periods2=[...new Set(allSn.map(s=>s.date))].length;
 
-  /* ── ROAS hero ── */
+  /* ── ROAS hero (left column, tall, spans 2 rows) ── */
   const roasS=acctSeries('roas',12);
   const roasLargeSpk=(()=>{
-    const vals=roasS,w2=120,h2=44,col2=roasCol;
+    const vals=roasS,w2=110,h2=52,col2=roasCol;
     if(vals.filter(v=>v>0).length<2)return'';
     const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
     const pts=vals.map((v,i)=>[i/(vals.length-1)*(w2-4)+2,h2-4-((v-mn)/range)*(h2-8)]);
@@ -6630,93 +6586,74 @@ function renderDashKPIs(period,cmpPeriod){
     const area=d+` L${pts[pts.length-1][0]} ${h2} L${pts[0][0]} ${h2} Z`;
     const lv=vals[vals.length-1],pv=vals[vals.length-2]||lv;
     const tc=lv>=pv?col2:'var(--red)';
-    return`<svg width="${w2}" height="${h2}" style="display:block"><defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tc}" stop-opacity=".22"/><stop offset="1" stop-color="${tc}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#hg)"/><path d="${d}" fill="none" stroke="${tc}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2.5" fill="${tc}" stroke="#0d1117" stroke-width="1.5"/></svg>`;
+    return`<svg width="${w2}" height="${h2}" style="display:block"><defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tc}" stop-opacity=".25"/><stop offset="1" stop-color="${tc}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#hg)"/><path d="${d}" fill="none" stroke="${tc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3" fill="${tc}" stroke="var(--panel)" stroke-width="1.5"/></svg>`;
   })();
 
-  const statusIcon=cur.roas>=5?'✓':cur.roas>=4?'⚠':'✕';
-  const statusText=cur.roas>=5?'Above 5× target':cur.roas>=4?'Below 5× — watch':'Below 4× — act now';
-  const roasDelta=cmp?pctD(cur.roas,cmp.roas):null;
-
-  /* Health bar (green/amber/red proportional strip) */
-  const hTotal=g+a+red||1;
-  const hBar=`<div style="display:flex;height:4px;border-radius:3px;overflow:hidden;gap:1px;margin-bottom:6px">
-    <div style="flex:${g};background:var(--green);border-radius:3px;min-width:${g?2:0}px"></div>
-    <div style="flex:${a};background:var(--amber);border-radius:3px;min-width:${a?2:0}px"></div>
-    <div style="flex:${red};background:var(--red);border-radius:3px;min-width:${red?2:0}px"></div>
-  </div>`;
-
-  const heroHtml=`<div style="background:var(--panel);border:1px solid ${cur.roas>=5?'rgba(46,229,157,.22)':cur.roas>=4?'rgba(255,181,71,.22)':'rgba(255,93,108,.22)'};border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-sm);position:relative;overflow:hidden">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${roasCol};opacity:.6"></div>
-    <div style="position:absolute;bottom:-8px;right:6px;opacity:.05;font-size:70px;font-family:var(--display);font-weight:900;line-height:1;pointer-events:none;color:${roasCol}">×</div>
+  const heroHtml=`<div style="grid-row:span 2;background:${cur.roas>=5?'rgba(46,229,157,.07)':cur.roas>=4?'rgba(255,181,71,.06)':'rgba(255,93,108,.06)'};border:1px solid ${cur.roas>=5?'rgba(46,229,157,.25)':cur.roas>=4?'rgba(255,181,71,.25)':'rgba(255,93,108,.25)'};border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-sm)">
     <div>
-      <div style="font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text4);margin-bottom:8px">Blended ROAS</div>
-      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px">
-        <span style="font-family:var(--display);font-size:46px;font-weight:700;letter-spacing:-2.5px;color:${roasCol};line-height:1">${fmt(cur.roas,2)}</span>
-        <span style="font-size:16px;font-weight:400;color:${roasCol};opacity:.55;letter-spacing:-1px">×</span>
-        ${roasDelta!=null?`<span style="font-size:11px;font-weight:700;color:${Math.abs(roasDelta)<0.5?'var(--text4)':roasDelta>0?'var(--green)':'var(--red)'}">${roasDelta>0?'↑':'↓'}${Math.abs(roasDelta).toFixed(1)}%</span>`:''}
+      <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:${roasCol};margin-bottom:6px">ROAS — Primary KPI</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:2px">
+        <span style="font-family:var(--display);font-size:42px;font-weight:700;letter-spacing:-2px;color:${roasCol};line-height:1">${fmt(cur.roas,2)}</span>
+        ${cmp?dTag(cur.roas,cmp.roas,true):'<span style="font-size:10px;color:var(--text4)">vs prev</span>'}
       </div>
-      <div style="display:inline-flex;align-items:center;gap:4px;background:${cur.roas>=5?'rgba(46,229,157,.08)':cur.roas>=4?'rgba(255,181,71,.08)':'rgba(255,93,108,.08)'};border:1px solid ${cur.roas>=5?'rgba(46,229,157,.18)':cur.roas>=4?'rgba(255,181,71,.18)':'rgba(255,93,108,.18)'};border-radius:20px;padding:3px 9px;margin-bottom:14px">
-        <span style="font-size:9.5px;color:${roasCol};font-weight:700">${statusIcon} ${statusText}</span>
+      <div style="font-size:10.5px;color:${roasCol};font-weight:700;margin-bottom:10px">${cur.roas>=5?'✓ Above 5× target':cur.roas>=4?'⚠ Below 5× target — watch closely':'✕ Below 4× — action needed'}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px">
+        ${[['ACOS',cur.acos>0?fmt(cur.acos,1)+'%':'—'],['CTR',cur.ctr>0?fmt(cur.ctr,2)+'%':'—'],['Impr',intf(cur.impressions||0)],['Clicks',intf(cur.clicks||0)]].map(([l,v])=>`<div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:5px 8px"><div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">${l}</div><div style="font-size:12px;font-weight:700;color:var(--text);margin-top:1px">${v}</div></div>`).join('')}
       </div>
     </div>
     <div>${roasLargeSpk}</div>
   </div>`;
 
-  /* ── supporting tile ── */
-  const tile=(label,val,key,hb)=>{
+  /* ── compact supporting tile ── */
+  const tile=(label,val,key,hb,extra='')=>{
     const s2=acctSeries(key);
     const lv=s2[s2.length-1]||0,pv=s2[s2.length-2]||0;
-    const up=hb?lv>=pv:lv<=pv;
-    const spkCol=up?'#5b9dff':'var(--red)';
-    const sp=spk(s2,spkCol,48,20);
-    const delta=cmp?pctD(cur[key]||0,cmp[key]||0):null;
-    const dCol=delta==null?'':Math.abs(delta)<0.5?'var(--text4)':((hb?delta>0:delta<0)?'var(--green)':'var(--red)');
-    return`<div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:14px 14px 12px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-sm)">
+    const spkCol=lv>=pv?'var(--text3)':'var(--red)';
+    const sp=spk(s2,spkCol);
+    return`<div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm)">
       <div>
-        <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text4);margin-bottom:6px">${label}</div>
-        <div style="font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.9px;color:var(--text);line-height:1">${val}</div>
-        ${delta!=null?`<div style="font-size:10px;font-weight:700;color:${dCol};margin-top:5px">${delta>0?'↑':'↓'} ${Math.abs(delta).toFixed(1)}%</div>`:`<div style="height:15px;margin-top:5px"></div>`}
+        <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:3px">${label}</div>
+        <div style="font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.7px;color:var(--text)">${val}</div>
+        <div style="margin-top:3px;min-height:15px">${cmp?dTag(cur[key]||0,cmp[key]||0,hb):extra}</div>
       </div>
-      <div style="margin-top:10px;opacity:.65">${sp}</div>
+      ${sp}
     </div>`;
   };
 
-  /* ── campaign health tile ── */
-  const healthHtml=`<div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:14px 14px 12px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;justify-content:space-between">
-    <div>
-      <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text4);margin-bottom:10px">Campaign Health</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
-        <div style="flex:1;text-align:center;cursor:pointer;padding:5px 0;background:rgba(46,229,157,.06);border:1px solid rgba(46,229,157,.12);border-radius:7px;transition:.15s" onclick="document.querySelector('[data-p=campaigns]').click()" onmouseenter="this.style.background='rgba(46,229,157,.12)'" onmouseleave="this.style.background='rgba(46,229,157,.06)'">
+  /* ── health tile (spans cols 2-4, row 2) ── */
+  const healthHtml=`<div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;display:flex;align-items:center;gap:0;box-shadow:var(--shadow-sm)">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:6px">Campaign Health</div>
+      <div style="display:flex;gap:4px">
+        <div style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--green-bg);border:1px solid rgba(46,229,157,.2);border-radius:6px" onclick="document.querySelector('[data-p=campaigns]').click()">
           <div style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--green);line-height:1">${g}</div>
-          <div style="font-size:7.5px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;opacity:.8">G</div>
+          <div style="font-size:8.5px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.3px;margin-top:2px">Green</div>
         </div>
-        <div style="flex:1;text-align:center;cursor:pointer;padding:5px 0;background:rgba(255,181,71,.06);border:1px solid rgba(255,181,71,.12);border-radius:7px;transition:.15s" onclick="document.querySelector('[data-p=campaigns]').click()" onmouseenter="this.style.background='rgba(255,181,71,.12)'" onmouseleave="this.style.background='rgba(255,181,71,.06)'">
+        <div style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--amber-bg);border:1px solid rgba(255,181,71,.2);border-radius:6px" onclick="document.querySelector('[data-p=campaigns]').click()">
           <div style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--amber);line-height:1">${a}</div>
-          <div style="font-size:7.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;opacity:.8">A</div>
+          <div style="font-size:8.5px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.3px;margin-top:2px">Amber</div>
         </div>
-        <div style="flex:1;text-align:center;cursor:pointer;padding:5px 0;background:rgba(255,93,108,.06);border:1px solid rgba(255,93,108,.12);border-radius:7px;transition:.15s" onclick="document.querySelector('[data-p=campaigns]').click()" onmouseenter="this.style.background='rgba(255,93,108,.12)'" onmouseleave="this.style.background='rgba(255,93,108,.06)'">
+        <div style="cursor:pointer;flex:1;text-align:center;padding:5px 4px;background:var(--red-bg);border:1px solid rgba(255,93,108,.2);border-radius:6px" onclick="document.querySelector('[data-p=campaigns]').click()">
           <div style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--red);line-height:1">${red}</div>
-          <div style="font-size:7.5px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;opacity:.8">R</div>
+          <div style="font-size:8.5px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.3px;margin-top:2px">Red</div>
         </div>
       </div>
     </div>
-    <div>
-      ${hBar}
-      <div style="display:flex;justify-content:space-between">
-        <span style="font-size:8.5px;color:var(--text4)">${lastSnDate}</span>
-        <span style="font-size:8.5px;color:var(--text4)">${periods2} periods</span>
-      </div>
+    <div style="width:1px;background:var(--border);margin:0 16px;align-self:stretch"></div>
+    <div style="flex-shrink:0;min-width:120px">
+      <div style="margin-bottom:6px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Last snapshot</div><div style="font-size:12px;font-weight:600;color:var(--text);margin-top:1px">${lastSnDate}</div></div>
+      <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Periods tracked</div><div style="font-size:12px;font-weight:600;color:var(--text);margin-top:1px">${periods2}</div></div>
     </div>
   </div>`;
 
-  /* Single-row grid: ROAS hero + Sales + Spend + Orders + Health */
-  el.style.gridTemplateColumns='1.5fr 1fr 1fr 1fr 1fr';
-  el.style.gridTemplateRows='auto';
+  /* Grid layout: col 1 = ROAS (row-span 2), cols 2-4 = tiles row 1, cols 2-4 = health row 2 */
+  el.style.gridTemplateColumns='1.6fr 1fr 1fr 1fr';
+  el.style.gridTemplateRows='auto auto';
   el.innerHTML=heroHtml+
-    tile('Total Sales',gbp(cur.sales),'sales',true)+
-    tile('Total Spend',gbp(cur.spend),'spend',false)+
+    tile('Sales',gbp(cur.sales),'sales',true)+
+    tile('Spend',gbp(cur.spend),'spend',false)+
     tile('Orders',intf(cur.purchases),'purchases',true)+
-    healthHtml;
+    `<div style="grid-column:span 3">${healthHtml}</div>`;
 }
 
 function renderDashCampBreakdown(period,cmpPeriod){
@@ -6921,42 +6858,22 @@ async function saveGlobalChange(){
   const review=document.getElementById('gcl-review').value;
   const goal=document.getElementById('gcl-goal').value.trim();
   const status=document.getElementById('gcl-status');
-  const saveBtn=document.querySelector('#gcl-overlay .po-body button.btn:last-child');
   if(!date||!what||!why||!review){
     if(status){status.textContent='⚠ All fields marked * are required';status.style.color='var(--red)';}
     return;
   }
-  if(saveBtn){saveBtn.textContent='Saving…';saveBtn.disabled=true;}
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
+  c.changes.unshift(change);
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
-      const saved=await sbInsert('changes',{campaign_id:c.id,type,date,what,why,goal:goal||null,outcome:'pending',review_date:review,created_at:new Date().toISOString()});
-      if(saved&&saved.id){
-        /* Use DB-returned id so edits and markChange can find it reliably */
-        change._dbId=saved.id;
-        c.changes.unshift(change);
-        if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
-      } else {
-        /* Insert returned nothing — treat as failure */
-        if(status){status.textContent='⚠ Save may have failed — please check Change Log tab';status.style.color='var(--red)';}
-        if(saveBtn){saveBtn.textContent='Save change';saveBtn.disabled=false;}
-        return;
-      }
-    }catch(e){
-      console.error('Change save failed:',e);
-      if(status){status.textContent='⚠ Supabase error: '+e.message;status.style.color='var(--red)';}
-      if(saveBtn){saveBtn.textContent='Save change';saveBtn.disabled=false;}
-      return;
-    }
+      await sbInsert('changes',{campaign_id:c.id,type,date,what,why,goal:goal||null,outcome:'pending',review_date:review,created_at:new Date().toISOString()});
+      if(status){status.textContent='✓ Saved to Supabase';status.style.color='var(--green)';}
+    }catch(e){if(status){status.textContent='Saved locally';status.style.color='var(--amber)';}}
   } else {
-    c.changes.unshift(change);
     if(status){status.textContent='✓ Saved';status.style.color='var(--green)';}
   }
   renderCampaigns();renderChangeLog();
-  setTimeout(()=>{
-    if(saveBtn){saveBtn.textContent='Save change';saveBtn.disabled=false;}
-    closeGlobalCL();
-  },900);
+  setTimeout(()=>{closeGlobalCL();},900);
 }
 
 /* boot */
@@ -6969,7 +6886,6 @@ loadFromSupabase().then(()=>{
     renderDashAttention();
     renderDashReminders();
     renderDashRecentChanges();
-    renderDashReviewsList();
   }
   /* Warn if targeting_json column is missing */
   if(window._missingTargetingCol){
@@ -7132,6 +7048,72 @@ function toggleSnapExpand(){
 </script>
 
 <!-- ════════ GLOBAL LOG CHANGE MODAL ════════ -->
+
+<!-- ════════ EDIT CAMPAIGN MODAL ════════ -->
+<div class="overlay" id="edit-camp-overlay" onclick="if(event.target.id==='edit-camp-overlay')closeEditCampaign()">
+  <div class="popout" style="max-width:560px;width:calc(100vw - 40px);max-height:80vh;overflow-y:auto">
+    <div class="po-header" style="padding:16px 20px">
+      <div class="po-title" style="font-size:14px">Edit Campaign</div>
+      <button class="close-btn" onclick="closeEditCampaign()">✕</button>
+    </div>
+    <div style="padding:20px">
+      <div style="display:grid;gap:12px">
+        <div>
+          <div class="label" style="margin-bottom:5px">Campaign name / title <span style="color:var(--red)">*</span></div>
+          <input class="input" id="ec-name" style="width:100%" placeholder="e.g. GF Hamper – Exact Keywords">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Display alias (shorter name)</div>
+          <input class="input" id="ec-alias" style="width:100%" placeholder="e.g. GF Hamper Exact">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Product name</div>
+          <input class="input" id="ec-product" style="width:100%" placeholder="e.g. Lavarion Gluten Free Biscuit Hamper">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="label" style="margin-bottom:5px">ASIN</div>
+            <input class="input" id="ec-asin" style="width:100%" placeholder="B0GJ68VNM2">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">SKU</div>
+            <input class="input" id="ec-sku" style="width:100%" placeholder="XN-SIFQ-76TE">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="label" style="margin-bottom:5px">Product price (£)</div>
+            <input class="input" id="ec-price" style="width:100%" type="number" step="0.01" placeholder="0.00">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Status</div>
+            <select class="sel" id="ec-status" style="width:100%">
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="inactive">Inactive</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Review frequency</div>
+          <select class="sel" id="ec-review-freq" style="width:100%">
+            <option value="3">Every 3 days</option>
+            <option value="7">Weekly</option>
+            <option value="14">Fortnightly</option>
+            <option value="30">Monthly</option>
+            <option value="0">No scheduled review</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding-top:4px">
+          <button class="btn" onclick="saveEditCampaign()">Save changes</button>
+          <button class="btn ghost" onclick="closeEditCampaign()">Cancel</button>
+          <span id="ec-status-msg" style="font-size:11.5px;color:var(--text3)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="gcl-overlay" onclick="if(event.target.id==='gcl-overlay')closeGlobalCL()">
   <div class="popout" style="max-width:580px;min-height:auto;margin:auto">
     <div class="po-header">
