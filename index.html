@@ -1168,8 +1168,69 @@ function applyLocalOverlay(){
   });
   window._actionedKeys=new Set(st.done);
 }
-function markActionDone(key){if(!window._actionedKeys)window._actionedKeys=new Set();window._actionedKeys.add(key);lsSetDone(key,true);renderDashActionList();}
-function resetActions(){window._actionedKeys=new Set();lsClearDone();renderDashActionList();}
+function markActionDone(key){if(!window._actionedKeys)window._actionedKeys=new Set();window._actionedKeys.add(key);lsSetDone(key,true);sbSaveDismissed();renderDashActionList();}
+function resetActions(){window._actionedKeys=new Set();lsClearDone();sbSaveDismissed();renderDashActionList();}
+/* ── On-screen feedback toast ── */
+function toast(msg,kind){
+  var col=kind==='err'?'var(--red)':kind==='warn'?'var(--amber)':'var(--green)';
+  var bg=kind==='err'?'var(--red-bg)':kind==='warn'?'var(--amber-bg)':'var(--green-bg,rgba(46,229,157,.12))';
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:'+bg+';border:1px solid '+col+';color:'+col+';padding:9px 18px;border-radius:10px;font-size:12.5px;font-weight:700;z-index:10000;box-shadow:0 4px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center';
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(function(){t.style.transition='opacity .4s';t.style.opacity='0';setTimeout(function(){t.remove();},400);},2600);
+}
+/* ── Boot loading spinner ── */
+function showBootSpinner(){
+  if(document.getElementById('boot-spinner'))return;
+  if(!document.getElementById('spin-kf')){var st=document.createElement('style');st.id='spin-kf';st.textContent='@keyframes spin{to{transform:rotate(360deg)}}';document.head.appendChild(st);}
+  var d=document.createElement('div');d.id='boot-spinner';
+  d.style.cssText='position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg,#0b0f14);z-index:99999';
+  d.innerHTML='<div style="width:34px;height:34px;border:3px solid var(--border,#2a3441);border-top-color:var(--blue,#5b9dff);border-radius:50%;animation:spin .8s linear infinite"></div><div style="font-size:12px;color:var(--text3,#7a8eaa)">Loading your campaigns…</div>';
+  document.body.appendChild(d);
+}
+function removeBootSpinner(){var d=document.getElementById('boot-spinner');if(d){d.style.transition='opacity .3s';d.style.opacity='0';setTimeout(function(){d.remove();},300);}}
+/* ── Rename a period in Supabase so it syncs to every laptop ── */
+async function sbRenamePeriod(oldP,newP){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return;
+  try{
+    var hds=await sbHeaders();
+    var res=await fetch(SUPABASE_URL+'/rest/v1/snapshots?period=eq.'+encodeURIComponent(oldP),{method:'PATCH',headers:Object.assign({},hds,{'Prefer':'return=minimal'}),body:JSON.stringify({period:newP})});
+    if(!res.ok)throw new Error((await res.text()).slice(0,80));
+    toast('Period renamed — saved to Supabase','ok');
+  }catch(e){toast('Renamed on this laptop only — Supabase error: '+(e.message||'error'),'warn');}
+}
+/* ── Cross-laptop "Mark Done" dismissals, stored in the settings table ── */
+async function sbLoadDismissed(){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return;
+  try{
+    var hds=await sbHeaders();
+    var res=await fetch(SUPABASE_URL+'/rest/v1/settings?id=eq.dismissed_actions&select=value',{headers:hds});
+    if(res.ok){var rows=await res.json();if(rows[0]&&rows[0].value){(JSON.parse(rows[0].value)||[]).forEach(function(k){window._actionedKeys.add(k);});}}
+  }catch(e){}
+}
+async function sbSaveDismissed(){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return;
+  try{
+    var hds=await sbHeaders();
+    await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({id:'dismissed_actions',key:'dismissed_actions',value:JSON.stringify([...window._actionedKeys])})});
+  }catch(e){}
+}
+/* ── Escape-to-close overlays + auto-refresh when returning to the tab (keeps laptops in sync) ── */
+let _lastSync=Date.now();
+function installGlobalUX(){
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      var ov=[...document.querySelectorAll('.overlay.open')].pop();
+      if(ov){ov.classList.remove('open');if(!document.querySelector('.overlay.open'))document.body.style.overflow='';}
+    }
+  });
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible'&&SUPABASE_URL&&SUPABASE_KEY&&Date.now()-_lastSync>15000){
+      _lastSync=Date.now();
+      loadFromSupabase();
+    }
+  });
+}
 /* Safe dashboard refresh used after edits / deletes (replaces the old undefined renderDashboard) */
 function renderDashboard(){
   _dashDirty=true;
@@ -1183,6 +1244,7 @@ function renderDashboard(){
 async function loadFromSupabase(){
   if(!SUPABASE_URL||!SUPABASE_KEY){
     /* No Supabase — show empty state prompting to connect */
+    removeBootSpinner();
     showNoSupabaseState();
     return;
   }
@@ -1231,7 +1293,9 @@ async function loadFromSupabase(){
       campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
     });
     applyLocalOverlay();
+    sbLoadDismissed().then(function(){if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active'))renderDashActionList();});
     _dashDirty=true;
+    removeBootSpinner();
     renderCampaigns();
     /* re-render dashboard if visible */
     if(document.getElementById('page-dashboard')?.classList.contains('active')){
@@ -1239,6 +1303,7 @@ async function loadFromSupabase(){
     }
   }catch(e){
     console.error('Supabase error:',e);
+    removeBootSpinner();
     showSupabaseError(e.message);
   }
 }
@@ -5309,6 +5374,7 @@ function renamePeriodAll(safeP){
   const newSafeP=newDate.replace(/[^a-zA-Z0-9]/g,'_');
   window._periodMap[newSafeP]=newDate;
   delete window._periodMap[safeP];
+  sbRenamePeriod(period,newDate);
   renderSnapshots();
 }
 
@@ -5325,6 +5391,7 @@ function renamePeriodFromModal(){
     delete window._periodMap[_snapModalSafeP];
     _snapModalSafeP=newSafeP;
   }
+  sbRenamePeriod(period,newDate);
   closeSnap();renderSnapshots();
 }
 
@@ -6465,6 +6532,8 @@ async function saveGlobalChange(){
 }
 
 /* boot */
+showBootSpinner();
+installGlobalUX();
 loadMatchColours();
 loadFromSupabase().then(()=>{
   /* after data loads, render dashboard if it's the active page */
