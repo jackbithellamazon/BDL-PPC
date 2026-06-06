@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL PPC — Change Tracker v29</title>
+<title>BDL PPC — Change Tracker v30</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -355,7 +355,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;PPC <span class="logo-ver">v29</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;PPC <span class="logo-ver">v30</span></div>
   <div class="nav" id="nav">
     <button class="nav-btn active" data-p="dashboard">Dashboard</button>
     <button class="nav-btn" data-p="campaigns">Campaigns</button>
@@ -379,7 +379,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
     <div>
       <h1 style="font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.5px">Dashboard</h1>
-      <div style="color:var(--text3);font-size:12px;margin-top:1px" id="dash-sub">PPC command centre <span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--green);background:var(--green-bg);border:1px solid var(--green-dim);border-radius:6px;padding:1px 7px;vertical-align:middle">v29 · UPDATED</span></div>
+      <div style="color:var(--text3);font-size:12px;margin-top:1px" id="dash-sub">PPC command centre <span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--green);background:var(--green-bg);border:1px solid var(--green-dim);border-radius:6px;padding:1px 7px;vertical-align:middle">v30 · UPDATED</span></div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <select class="sel" id="dash-period-sel" onchange="renderDashPeriod()" style="min-width:190px"><option value="latest">Latest snapshot</option></select>
@@ -1235,6 +1235,19 @@ function renderDashboard(){
   if(typeof renderDashPeriod==='function')renderDashPeriod();
   if(typeof renderDashAttention==='function')renderDashAttention();
   if(typeof renderDashRecentChanges==='function')renderDashRecentChanges();
+}
+
+/* Re-render whatever page is currently visible after a save/edit/delete, so the UI
+   reflects the latest data without a manual page refresh. Also flags the dashboard
+   as dirty so it rebuilds next time it is opened. */
+function refreshAfterSave(){
+  _dashDirty=true;
+  const active=id=>{const el=document.getElementById(id);return el&&el.classList.contains('active');};
+  try{ if(typeof renderCampaigns==='function') renderCampaigns(); }catch(e){console.warn('refresh: campaigns',e);}
+  try{ if(active('page-dashboard')&&typeof renderDashPeriod==='function'){populateDashPeriodSelectors();renderDashPeriod();if(typeof renderDashAttention==='function')renderDashAttention();if(typeof renderDashRecentChanges==='function')renderDashRecentChanges();_dashDirty=false;} }catch(e){console.warn('refresh: dashboard',e);}
+  try{ if(active('page-changelog')&&typeof renderChangeLog==='function') renderChangeLog(); }catch(e){console.warn('refresh: changelog',e);}
+  try{ if(active('page-snapshots')&&typeof renderSnapshots==='function') renderSnapshots(); }catch(e){console.warn('refresh: snapshots',e);}
+  try{ if(active('page-insights')&&typeof renderInsights==='function') renderInsights(); }catch(e){console.warn('refresh: insights',e);}
 }
 
 async function loadFromSupabase(){
@@ -3129,6 +3142,7 @@ async function saveChangeEntry(){
   document.getElementById('change-list').innerHTML=c.changes.map((ch,i)=>changeEntry(ch,c.id,i)).join('');
   renderCampaigns();
   renderChangeLog();
+  refreshAfterSave();
   if(status){status.textContent='✓ Change saved';status.style.color='var(--green)';setTimeout(()=>{if(status)status.textContent='';},2500);}
 
   /* Save to Supabase in background */
@@ -3172,8 +3186,8 @@ function changeEntry(ch, campId, chIdx){
         <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
           <textarea id="rn-${campId}-${chIdx}" placeholder="Review notes — what actually happened?" class="input" style="flex:1;min-width:180px;min-height:48px;font-size:12px;resize:vertical"></textarea>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <button class="btn" style="background:var(--green);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange(${campId},${chIdx},'win')">✓ Worked</button>
-            <button class="btn" style="background:var(--red);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange(${campId},${chIdx},'loss')">✕ Did not work</button>
+            <button class="btn" style="background:var(--green);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange('${campId}',${chIdx},'win')">✓ Worked</button>
+            <button class="btn" style="background:var(--red);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange('${campId}',${chIdx},'loss')">✕ Did not work</button>
           </div>
         </div>
       </div>`
@@ -3181,8 +3195,8 @@ function changeEntry(ch, campId, chIdx){
 
   const editDeleteBtns=(campId!=null&&chIdx!=null)
     ?`<div style="display:flex;gap:5px;margin-top:7px">
-        <button onclick="openEditChangeLog(${campId},${chIdx})" style="font-size:10.5px;padding:3px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
-        <button onclick="deleteChangeLog(${campId},${chIdx})" style="font-size:10.5px;padding:3px 10px;border-radius:6px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑 Delete</button>
+        <button onclick="openEditChangeLog('${campId}',${chIdx})" style="font-size:10.5px;padding:3px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
+        <button onclick="deleteChangeLog('${campId}',${chIdx})" style="font-size:10.5px;padding:3px 10px;border-radius:6px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑 Delete</button>
       </div>`
     :'';
 
@@ -3234,6 +3248,7 @@ function markChange(campId, chIdx, outcome){
   renderCampaigns();renderChangeLog();
   /* If inside popout, re-render changes tab */
   if(curCamp&&curCamp.id==campId)renderChanges();
+  refreshAfterSave();
 }
 
 /* profitability tab */
@@ -3912,6 +3927,7 @@ async function saveSnapshot(){
   switchTab('performance');
   renderPerf();
   renderCampaigns();
+  refreshAfterSave();
 
   /* Success banner */
   /* Clear parsed state for next snapshot */
@@ -4312,13 +4328,13 @@ function renderChangeLog(){
     const campChip=x.cname?`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">${x.cname}</span>`:'';
     const typeChip=`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,.2)">${ch.type}</span>`;
     const markBtns=ch.outcome==='pending'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap">
-      <button onclick="clQuickMark(${x.cid},${x.idx},'win',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--green-bg);border:1px solid rgba(46,229,157,.3);color:var(--green);cursor:pointer;font-family:var(--font);font-weight:600">✓ Worked</button>
-      <button onclick="clQuickMark(${x.cid},${x.idx},'loss',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">✕ Didn't</button>
-      <button onclick="openEditChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
-      <button onclick="deleteChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
+      <button onclick="clQuickMark('${x.cid}',${x.idx},'win',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--green-bg);border:1px solid rgba(46,229,157,.3);color:var(--green);cursor:pointer;font-family:var(--font);font-weight:600">✓ Worked</button>
+      <button onclick="clQuickMark('${x.cid}',${x.idx},'loss',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">✕ Didn't</button>
+      <button onclick="openEditChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
+      <button onclick="deleteChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
     </div>`:`<div style="display:flex;gap:4px;flex-shrink:0;align-items:flex-start">
-      <button onclick="openEditChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
-      <button onclick="deleteChangeLog(${x.cid},${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
+      <button onclick="openEditChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
+      <button onclick="deleteChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
     </div>`;
     return`<div style="display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:start${reviewDue?';background:rgba(255,93,108,.04);border-left:3px solid var(--red)':''}">
       <div style="width:24px;height:24px;border-radius:6px;background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}44;display:grid;place-items:center;font-size:11px">${ic}</div>
@@ -4415,6 +4431,7 @@ async function saveEditChangeLog(){
   renderCampaigns();
   renderChangeLog();
   if(curCamp&&curCamp.id==campId)renderChanges();
+  refreshAfterSave();
   closeEditChangeLog();
   /* Supabase update */
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
@@ -4463,6 +4480,7 @@ async function deleteChangeLog(campId,chIdx){
   renderCampaigns();
   renderChangeLog();
   if(curCamp&&curCamp.id==campId)renderChanges();
+  refreshAfterSave();
   toast('Change log deleted','ok');
 }
 
@@ -5067,7 +5085,7 @@ function deleteAllSnapshots(){
       });
     });
   }
-  renderCampaigns();renderSnapshots();
+  renderCampaigns();renderSnapshots();refreshAfterSave();
   /* Show feedback */
   const s=document.getElementById('cfg-status');
   if(s){s.textContent='✓ All '+count+' snapshots deleted. Campaigns intact.';s.style.color='var(--green)';}
@@ -5095,6 +5113,7 @@ async function deleteSnapshotPeriod(period){
   }
   renderSnapshots();renderCampaigns();
   if(curCamp)renderPerf();
+  refreshAfterSave();
   const banner=document.createElement('div');
   banner.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 20px;border-radius:10px;font-size:12.5px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4)';
   banner.textContent='🗑 Snapshot deleted from memory and Supabase';
