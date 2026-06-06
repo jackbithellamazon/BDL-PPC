@@ -1128,6 +1128,58 @@ const campaigns=[];
 let SUPABASE_URL = 'https://ffbdazepqrsyurhouxif.supabase.co';
 let SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmYmRhemVwcXJzeXVyaG91eGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4OTM5MjIsImV4cCI6MjA5MDQ2OTkyMn0.BAuodLUDGzO9A7IfoRRn0HZ1MgWOXNPeYKPDBNaNWeg';
 
+/* ════════ LOCAL PERSISTENCE OVERLAY — keeps edits, deletes & dismissals after a refresh ════════ */
+let _dashDirty=true, _dashRenderedOnce=false;
+const PPC_LS_KEY='ppc_local_state_v1';
+function lsLoad(){try{return JSON.parse(localStorage.getItem(PPC_LS_KEY))||{};}catch(e){return{};}}
+function lsState(){const st=lsLoad();st.edits=st.edits||{};st.deleted=st.deleted||[];st.done=st.done||[];return st;}
+function lsSave(st){try{localStorage.setItem(PPC_LS_KEY,JSON.stringify(st));}catch(e){console.warn('local save failed',e);}}
+function lsApplyEdit(id,fields){const st=lsState();st.edits[String(id)]=Object.assign(st.edits[String(id)]||{},fields);lsSave(st);}
+function lsMarkDeleted(id){const st=lsState();if(!st.deleted.includes(String(id)))st.deleted.push(String(id));delete st.edits[String(id)];lsSave(st);}
+function lsSetDone(key,on){const st=lsState();const i=st.done.indexOf(key);if(on&&i<0)st.done.push(key);if(!on&&i>=0)st.done.splice(i,1);lsSave(st);}
+function lsClearDone(){const st=lsState();st.done=[];lsSave(st);}
+function lsClearEdit(id){const st=lsState();delete st.edits[String(id)];lsSave(st);}
+/* Build a campaign update using ONLY columns that exist in the user's Supabase table
+   (auto-detected on load). Avoids the whole write being rejected for an unknown column. */
+function buildCampPatch(f){
+  const cols=window._sbCampCols;
+  const out={};
+  const put=(names,val)=>{const k=cols?names.find(n=>cols.includes(n)):names[0];if(k)out[k]=val;};
+  put(['name','campaign_name'],f.name);
+  put(['alias'],f.alias);
+  /* loader reads product_name first — write product to BOTH columns that exist so it round-trips */
+  if(!cols||cols.includes('product_name'))out.product_name=f.product;
+  if(!cols||cols.includes('product'))out.product=f.product;
+  put(['asin'],f.asin);
+  put(['sku'],f.sku);
+  put(['price'],f.price||null);
+  put(['status'],f.status);
+  put(['review_freq_days'],f.reviewFreqDays||null);
+  return out;
+}
+/* Re-apply saved local edits / deletes / dismissals onto the freshly-loaded campaigns array */
+function applyLocalOverlay(){
+  const st=lsState();
+  if(st.deleted.length){for(let i=campaigns.length-1;i>=0;i--){if(st.deleted.includes(String(campaigns[i].id)))campaigns.splice(i,1);}}
+  Object.entries(st.edits).forEach(([id,fields])=>{
+    const c=campaigns.find(x=>String(x.id)===String(id));if(!c)return;
+    Object.assign(c,fields);
+    c.rag=ragOf(c.roas,c.sales,c.spend);c.noSaleSpend=c.spend>0&&c.sales===0;
+  });
+  window._actionedKeys=new Set(st.done);
+}
+function markActionDone(key){if(!window._actionedKeys)window._actionedKeys=new Set();window._actionedKeys.add(key);lsSetDone(key,true);renderDashActionList();}
+function resetActions(){window._actionedKeys=new Set();lsClearDone();renderDashActionList();}
+/* Safe dashboard refresh used after edits / deletes (replaces the old undefined renderDashboard) */
+function renderDashboard(){
+  _dashDirty=true;
+  if(!document.getElementById('page-dashboard')||!document.getElementById('page-dashboard').classList.contains('active'))return;
+  if(typeof populateDashPeriodSelectors==='function')populateDashPeriodSelectors();
+  if(typeof renderDashPeriod==='function')renderDashPeriod();
+  if(typeof renderDashAttention==='function')renderDashAttention();
+  if(typeof renderDashRecentChanges==='function')renderDashRecentChanges();
+}
+
 async function loadFromSupabase(){
   if(!SUPABASE_URL||!SUPABASE_KEY){
     /* No Supabase — show empty state prompting to connect */
@@ -1155,7 +1207,7 @@ async function loadFromSupabase(){
         window._missingTargetingCol=false;
       }
     }
-    if(campData.length>0)console.log('Supabase campaign columns:',Object.keys(campData[0]));
+    if(campData.length>0){window._sbCampCols=Object.keys(campData[0]);console.log('Supabase campaign columns:',window._sbCampCols);}
     campData.forEach(row=>{
       const snaps=snapData.filter(s=>s.campaign_id===row.id).map(s=>{
         let _rawTj=null;
@@ -1178,6 +1230,8 @@ async function loadFromSupabase(){
       const product=row.product_name||row.product||row.name||'Unnamed product';
       campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
     });
+    applyLocalOverlay();
+    _dashDirty=true;
     renderCampaigns();
     /* re-render dashboard if visible */
     if(document.getElementById('page-dashboard')?.classList.contains('active')){
@@ -1450,28 +1504,33 @@ async function saveEditCampaign(){
   const last=c.snapshots[c.snapshots.length-1]||{};
   c.rag=ragOf(c.roas,c.sales,c.spend);
   c.noSaleSpend=c.spend>0&&c.sales===0;
-  /* Persist to Supabase */
+  /* Persist to Supabase — the single source of truth shared across all laptops */
+  const fields={name,alias:alias||name,product,asin:asin||c.asin,sku,price,status,reviewFreqDays:reviewFreq};
+  let dbOk=false;
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
       const hds=await sbHeaders();
       const res=await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{
         method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},
-        body:JSON.stringify({name,alias:alias||name,product,asin:asin||c.asin,sku,price:price||null,status,review_freq_days:reviewFreq||null})
+        body:JSON.stringify(buildCampPatch(fields))
       });
       if(!res.ok){const e=await res.text();throw new Error(e);}
-      statusEl.textContent='✓ Saved';statusEl.style.color='var(--green)';
+      dbOk=true;
+      statusEl.textContent='✓ Saved to Supabase — will show on every laptop';statusEl.style.color='var(--green)';
     }catch(e){
-      statusEl.textContent='Saved locally (Supabase error: '+e.message+')';statusEl.style.color='var(--amber)';
+      statusEl.textContent='⚠ Could not save to Supabase — kept on this laptop only. '+(e.message||'').slice(0,90);statusEl.style.color='var(--amber)';
     }
   } else {
-    statusEl.textContent='✓ Saved locally';statusEl.style.color='var(--green)';
+    statusEl.textContent='Saved on this laptop only — no Supabase connection';statusEl.style.color='var(--amber)';
   }
-  /* Refresh the campaign popout header */
-  const campName=c.alias||c.name;
-  const ragPillHtml=c.rag==='leak'?'<span class="rag flag">SPEND LEAK</span>':`<span class="rag ${c.rag}"><span class="d"></span>${fmt(c.roas,2)} ROAS</span>`;
-  document.getElementById('po-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:11px">${monoTile(campName,30)}<span style="display:flex;flex-direction:column;gap:3px"><span>${campName}</span><span style="font-size:12px;font-weight:400;color:var(--text3);font-family:var(--font)">${c.product||''}</span></span>${ragPillHtml}</span>`;
+  /* DB accepted it -> it's authoritative, drop any stale local copy. DB refused -> keep a local fallback. */
+  if(dbOk)lsClearEdit(c.id); else lsApplyEdit(c.id,fields);
+  _dashDirty=true;
+  /* Refresh every surface that shows this campaign: the table, the open campaign view, and the dashboard */
   renderCampaigns();
-  setTimeout(()=>closeEditCampaign(),1200);
+  openCamp(c.id);
+  renderDashboard();
+  setTimeout(()=>closeEditCampaign(),900);
 }
 
 async function confirmDeleteCampaign(){
@@ -1486,27 +1545,30 @@ async function confirmDeleteCampaign(){
 async function deleteCampaign(campId){
   const c=campaigns.find(x=>x.id==campId);if(!c)return;
   const campName=c.alias||c.name;
-  /* Remove from Supabase first */
-  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+  /* Remove from Supabase first — the source of truth shared across laptops */
+  const dbConfigured=!!(SUPABASE_URL&&SUPABASE_KEY&&c.id);
+  let dbDeleted=false;
+  if(dbConfigured){
     try{
       const hds=await sbHeaders();
-      /* Delete snapshots first (FK constraint) */
       await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
-      /* Delete changes */
       await fetch(SUPABASE_URL+'/rest/v1/changes?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}}).catch(()=>{});
-      /* Delete campaign */
       const res=await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
+      dbDeleted=res.ok;
       if(!res.ok)console.warn('Campaign delete response:',res.status);
     }catch(e){console.error('Error deleting campaign from Supabase:',e);}
   }
-  /* Remove from memory */
+  /* Gone from the DB -> gone everywhere, no local override needed.
+     DB refused (or offline) -> hide it on THIS laptop so it doesn't reappear here. */
+  if(!dbDeleted)lsMarkDeleted(campId);
   const idx=campaigns.findIndex(x=>x.id==campId);
   if(idx>-1)campaigns.splice(idx,1);
-  /* Close the popout and refresh */
+  _dashDirty=true;
   closePop();
   renderCampaigns();
   renderDashboard();
-  alert('"'+campName+'" has been deleted.');
+  if(dbConfigured&&!dbDeleted)alert('"'+campName+'" was removed on this laptop, but the database refused the delete, so it may still appear on other laptops. This is usually a Supabase permissions (RLS) setting.');
+  else alert('"'+campName+'" has been deleted.');
 }
 
 function closePop(){document.getElementById('camp-overlay').classList.remove('open');document.body.style.overflow='';}
@@ -1516,16 +1578,10 @@ async function sbHeaders(){
   return{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 }
 async function sbInsert(table,row){
+  _dashDirty=true;
   if(!SUPABASE_URL||!SUPABASE_KEY)return null;
   const res=await fetch(SUPABASE_URL+'/rest/v1/'+table,{method:'POST',headers:await sbHeaders(),body:JSON.stringify(row)});
   if(!res.ok){const err=await res.text();console.error('Supabase insert error',table,err);return null;}
-  const data=await res.json();return Array.isArray(data)?data[0]:data;
-}
-async function sbUpsert(table,row,onConflict){
-  if(!SUPABASE_URL||!SUPABASE_KEY)return null;
-  const url=SUPABASE_URL+'/rest/v1/'+table+(onConflict?`?on_conflict=${onConflict}`:'');
-  const res=await fetch(url,{method:'POST',headers:{...await sbHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});
-  if(!res.ok){const err=await res.text();console.error('Supabase upsert error',table,err);return null;}
   const data=await res.json();return Array.isArray(data)?data[0]:data;
 }
 
@@ -1640,11 +1696,6 @@ document.querySelectorAll('.po-tab').forEach(b=>b.onclick=()=>switchTab(b.datase
 
 /* showDataView moved into renderPerf */
 
-function poKpi(label,val,delta,higherBetter=true,sub,spk){
-  let dl='';if(delta!=null){const cls=Math.abs(delta)<0.5?'fl':((delta>0)===higherBetter?'up':'dn');const ar=delta>0?'↑':delta<0?'↓':'→';dl=`<div class="dl ${cls}">${ar} ${fmt(Math.abs(delta),1)}%</div>`;}
-  return `<div class="po-kpi"><div class="label">${label}</div><div class="v">${val}</div>${dl||(sub?`<div class="dl fl">${sub}</div>`:'')}${spk?`<div style="margin-top:7px;height:18px">${spk}</div>`:''}</div>`;
-}
-function pctDelta(cur,prev){return (prev&&prev!==0)?((cur-prev)/Math.abs(prev))*100:null;}
 
 /* ════ CAMPAIGN TRENDS TAB ════ */
 function renderCampTrends(){
@@ -1926,22 +1977,6 @@ function fmtTargetLabel(kw,match){
   return label;
 }
 
-function isProductTarget(kw,match){
-  if(!kw)return false;
-  const lkw=(kw||'').toLowerCase();
-  const lm=(match||'').toLowerCase();
-  return lkw.includes('asin=')
-    ||lkw.includes('category=')
-    ||lkw.includes('keyword=')
-    ||lkw.startsWith('[')
-    ||lm.includes('product')
-    ||lm.includes('category')
-    ||lm.includes('auto')
-    ||lm.includes('close')
-    ||lm.includes('loose')
-    ||lm.includes('substitute')
-    ||lm.includes('complement');
-}
 
 function _doCompare(){
   const ss=curCamp?.snapshots;if(!ss||ss.length<2)return;
@@ -2860,105 +2895,8 @@ function showDataView(view){
 }
 
 
-function changeChart(c){
-  const ss=c.snapshots; if(ss.length<2)return '<div class="chartwrap"><div class="muted">Need 2+ snapshots to chart the trend.</div></div>';
-  const W=920,H=175,padL=46,padR=18,padT=20,padB=36,iw=W-padL-padR,ih=H-padT-padB;
-  const sales=ss.map(s=>s.sales),spend=ss.map(s=>s.spend);
-  const maxS=Math.max(...sales,1)*1.15,maxSp=Math.max(...spend,0.1)*1.6;
-  const xs=i=>padL+(ss.length<2?0:i/(ss.length-1)*iw);
-  const ysS=v=>padT+ih-(v/maxS)*ih, ysSp=v=>padT+ih-(v/maxSp)*ih;
-  const ln=(arr,y)=>arr.map((v,i)=>(i?'L':'M')+xs(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
-  const salesLn=ln(sales,ysS),spendLn=ln(spend,ysSp);
-  const salesArea=salesLn+` L${xs(ss.length-1)} ${padT+ih} L${xs(0)} ${padT+ih} Z`;
-  let grid='';for(let g=0;g<=3;g++){const y=padT+ih-(g/3)*ih;grid+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--border)"/><text x="${padL-9}" y="${y+3}" fill="var(--text4)" font-size="10" font-family="var(--mono)" text-anchor="end">${gbp(maxS*g/3,0)}</text>`;}
-  const xl=ss.map((s,i)=>`<text x="${xs(i)}" y="${H-20}" fill="var(--text4)" font-size="10" font-family="var(--mono)" text-anchor="${i===0?'start':i===ss.length-1?'end':'middle'}">${s.date}</text>`).join('');
-  const evs=c.changes.map((ch,k)=>{ const idx=Math.min(ss.length-1, ss.length-1-k); const x=xs(idx);
-    const oc=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
-    return `<g class="evmark" onmousemove="showTip(event,${c.id},${k})" onmouseleave="hideTip()">
-      <line x1="${x}" y1="${padT}" x2="${x}" y2="${padT+ih}" stroke="var(--amber)" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
-      <circle cx="${x}" cy="${padT-4}" r="11" fill="var(--bg)" stroke="${oc}" stroke-width="1.6"/>
-      <text x="${x}" y="${padT}" fill="${oc}" font-size="11" font-family="var(--mono)" font-weight="600" text-anchor="middle">${k+1}</text>
-    </g>`;}).join('');
-  const dots=sales.map((v,i)=>`<circle class="sdot" data-i="${i}" cx="${xs(i)}" cy="${ysS(v)}" r="${i===sales.length-1?4:3}" fill="var(--green)"/>`).join('');
-  window._chart={W,padL,iw,n:ss.length,ss,ysS,ysSp,xs:(i)=>xs(i)};
-  return `<div class="chartwrap" id="chartwrap">
-    <div class="chart-head">
-      <div class="label" style="color:var(--text2)">Sales vs spend — your changes marked on the timeline</div>
-      <div class="legend"><i class="s">Sales</i><i class="sp">Spend</i><i class="ev">Change</i></div>
-    </div>
-    <div class="chart-guide" id="cguide"></div>
-    <div class="chart-read" id="cread"></div>
-    <div class="chart-tip" id="chart-tip"></div>
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" id="csvg">
-      <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--green)" stop-opacity=".22"/><stop offset="1" stop-color="var(--green)" stop-opacity="0"/></linearGradient></defs>
-      ${grid}
-      <path d="${salesArea}" fill="url(#sg)"/>
-      <path d="${salesLn}" fill="none" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2000" stroke-dashoffset="2000" style="animation:draw 1.3s .15s cubic-bezier(.4,0,.2,1) forwards"/>
-      <path d="${spendLn}" fill="none" stroke="var(--blue)" stroke-width="2" stroke-dasharray="5 5" opacity=".9" stroke-linecap="round"/>
-      ${dots}${evs}${xl}
-      <rect x="${padL}" y="${padT}" width="${iw}" height="${ih}" fill="transparent" onmousemove="chartHover(event)" onmouseleave="chartLeave()"/>
-    </svg>
-  </div>`;
-}
-function chartHover(e){const g=window._chart;if(!g)return;const svg=document.getElementById('csvg');const wrap=document.getElementById('chartwrap');if(!svg||!wrap)return;
-  const r=svg.getBoundingClientRect();const scale=r.width/g.W;const vx=(e.clientX-r.left)/scale;
-  let idx=Math.round((vx-g.padL)/g.iw*(g.n-1));idx=Math.max(0,Math.min(g.n-1,idx));
-  const px=r.left-wrap.getBoundingClientRect().left + g.xs(idx)*scale;
-  const guide=document.getElementById('cguide');guide.style.left=px+'px';guide.style.opacity=1;
-  const s=g.ss[idx],roas=s.spend?s.sales/s.spend:0;
-  const read=document.getElementById('cread');
-  read.innerHTML=`<div class="pd">${s.date}</div>
-    <div class="rl"><span class="dotc" style="background:var(--green)"></span>Sales <b>${gbp(s.sales)}</b></div>
-    <div class="rl"><span class="dotc" style="background:var(--blue)"></span>Spend <b>${gbp(s.spend)}</b></div>
-    <div class="rl"><span class="dotc" style="background:var(--text3)"></span>ROAS <b style="color:${ragColor(ragOf(roas,s.sales,s.spend))}">${fmt(roas,2)}</b></div>`;
-  const wrapW=wrap.getBoundingClientRect().width;
-  read.style.left=Math.min(px+12,wrapW-150)+'px';read.style.top='34px';read.style.opacity=1;
-}
-function chartLeave(){const g=document.getElementById('cguide'),r=document.getElementById('cread');if(g)g.style.opacity=0;if(r)r.style.opacity=0;}
-function showTip(e,cid,k){
-  const c=campaigns.find(x=>x.id===cid),ch=c.changes[k];const tip=document.getElementById('chart-tip');if(!tip)return;
-  const oc=ch.outcome==='win'?'<span class="outcome win">✓ Worked</span>':ch.outcome==='loss'?'<span class="outcome loss">✕ Didn\'t work</span>':'<span class="outcome pending"><svg class="outcome-clock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><polyline points="8,4.5 8,8 10.5,9.5"/></svg>Watching</span>';
-  tip.innerHTML=`<b>${k+1}. ${ch.what}</b><div class="meta">${ch.type} · ${ch.date}</div><div style="color:var(--text2);font-size:11px;margin:4px 0">${ch.why}</div>${oc}${ch.outcomeNote?`<div class="meta" style="margin-top:4px;color:var(--text2)">${ch.outcomeNote}</div>`:''}`;
-  const wrap=tip.closest('.chartwrap').getBoundingClientRect();
-  tip.style.left=Math.min(e.clientX-wrap.left+12,wrap.width-250)+'px';tip.style.top=(e.clientY-wrap.top+12)+'px';tip.style.opacity=1;
-}
-function hideTip(){const t=document.getElementById('chart-tip');if(t)t.style.opacity=0;}
 
 /* ad groups */
-function adGroupsHTML(targeting){
-  if(!targeting.length)return '<div class="muted" style="padding:10px 0">No targeting rows in this snapshot.</div>';
-  const groups={};targeting.forEach(t=>{(groups[t.adGroup]=groups[t.adGroup]||[]).push(t)});
-  return Object.entries(groups).map(([ag,rows],gi)=>{
-    const agg=rows.reduce((a,r)=>({imp:a.imp+r.imp,spend:a.spend+r.spend,sales:a.sales+r.sales,clicks:a.clicks+r.clicks,purch:a.purch+r.purch}),{imp:0,spend:0,sales:0,clicks:0,purch:0});
-    const roas=agg.spend?agg.sales/agg.spend:0,acos=agg.sales?agg.spend/agg.sales*100:0;
-    const rg=ragOf(roas,agg.sales,agg.spend);
-    return `<div class="agcard ${gi===0?'open':''}">
-      <div class="ag-head" onclick="this.closest('.agcard').classList.toggle('open')">
-        <span class="ag-chev">▶</span>
-        <div class="ag-name">${ag} ${rg==='leak'?'<span class="rag flag">NO SALE</span>':`<span class="rag ${rg}"><span class="d"></span>${fmt(roas,1)}</span>`} <span class="muted" style="font-weight:400;font-size:11px">${rows.length} target${rows.length>1?'s':''}</span></div>
-        <div class="ag-metrics">
-          <div class="ag-m"><div class="l">Impr</div><div class="v">${intf(agg.imp)}</div></div>
-          <div class="ag-m"><div class="l">Spend</div><div class="v" style="${agg.sales===0&&agg.spend>0?'color:var(--amber)':''}">${gbp(agg.spend)}</div></div>
-          <div class="ag-m"><div class="l">Sales</div><div class="v">${gbp(agg.sales)}</div></div>
-          <div class="ag-m"><div class="l">ACOS</div><div class="v">${agg.sales?fmt(acos,1)+'%':'—'}</div></div>
-        </div>
-      </div>
-      <div class="ag-detail"><table class="kwtable">
-        <thead><tr><th>Target / keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-        <tbody>${rows.map(r=>{const rg2=ragOf(r.roas,r.sales,r.spend);return `<tr>
-          <td>${rg2==="leak"?"<span class=\"flagdot\"></span>":""}${r.kw}</td>
-          <td style="text-align:right">${matchTag(r.match)}</td>
-          <td style="text-align:right"><input class="bidinput" value="${fmt(r.bid,2)}"></td>
-          <td>${intf(r.imp)}</td><td>${intf(r.clicks)}</td><td>${fmt(r.ctr,2)}%</td>
-          <td style="${r.sales===0&&r.spend>0?'color:var(--amber);font-weight:600':''}">${gbp(r.spend)}</td>
-          <td>${gbp(r.sales)}</td><td>${intf(r.purch)}</td>
-          <td>${r.sales?fmt(r.acos,1)+'%':'—'}</td>
-          <td style="color:${ragColor(rg2)};font-weight:600">${rg2==='leak'?'—':fmt(r.roas,2)}</td>
-        </tr>`;}).join('')}</tbody>
-      </table></div>
-    </div>`;
-  }).join('');
-}
 
 /* change log tab in popout */
 function renderChanges(){
@@ -3480,9 +3418,6 @@ function parseCsv(text){
     return o;
   });
   return{headers,rows};
-}
-function csvVal(row,...keys){
-  for(const k of keys){const v=row[k]||row[k.toLowerCase()]||'';if(v&&v!=='—'&&v!='--')return v;}return'';
 }
 /* turn a period label ("2 Jun 2026" or "25 May – 31 May 2026") into a sortable timestamp using its START date */
 function parseGbPeriod(s){
@@ -4576,7 +4511,6 @@ function periodAgg(period){let spend=0,sales=0,orders=0,impr=0,n=0,leaks=0;
   return{spend,sales,orders,impr,n,leaks,roas:spend?sales/spend:0};}
 /* Period lookup map */
 window._periodMap = {};
-function deletePeriod(safeP){ const p=window._periodMap[safeP]; if(p)deleteSnapshotPeriod(p); }
 
 function renderSnapshots(){
   /* Populate campaign filter */
@@ -4884,162 +4818,7 @@ function snapEditRow(campId, date){
   document.body.style.overflow='hidden';
 }
 
-function renderSnapPeriodDetail(period){
-  const rows=campaigns.map(c=>({c,s:c.snapshots.find(x=>x.date===period)})).filter(x=>x.s);
-  if(!rows.length)return'<div style="padding:16px;color:var(--text3);font-size:12px">No campaign data for this period.</div>';
-  const sCpc=s=>s.cpc>0?s.cpc:(s.clicks&&s.spend?s.spend/s.clicks:0);
-  const sCtr=s=>s.ctr>0?s.ctr:(s.impressions&&s.clicks?s.clicks/s.impressions*100:0);
-  const safeP=period.replace(/[^a-zA-Z0-9]/g,'_');
 
-  return `<div style="overflow-x:auto">
-    <table class="dt" style="min-width:860px">
-      <thead><tr>
-        <th style="text-align:left">Campaign</th>
-        <th>Impr.</th><th>Clicks</th><th>CTR</th>
-        <th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th>
-        <th style="width:24px"></th>
-      </tr></thead>
-      <tbody>${rows.sort((x,y)=>y.s.spend-x.s.spend).map(({c,s})=>{
-        const hl=s.spend>0&&s.sales===0;
-        const rg=ragOf(s.roas,s.sales,s.spend);
-        const hasTgt=(s.targeting&&s.targeting.length>0);
-        const hasAg=(s.adGroups&&s.adGroups.length>0);
-        const rowId=`spd-${c.id}-${safeP}`;
-        return `<tr class="${hl?'flagrow':''}" onclick="toggleKwDetail('${rowId}')" style="cursor:pointer">
-          <td><div class="cn">${monoTile(c.alias||c.name)}<div class="meta">
-            <b>${hl?'<span class="flagdot"></span>':''}${c.alias||c.name}</b>
-            <span>${c.asin}${hasTgt||hasAg?` · <span style="color:var(--blue);font-size:9.5px">${hasTgt?s.targeting.length+' keywords':''}${hasTgt&&hasAg?' · ':''}${hasAg?s.adGroups.length+' ads':''}</span>`:' · <span style="color:var(--text4);font-size:9.5px">no CSV data</span>'}</span>
-          </div></div></td>
-          <td>${intf(s.impressions||0)}</td>
-          <td>${intf(s.clicks||0)}</td>
-          <td>${sCtr(s)>0?fmt(sCtr(s),2)+'%':'—'}</td>
-          <td ${hl?'style="color:var(--amber);font-weight:600"':''}>${gbp(s.spend)}</td>
-          <td>${sCpc(s)>0?gbp(sCpc(s)):'—'}</td>
-          <td ${hl?'style="color:var(--amber)"':''}>${gbp(s.sales)}</td>
-          <td>${intf(s.purchases||0)}</td>
-          <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
-          <td style="color:${ragColor(rg)};font-weight:700">${hl?'<span class="rag r" style="font-size:9px">NO SALE</span>':fmt(s.roas||0,2)}</td>
-          <td style="color:var(--text4);font-size:11px;text-align:center">${hasTgt||hasAg?'▼':''}</td>
-          <td style="text-align:right;white-space:nowrap">
-            <button onclick="event.stopPropagation();renamePeriod('${c.id}','${s.date}')" style="background:none;border:none;color:var(--text3);font-size:10.5px;cursor:pointer;padding:2px 6px;border-radius:4px" title="Rename period">✎</button>
-            <button onclick="event.stopPropagation();deleteOneCampSnap('${c.id}','${s.date}')" style="background:none;border:none;color:var(--red);font-size:10.5px;cursor:pointer;padding:2px 6px;border-radius:4px" title="Delete this snapshot">✕</button>
-          </td>
-        </tr>
-        ${hasTgt||hasAg?`<tr id="${rowId}" style="display:none">
-          <td colspan="11" style="padding:0;background:var(--bg3)">
-            <div style="padding:12px 16px">
-              <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center">
-                ${hasTgt?`<button onclick="snapKwTab('${rowId}','tgt')" data-view="tgt"
-                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font)">
-                  Targeting (${s.targeting.length})</button>`:''}
-                ${hasAg?`<button onclick="snapKwTab('${rowId}','ag')" data-view="ag"
-                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:${hasTgt?'var(--bg4)':'var(--blue)'};color:${hasTgt?'var(--text3)':'#fff'};cursor:pointer;font-family:var(--font)">
-                  Ad Groups (${s.adGroups.length})</button>`:''}
-              </div>
-              ${hasTgt?`<div id="${rowId}-tgt" style="overflow-x:auto;max-height:340px;overflow-y:auto">
-                <table class="simple-tbl" style="min-width:680px">
-                  <thead><tr><th>Keyword / target</th><th>Match</th><th>Bid</th><th>Impr</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-                  <tbody>${s.targeting.map(t=>{
-                    const tRg=ragOf(t.roas,t.sales,t.spend);
-                    const tLeak=t.spend>0&&t.sales===0;
-                    return `<tr ${tLeak?'class="trow-leak"':''}>
-                      <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${tLeak?'<span class="flagdot"></span>':''}${t.kw||'—'}</td>
-                      <td>${matchTag(t.match||'—')}</td>
-                      <td style="color:var(--text3)">${t.bid>0?gbp(t.bid):'—'}</td>
-                      <td>${intf(t.imp||0)}</td>
-                      <td>${intf(t.clicks||0)}</td>
-                      <td ${tLeak?'style="color:var(--amber);font-weight:600"':''}>${gbp(t.spend||0)}</td>
-                      <td>${gbp(t.sales||0)}</td>
-                      <td>${intf(t.purch||0)}</td>
-                      <td>${t.sales?fmt(t.acos||t.spend/t.sales*100,1)+'%':'—'}</td>
-                      <td style="color:${ragColor(tRg)};font-weight:700">${tLeak?'<span style="color:var(--amber)">NO SALE</span>':fmt(t.roas||0,2)}</td>
-                    </tr>`;
-                  }).join('')}</tbody>
-                </table></div>`:''}
-              ${hasAg?`<div id="${rowId}-ag" style="${hasTgt?'display:none;':''}overflow-x:auto;max-height:340px;overflow-y:auto">
-                <table class="simple-tbl" style="min-width:580px">
-                  <thead><tr><th>Ad name</th><th>ASIN</th><th>Impr</th><th>Clicks</th><th>Spend</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th></tr></thead>
-                  <tbody>${s.adGroups.map(ag=>{
-                    const aRg=ragOf(ag.roas,ag.sales,ag.spend);
-                    return `<tr>
-                      <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ag.name||'—'}</td>
-                      <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${ag.asin||'—'}</td>
-                      <td>${intf(ag.imp||0)}</td><td>${intf(ag.clicks||0)}</td>
-                      <td>${gbp(ag.spend||0)}</td><td>${gbp(ag.sales||0)}</td>
-                      <td>${intf(ag.purch||0)}</td>
-                      <td>${ag.sales?fmt(ag.acos||ag.spend/ag.sales*100,1)+'%':'—'}</td>
-                      <td style="color:${ragColor(aRg)};font-weight:700">${fmt(ag.roas||0,2)}</td>
-                    </tr>`;
-                  }).join('')}</tbody>
-                </table></div>`:''}
-            </div>
-          </td>
-        </tr>`:''}`;
-      }).join('')}</tbody>
-    </table>
-  </div>`;
-}
-
-function renderCampSnapHistory(c){
-  const ss=c.snapshots;
-  if(!ss.length)return'<div style="padding:16px;color:var(--text3);font-size:12px">No snapshots yet.</div>';
-  const sCpc=s=>s.cpc>0?s.cpc:(s.clicks&&s.spend?s.spend/s.clicks:0);
-  const sCtr=s=>s.ctr>0?s.ctr:(s.impressions&&s.clicks?s.clicks/s.impressions*100:0);
-  return `<div style="overflow-x:auto">
-    <table class="dt" style="min-width:760px">
-      <thead><tr><th style="text-align:left">Period</th><th>Impr.</th><th>Clicks</th><th>CTR</th><th>Spend</th><th>CPC</th><th>Sales</th><th>Orders</th><th>ACOS</th><th>ROAS</th><th style="width:24px"></th></tr></thead>
-      <tbody>${[...ss].reverse().map((s,ri)=>{
-        const rg=ragOf(s.roas,s.sales,s.spend);
-        const hl=s.spend>0&&s.sales===0;
-        const isLatest=ri===0;
-        const hasTgt=(s.targeting&&s.targeting.length>0);
-        const hasAg=(s.adGroups&&s.adGroups.length>0);
-        const rowId=`csh-${c.id}-${ri}`;
-        return `<tr ${hl?'class="flagrow"':''} ${hasTgt||hasAg?`onclick="toggleKwDetail('${rowId}')" style="cursor:pointer"`:'style="cursor:default"'}>
-          <td style="white-space:nowrap">
-            ${s.date||'—'}
-            ${isLatest?'<span class="ctag" style="font-size:9px;padding:1px 5px;vertical-align:middle;margin-left:4px">latest</span>':''}
-            ${hasTgt||hasAg?`<span style="color:var(--blue);font-size:9.5px;margin-left:6px">${hasTgt?s.targeting.length+' kw':''}${hasTgt&&hasAg?' · ':''}${hasAg?s.adGroups.length+' ads':''}</span>`:''}
-          </td>
-          <td>${intf(s.impressions||0)}</td>
-          <td>${intf(s.clicks||0)}</td>
-          <td>${sCtr(s)>0?fmt(sCtr(s),2)+'%':'—'}</td>
-          <td ${hl?'style="color:var(--amber);font-weight:600"':''}>${gbp(s.spend)}</td>
-          <td>${sCpc(s)>0?gbp(sCpc(s)):'—'}</td>
-          <td>${gbp(s.sales)}</td>
-          <td>${intf(s.purchases||0)}</td>
-          <td>${s.sales?fmt(s.acos||s.spend/s.sales*100,1)+'%':'—'}</td>
-          <td style="color:${ragColor(rg)};font-weight:700">${fmt(s.roas||0,2)}</td>
-          <td style="color:var(--text4);font-size:11px;text-align:center">${hasTgt||hasAg?'▼':''}</td>
-        </tr>
-        ${hasTgt||hasAg?`<tr id="${rowId}" style="display:none">
-          <td colspan="11" style="padding:0;background:var(--bg3)">
-            <div style="padding:12px 16px">
-              <div style="display:flex;gap:6px;margin-bottom:10px">
-                ${hasTgt?`<button onclick="snapKwTab('${rowId}','tgt')" data-view="tgt"
-                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:var(--blue);color:#fff;cursor:pointer;font-family:var(--font)">
-                  Targeting (${s.targeting.length})</button>`:''}
-                ${hasAg?`<button onclick="snapKwTab('${rowId}','ag')" data-view="ag"
-                  style="border:none;padding:4px 13px;border-radius:6px;font-size:11px;font-weight:600;background:${hasTgt?'var(--bg4)':'var(--blue)'};color:${hasTgt?'var(--text3)':'#fff'};cursor:pointer;font-family:var(--font)">
-                  Ad Groups (${s.adGroups.length})</button>`:''}
-              </div>
-              ${hasTgt?`<div id="${rowId}-tgt" style="overflow-x:auto;max-height:300px;overflow-y:auto">
-                <table class="simple-tbl" style="min-width:640px">
-                  <thead><tr><th>Keyword</th><th>Match</th><th>Bid</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th></tr></thead>
-                  <tbody>${s.targeting.map(t=>{const tRg=ragOf(t.roas,t.sales,t.spend);const tL=t.spend>0&&t.sales===0;return`<tr ${tL?'class="trow-leak"':''}><td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${tL?'<span class="flagdot"></span>':''}${t.kw||'—'}</td><td>${matchTag(t.match||'—')}</td><td>${t.bid>0?gbp(t.bid):'—'}</td><td>${intf(t.imp||0)}</td><td ${tL?'style="color:var(--amber);font-weight:600"':''}>${gbp(t.spend||0)}</td><td>${gbp(t.sales||0)}</td><td>${t.sales?fmt(t.acos||t.spend/t.sales*100,1)+'%':'—'}</td><td style="color:${ragColor(tRg)};font-weight:700">${tL?'NO SALE':fmt(t.roas||0,2)}</td></tr>`;}).join('')}</tbody>
-                </table></div>`:''}
-              ${hasAg?`<div id="${rowId}-ag" style="${hasTgt?'display:none;':''}overflow-x:auto;max-height:300px;overflow-y:auto">
-                <table class="simple-tbl" style="min-width:540px">
-                  <thead><tr><th>Ad name</th><th>Impr</th><th>Spend</th><th>Sales</th><th>ACOS</th><th>ROAS</th></tr></thead>
-                  <tbody>${s.adGroups.map(ag=>{const aRg=ragOf(ag.roas,ag.sales,ag.spend);return`<tr><td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ag.name||'—'}</td><td>${intf(ag.imp||0)}</td><td>${gbp(ag.spend||0)}</td><td>${gbp(ag.sales||0)}</td><td>${ag.sales?fmt(ag.acos||ag.spend/ag.sales*100,1)+'%':'—'}</td><td style="color:${ragColor(aRg)};font-weight:700">${fmt(ag.roas||0,2)}</td></tr>`;}).join('')}</tbody>
-                </table></div>`:''}
-            </div>
-          </td>
-        </tr>`:''}`;
-      }).join('')}</tbody>
-    </table>
-  </div>`;
-}
 
 function toggleSnapPeriod(safeP){
   const exp=document.getElementById('snap-exp-'+safeP);
@@ -5050,21 +4829,7 @@ function toggleSnapPeriod(safeP){
   if(chev)chev.style.transform=open?'rotate(0deg)':'rotate(180deg)';
 }
 
-function toggleCampSnaps(campId){
-  const exp=document.getElementById('camp-snap-exp-'+campId);
-  const chev=document.getElementById('camp-snap-chev-'+campId);
-  if(!exp)return;
-  const open=exp.style.display!=='none';
-  exp.style.display=open?'none':'block';
-  if(chev)chev.textContent=open?'▼':'▲';
-}
 
-function toggleKwDetail(rowId){
-  const row=document.getElementById(rowId);
-  if(!row)return;
-  const open=row.style.display!=='none';
-  row.style.display=open?'none':'table-row';
-}
 
 function snapKwTab(rowId, view){
   const tgt=document.getElementById(rowId+'-tgt');
@@ -5086,15 +4851,6 @@ function openSnapPeriod(period){ toggleSnapPeriod(period.replace(/[^a-zA-Z0-9]/g
 
 
 
-function renamePeriod(campId, oldDate){
-  const newDate=prompt('Rename period "'+oldDate+'" to:', oldDate);
-  if(!newDate||newDate===oldDate)return;
-  const c=campaigns.find(x=>x.id==campId);if(!c)return;
-  const s=c.snapshots.find(x=>x.date===oldDate);if(!s)return;
-  s.date=newDate;
-  renderSnapshots();
-  if(curCamp&&curCamp.id==campId)renderPerf();
-}
 
 async function deleteOneCampSnap(campId, date){
   if(!confirm('Delete the "'+date+'" snapshot for this campaign only?'))return;
@@ -5175,23 +4931,6 @@ let _snapModalSafeP=null;
 /* In-memory edit buffers: keyed by campId — {tgts:[...], ags:[...], dirty:bool} */
 window._snapEditBuf={};
 
-function openSnapPeriodModal(safeP){
-  const period=window._periodMap[safeP];
-  if(!period)return;
-  _snapModalSafeP=safeP;
-  window._snapModalPeriod=period;
-  /* Pre-init all edit buffers from current snapshot data */
-  window._snapEditBuf={};
-  campaigns.forEach(c=>{
-    const s=c.snapshots.find(x=>x.date===period);
-    if(s) window._snapEditBuf[c.id]={
-      tgts:JSON.parse(JSON.stringify(s.targeting||[])),
-      ags:JSON.parse(JSON.stringify(s.adGroups||[])),
-      dirty:false
-    };
-  });
-  _renderSnapModal();
-}
 
 function _renderSnapModal(){
   const period=window._snapModalPeriod;
@@ -5597,15 +5336,6 @@ function deletePeriodFromModal(){
   deleteSnapshotPeriod(period);
 }
 
-function renamePeriodOne(campId, oldDate){
-  const newDate=prompt('Rename period "'+oldDate+'" for this campaign only:', oldDate);
-  if(!newDate||newDate===oldDate)return;
-  const c=campaigns.find(x=>x.id==campId);if(!c)return;
-  const s=c.snapshots.find(x=>x.date===oldDate);if(!s)return;
-  s.date=newDate;
-  closeSnap();renderSnapshots();
-  if(curCamp&&curCamp.id==campId)renderPerf();
-}
 
 async function deleteOneCampSnapFromModal(campId, date){
   if(!confirm('Delete the "'+date+'" snapshot for this campaign only?'))return;
@@ -5780,18 +5510,6 @@ function saveDisplayPrefs(){
   const s=document.getElementById('cfg-status');
   if(s){s.textContent='✓ Saved';s.style.color='var(--green)';setTimeout(()=>{s.textContent='';},1800);}
 }
-function loadDisplayPrefs(){
-  try{
-    const raw=localStorage.getItem('bdl_display_prefs');
-    if(raw){
-      window.displayPrefs=JSON.parse(raw);
-      /* Re-apply to settings UI */
-      const dp=window.displayPrefs;
-      if(dp.currency){const el=document.getElementById('cfg-currency');if(el)el.value=dp.currency;}
-      if(dp.defaultSort){const el=document.getElementById('cfg-default-sort');if(el)el.value=dp.defaultSort;}
-    }
-  }catch(e){}
-}
 function renderSettings(){
   document.getElementById('cfg-url').value=SUPABASE_URL||'';
   document.getElementById('cfg-key').value=SUPABASE_KEY||'';
@@ -5865,7 +5583,7 @@ function deletePriceEntry(asin,date){
 document.querySelectorAll('#nav .nav-btn').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#nav .nav-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+b.dataset.p).classList.add('active');
-  if(b.dataset.p==='dashboard'){populateDashPeriodSelectors();renderDashPeriod();}
+  if(b.dataset.p==='dashboard'){populateDashPeriodSelectors();if(_dashDirty||!_dashRenderedOnce){renderDashPeriod();renderDashAttention();renderDashRecentChanges();}}
   if(b.dataset.p==='campaigns')renderCampaigns();
   if(b.dataset.p==='insights')renderInsights();
   if(b.dataset.p==='changelog')renderChangeLog();
@@ -5926,12 +5644,6 @@ function _aggregatePeriod(period){
   return{spend,sales,purchases,impressions,clicks,roas,acos,cpc,ctr,matched};
 }
 
-function setDashSort(field,btn){
-  _dashSort=field;
-  document.querySelectorAll('#db-sort-spend,#db-sort-roas,#db-sort-sales').forEach(b=>b.classList.remove('on'));
-  if(btn)btn.classList.add('on');
-  renderDashCampBreakdown();
-}
 
 function renderDashPeriod(){
   const period=(document.getElementById('dash-period-sel')||{value:'latest'}).value;
@@ -5954,6 +5666,7 @@ function renderDashPeriod(){
   if(lbl)lbl.textContent=period==='latest'?'— latest snapshot per campaign':'— period: '+period;
   const cov=document.getElementById('dash-period-coverage');
   if(cov){const a=_aggregatePeriod(period);cov.textContent=a.matched+' of '+campaigns.length+' campaigns have data';}
+  _dashRenderedOnce=true;_dashDirty=false;
 }
 
 
@@ -5985,58 +5698,47 @@ function renderDashActionList(){
   const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
   const maxAcos=parseFloat(document.getElementById('cfg-max-acos')?.value||30);
   if(!window._actionedKeys)window._actionedKeys=new Set();
-  const actions=[];
+  const actions=[],reviews=[];               /* actions = performance · reviews = scheduled/change reviews */
+  const today=new Date();today.setHours(0,0,0,0);
   A.forEach(c=>{
     const ls=c.snapshots[c.snapshots.length-1]||{};
     const pv=c.snapshots[c.snapshots.length-2];
     const name=c.alias||c.name;
-    if(c.noSaleSpend||c.rag==='leak') actions.push({pri:0,type:'urgent',tag:'SPEND LEAK',label:'Zero sales — pausing recommended',camp:name,sub:gbp(c.spend)+' spent · no return',cid:c.id,action:'Pause campaign or add negative keywords immediately',key:c.id+'|leak'});
-    else if(c.roas>0&&c.roas<T) actions.push({pri:1,type:'warn',tag:'LOW ROAS',label:fmt(c.roas,2)+'× below '+fmt(T,1)+'× target',camp:name,sub:'Spend '+gbp(c.spend)+' · Sales '+gbp(c.sales),cid:c.id,action:'Lower bids or pause underperforming keywords',key:c.id+'|roas'});
-    if(c.acos>maxAcos&&c.sales>0) actions.push({pri:2,type:'warn',tag:'HIGH ACOS',label:fmt(c.acos,1)+'% above '+maxAcos+'% target',camp:name,sub:gbp(c.spend)+' spend for '+gbp(c.sales)+' sales',cid:c.id,action:'Review keyword bids and match types',key:c.id+'|acos'});
-    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>25&&c.roas>=T) actions.push({pri:2,type:'warn',tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
-    (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0).forEach(t=>{actions.push({pri:1,type:'urgent',tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
-    if(ls.impressions===0&&c.snapshots.length>0) actions.push({pri:3,type:'info',tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status in Amazon',key:c.id+'|noimpr'});
-    const today=new Date();today.setHours(0,0,0,0);
-    /* Scheduled review frequency — only show if no change-based review already flagged */
+    if(c.noSaleSpend||c.rag==='leak') actions.push({type:'urgent',pri:0,tag:'SPEND LEAK',label:'Zero sales — pausing recommended',camp:name,sub:gbp(c.spend)+' spent · no return',cid:c.id,action:'Pause campaign or add negative keywords immediately',key:c.id+'|leak'});
+    else if(c.roas>0&&c.roas<T) actions.push({type:'warn',pri:1,tag:'LOW ROAS',label:fmt(c.roas,2)+'× below '+fmt(T,1)+'× target',camp:name,sub:'Spend '+gbp(c.spend)+' · Sales '+gbp(c.sales),cid:c.id,action:'Lower bids or pause underperforming keywords',key:c.id+'|roas'});
+    if(c.acos>maxAcos&&c.sales>0) actions.push({type:'warn',pri:2,tag:'HIGH ACOS',label:fmt(c.acos,1)+'% above '+maxAcos+'% target',camp:name,sub:gbp(c.spend)+' spend for '+gbp(c.sales)+' sales',cid:c.id,action:'Review keyword bids and match types',key:c.id+'|acos'});
+    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>25&&c.roas>=T) actions.push({type:'warn',pri:2,tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
+    (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0).forEach(t=>{actions.push({type:'urgent',pri:1,tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
+    if(ls.impressions===0&&c.snapshots.length>0) actions.push({type:'info',pri:3,tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status in Amazon',key:c.id+'|noimpr'});
+    /* ── Due for Review: scheduled frequency ── */
     if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
-      const lastSnap=c.snapshots[c.snapshots.length-1];
-      const lastDate=lastSnap.date||'—';
-      /* Try to estimate days since last snapshot from today */
       const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
-      /* Only fire if no pending change review already showing */
       if(!hasPendingReview){
+        const lastDate=c.snapshots[c.snapshots.length-1].date||'—';
         const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
-        actions.push({pri:3,type:'info',tag:'SCHEDULED',label:rfLabel+' review due — '+lastDate,camp:name,sub:'Review campaign performance and log any changes needed',cid:c.id,action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
+        reviews.push({type:'review',pri:3,tag:'SCHEDULED',label:rfLabel+' review due — '+lastDate,camp:name,sub:'Review campaign performance and log any changes needed',cid:c.id,action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
       }
     }
-    (c.changes||[]).filter(ch=>ch.outcome==='pending'&&ch.review).forEach(ch=>{try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);if(diff<=3)actions.push({pri:2,type:'review',tag:diff<=0?'OVERDUE':'REVIEW DUE',label:(diff<=0?'Overdue: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work'});}catch(e){}});
+    /* ── Due for Review: change follow-ups ── */
+    (c.changes||[]).forEach((ch,ci)=>{
+      if(ch.outcome==='pending'&&ch.review){
+        try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);
+          if(diff<=3)reviews.push({type:'review',pri:diff<=0?0:2,tag:diff<=0?'OVERDUE':'REVIEW DUE',label:(diff<=0?'Overdue: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work',key:c.id+'|chreview|'+ci});
+        }catch(e){}
+      }
+    });
   });
-  actions.sort((a,b)=>a.pri-b.pri);
-  /* give every action a stable key if not already set */
-  actions.forEach((a,i)=>{if(!a.key)a.key=a.cid+'|'+a.tag+'|'+i;});
+  actions.sort((a,b)=>a.pri-b.pri);reviews.sort((a,b)=>a.pri-b.pri);
   const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)',review:'var(--purple)'};
   const bgMap={urgent:'rgba(255,93,108,.1)',warn:'rgba(255,181,71,.08)',info:'rgba(91,157,255,.08)',review:'rgba(183,148,255,.1)'};
-  const visible=actions.filter(a=>!window._actionedKeys.has(a.key));
-  const dismissed=actions.length-visible.length;
-  const count=visible.length;
-  const urgentVisible=visible.some(a=>a.type==='urgent');
-  const hdr=`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-    <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">Action Required</span>
-      ${count?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${urgentVisible?'var(--red-bg)':'var(--amber-bg)'};color:${urgentVisible?'var(--red)':'var(--amber)'};border:1px solid ${urgentVisible?'rgba(255,93,108,.3)':'rgba(255,181,71,.3)'}">${count} item${count!==1?'s':''}</span>`:'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>'}
-      ${dismissed?`<span style="font-size:10.5px;color:var(--text3)">${dismissed} marked done</span>`:''}
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      ${dismissed?`<button onclick="window._actionedKeys.clear();renderDashActionList()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset all</button>`:''}
-      <span style="font-size:10.5px;color:var(--text4)">Click row to open · Mark Done to dismiss</span>
-    </div>
-  </div>`;
-  if(!count&&!dismissed){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All campaigns healthy — no actions required.</div>';return;}
-  if(!count){el.innerHTML=hdr+'<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">All actions marked as done. Click Reset all to bring them back.</div>';return;}
-  el.innerHTML=hdr+'<div style="overflow-y:auto;max-height:280px">'+visible.slice(0,15).map(a=>{
+  const done=window._actionedKeys;
+  const visA=actions.filter(a=>!done.has(a.key));
+  const visR=reviews.filter(a=>!done.has(a.key));
+  const dismissedCount=(actions.length-visA.length)+(reviews.length-visR.length);
+  const row=(a)=>{
     const col=colMap[a.type];
-    const ek=JSON.stringify(a.key);
-    return`<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:.12s" class="hrow">
+    const kAttr=String(a.key).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);transition:.12s" class="hrow">
       <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:${bgMap[a.type]};color:${col};border:1px solid ${col}44;white-space:nowrap;letter-spacing:.3px;cursor:pointer" onclick="openCamp('${a.cid}')">${a.tag}</div>
       <div style="min-width:0;cursor:pointer" onclick="openCamp('${a.cid}')">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
@@ -6045,11 +5747,27 @@ function renderDashActionList(){
         </div>
         <div style="font-size:11px;color:#d4dff0">${a.sub} <span style="color:#8892a8;font-style:italic"> — ${a.action}</span></div>
       </div>
-      <button onclick="window._actionedKeys.add(${ek});renderDashActionList()" title="Dismiss this action" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
+      <button data-k="${kAttr}" onclick="markActionDone(this.getAttribute('data-k'))" title="Mark done — stays dismissed after refresh" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:#dde3ef;font-size:11px;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--font)" onmouseenter="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='#dde3ef'">Mark Done</button>
     </div>`;
-  }).join('')+'</div>';
+  };
+  const section=(title,accent,items,emptyMsg)=>{
+    const urgent=items.some(a=>a.type==='urgent'||a.tag==='OVERDUE');
+    const badge=items.length
+      ?`<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${urgent?'var(--red-bg)':accent+'22'};color:${urgent?'var(--red)':accent};border:1px solid ${accent}55">${items.length} item${items.length!==1?'s':''}</span>`
+      :'<span style="font-size:11px;font-weight:700;color:var(--green)">All clear</span>';
+    const hdr=`<div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px"><span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text)">${title}</span>${badge}</div>`;
+    if(!items.length)return hdr+`<div style="padding:14px 16px;font-size:12.5px;color:var(--green)">${emptyMsg}</div>`;
+    return hdr+'<div style="overflow-y:auto;max-height:260px">'+items.slice(0,15).map(row).join('')+'</div>';
+  };
+  const topBar=`<div style="padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+    <span style="font-size:10.5px;color:var(--text4)">Click a row to open the campaign · Mark Done to dismiss (stays dismissed after refresh)</span>
+    ${dismissedCount?`<span style="display:flex;align-items:center;gap:8px"><span style="font-size:10.5px;color:var(--text3)">${dismissedCount} marked done</span><button onclick="resetActions()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10.5px;padding:3px 9px;border-radius:6px;cursor:pointer;font-family:var(--font)">Reset all</button></span>`:''}
+  </div>`;
+  el.innerHTML=topBar
+    +section('Action Required','var(--amber)',visA,'All campaigns healthy — no actions required.')
+    +'<div style="height:10px;background:transparent"></div>'
+    +section('Due for Review','var(--purple)',visR,'No reviews scheduled or due.');
 }
-
 function renderDashWhatsWorking(){
   const el=document.getElementById('dash-whats-working');if(!el)return;
   const A=campaigns.filter(c=>c.status==='active'&&c.roas>0);
@@ -6213,7 +5931,6 @@ function renderDashProductOverview(){
   }).join('')}</div>`;
 }
 
-function renderDashMainChart(){/* removed */}
 
 /* ── Since Last Snapshot ── */
 function renderDashSinceLast(period,cmpPeriod){
@@ -6272,139 +5989,10 @@ function renderDashSinceLast(period,cmpPeriod){
 }
 
 /* ── Performance Score (now embedded in KPI strip) ── */
-function renderDashScore(){
-  /* score is now rendered inside renderDashKPIs health tile — nothing to do */
-  return;
-  const el=document.getElementById('dash-score-card');if(!el)return;
-  const A=campaigns.filter(c=>c.status==='active');
-  if(!A.length){el.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:11px">No active campaigns</div>';return;}
-  /* Score: ROAS 40%, ACOS 25%, leaks 20%, CTR 15% */
-  let score=0;
-  const totSp=A.reduce((a,c)=>a+c.spend,0), totSa=A.reduce((a,c)=>a+c.sales,0);
-  const roas=totSp?totSa/totSp:0;
-  const acos=totSa?totSp/totSa*100:0;
-  const leaks=A.filter(c=>c.noSaleSpend).length;
-  const greens=A.filter(c=>c.rag==='g').length;
-  score+=Math.min(40,roas>=5?40:roas>=4?30:roas>=3?18:8);
-  score+=Math.min(25,acos<=15?25:acos<=20?20:acos<=30?12:4);
-  score+=leaks===0?20:leaks===1?12:leaks<=3?6:0;
-  score+=Math.round((greens/Math.max(A.length,1))*15);
-  const sc=Math.round(score);
-  const col=sc>=80?'var(--green)':sc>=60?'var(--amber)':'var(--red)';
-  const label=sc>=80?'Excellent':sc>=60?'Good':sc>=40?'Needs Work':'Action Required';
-  const circ=(r,pct,c)=>{const circ2=2*Math.PI*r;const off=circ2-(pct/100*circ2);return`<circle cx="36" cy="36" r="${r}" fill="none" stroke="${c}" stroke-width="4" stroke-dasharray="${circ2}" stroke-dashoffset="${off}" stroke-linecap="round" transform="rotate(-90 36 36)"/>`;};
-  const roasScore=Math.min(40,roas>=5?40:roas>=4?30:roas>=3?18:8);
-  const acosScore=Math.min(25,acos<=15?25:acos<=20?20:acos<=30?12:4);
-  const leakScore=leaks===0?20:leaks===1?12:leaks<=3?6:0;
-  const healthScore=Math.round((greens/Math.max(A.length,1))*15);
-  const bar=(label2,val2,max2,col2)=>`<div style="margin-bottom:5px">
-    <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:9.5px;color:var(--text3)">${label2}</span><span style="font-size:9.5px;font-weight:700;color:${col2}">${val2}/${max2}</span></div>
-    <div style="height:4px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:${Math.round(val2/max2*100)}%;height:100%;background:${col2};border-radius:3px"></div></div>
-  </div>`;
-  el.innerHTML=`<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-    <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)">Performance Score</span>
-    <span style="font-size:18px;font-weight:700;font-family:var(--display);color:${col}">${sc}<span style="font-size:10px;color:var(--text3);font-weight:500">/100</span></span>
-  </div>
-  <div style="padding:10px 14px">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <div style="position:relative;width:52px;height:52px;flex-shrink:0">
-        <svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="none" stroke="var(--bg4)" stroke-width="3.5"/>${(()=>{const c2=2*Math.PI*20;const off=c2-(sc/100*c2);return`<circle cx="26" cy="26" r="20" fill="none" stroke="${col}" stroke-width="3.5" stroke-dasharray="${c2}" stroke-dashoffset="${off}" stroke-linecap="round" transform="rotate(-90 26 26)"/>`;})()}</svg>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:14px;font-weight:700;color:${col}">${sc}</div>
-      </div>
-      <div><div style="font-size:13px;font-weight:700;color:${col}">${label}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${A.length} active campaign${A.length!==1?'s':''}</div></div>
-    </div>
-    ${bar('ROAS',roasScore,40,roas>=5?'var(--green)':roas>=4?'var(--amber)':'var(--red)')}
-    ${bar('ACOS',acosScore,25,acos<=20?'var(--green)':'var(--amber)')}
-    ${bar('No leaks',leakScore,20,leaks===0?'var(--green)':'var(--red)')}
-    ${bar('Health',healthScore,15,greens===A.length?'var(--green)':'var(--amber)')}
-  </div>`;
-}
 
 /* ── Snapshot Activity (now embedded in KPI strip health tile) ── */
-function renderDashSnapActivity(){
-  /* activity is now rendered inside renderDashKPIs health tile — nothing to do */
-  return;
-  const el=document.getElementById('dash-snap-activity');if(!el)return;
-  const A=campaigns.filter(c=>c.status==='active');
-  const allSnaps=A.flatMap(c=>c.snapshots);
-  if(!allSnaps.length){el.innerHTML='<div style="padding:12px 14px"><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:8px">Snapshot Activity</div><div style="font-size:11.5px;color:var(--text3)">No snapshots yet.</div></div>';return;}
-  const dates=allSnaps.map(s=>s.date).filter(Boolean).sort().reverse();
-  const lastDate=dates[0]||'—';
-  const totalSnaps=allSnaps.length;
-  /* Count unique periods */
-  const periods=[...new Set(allSnaps.map(s=>s.date))];
-  /* Mini timeline — last 8 periods as dots */
-  const recentPeriods=[...new Set(allSnaps.map(s=>s.date).filter(Boolean))].sort().slice(-8);
-  const dots=recentPeriods.map((p,i)=>{
-    const isLast=i===recentPeriods.length-1;
-    return`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1">
-      <div style="width:${isLast?10:7}px;height:${isLast?10:7}px;border-radius:50%;background:${isLast?'var(--blue)':'var(--bg5)'};border:${isLast?'2px solid var(--blue)':'1px solid var(--border2)'};box-shadow:${isLast?'0 0 8px rgba(91,157,255,.5)':'none'}"></div>
-      <div style="font-size:7px;color:var(--text4);text-align:center;white-space:nowrap;overflow:hidden;max-width:32px;text-overflow:ellipsis">${p.replace(/\d{4}/,'').trim().slice(0,8)}</div>
-    </div>`;
-  }).join('');
-  el.innerHTML=`<div style="padding:10px 14px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)">Snapshot Activity</span></div>
-  <div style="padding:10px 14px;display:flex;flex-direction:column;gap:7px">
-    ${[['Last snapshot',lastDate,'var(--text)'],['Periods tracked',periods.length,'var(--text)'],['Campaigns with data',A.filter(c=>c.snapshots.length>0).length+'/'+A.length,'var(--text3)']].map(([l,v,c])=>`<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10.5px;color:var(--text3)">${l}</span><span style="font-size:11.5px;font-weight:700;color:${c}">${v}</span></div>`).join('')}
-  </div>
-  ${dots?`<div style="padding:6px 10px 10px;border-top:1px solid var(--border)"><div style="font-size:9px;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Recent snapshots</div><div style="display:flex;align-items:flex-end;gap:2px">${dots}</div></div>`:''}`;
-}
 
 /* ── Charts Strip ── */
-function renderDashChartsStrip(){
-  const el=document.getElementById('dash-charts-strip');if(!el)return;
-  const A=campaigns.filter(c=>c.status==='active');
-  const maxSnaps=Math.max(...A.map(c=>c.snapshots.length),0);
-  if(maxSnaps<2){el.innerHTML='<div style="padding:14px;font-size:12px;color:var(--text3)">Add at least 2 snapshots to see trend charts.</div>';return;}
-  const n=Math.min(maxSnaps,12);
-  const buildSeries=(key)=>{
-    const out=[];
-    for(let i=Math.max(0,maxSnaps-n);i<maxSnaps;i++){
-      let v=0;
-      A.forEach(c=>{const s=c.snapshots[i];if(s)v+=key==='roas'?(s.spend?s.sales/s.spend:0):(s[key]||0);});
-      out.push(v);
-    }
-    return out;
-  };
-  const labels=[];
-  if(A[0]){
-    for(let i=Math.max(0,maxSnaps-n);i<maxSnaps;i++){const s=A[0].snapshots[i];if(s)labels.push(s.date||'');else labels.push('');}
-  }
-  const roasS=buildSeries('roas'),salesS=buildSeries('sales'),spendS=buildSeries('spend');
-  const lastRoas=roasS[roasS.length-1]||0;
-  const roasCol=lastRoas>=5?'var(--green)':lastRoas>=4?'var(--amber)':'var(--red)';
-
-  const mkChart=(vals,col,label,fmtFn,w=180,h=60)=>{
-    if(vals.filter(v=>v>0).length<2)return'';
-    const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
-    const pts=vals.map((v,i)=>[i/(vals.length-1)*(w-8)+4,h-8-((v-mn)/range)*(h-16)]);
-    const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
-    const area=d+` L${pts[pts.length-1][0]} ${h} L${pts[0][0]} ${h} Z`;
-    const lv=vals[vals.length-1],pv=vals[vals.length-2]||lv;
-    const tc=lv>=pv?col:'var(--red)';
-    const pct=pv?((lv-pv)/Math.abs(pv)*100):null;
-    const lastPt=pts[pts.length-1];
-    const gradId='cg'+col.replace(/[^a-z]/gi,'');
-    return`<div style="flex:1;min-width:0;padding:10px 12px;border-right:1px solid var(--border)">
-      <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:4px">${label}</div>
-      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
-        <span style="font-family:var(--display);font-size:18px;font-weight:700;color:${tc}">${fmtFn(lv)}</span>
-        ${pct!=null?`<span style="font-size:10.5px;font-weight:700;color:${tc}">${pct>=0?'↑':'↓'} ${Math.abs(pct).toFixed(1)}%</span>`:''}
-      </div>
-      <svg width="${w}" height="${h}" style="display:block;overflow:visible">
-        <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tc}" stop-opacity=".18"/><stop offset="1" stop-color="${tc}" stop-opacity="0"/></linearGradient></defs>
-        <path d="${area}" fill="url(#${gradId})"/>
-        <path d="${d}" fill="none" stroke="${tc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="3.5" fill="${tc}" stroke="var(--panel)" stroke-width="1.5"/>
-      </svg>
-    </div>`;
-  };
-  el.innerHTML=`<div style="padding:10px 14px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)">Performance Trends</span><span style="font-size:10.5px;color:var(--text3);margin-left:8px">last ${n} snapshots</span></div>
-  <div style="display:flex;overflow-x:auto">
-    ${mkChart(roasS,roasCol,'ROAS',v=>fmt(v,2))}
-    ${mkChart(salesS,'var(--text)','Sales',v=>gbp(v))}
-    ${mkChart(spendS,'var(--text)','Spend',v=>gbp(v))}
-  </div>`;
-}
 
 /* ── Quick Wins ── */
 function renderDashQuickWins(){
@@ -6884,7 +6472,6 @@ loadFromSupabase().then(()=>{
     populateDashPeriodSelectors();
     renderDashPeriod();
     renderDashAttention();
-    renderDashReminders();
     renderDashRecentChanges();
   }
   /* Warn if targeting_json column is missing */
