@@ -1264,7 +1264,12 @@ async function loadFromSupabase(){
        row we just wrote — which is exactly why the Campaigns page used to need a
        manual refresh to show the new snapshot. */
     const _noCache={cache:'no-store'};
-    const _cb='&_ts='+Date.now();
+    /* NOTE: do NOT append a cache-buster query param here. PostgREST treats any
+       unrecognised query parameter (e.g. &_ts=...) as a column filter, and since
+       there is no `_ts` column the whole request fails with a 400. The
+       cache:'no-store' option in _noCache already forces a fresh read, so this
+       is left empty. */
+    const _cb='';
     const campRes=await fetch(SUPABASE_URL+'/rest/v1/campaigns?select=*&order=id'+_cb,{headers,..._noCache});
     if(!campRes.ok)throw new Error('campaigns fetch failed ('+campRes.status+')');
     const campData=await campRes.json();
