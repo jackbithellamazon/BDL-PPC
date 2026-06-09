@@ -116,7 +116,7 @@ body{background:
 .rag.n{color:var(--text2);background:var(--bg4)} .rag.n .d{background:var(--text4)}
 
 /* TABLE */
-.tablecard{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--panel);box-shadow:var(--shadow-sm)}
+.tablecard{border:1px solid var(--border);border-radius:var(--r);overflow:auto;min-width:0;background:var(--panel);box-shadow:var(--shadow-sm)}
 .tscroll{overflow:auto;max-height:none}
 table.dt{width:100%;border-collapse:collapse;min-width:1020px}
 table.dt thead th{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#dde3ef;text-align:right;padding:12px 14px;border-bottom:1px solid var(--border2);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--bg3);z-index:2;transition:.12s}
@@ -605,6 +605,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <select class="sel" id="cl-type-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All types</option><option>PPC Bid</option><option>PPC Budget</option><option>PPC Keywords</option><option>Pricing</option><option>Listing</option><option>Stock</option></select>
       <select class="sel" id="cl-outcome-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All outcomes</option><option value="pending">Pending review</option><option value="overdue">Overdue</option><option value="win">Worked</option><option value="loss">Did not work</option></select>
       <select class="sel" id="cl-date-filter" onchange="window._clPage=0;renderChangeLog()" style="min-width:130px"><option value="all">Any date</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select>
+      <select class="sel" id="cl-sort" onchange="window._clPage=0;renderChangeLog()" style="min-width:150px"><option value="recent">Sort: Newest</option><option value="oldest">Sort: Oldest</option><option value="review">Sort: Review due</option><option value="campaign">Sort: Campaign</option><option value="outcome">Sort: Outcome</option></select>
       <select class="sel" id="cl-scope" onchange="window._clPage=0;renderChangeLog()">
         <option value="flat">Flat list</option>
         <option value="campaign">Group: campaign</option>
@@ -1091,6 +1092,18 @@ function monoLetters(name){const w=(name||'').replace(/[—–-]/g,' ').split(/\
 function monoIdx(name){let h=0;for(const ch of(name||''))h=(h*31+ch.charCodeAt(0))>>>0;return h%MONO.length;}
 function monoTile(name,size=32){const[c,bg]=MONO[monoIdx(name)];const fs=Math.round(size*0.36);return`<div class="mono-ic" style="width:${size}px;height:${size}px;background:${bg};color:${c};font-size:${fs}px">${monoLetters(name)}</div>`;}
 
+/* Copy a value to the clipboard and give brief inline feedback on the clicked element */
+function copyText(t,e){
+  const done=()=>{ if(e){const o=e.innerHTML;e.dataset._copyLabel=o;e.innerHTML='✓ Copied';setTimeout(()=>{ if(e)e.innerHTML=e.dataset._copyLabel||o; },1100);} };
+  try{ navigator.clipboard.writeText(t).then(done,done); }
+  catch(_){ try{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}catch(__){} done(); }
+}
+/* Build a chip that copies its value when clicked (e.g. ASIN / SKU) */
+function _copyChip(label,val,style){
+  if(!val||val==='—')return `<span class="chip" style="${style||''}">${label}&nbsp;—</span>`;
+  return `<span class="chip" onclick="event.stopPropagation();copyText('${String(val).replace(/'/g,"\\'")}',this)" title="Click to copy ${label}" style="cursor:pointer;${style||''}">${label}&nbsp;${val}</span>`;
+}
+
 /* periods (oldest→newest) */
 const PERIODS=['Apr 2026','25 Apr–1 May','2–8 May','9–15 May','16–22 May','23–31 May','1 Jun 2026'];
 
@@ -1546,7 +1559,7 @@ function openCamp(id){
     else if(hasPendingChange){_reviewFlag=' — pending';}
     _reviewChip=`<span class="chip" style="color:${_chipTxt};border-color:${_chipCol};cursor:pointer" onclick="switchTab('changes')" title="Click to see changes">${_rfLabel} review${_reviewFlag}</span>`;
   }
-  document.getElementById('po-sub').innerHTML=`<span class="chip" style="color:var(--purple);border-color:rgba(183,148,255,.3);background:var(--purple-bg)">ASIN&nbsp;${c.asin}</span><span class="chip" style="color:var(--text2)">SKU&nbsp;${c.sku||'—'}</span>${c.price?`<span class="chip">£${fmt(c.price,2)}</span>`:''}<span class="chip" style="color:${c.status==='active'?'var(--green)':'var(--text3)'};border-color:${c.status==='active'?'rgba(46,229,157,.3)':'var(--border)'}"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${c.status==='active'?'var(--green)':'var(--text4)'};margin-right:5px;box-shadow:${c.status==='active'?'0 0 5px var(--green)':'none'}"></span>${c.status}</span><span class="chip" style="color:var(--blue);border-color:rgba(91,157,255,.3);background:var(--blue-bg)">${_ss.length}&nbsp;snapshot${_ss.length!==1?'s':''}</span><span class="chip" style="color:${c.changes.length?'var(--amber)':'var(--text2)'};border-color:${c.changes.length?'rgba(255,181,71,.3)':'var(--border)'}">${c.changes.length}&nbsp;change${c.changes.length!==1?'s':''}</span>${_reviewChip}`;
+  document.getElementById('po-sub').innerHTML=`${_copyChip('ASIN',c.asin,'color:var(--purple);border-color:rgba(183,148,255,.3);background:var(--purple-bg)')}${_copyChip('SKU',c.sku,'color:var(--text2)')}${c.price?`<span class="chip">£${fmt(c.price,2)}</span>`:''}<span class="chip" style="color:${c.status==='active'?'var(--green)':'var(--text3)'};border-color:${c.status==='active'?'rgba(46,229,157,.3)':'var(--border)'}"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${c.status==='active'?'var(--green)':'var(--text4)'};margin-right:5px;box-shadow:${c.status==='active'?'0 0 5px var(--green)':'none'}"></span>${c.status}</span><span class="chip" style="color:var(--blue);border-color:rgba(91,157,255,.3);background:var(--blue-bg)">${_ss.length}&nbsp;snapshot${_ss.length!==1?'s':''}</span><span class="chip" style="color:${c.changes.length?'var(--amber)':'var(--text2)'};border-color:${c.changes.length?'rgba(255,181,71,.3)':'var(--border)'}">${c.changes.length}&nbsp;change${c.changes.length!==1?'s':''}</span>${_reviewChip}`;
   document.getElementById('potab-changes').textContent=c.changes.length||'';
   renderPerf();renderChanges();renderProfit();renderNotes();renderImport();
   window._perfPeriod=null;
@@ -2156,7 +2169,7 @@ function _doCompare(){
     const col=_ppcColour(label,vA2,vB2,d)||'rgba(148,163,184,0.4)';
     const dotCol=(!noChange&&d!=null)?col:'rgba(148,163,184,0.3)';
     const absDiff=vA2-vB2;
-    const absStr=absDiff>=0?`+${fn(Math.abs(absDiff))}`:`−${fn(Math.abs(absDiff))}`;
+    const absStr=absDiff>=0?`↑${fn(Math.abs(absDiff))}`:`↓${fn(Math.abs(absDiff))}`;
     const pctTxt=d!=null?`${d>0?'+':''}${d.toFixed(1)}%`:null;
     // Bar: scales relative to the biggest possible move, max 92% of available space
     const barPct=(!noChange&&d!=null)?Math.max(6,Math.min(92,Math.abs(d)*0.9)):0;
@@ -2405,12 +2418,19 @@ function _doCompare(){
       if(diff==null)return`<td style="padding:6px 10px;text-align:right;font-family:var(--mono);font-size:12.5px;color:var(--text2)">—</td>`;
       const isLeakSpend=spendCtx&&salesA===0&&spendA>0;
       const col=Math.abs(diff)<0.005?'var(--text2)':isLeakSpend?'var(--red)':spendCtx?'var(--text)':hb?(diff>0?'var(--green)':'var(--red)'):(diff<0?'var(--green)':'var(--red)');
-      const sign=diff>0?'+':'';
+      const arrow=diff>0?'↑':'↓';
+      const valTxt=String(fmtFn(Math.abs(diff))).replace(/^\+/,'');
       const p=pctPair?pctOf(pctPair[0],pctPair[1]):null;
       return`<td style="padding:6px 10px;text-align:right">
-        <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${col}">${Math.abs(diff)<0.005?'—':sign+fmtFn(diff)}</div>
+        <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${col}">${Math.abs(diff)<0.005?'—':`<span style="font-size:11px;margin-right:1px">${arrow}</span>${valTxt}`}</div>
         ${Math.abs(diff)>0.005?pctSec(p):''}
       </td>`;
+    };
+    // Magnitude + direction arrow for the expanded breakdown tiles
+    const dDiff=(delta,fmtFn)=>{
+      if(delta==null||Math.abs(delta)<0.005)return '—';
+      const a=delta>0?'↑':'↓';
+      return `<span style="font-size:11px;margin-right:1px">${a}</span>`+fmtFn(Math.abs(delta));
     };
 
     const expandedDetail=expanded?`<tr id="exp-${idx}">
@@ -2418,19 +2438,19 @@ function _doCompare(){
         <div style="padding:12px 16px 12px 48px">
           <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
             ${[
-              ['Sales',gbp(salesB),gbp(salesA),gbp(dSales),dSales>=0?'var(--green)':'var(--red)'],
-              ['Spend',gbp(spendB),gbp(spendA),gbp(dSpend),salesA===0&&spendA>0?'var(--red)':'var(--text)'],
-              ['Orders',ordB,ordA,dOrd>=0?'+'+dOrd:String(dOrd),dOrd>=0?'var(--green)':'var(--red)'],
-              ['ROAS',fmt(roaB2,2)+'×',fmt(roaA2,2)+'×',(dRoas>=0?'+':'')+fmt(dRoas,2)+'×',dRoas>=0?'var(--green)':'var(--red)'],
-              acosA!=null?['ACOS',acosB!=null?fmt(acosB,1)+'%':'—',fmt(acosA,1)+'%',dAcos!=null?(dAcos<=0?'+':'')+fmt(-dAcos,1)+'% impr':null,dAcos!=null?(dAcos<=0?'var(--green)':'var(--red)'):'var(--text2)']:null,
-              cpcA2>0||cpcB2>0?['CPC',gbp(cpcB2),gbp(cpcA2),(dCpc<=0?'+':'')+gbp(Math.abs(dCpc)),dCpc<=0?'var(--green)':'var(--red)']:null,
-              impA>0||impB>0?['Impressions',intf(impB),intf(impA),(dImp>=0?'+':'')+intf(dImp),dImp>=0?'var(--green)':'var(--red)']:null,
-              clkA>0||clkB>0?['Clicks',intf(clkB),intf(clkA),(dClk>=0?'+':'')+intf(dClk),dClk>=0?'var(--green)':'var(--red)']:null,
-              ctrA>0||ctrB>0?['CTR',fmt(ctrB,2)+'%',fmt(ctrA,2)+'%',(dCtr>=0?'+':'')+fmt(dCtr,2)+'%',dCtr>=0?'var(--green)':'var(--red)']:null,
-              cvrA>0||cvrB>0?['CVR',fmt(cvrB,2)+'%',fmt(cvrA,2)+'%',(dCvr>=0?'+':'')+fmt(dCvr,2)+'%',dCvr>=0?'var(--green)':'var(--red)']:null,
+              ['Sales',gbp(salesB),gbp(salesA),dDiff(dSales,gbp),dSales>=0?'var(--green)':'var(--red)'],
+              ['Spend',gbp(spendB),gbp(spendA),dDiff(dSpend,gbp),salesA===0&&spendA>0?'var(--red)':'var(--text)'],
+              ['Orders',ordB,ordA,dDiff(dOrd,v=>intf(v)),dOrd>=0?'var(--green)':'var(--red)'],
+              ['ROAS',fmt(roaB2,2)+'×',fmt(roaA2,2)+'×',dDiff(dRoas,v=>fmt(v,2)+'×'),dRoas>=0?'var(--green)':'var(--red)'],
+              acosA!=null?['ACOS',acosB!=null?fmt(acosB,1)+'%':'—',fmt(acosA,1)+'%',dAcos!=null?dDiff(dAcos,v=>fmt(v,1)+'%'):null,dAcos!=null?(dAcos<=0?'var(--green)':'var(--red)'):'var(--text2)']:null,
+              cpcA2>0||cpcB2>0?['CPC',gbp(cpcB2),gbp(cpcA2),dDiff(dCpc,gbp),dCpc<=0?'var(--green)':'var(--red)']:null,
+              impA>0||impB>0?['Impressions',intf(impB),intf(impA),dDiff(dImp,v=>intf(v)),dImp>=0?'var(--green)':'var(--red)']:null,
+              clkA>0||clkB>0?['Clicks',intf(clkB),intf(clkA),dDiff(dClk,v=>intf(v)),dClk>=0?'var(--green)':'var(--red)']:null,
+              ctrA>0||ctrB>0?['CTR',fmt(ctrB,2)+'%',fmt(ctrA,2)+'%',dDiff(dCtr,v=>fmt(v,2)+'%'),dCtr>=0?'var(--green)':'var(--red)']:null,
+              cvrA>0||cvrB>0?['CVR',fmt(cvrB,2)+'%',fmt(cvrA,2)+'%',dDiff(dCvr,v=>fmt(v,2)+'%'),dCvr>=0?'var(--green)':'var(--red)']:null,
             ].filter(Boolean).map(([label,vOld,vNew,diff2,col2])=>`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 11px">
               <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:5px">${label}</div>
-              <div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:2px">${vOld} → ${vNew}</div>
+              <div style="font-family:var(--mono);font-size:11px;margin-bottom:2px"><span style="color:var(--text4)" title="Older snapshot (B)">${vOld}</span> <span style="color:var(--text4)">→</span> <span style="color:var(--text);font-weight:700" title="Newer snapshot (A)">${vNew}</span></div>
               <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:${col2}">${diff2||'—'}</div>
             </div>`).join('')}
           </div>
@@ -2600,7 +2620,7 @@ function _doCompare(){
   const _pm=_panelMetrics(smx,roaA,roaB,cpcA,cpcB);
   const _showON=window._cmpShowOldNew;
 
-  const olderCard=`<div style="flex:1;min-width:190px;background:#0c0f16;border:1px solid rgba(148,163,184,0.13);border-radius:12px;padding:18px 20px;position:relative;box-sizing:border-box">
+  const olderCard=`<div style="flex:1;min-width:190px;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.14);border-radius:12px;padding:18px 20px;position:relative;box-sizing:border-box">
     <div style="position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(148,163,184,0.1);border:1px solid rgba(148,163,184,0.18);display:grid;place-items:center;font-size:11px;font-weight:800;color:#5a6880;font-family:var(--mono)">B</div>
     <div style="margin-bottom:16px;padding-right:34px">
       <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:#4a5568;margin-bottom:5px">Older Snapshot</div>
@@ -2618,7 +2638,7 @@ function _doCompare(){
     ${_pm.map(m=>_diffRowV2(m.l,m.vA,m.vB,m.fn,_showON)).join('')}
   </div>`;
 
-  const newerCard=`<div style="flex:1;min-width:190px;background:#0c0f16;border:1px solid rgba(91,157,255,0.2);border-radius:12px;padding:18px 20px;position:relative;box-sizing:border-box">
+  const newerCard=`<div style="flex:1;min-width:190px;background:#0c0f16;border:2px solid rgba(91,157,255,0.5);border-radius:12px;padding:18px 20px;position:relative;box-sizing:border-box">
     <div style="position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(91,157,255,0.1);border:1px solid rgba(91,157,255,0.25);display:grid;place-items:center;font-size:11px;font-weight:800;color:#5b9dff;font-family:var(--mono)">A</div>
     <div style="margin-bottom:16px;padding-right:34px">
       <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:rgba(91,157,255,0.65);margin-bottom:5px">Newer Snapshot</div>
@@ -3203,10 +3223,10 @@ function changeEntry(ch, campId, chIdx){
     ?`<div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
         <div style="font-size:12px;color:#dde3ef;margin-bottom:7px;font-weight:500">Mark this change as reviewed:</div>
         <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
-          <textarea id="rn-${campId}-${chIdx}" placeholder="Review notes — what actually happened?" class="input" style="flex:1;min-width:180px;min-height:48px;font-size:12px;resize:vertical"></textarea>
+          <textarea id="rn-${campId}-${chIdx}" oninput="(window._reviewNotes=window._reviewNotes||{})['${campId}|${chIdx}']=this.value" placeholder="Review notes — what actually happened?" class="input" style="flex:1;min-width:180px;min-height:48px;font-size:12px;resize:vertical"></textarea>
           <div style="display:flex;flex-direction:column;gap:5px">
-            <button class="btn" style="background:var(--green);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange('${campId}',${chIdx},'win')">✓ Worked</button>
-            <button class="btn" style="background:var(--red);font-size:12px;padding:7px 14px;font-weight:700" onclick="markChange('${campId}',${chIdx},'loss')">✕ Did not work</button>
+            <button class="btn" style="background:var(--green);font-size:12px;padding:7px 14px;font-weight:700" onpointerdown="event.preventDefault();markChange('${campId}',${chIdx},'win')" onclick="markChange('${campId}',${chIdx},'win')">✓ Worked</button>
+            <button class="btn" style="background:var(--red);font-size:12px;padding:7px 14px;font-weight:700" onpointerdown="event.preventDefault();markChange('${campId}',${chIdx},'loss')" onclick="markChange('${campId}',${chIdx},'loss')">✕ Did not work</button>
           </div>
         </div>
       </div>`
@@ -3242,9 +3262,26 @@ function changeEntry(ch, campId, chIdx){
 }
 
 function markChange(campId, chIdx, outcome){
+  /* Debounce: pointerdown plus the emulated click can both fire for a single tap,
+     and the buttons sit beside the notes box. Without this, the second pass would
+     re-read an already-cleared notes field and wipe the note. Ignore repeats
+     within 600ms. */
+  const _gk=campId+'|'+chIdx;
+  window._markGuard=window._markGuard||{};
+  if(window._markGuard[_gk]&&Date.now()-window._markGuard[_gk]<600)return;
+  window._markGuard[_gk]=Date.now();
   const c=campaigns.find(x=>x.id==campId);if(!c)return;
   const ch=c.changes[chIdx];if(!ch)return;
-  const note=(document.getElementById('rn-'+campId+'-'+chIdx)||{value:''}).value.trim();
+  /* Read the review note from the textarea, falling back to the value captured
+     live as the user typed. The fallback is what fixes the reported bug: when the
+     button is tapped right after the notes field had focus (e.g. a tap that first
+     dismisses a mobile keyboard, or any blur/click race), the field could be gone
+     by the time we read it — which previously meant the note, and the whole
+     outcome, silently failed to register. */
+  const _store=window._reviewNotes||{};
+  const _domEl=document.getElementById('rn-'+campId+'-'+chIdx);
+  const note=((_domEl?_domEl.value:'')||_store[_gk]||'').trim();
+  if(window._reviewNotes)delete window._reviewNotes[_gk];
   ch.outcome=outcome;
   ch.outcomeNote=note||'';
   ch.reviewedAt=new Date().toISOString().slice(0,10);
@@ -4300,6 +4337,14 @@ if(!window._clPage)window._clPage=0;
 const CL_PAGE_SIZE=40;
 
 function renderChangeLog(){
+  /* Keep an open change-detail popup in sync after any mark/edit/delete. Match by
+     a stable signature (date|what) so it survives index shifts; close if removed. */
+  if(window._cdOpen){
+    const _c=campaigns.find(x=>x.id==window._cdOpen.cid);
+    const _ni=_c?_c.changes.findIndex(ch=>((ch.date||'')+'|'+(ch.what||''))===window._cdOpen.sig):-1;
+    if(_c&&_ni>=0)_renderChangeDetailBody(window._cdOpen.cid,_ni);
+    else closeChangeDetail();
+  }
   /* Populate campaign filter */
   const cfEl=document.getElementById('cl-camp-filter');
   if(cfEl){const prev=cfEl.value;cfEl.innerHTML='<option value="all">All campaigns</option>'+campaigns.map(c=>`<option value="${c.id}" ${c.id==prev?'selected':''}>${c.alias||c.name}</option>`).join('');if(prev)cfEl.value=prev;}
@@ -4320,7 +4365,15 @@ function renderChangeLog(){
   else if(of2!=='all')all=all.filter(x=>x.outcome===of2);
   if(dateF!=='all'){const days=parseInt(dateF);all=all.filter(x=>{try{return(today2-new Date((x.date||'')+'T00:00:00'))<=days*86400000;}catch(e){return true;}});}
   if(srch)all=all.filter(x=>(x.what||'').toLowerCase().includes(srch)||(x.why||'').toLowerCase().includes(srch)||(x.cname||'').toLowerCase().includes(srch)||(x.type||'').toLowerCase().includes(srch)||(x.goal||'').toLowerCase().includes(srch));
-  all.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const sortBy=document.getElementById('cl-sort')?.value||'recent';
+  const _ocRank={pending:0,loss:1,win:2};
+  all.sort((a,b)=>{
+    if(sortBy==='oldest')return (a.date||'').localeCompare(b.date||'');
+    if(sortBy==='review')return (a.review||'9999-99').localeCompare(b.review||'9999-99')||(b.date||'').localeCompare(a.date||'');
+    if(sortBy==='campaign')return (a.cname||'').localeCompare(b.cname||'')||(b.date||'').localeCompare(a.date||'');
+    if(sortBy==='outcome')return ((_ocRank[a.outcome]??9)-(_ocRank[b.outcome]??9))||(b.date||'').localeCompare(a.date||'');
+    return (b.date||'').localeCompare(a.date||'');
+  });
 
   const allChanges=campaigns.flatMap(c=>c.changes);
   const wins=allChanges.filter(x=>x.outcome==='win').length;
@@ -4351,9 +4404,8 @@ function renderChangeLog(){
 
   const pageItems=all.slice(safePage*CL_PAGE_SIZE,(safePage+1)*CL_PAGE_SIZE);
 
-  /* Compact row renderer for scalability */
-  const SVG_CLK=`<svg style="width:10px;height:10px;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><polyline points="8,4.5 8,8 10.5,9.5"/></svg>`;
-  const clCompactRow=(x)=>{
+  /* Compact clickable tile — opens a detail popup. Scales to thousands of rows. */
+  const clTile=(x)=>{
     const ch=x.ch||x;
     const ic={'PPC Bid':'⊙','PPC Budget':'£','PPC Keywords':'⌗','Pricing':'฿','Listing':'≣','Stock':'▣','Other':'•'}[ch.type]||'•';
     const reviewDate=ch.review?new Date(ch.review+'T00:00:00'):null;
@@ -4361,44 +4413,35 @@ function renderChangeLog(){
     const reviewDue=reviewDate&&reviewDate<=today2&&ch.outcome==='pending';
     const daysUntil=reviewDate?Math.round((reviewDate-today2)/86400000):null;
     const dotCol=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
-    const ocLabel=ch.outcome==='win'?`<span class="outcome win" style="font-size:10px;padding:2px 8px">✓ Worked</span>`:
-      ch.outcome==='loss'?`<span class="outcome loss" style="font-size:10px;padding:2px 8px">✕ Didn't work</span>`:
-      `<span class="outcome pending" style="font-size:10px;padding:2px 8px">${SVG_CLK} ${reviewDue?'OVERDUE':'Pending'}</span>`;
-    const reviewLabel=reviewDate?(
-      daysUntil===0?`<span style="font-size:10px;color:var(--red);font-weight:600">TODAY</span>`:
-      daysUntil<0?`<span style="font-size:10px;color:var(--red);font-weight:600">${Math.abs(daysUntil)}d overdue</span>`:
-      daysUntil<=7?`<span style="font-size:10px;color:var(--amber)">${fmtDateShort(ch.review)}</span>`:
-      `<span style="font-size:10px;color:var(--text3)">${fmtDateShort(ch.review)}</span>`):'';
-    const campChip=x.cname?`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">${x.cname}</span>`:'';
-    const typeChip=`<span style="font-size:10px;padding:1px 7px;border-radius:5px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,.2)">${ch.type}</span>`;
-    const markBtns=ch.outcome==='pending'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap">
-      <button onclick="clQuickMark('${x.cid}',${x.idx},'win',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--green-bg);border:1px solid rgba(46,229,157,.3);color:var(--green);cursor:pointer;font-family:var(--font);font-weight:600">✓ Worked</button>
-      <button onclick="clQuickMark('${x.cid}',${x.idx},'loss',this)" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">✕ Didn't</button>
-      <button onclick="openEditChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
-      <button onclick="deleteChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
-    </div>`:`<div style="display:flex;gap:4px;flex-shrink:0;align-items:flex-start">
-      <button onclick="openEditChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-family:var(--font);font-weight:600">✎ Edit</button>
-      <button onclick="deleteChangeLog('${x.cid}',${x.idx})" style="font-size:10px;padding:3px 8px;border-radius:5px;background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);cursor:pointer;font-family:var(--font);font-weight:600">🗑</button>
-    </div>`;
-    return`<div style="display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);align-items:start${reviewDue?';background:rgba(255,93,108,.04);border-left:3px solid var(--red)':''}">
-      <div style="width:24px;height:24px;border-radius:6px;background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}44;display:grid;place-items:center;font-size:11px">${ic}</div>
-      <div style="min-width:0">
-        <div style="font-size:12.5px;font-weight:700;color:#f2f4f9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:400px;margin-bottom:4px">${ch.what}</div>
-        <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
-          ${typeChip}${campChip}
-          <span style="font-size:10px;color:var(--text4)">${fmtDate(ch.date)}</span>
-          ${ocLabel}
-          ${reviewLabel?`<span style="font-size:10px;color:var(--text4)">Review:</span>${reviewLabel}`:''}
-        </div>
-        ${ch.why?`<div style="font-size:11px;color:var(--text3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${ch.why}</div>`:''}
-        ${ch.outcomeNote?`<div style="font-size:10.5px;color:var(--green);margin-top:2px">Result: ${ch.outcomeNote}</div>`:''}
+    const ocTxt=ch.outcome==='win'?'✓ Worked':ch.outcome==='loss'?"✕ Didn't":(reviewDue?'⚠ Overdue':'◷ Pending');
+    const reviewTxt=reviewDate?(
+      daysUntil<0?`${Math.abs(daysUntil)}d overdue`:
+      daysUntil===0?'review today':
+      daysUntil<=7?`review in ${daysUntil}d`:
+      `review ${fmtDateShort(ch.review)}`):'no review date';
+    const reviewCol=reviewDate?(daysUntil<0?'var(--red)':daysUntil<=7?'var(--amber)':'var(--text4)'):'var(--text4)';
+    const noteTag=ch.outcomeNote?'<span title="Has a result note" style="color:var(--green)">📝</span>':'';
+    return`<button onclick="openChangeDetail('${x.cid}',${x.idx})" style="all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:7px;cursor:pointer;width:100%;padding:11px 13px;background:var(--panel);border:1px solid var(--border);border-left:3px solid ${dotCol};border-radius:10px;transition:.12s" onmouseover="this.style.borderColor='var(--border3)';this.style.background='var(--bg2)';this.style.borderLeftColor='${dotCol}'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--panel)';this.style.borderLeftColor='${dotCol}'">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:22px;height:22px;border-radius:6px;background:${dotCol}1f;color:${dotCol};border:1px solid ${dotCol}44;display:grid;place-items:center;font-size:11px;flex-shrink:0">${ic}</span>
+        <span style="font-size:12.5px;font-weight:700;color:#f2f4f9;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${ch.what||'—'}</span>
       </div>
-      ${markBtns}
-    </div>`;
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px;background:${dotCol}1a;color:${dotCol};border:1px solid ${dotCol}33">${ocTxt}</span>
+        <span style="font-size:9.5px;padding:2px 7px;border-radius:5px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,157,255,.2)">${ch.type}</span>
+        ${noteTag}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--border);padding-top:6px;margin-top:1px">
+        <span style="font-size:10px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.cname||'—'}</span>
+        <span style="font-size:10px;color:var(--text4);white-space:nowrap;flex-shrink:0">${fmtDateShort(ch.date)}</span>
+      </div>
+      <div style="font-size:10px;font-weight:600;color:${reviewCol}">${reviewTxt}</div>
+    </button>`;
   };
+  const clGrid=(items)=>`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">${items.map(x=>clTile(x)).join('')}</div>`;
 
   if(scope==='flat'){
-    document.getElementById('cl-content').innerHTML=`<div class="card" style="overflow:hidden">${pageItems.map(x=>clCompactRow(x)).join('')}</div>`;
+    document.getElementById('cl-content').innerHTML=clGrid(pageItems);
   } else {
     const groups={};
     pageItems.forEach(x=>{
@@ -4409,8 +4452,8 @@ function renderChangeLog(){
       (groups[key]=groups[key]||[]).push(x);
     });
     document.getElementById('cl-content').innerHTML=Object.entries(groups).map(([k,items])=>`
-      <div class="sh" style="margin:12px 0 6px"><div class="tt" style="font-size:12.5px;color:#f2f4f9">${k} <small style="color:#d4dff0">${items.length} change${items.length!==1?'s':''}</small></div></div>
-      <div class="card" style="overflow:hidden">${items.map(x=>clCompactRow(x)).join('')}</div>`).join('');
+      <div class="sh" style="margin:14px 0 8px"><div class="tt" style="font-size:12.5px;color:#f2f4f9">${k} <small style="color:#d4dff0">${items.length} change${items.length!==1?'s':''}</small></div></div>
+      ${clGrid(items)}`).join('');
   }
 
   const totalLabel=`${intf(totalItems)} change${totalItems!==1?'s':''} ${srch||tf!=='all'||of2!=='all'||campF!=='all'||dateF!=='all'?'(filtered)':'total'}`;
@@ -4431,6 +4474,28 @@ function clQuickMark(campId,chIdx,outcome,btn){
   btn.textContent='…';btn.disabled=true;
   markChange(campId,chIdx,outcome);
   setTimeout(()=>renderChangeLog(),150);
+}
+
+/* ── Change-detail popup (opened by clicking a Change Log tile) ── */
+function _renderChangeDetailBody(cid,idx){
+  const c=campaigns.find(x=>x.id==cid);if(!c)return;
+  const ch=c.changes[idx];if(!ch)return;
+  const body=document.getElementById('cd-body');if(!body)return;
+  body.innerHTML=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:10px">${c.alias||c.name}</div>${changeEntry(ch,cid,idx)}`;
+}
+function openChangeDetail(cid,idx){
+  const c=campaigns.find(x=>x.id==cid);if(!c)return;
+  const ch=c.changes[idx];if(!ch)return;
+  window._cdOpen={cid,sig:(ch.date||'')+'|'+(ch.what||'')};
+  _renderChangeDetailBody(cid,idx);
+  const ov=document.getElementById('cd-overlay');
+  if(ov){ov.classList.add('open');document.body.style.overflow='hidden';}
+}
+function closeChangeDetail(){
+  window._cdOpen=null;
+  const ov=document.getElementById('cd-overlay');
+  if(ov)ov.classList.remove('open');
+  if(!document.querySelector('.overlay.open'))document.body.style.overflow=curCamp?'hidden':'';
 }
 
 /* ── Edit / Delete Change Log ── */
@@ -4662,7 +4727,7 @@ function renderProducts(){
   if(!filtered.length){grid.innerHTML='<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--text3)">No products match your search.</div>';return;}
 
   /* Mini-tile layout — 1 row per product, click opens popup */
-  grid.style.gridTemplateColumns='1fr';
+  grid.style.gridTemplateColumns='minmax(0,1fr)';
   grid.innerHTML=`<div class="tablecard"><table class="dt" style="min-width:700px">
     <thead><tr>
       <th style="text-align:left">Product</th>
@@ -7033,6 +7098,16 @@ function toggleSnapExpand(){
         </div>
       </div>
     </div>
+  </div>
+</div>
+<!-- ════════ CHANGE DETAIL POPUP ════════ -->
+<div class="overlay" id="cd-overlay" onclick="if(event.target.id==='cd-overlay')closeChangeDetail()" style="z-index:380">
+  <div class="popout" style="max-width:580px;width:calc(100vw - 40px);max-height:90vh;overflow-y:auto;margin:auto">
+    <div class="po-header" style="padding:16px 20px">
+      <div class="po-title" style="font-size:14px">Change detail</div>
+      <button class="close-btn" onclick="closeChangeDetail()">✕</button>
+    </div>
+    <div style="padding:18px 20px" id="cd-body"></div>
   </div>
 </div>
 <!-- ════════ EDIT CHANGE LOG MODAL ════════ -->
