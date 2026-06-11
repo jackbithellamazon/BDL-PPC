@@ -721,6 +721,13 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
             <input class="input" id="cfg-max-acos" style="width:100%" type="number" step="1" placeholder="15" oninput="settingsDirty()"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <div><div class="label" style="margin-bottom:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:5px"></span>Green ROAS ≥</div>
+            <input class="input" id="cfg-rag-green" style="width:100%" type="number" step="0.1" placeholder="5" oninput="settingsDirty()"></div>
+          <div><div class="label" style="margin-bottom:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:5px"></span>Amber ROAS ≥</div>
+            <input class="input" id="cfg-rag-amber" style="width:100%" type="number" step="0.1" placeholder="4" oninput="settingsDirty()"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:-2px">ROAS at or above the green value shows green; at or above amber shows amber; anything lower is red. These drive campaign health colours everywhere. <button class="btn-sm" type="button" onclick="document.getElementById('cfg-rag-green').value=document.getElementById('cfg-target-roas').value||5;document.getElementById('cfg-rag-amber').value=((+document.getElementById('cfg-target-roas').value||5)*0.8).toFixed(1);settingsDirty()" style="margin-left:4px">Match to Target ROAS</button></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
           <div><div class="label" style="margin-bottom:4px">Default bid step (£)</div>
             <input class="input" id="cfg-bid-step" style="width:100%" type="number" step="0.01" placeholder="0.05" oninput="settingsDirty()"></div>
           <div><div class="label" style="margin-bottom:4px">Max bid cap (£)</div>
@@ -1085,7 +1092,10 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 const fmt=(n,d=2)=>Number(n||0).toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});
 const gbp=(n,d=2)=>'£'+fmt(n,d);
 const intf=n=>Number(n||0).toLocaleString('en-GB');
-const ragOf=(roas,sales,spend)=>{ if(spend>0&&sales===0)return 'leak'; if(!sales&&!spend)return 'n'; if(roas>=5)return 'g'; if(roas>=4)return 'a'; return 'r'; };
+const ragOf=(roas,sales,spend)=>{ if(spend>0&&sales===0)return 'leak'; if(!sales&&!spend)return 'n';
+  const g=(typeof appSettings!=='undefined'&&+appSettings.ragGreen)||5;
+  const a=(typeof appSettings!=='undefined'&&+appSettings.ragAmber)||4;
+  if(roas>=g)return 'g'; if(roas>=a)return 'a'; return 'r'; };
 const ragColor=r=>({g:'var(--green)',a:'var(--amber)',r:'var(--red)',leak:'var(--amber)',n:'var(--text3)'}[r]);
 
 /* monogram tile — replaces emojis */
@@ -1296,6 +1306,7 @@ async function loadFromSupabase(){
     /* Diagnostic: log snapshot schema so we know which columns exist */
     if(snapData.length>0){
       const snapCols=Object.keys(snapData[0]);
+      window._snapCols=snapCols;
       console.log('Supabase snapshot columns:',snapCols);
       if(!snapCols.includes('targeting_json')){
         console.warn('⚠ targeting_json column MISSING from snapshots table — CSV data cannot be stored. Run the SQL migration in Settings to add it.');
@@ -1320,6 +1331,7 @@ async function loadFromSupabase(){
         const builtCtr=rawCtr>0?rawCtr:((s.impressions&&s.clicks)?(s.clicks/s.impressions*100):0);
         const sn=snap(s.period,s.impressions,s.clicks,s.spend,s.sales,s.purchases,tgts);
         sn.cpc=builtCpc; sn.ctr=builtCtr;
+        if(s.total_sales!=null&&s.total_sales!=='')sn.totalSales=+s.total_sales;
         if(ags)sn.adGroups=ags;
         return sn;
       });
@@ -1336,6 +1348,25 @@ async function loadFromSupabase(){
       campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
     });
     applyLocalOverlay();
+    /* CRITICAL: loadFromSupabase rebuilds `campaigns` with brand-new objects. If a
+       campaign popout is open, curCamp still points at the now-detached old object.
+       Re-point it to the rebuilt object and re-render the open popout, otherwise
+       later edits (e.g. completing a review) mutate the new object while the UI
+       renders the stale one — which made reviewed items appear to stay in Active
+       Changes until a manual refresh. */
+    if(curCamp){
+      const _fresh=campaigns.find(c=>c.id==curCamp.id);
+      if(_fresh){
+        curCamp=_fresh;
+        const _open=document.getElementById('camp-overlay')?.classList.contains('open');
+        if(_open){
+          try{renderPerf();}catch(e){}
+          try{renderChanges();}catch(e){}
+          try{renderProfit&&renderProfit();}catch(e){}
+          try{renderNotes&&renderNotes();}catch(e){}
+        }
+      } else { curCamp=null; }
+    }
     sbLoadDismissed().then(function(){if(document.getElementById('page-dashboard')&&document.getElementById('page-dashboard').classList.contains('active'))renderDashActionList();});
     _dashDirty=true;
     removeBootSpinner();
@@ -1413,20 +1444,26 @@ function activeList(){
 function campKpis(){
   const A=campaigns.filter(c=>c.status==='active');
   const sum=A.reduce((a,c)=>({spend:a.spend+c.spend,sales:a.sales+c.sales,orders:a.orders+c.purchases,impr:a.impr+c.impressions}),{spend:0,sales:0,orders:0,impr:0});
-  const roas=sum.spend?sum.sales/sum.spend:0, acos=sum.sales?sum.spend/sum.sales*100:0;
+  /* Blended ROAS = simple average of each campaign's ROAS (sum of ROAS ÷ count).
+     Deliberately NOT a spend/sales-weighted figure. Averaged over active campaigns
+     that have a real ROAS, so dead/no-data campaigns don't drag it to zero. */
+  const _roasCamps=A.filter(c=>c.roas>0);
+  const roas=_roasCamps.length?_roasCamps.reduce((s,c)=>s+(c.roas||0),0)/_roasCamps.length:0;
+  const acos=sum.sales?sum.spend/sum.sales*100:0;
   const leaks=A.filter(c=>c.noSaleSpend); const leakSpend=leaks.reduce((a,c)=>a+c.spend,0);
   /* account series across the 3 aligned snapshot indices, for sparklines */
   const ns=Math.max(...A.map(c=>c.snapshots.length),1);
-  const series=k=>{const out=[];for(let i=0;i<ns;i++){let sp=0,sa=0,or=0,im=0;A.forEach(c=>{const s=c.snapshots[c.snapshots.length-ns+i];if(s){sp+=s.spend;sa+=s.sales;or+=s.purchases;im+=s.impressions;}});
-    out.push(k==='spend'?sp:k==='sales'?sa:k==='orders'?or:k==='impr'?im:k==='roas'?(sp?sa/sp:0):k==='acos'?(sa?sp/sa*100:0):0);}return out;};
-  const gCount=A.filter(c=>c.roas>=5&&c.rag!=='leak').length;
-  const aCount=A.filter(c=>c.roas>=4&&c.roas<5&&c.rag!=='leak').length;
-  const rCount=A.filter(c=>c.roas<4&&c.roas>0&&c.rag!=='leak').length;
+  const series=k=>{const out=[];for(let i=0;i<ns;i++){let sp=0,sa=0,or=0,im=0,rSum=0,rN=0;A.forEach(c=>{const s=c.snapshots[c.snapshots.length-ns+i];if(s){sp+=s.spend;sa+=s.sales;or+=s.purchases;im+=s.impressions;const sr=s.spend>0?s.sales/s.spend:0;if(sr>0){rSum+=sr;rN++;}}});
+    out.push(k==='spend'?sp:k==='sales'?sa:k==='orders'?or:k==='impr'?im:k==='roas'?(rN?rSum/rN:0):k==='acos'?(sa?sp/sa*100:0):0);}return out;};
+  const _rg=(+appSettings.ragGreen)||5, _ra=(+appSettings.ragAmber)||4;
+  const gCount=A.filter(c=>c.roas>=_rg&&c.rag!=='leak').length;
+  const aCount=A.filter(c=>c.roas>=_ra&&c.roas<_rg&&c.rag!=='leak').length;
+  const rCount=A.filter(c=>c.roas<_ra&&c.roas>0&&c.rag!=='leak').length;
   const K=[
     {l:'Active campaigns',v:intf(A.length),c:'var(--text)',s:null},
     {l:'Total spend',v:gbp(sum.spend),c:'var(--text)',s:series('spend'),sc:'var(--text3)'},
     {l:'Total sales',v:gbp(sum.sales),c:'var(--text)',s:series('sales'),sc:'var(--text3)'},
-    {l:'Blended ROAS',v:fmt(roas,2),c:roas>=5?'var(--green)':roas>=4?'var(--amber)':'var(--red)',s:series('roas'),sc:roas>=5?'var(--green)':roas>=4?'var(--amber)':'var(--red)'},
+    {l:'Blended ROAS',v:fmt(roas,2),c:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)',s:series('roas'),sc:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)'},
   ];
   const ragBox=`<div class="card kpi" style="padding:10px 12px">
     <div class="label" style="margin-bottom:8px">Campaign health</div>
@@ -2764,7 +2801,26 @@ function renderPerf(){
     }).join('')}
   </div>`;
 
-  /* ── secondary stats bar (always visible) ── */
+  /* ── TACOS / true blended ROAS strip — only when total business sales captured ── */
+  let tacosHtml='';
+  if(last&&last.totalSales>0){
+    const adSpend=last.spend||0, adSales=last.sales||0, totSales=last.totalSales;
+    const tacos=totSales?adSpend/totSales*100:0;
+    const totalRoas=adSpend?totSales/adSpend:0;
+    const adShare=totSales?adSales/totSales*100:0;
+    const tcol=tacos<=10?'var(--green)':tacos<=20?'var(--amber)':'var(--red)';
+    const cell=(lbl,val,col,sub)=>`<div style="padding:9px 16px;border-right:1px solid var(--border);min-width:120px;flex:1">
+      <div class="sec-label" style="letter-spacing:.8px">${lbl}</div>
+      <div style="font-family:var(--display);font-size:18px;font-weight:700;color:${col};line-height:1.1">${val}</div>
+      ${sub?`<div style="font-size:9.5px;color:var(--text4);margin-top:2px">${sub}</div>`:''}</div>`;
+    tacosHtml=`<div style="display:flex;flex-wrap:wrap;margin-bottom:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden">
+      ${cell('Total sales','£'+fmt(totSales,2),'var(--text)','incl. organic')}
+      ${cell('TACOS',fmt(tacos,1)+'%',tcol,'ad spend ÷ total sales')}
+      ${cell('Total ROAS',fmt(totalRoas,2),'var(--text)','total sales ÷ ad spend')}
+      ${cell('Ad ROAS',fmt(last.roas||0,2),ragColor(c.rag),'ad sales ÷ ad spend')}
+      ${cell('Ad-driven share',fmt(adShare,0)+'%','var(--text2)','of total sales')}
+    </div>`;
+  }
   const allSecondary=[
     {l:'ACOS',  v:acos_of(last)>0?fmt(acos_of(last),1)+'%':'—', col:'var(--text)', d:delta(acos_of(last),acos_of(prev),false)},
     {l:'CPC',   v:cpc_of(last)>0?gbp(cpc_of(last)):'—',   col:'var(--text)', d:delta(cpc_of(last),cpc_of(prev),false)},
@@ -2934,6 +2990,7 @@ function renderPerf(){
     ${histBannerHtml}
     ${selectorHtml}
     ${heroHtml}
+    ${tacosHtml}
     ${secHtml}
     ${tgtHtml}
 
@@ -3290,9 +3347,16 @@ function markChange(campId, chIdx, outcome){
      within 600ms. */
   const _gk=campId+'|'+chIdx;
   window._markGuard=window._markGuard||{};
-  if(window._markGuard[_gk]&&Date.now()-window._markGuard[_gk]<600)return;
-  window._markGuard[_gk]=Date.now();
-  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const _nowG=Date.now();
+  /* Global guard: once any mark fires, ignore ALL marks for 600ms. This stops the
+     emulated click that follows pointerdown from landing on a different item after
+     renderChanges() rebuilds the list (which would otherwise mark the wrong change). */
+  if(window._markGuardGlobal&&_nowG-window._markGuardGlobal<600)return;
+  if(window._markGuard[_gk]&&_nowG-window._markGuard[_gk]<600)return;
+  window._markGuard[_gk]=_nowG;window._markGuardGlobal=_nowG;
+  /* Prefer the open campaign object so the object we mutate is the one the popout
+     renders from (guards against any stale reference after a background reload). */
+  const c=(curCamp&&curCamp.id==campId)?curCamp:campaigns.find(x=>x.id==campId);if(!c)return;
   const ch=c.changes[chIdx];if(!ch)return;
   /* Read the review note from the textarea, falling back to the value captured
      live as the user typed. The fallback is what fixes the reported bug: when the
@@ -3330,10 +3394,15 @@ function markChange(campId, chIdx, outcome){
       }
     }).catch(e=>console.warn('markChange Supabase fail',e));
   }
-  renderCampaigns();renderChangeLog();
-  /* If inside popout, re-render changes tab */
-  if(curCamp&&curCamp.id==campId)renderChanges();
-  refreshAfterSave();
+  /* Render the OPEN popout FIRST and in isolation. The Active→History transition
+     plus counters must happen instantly, even if another view's render throws on
+     the live dataset. Previously these ran as one un-guarded sequence, so a throw
+     in renderCampaigns()/renderChangeLog() silently aborted the popout re-render —
+     which is why the reviewed item appeared to stay until a manual refresh. */
+  try{ if(curCamp&&curCamp.id==campId)renderChanges(); }catch(e){console.warn('markChange: renderChanges',e);}
+  try{ renderCampaigns(); }catch(e){console.warn('markChange: renderCampaigns',e);}
+  try{ renderChangeLog(); }catch(e){console.warn('markChange: renderChangeLog',e);}
+  try{ refreshAfterSave(); }catch(e){console.warn('markChange: refreshAfterSave',e);}
 }
 
 /* ════════ REVIEW HISTORY TAB ════════
@@ -3357,6 +3426,24 @@ function renderHistory(){
   window._histFilter=window._histFilter||'all';
   if(window._histSearch==null)window._histSearch='';
 
+  /* Win-rate by change type (per-campaign learning) */
+  const byType={};
+  reviewed.forEach(x=>{const t=x.ch.type||'Other';byType[t]=byType[t]||{win:0,loss:0};if(x.ch.outcome==='win')byType[t].win++;else byType[t].loss++;});
+  const typeRows=Object.keys(byType).sort((a,b)=>(byType[b].win+byType[b].loss)-(byType[a].win+byType[a].loss)).map(t=>{
+    const o=byType[t];const tot=o.win+o.loss;const pct=tot?Math.round(o.win/tot*100):0;
+    const col=pct>=67?'var(--green)':pct>=34?'var(--amber)':'var(--red)';
+    return `<div style="display:flex;align-items:center;gap:8px;font-size:11.5px">
+      <div style="width:96px;color:var(--text2);flex-shrink:0">${t}</div>
+      <div style="flex:1;height:7px;background:var(--bg4);border-radius:4px;overflow:hidden;min-width:60px"><div style="height:100%;width:${pct}%;background:${col}"></div></div>
+      <div style="width:104px;text-align:right;flex-shrink:0"><b style="color:${col}">${pct}% worked</b> <span style="color:var(--text4)">(${o.win}/${tot})</span></div>
+    </div>`;
+  }).join('');
+  const winRateBlock=allN?`
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:10px">Win rate by change type</div>
+      <div style="display:flex;flex-direction:column;gap:7px">${typeRows}</div>
+    </div>`:'';
+
   const chip=(k,label,n,col)=>{
     const on=window._histFilter===k;
     return `<button onclick="window._histFilter='${k}';renderHistory()" style="font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;font-family:inherit;border:1.5px solid ${on?col:'var(--border)'};background:${on?col.replace('var(--','var(--').replace(')','-bg)'):'transparent'};color:${on?col:'var(--text2)'};transition:.12s">${label} (${n})</button>`;
@@ -3370,6 +3457,7 @@ function renderHistory(){
       </div>
       <input class="input" id="hist-search" placeholder="Search title, details or notes…" value="${_histEsc(window._histSearch)}" oninput="histSearch(this.value)" style="width:230px;font-size:12.5px">
     </div>
+    ${winRateBlock}
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
       ${chip('all','All reviews',allN,'var(--blue)')}
       ${chip('win','Worked',winN,'var(--green)')}
@@ -3478,7 +3566,7 @@ function editHistoryReview(campId,chIdx){window._histEdit=campId+'|'+chIdx;rende
 function cancelHistoryEdit(){window._histEdit=null;renderHistory();}
 
 async function saveHistoryReview(campId,chIdx){
-  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const c=(curCamp&&curCamp.id==campId)?curCamp:campaigns.find(x=>x.id==campId);if(!c)return;
   const ch=c.changes[chIdx];if(!ch)return;
   const outcome=document.getElementById('he-outcome-'+campId+'-'+chIdx)?.value||ch.outcome;
   const note=(document.getElementById('he-note-'+campId+'-'+chIdx)?.value||'').trim();
@@ -3491,11 +3579,12 @@ async function saveHistoryReview(campId,chIdx){
   ch.outcome=outcome;
   ch.outcomeNote=note;
   window._histEdit=null;
-  /* Re-render everything (renderChanges also refreshes this tab + both badges) */
-  renderCampaigns();
-  renderChangeLog();
-  if(curCamp&&curCamp.id==campId)renderChanges(); else renderHistory();
-  refreshAfterSave();
+  /* Re-render everything (renderChanges also refreshes this tab + both badges).
+     Popout first + isolated so one failing view can't block the update. */
+  try{ if(curCamp&&curCamp.id==campId)renderChanges(); else renderHistory(); }catch(e){console.warn('saveHistoryReview: renderChanges',e);}
+  try{ renderCampaigns(); }catch(e){console.warn('saveHistoryReview: renderCampaigns',e);}
+  try{ renderChangeLog(); }catch(e){console.warn('saveHistoryReview: renderChangeLog',e);}
+  try{ refreshAfterSave(); }catch(e){console.warn('saveHistoryReview: refreshAfterSave',e);}
   /* Supabase update — match by stored id, else by date + what */
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
@@ -3783,10 +3872,19 @@ function parseGbPeriod(s){
   s=String(s);
   const yearM=s.match(/(20\d{2})/);
   const year=yearM?+yearM[1]:new Date().getFullYear();
-  const start=s.split(/–|—|-|\bto\b/i)[0];
   const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-  const dm=start.match(/(\d{1,2})\s*([A-Za-z]{3,})/);
-  if(dm){const mo=months[dm[2].slice(0,3).toLowerCase()];if(mo!=null)return new Date(year,mo,+dm[1]).getTime();}
+  /* Find the FIRST month name anywhere in the label. This correctly handles the
+     app's own auto-generated range labels — e.g. "1–30 Apr 2026" or
+     "28 Apr – 3 May 2026" — where the older logic split on the dash and lost the
+     month, returning 0 and breaking chronological sort / "latest snapshot". */
+  const moM=s.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
+  if(moM){
+    const mo=months[moM[1].slice(0,3).toLowerCase()];
+    const dayM=s.match(/\b(\d{1,2})\b/); /* first 1–2 digit number = range start day */
+    const day=dayM?+dayM[1]:1;
+    return new Date(year,mo,day).getTime();
+  }
+  /* No month name (e.g. ISO "2026-04-01") — fall back to native parsing. */
   const t=Date.parse(s);return isNaN(t)?0:t;
 }
 
@@ -4080,6 +4178,10 @@ function renderImport(){
           <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px">Notes</div>
           <input class="input" id="snap-notes" style="width:100%;font-size:11.5px;padding:5px 10px" placeholder="e.g. Increased bids on exact match…">
         </div>
+        <div style="padding:8px 12px;border-right:1px solid var(--border);flex:1;min-width:130px">
+          <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px" title="Total business sales for this period including organic — enables TACOS and true blended ROAS">Total sales £ <span style="color:var(--text4)">(opt)</span></div>
+          <input class="input" id="snap-total-sales" type="number" step="0.01" min="0" style="width:100%;font-size:11.5px;padding:5px 10px" placeholder="incl. organic">
+        </div>
         <div style="padding:8px 12px;border-right:1px solid var(--border);flex:1;min-width:120px" id="snap-checklist-inline"></div>
         <div style="padding:8px 12px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
           <div id="save-snap-note" style="font-size:10.5px;text-align:right;font-weight:600"></div>
@@ -4125,6 +4227,25 @@ async function saveSnapshot(){
     if(note){note.textContent='⚠ Set a date range first';note.style.color='var(--red)';}
     return;
   }
+  /* Enforce a REAL, ordered date range so every snapshot has a reliably sortable
+     period. Without this, an out-of-order or unparseable range can make the wrong
+     snapshot read as "latest" on the Campaigns page. */
+  {
+    const _fd=new Date(dateFrom+'T00:00:00'), _td=new Date(dateTo+'T00:00:00');
+    const note=document.getElementById('save-snap-note');
+    if(isNaN(_fd)||isNaN(_td)){
+      if(note){note.textContent='⚠ Invalid date range — pick valid From and To dates';note.style.color='var(--red)';}
+      return;
+    }
+    if(_fd>_td){
+      if(note){note.textContent='⚠ The "From" date must be on or before the "To" date';note.style.color='var(--red)';}
+      return;
+    }
+    if(!parseGbPeriod(period)){
+      if(note){note.textContent='⚠ Could not read the period — re-pick the date range';note.style.color='var(--red)';}
+      return;
+    }
+  }
   const c=curCamp;
 
   /* Compute totals — prefer ad-groups for impressions/clicks */
@@ -4143,6 +4264,9 @@ async function saveSnapshot(){
   /* Store notes and type on snap */
   newSnap.note=document.getElementById('snap-notes')?.value||'';
   newSnap.snapType=document.getElementById('snap-type')?.value||'regular';
+  /* Optional total business sales (incl. organic) → enables TACOS + true blended ROAS */
+  const _tsRaw=document.getElementById('snap-total-sales')?.value;
+  if(_tsRaw!=null&&_tsRaw!=='')newSnap.totalSales=parseFloat(_tsRaw)||0;
 
   /* Merge or add snapshot */
   const existing=c.snapshots.findIndex(s=>s.date===period);
@@ -4176,6 +4300,11 @@ async function saveSnapshot(){
         targeting_json:JSON.stringify(_tjObj),
         ad_groups_json:ags.length?JSON.stringify(ags):null,
       };
+      /* Only send total_sales if that column exists, so we never 400 a snapshot
+         save on databases that haven't added the optional column. */
+      if(newSnap.totalSales!=null&&(!window._snapCols||window._snapCols.includes('total_sales'))){
+        _payload.total_sales=newSnap.totalSales;
+      }
       const _hds=await sbHeaders();
       const _chk=await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(period)+'&select=id',{headers:_hds});
       const _rows=_chk.ok?await _chk.json():[];
@@ -4224,6 +4353,7 @@ async function saveSnapshot(){
   window._snapAgs=null;
   window._calFromVal=null;
   window._calToVal=null;
+  {const ts=document.getElementById('snap-total-sales');if(ts)ts.value='';}
 
   const banner=document.createElement('div');
   banner.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid rgba(46,229,157,.4);color:var(--green);padding:10px 20px;border-radius:10px;font-size:12.5px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.3)';
@@ -4296,11 +4426,34 @@ function renderInsights(){
     </div>`;
   };
 
+  const _irg=(+appSettings.ragGreen)||5,_ira=(+appSettings.ragAmber)||4;
   document.getElementById('ins-trend-bar').innerHTML=
     trendCard('Total sales',totSales,salesSeries,'var(--text)',v=>gbp(v))+
     trendCard('Total spend',totSpend,spendSeries,'var(--text)',v=>gbp(v))+
-    trendCard('Blended ROAS',blendedRoas,roasSeries,blendedRoas>=5?'var(--green)':blendedRoas>=4?'var(--amber)':'var(--red)',v=>fmt(v,2))+
+    trendCard('Blended ROAS',blendedRoas,roasSeries,blendedRoas>=_irg?'var(--green)':blendedRoas>=_ira?'var(--amber)':'var(--red)',v=>fmt(v,2))+
     trendCard('Total orders',totOrders,orderSeries,'var(--text)',v=>intf(v));
+
+  /* ── account-level review win-rate (optimisation learning across all campaigns) ── */
+  (function(){
+    const bar=document.getElementById('ins-trend-bar');if(!bar)return;
+    let card=document.getElementById('ins-winrate-card');
+    if(!card){card=document.createElement('div');card.id='ins-winrate-card';card.style.cssText='margin-bottom:16px';bar.parentNode.insertBefore(card,bar.nextSibling);}
+    const allCh=campaigns.flatMap(c=>c.changes||[]).filter(ch=>ch.outcome==='win'||ch.outcome==='loss');
+    const tot=allCh.length, win=allCh.filter(ch=>ch.outcome==='win').length;
+    const pct=tot?Math.round(win/tot*100):0;
+    if(!tot){card.innerHTML='';return;}
+    const col=pct>=67?'var(--green)':pct>=34?'var(--amber)':'var(--red)';
+    const bt={};allCh.forEach(ch=>{const t=ch.type||'Other';bt[t]=bt[t]||{w:0,n:0};bt[t].n++;if(ch.outcome==='win')bt[t].w++;});
+    const rows=Object.keys(bt).sort((a,b)=>bt[b].n-bt[a].n).map(t=>{const o=bt[t];const p=Math.round(o.w/o.n*100);const c2=p>=67?'var(--green)':p>=34?'var(--amber)':'var(--red)';
+      return `<div style="display:flex;align-items:center;gap:8px;font-size:11.5px"><div style="width:110px;color:var(--text2);flex-shrink:0">${t}</div><div style="flex:1;height:7px;background:var(--bg4);border-radius:4px;overflow:hidden"><div style="height:100%;width:${p}%;background:${c2}"></div></div><div style="width:96px;text-align:right;flex-shrink:0"><b style="color:${c2}">${p}%</b> <span style="color:var(--text4)">(${o.w}/${o.n})</span></div></div>`;}).join('');
+    card.innerHTML=`<div class="card" style="padding:14px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+        <div><div style="font-size:13px;font-weight:600">Optimisation win rate</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Across all completed reviews in every campaign</div></div>
+        <div style="text-align:right"><div style="font-family:var(--display);font-size:26px;font-weight:700;color:${col};line-height:1">${pct}%</div><div style="font-size:11px;color:var(--text3)">${win} of ${tot} changes worked</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px">${rows}</div>
+    </div>`;
+  })();
 
   /* ── spend leaks ── */
   const leaks=[];
@@ -4737,7 +4890,7 @@ function closeEditChangeLog(){
 async function saveEditChangeLog(){
   const campId=document.getElementById('ecl-camp-id').value;
   const chIdx=parseInt(document.getElementById('ecl-ch-idx').value);
-  const c=campaigns.find(x=>x.id==campId);if(!c)return;
+  const c=(curCamp&&curCamp.id==campId)?curCamp:campaigns.find(x=>x.id==campId);if(!c)return;
   const ch=c.changes[chIdx];if(!ch)return;
   const origDate=ch.date||'';const origWhat=ch.what||'';
   const date=document.getElementById('ecl-date').value;
@@ -5876,7 +6029,7 @@ async function deleteOneCampSnapFromModal(campId, date){
   if(curCamp&&curCamp.id==campId)renderPerf();
 }
 /* ════════ SETTINGS DATA MODEL ════════ */
-let appSettings={targetRoas:'',maxAcos:'',marketplace:'UK'};
+let appSettings={targetRoas:'',maxAcos:'',marketplace:'UK',ragGreen:5,ragAmber:4};
 let priceHistory={}; /* keyed by asin: [{date,price,reason}] */
 
 function getPriceHistory(asin){return priceHistory[asin]||[];}
@@ -5962,7 +6115,19 @@ function saveAppSettings(){
   appSettings.targetRoas=document.getElementById('cfg-target-roas').value;
   appSettings.maxAcos=document.getElementById('cfg-max-acos').value;
   appSettings.marketplace=document.getElementById('cfg-marketplace').value;
-  const btn=event.target;btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save defaults',1400);
+  appSettings.ragGreen=parseFloat(document.getElementById('cfg-rag-green')?.value)||5;
+  appSettings.ragAmber=parseFloat(document.getElementById('cfg-rag-amber')?.value)||4;
+  if(appSettings.ragAmber>appSettings.ragGreen){const t=appSettings.ragAmber;appSettings.ragAmber=appSettings.ragGreen;appSettings.ragGreen=t;}
+  try{localStorage.setItem('bdl_app_settings',JSON.stringify(appSettings));}catch(e){}
+  /* Recompute RAG for every campaign with the new bands, then re-render */
+  try{campaigns.forEach(c=>{c.rag=ragOf(c.roas,c.sales,c.spend);});}catch(e){}
+  try{renderCampaigns();}catch(e){}
+  const btn=(typeof event!=='undefined'&&event)?event.target:null;if(btn){btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save defaults',1400);}
+}
+function _loadAppSettings(){
+  try{const s=JSON.parse(localStorage.getItem('bdl_app_settings'));if(s&&typeof s==='object')Object.assign(appSettings,s);}catch(e){}
+  if(!(+appSettings.ragGreen))appSettings.ragGreen=5;
+  if(!(+appSettings.ragAmber))appSettings.ragAmber=4;
 }
 
 function applyMatchColours(){
@@ -6038,6 +6203,8 @@ function renderSettings(){
   document.getElementById('cfg-key').readOnly=!!(SUPABASE_KEY);
   document.getElementById('cfg-target-roas').value=appSettings.targetRoas||'';
   document.getElementById('cfg-max-acos').value=appSettings.maxAcos||'';
+  {const g=document.getElementById('cfg-rag-green');if(g)g.value=appSettings.ragGreen||5;
+   const a=document.getElementById('cfg-rag-amber');if(a)a.value=appSettings.ragAmber||4;}
 
   /* Populate metrics toggle buttons (fixes template literal bug) */
   const mt=document.getElementById('cfg-metrics-toggle');
@@ -6249,11 +6416,16 @@ function renderDashActionList(){
         }
       }
     }
-    /* ── Due for Review: change follow-ups ── */
+    /* ── Due for Review: change follow-ups ──
+       Show EVERY active (pending) change that has a review date — overdue, due
+       today, or any future date — not just those within 3 days. */
     (c.changes||[]).forEach((ch,ci)=>{
       if(ch.outcome==='pending'&&ch.review){
         try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);
-          if(diff<=3)reviews.push({type:'review',pri:diff<=0?0:2,tag:diff<=0?'OVERDUE':'REVIEW DUE',label:(diff<=0?'Overdue: ':'In '+diff+'d: ')+ch.what,camp:name,sub:'Logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work',key:c.id+'|chreview|'+ci});
+          const pri=diff<=0?0:(diff<=3?2:4);
+          const tag=diff<=0?'OVERDUE':(diff<=3?'REVIEW DUE':'UPCOMING');
+          const label=(diff<=0?'Overdue: ':(diff===1?'Tomorrow: ':'In '+diff+'d: '))+ch.what;
+          reviews.push({type:'review',pri,tag,label,camp:name,sub:'Review '+fmtDate(ch.review)+' · logged '+fmtDate(ch.date),cid:c.id,action:'Assess result and mark as worked / did not work',key:c.id+'|chreview|'+ci});
         }catch(e){}
       }
     });
@@ -7010,6 +7182,7 @@ async function saveGlobalChange(){
 /* boot */
 showBootSpinner();
 installGlobalUX();
+_loadAppSettings();
 loadMatchColours();
 loadFromSupabase().then(()=>{
   /* after data loads, render dashboard if it's the active page */
