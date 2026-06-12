@@ -1284,19 +1284,24 @@ async function loadFromSupabase(){
         const _open=document.getElementById('camp-overlay')?.classList.contains('open');
         if(_open){
           /* Re-render whichever tab is currently active (lazy-consistent), plus the
-             badges. Active Changes / Numbers are the common cases. */
+             badges. BUT if the user is part-way through typing a change-log entry,
+             review note or snapshot, do NOT rebuild that tab — rebuilding the form
+             would wipe their unsaved text. The data still reloads in the background
+             and curCamp is re-pointed; their typing is left untouched. */
           const _activeTab=document.querySelector('.po-tab.active')?.dataset.t||'performance';
           try{updateCampTabBadges(curCamp);}catch(e){}
-          try{
-            if(_activeTab==='performance')renderPerf();
-            else if(_activeTab==='changes')renderChanges();
-            else if(_activeTab==='profit')renderProfit();
-            else if(_activeTab==='notes')renderNotes();
-            else if(_activeTab==='import')renderImport();
-            else if(_activeTab==='trends')renderCampTrends();
-            else if(_activeTab==='compare')renderCampCompare();
-            else if(_activeTab==='history')renderHistory();
-          }catch(e){console.warn('reload tab render',e);}
+          if(!popoutHasUnsavedInput()){
+            try{
+              if(_activeTab==='performance')renderPerf();
+              else if(_activeTab==='changes')renderChanges();
+              else if(_activeTab==='profit')renderProfit();
+              else if(_activeTab==='notes')renderNotes();
+              else if(_activeTab==='import')renderImport();
+              else if(_activeTab==='trends')renderCampTrends();
+              else if(_activeTab==='compare')renderCampCompare();
+              else if(_activeTab==='history')renderHistory();
+            }catch(e){console.warn('reload tab render',e);}
+          }
         }
       } else { curCamp=null; }
     }
@@ -1439,6 +1444,22 @@ function updateOverdueBadges(){
       else{el.textContent='';el.style.display='none';}
     });
   }catch(e){}
+}
+/* True when the user has typed something into the open campaign popout that hasn't
+   been saved yet (change-log entry, review note, snapshot fields, or a focused
+   editable field). Used to avoid wiping their work on a background reload. */
+function popoutHasUnsavedInput(){
+  try{
+    const ov=document.getElementById('camp-overlay');
+    if(!ov||!ov.classList.contains('open'))return false;
+    const ae=document.activeElement;
+    if(ae&&ov.contains(ae)&&/^(INPUT|TEXTAREA)$/.test(ae.tagName)&&!ae.readOnly)return true;
+    const ids=['clf-what','clf-why','clf-goal','clf-review','snap-notes','snap-total-sales'];
+    for(const id of ids){const el=document.getElementById(id);if(el&&el.value&&String(el.value).trim())return true;}
+    const dyn=ov.querySelectorAll('textarea[id^="rn-"],textarea[id^="he-note-"]');
+    for(const el of dyn){if(el.value&&el.value.trim())return true;}
+  }catch(e){}
+  return false;
 }
 function campRow(c){
   const trend=c.snapshots.length>=2?spark(c.snapshots.map(s=>s.roas),ragColor(c.rag)):'<span class="muted">—</span>';
