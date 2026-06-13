@@ -391,6 +391,9 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
   <!-- OVERDUE REVIEWS BANNER (hidden when none) -->
   <div id="dash-overdue-banner" style="display:none;margin-bottom:10px"></div>
 
+  <!-- DATA ISSUES BANNER (campaigns missing data / needing investigation) -->
+  <div id="dash-data-issues" style="display:none;margin-bottom:10px"></div>
+
   <!-- ROW 1: KPI strip -->
   <div id="dash-kpi-row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:10px"></div>
 
@@ -515,7 +518,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       </select>
       <select class="sel" id="cl-type-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All types</option><option>PPC Bid</option><option>PPC Budget</option><option>PPC Keywords</option><option>Pricing</option><option>Listing</option><option>Stock</option></select>
       <select class="sel" id="cl-outcome-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All outcomes</option><option value="pending">Pending review</option><option value="overdue">Overdue</option><option value="win">Worked</option><option value="loss">Did not work</option></select>
-      <select class="sel" id="cl-date-filter" onchange="window._clPage=0;renderChangeLog()" style="min-width:130px"><option value="all">Any date</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select>
+      <select class="sel" id="cl-date-filter" onchange="window._clPage=0;renderChangeLog()" style="min-width:140px"><option value="all">Any date</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="180">Last 6 months</option><option value="365">Last 12 months</option><option value="thismonth">This month</option><option value="lastmonth">Last month</option><option value="thisyear">This year</option></select>
       <select class="sel" id="cl-sort" onchange="window._clPage=0;renderChangeLog()" style="min-width:150px"><option value="recent">Sort: Newest</option><option value="oldest">Sort: Oldest</option><option value="review">Sort: Review due</option><option value="campaign">Sort: Campaign</option><option value="outcome">Sort: Outcome</option></select>
       <select class="sel" id="cl-scope" onchange="window._clPage=0;renderChangeLog()">
         <option value="flat">Flat list</option>
@@ -526,6 +529,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <button class="btn" onclick="openGlobalChangeLog()">+ Log change</button>
     </div>
   </div>
+  <div id="cl-view-seg" style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"></div>
   <div id="cl-summary" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px"></div>
   <div id="cl-content"></div>
   <div id="cl-pagination" style="display:flex;gap:8px;align-items:center;justify-content:center;padding:14px 0;margin-top:6px"></div>
@@ -582,9 +586,9 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 
 <!-- ════════ SETTINGS ════════ -->
 <div class="page" id="page-settings">
-  <div class="ph"><div><h1>Settings</h1><div class="sub">Account config, alert rules, bid defaults, data export</div></div></div>
+  <div class="ph"><div><h1>Settings</h1><div class="sub">Connection, scoring thresholds, bid defaults, data export</div></div></div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+  <div style="margin-bottom:14px">
     <div class="card pad">
       <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">☁ Supabase connection</div></div>
       <div style="display:grid;gap:9px">
@@ -600,23 +604,6 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
         </div>
         <div id="cfg-schema-info" style="display:none;margin-top:10px;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:11.5px;line-height:1.7">
         </div>
-      </div>
-    </div>
-    <div class="card pad">
-      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🛒 Amazon account</div></div>
-      <div style="display:grid;gap:9px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
-          <div><div class="label" style="margin-bottom:4px">Seller / vendor ID</div>
-            <input class="input" id="cfg-seller-id" style="width:100%" placeholder="A1B2C3D4E5" oninput="settingsDirty()"></div>
-          <div><div class="label" style="margin-bottom:4px">Marketplace</div>
-            <select class="sel" id="cfg-marketplace" style="width:100%" onchange="settingsDirty()">
-              <option value="UK">Amazon UK</option><option value="DE">Amazon DE</option>
-              <option value="FR">Amazon FR</option><option value="US">Amazon US</option>
-            </select></div>
-        </div>
-        <div><div class="label" style="margin-bottom:4px">Account label</div>
-          <input class="input" id="cfg-acct-label" style="width:100%" placeholder="e.g. BDL Homeware" oninput="settingsDirty()"></div>
-        <button class="btn ghost" onclick="saveAppSettings()">Save account</button>
       </div>
     </div>
   </div>
@@ -660,17 +647,22 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       </div>
     </div>
     <div class="card pad">
-      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🔔 Alert rules</div><button class="btn-sm" onclick="addAlertRule()">+ Add rule</button></div>
-      <div id="alert-rules-list"></div>
-      <div style="margin-top:10px;padding:9px 12px;background:var(--bg3);border-radius:var(--r-sm);font-size:11px;color:var(--text2)">Rules flag campaigns on Insights after each snapshot.</div>
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">🔔 Dashboard alerts</div></div>
+      <div style="font-size:11.5px;color:var(--text2);line-height:1.6;margin-bottom:10px">These run automatically on the Dashboard's <b>Action Required</b> list after every snapshot — there are no custom rules to add. They use the thresholds you set under <b>PPC defaults</b>:</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:12px">
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border-radius:6px"><span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--red-bg);color:var(--red)">SPEND LEAK</span><span style="color:var(--text2)">spend over £</span><input class="input" id="cfg-alert-leakspend" type="number" step="0.5" placeholder="0" style="width:64px;padding:3px 6px" oninput="settingsDirty()"><span style="color:var(--text2)">with zero sales</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border-radius:6px"><span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--amber-bg);color:var(--amber)">LOW ROAS</span><span style="color:var(--text2)">ROAS below your <b>Target ROAS</b> (set above)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border-radius:6px"><span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--amber-bg);color:var(--amber)">HIGH ACOS</span><span style="color:var(--text2)">ACOS above your <b>Max ACOS</b> (set above)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border-radius:6px"><span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--amber-bg);color:var(--amber)">ROAS DROP</span><span style="color:var(--text2)">ROAS fell more than</span><input class="input" id="cfg-alert-roasdrop" type="number" step="1" placeholder="25" style="width:58px;padding:3px 6px" oninput="settingsDirty()"><span style="color:var(--text2)">% since last snapshot</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border-radius:6px"><span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--red-bg);color:var(--red)">KW LEAK</span><span style="color:var(--text2)">a keyword spends over £</span><input class="input" id="cfg-alert-kwleak" type="number" step="0.5" placeholder="2" style="width:64px;padding:3px 6px" oninput="settingsDirty()"><span style="color:var(--text2)">with no sales</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border-radius:6px"><span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--blue-bg);color:var(--blue)">NO IMPRESSIONS</span><span style="color:var(--text2)">zero impressions this period</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+        <button class="btn ghost" onclick="saveAppSettings()">Save alert thresholds</button>
+        <span style="font-size:11px;color:var(--text3)">Changes apply to the dashboard instantly.</span>
+      </div>
     </div>
   </div>
-
-  <div class="sh" style="margin:4px 0 10px">
-    <div class="tt">💷 Product price history</div>
-    <button class="btn-sm" onclick="addPriceEntry()">+ Log price change</button>
-  </div>
-  <div class="card" style="margin-bottom:14px"><div id="price-history-list"></div></div>
 
   <div class="sh" style="margin:0 0 10px"><div class="tt" style="font-size:13px">Data export</div></div>
   <div class="card pad" style="margin-bottom:14px">
@@ -4692,7 +4684,9 @@ function renderInsights(){
 function fmtDate(d){if(!d)return'—';const p=d.split('-');if(p.length===3)return p[2]+'/'+p[1]+'/'+p[0];return d;}
 function fmtDateShort(d){if(!d)return'—';const p=d.split('-');if(p.length===3)return p[2]+'/'+p[1];return d;}
 if(!window._clPage)window._clPage=0;
-const CL_PAGE_SIZE=40;
+if(window._clView==null)window._clView='active';
+const CL_PAGE_SIZE=50;
+function setClView(v){window._clView=v;window._clPage=0;renderChangeLog();}
 
 function renderChangeLog(){
   /* Keep an open change-detail popup in sync after any mark/edit/delete. Match by
@@ -4717,11 +4711,24 @@ function renderChangeLog(){
   const today2=new Date();today2.setHours(0,0,0,0);
 
   let all=campaigns.flatMap(c=>c.changes.map((ch,i)=>({...ch,ch,c,cid:c.id,cname:c.alias||c.name,idx:i})));
+  /* Primary view split: Active = awaiting review, History = reviewed (worked/didn't),
+     All = everything. Keeps the log manageable as it grows into the thousands. */
+  const clView=window._clView||'active';
+  if(clView==='active')all=all.filter(x=>x.outcome==='pending');
+  else if(clView==='history')all=all.filter(x=>x.outcome==='win'||x.outcome==='loss');
   if(campF!=='all')all=all.filter(x=>x.cid==campF);
   if(tf!=='all')all=all.filter(x=>x.type===tf);
   if(of2==='overdue')all=all.filter(x=>x.outcome==='pending'&&x.review&&new Date((x.review||'')+'T00:00:00')<=today2);
   else if(of2!=='all')all=all.filter(x=>x.outcome===of2);
-  if(dateF!=='all'){const days=parseInt(dateF);all=all.filter(x=>{try{return(today2-new Date((x.date||'')+'T00:00:00'))<=days*86400000;}catch(e){return true;}});}
+  if(dateF!=='all'){
+    const inRange=(dstr)=>{try{const d=new Date((dstr||'')+'T00:00:00');if(isNaN(d))return true;
+      if(dateF==='thismonth')return d.getFullYear()===today2.getFullYear()&&d.getMonth()===today2.getMonth();
+      if(dateF==='lastmonth'){const m=new Date(today2.getFullYear(),today2.getMonth()-1,1);return d.getFullYear()===m.getFullYear()&&d.getMonth()===m.getMonth();}
+      if(dateF==='thisyear')return d.getFullYear()===today2.getFullYear();
+      const days=parseInt(dateF);return (today2-d)<=days*86400000;
+    }catch(e){return true;}};
+    all=all.filter(x=>inRange(x.date));
+  }
   if(srch)all=all.filter(x=>(x.what||'').toLowerCase().includes(srch)||(x.why||'').toLowerCase().includes(srch)||(x.cname||'').toLowerCase().includes(srch)||(x.type||'').toLowerCase().includes(srch)||(x.goal||'').toLowerCase().includes(srch));
   const sortBy=document.getElementById('cl-sort')?.value||'recent';
   const _ocRank={pending:0,loss:1,win:2};
@@ -4752,6 +4759,18 @@ function renderChangeLog(){
     <div style="font-size:10.5px;color:#dde3ef;margin-top:4px">${k.s}</div>
   </div>`).join('');
 
+  /* Active / History / All segmented view switch */
+  {
+    const seg=document.getElementById('cl-view-seg');
+    if(seg){
+      const defs=[['active','Active',pend,'var(--amber)'],['history','History',wins+loss,'var(--purple)'],['all','All',total,'var(--blue)']];
+      seg.innerHTML=defs.map(([v,label,n,col])=>{
+        const on=clView===v;
+        return `<button onclick="setClView('${v}')" style="font-size:13px;font-weight:700;padding:7px 16px;border-radius:9px;cursor:pointer;font-family:inherit;border:1.5px solid ${on?col:'var(--border)'};background:${on?col.replace(')','-bg)'):'transparent'};color:${on?col:'var(--text2)'};transition:.12s">${label} <span style="opacity:.8;font-weight:600">${n}</span></button>`;
+      }).join('')+(clView==='active'?`<span style="align-self:center;font-size:11.5px;color:var(--text3);margin-left:4px">${overdue?('<b style="color:var(--red)">'+overdue+' overdue</b> · '):''}awaiting review — mark them Worked / Didn't Work to move them to History</span>`:clView==='history'?`<span style="align-self:center;font-size:11.5px;color:var(--text3);margin-left:4px">completed reviews — kept permanently, nothing is ever deleted</span>`:'');
+    }
+  }
+
   const totalItems=all.length;
   const totalPages=Math.ceil(totalItems/CL_PAGE_SIZE);
   const safePage=Math.min(page,Math.max(0,totalPages-1));
@@ -4766,18 +4785,23 @@ function renderChangeLog(){
   const clTile=(x)=>{
     const ch=x.ch||x;
     const ic={'PPC Bid':'⊙','PPC Budget':'£','PPC Keywords':'⌗','Pricing':'฿','Listing':'≣','Stock':'▣','Other':'•'}[ch.type]||'•';
+    const reviewed=ch.outcome==='win'||ch.outcome==='loss';
     const reviewDate=ch.review?new Date(ch.review+'T00:00:00'):null;
     if(reviewDate)reviewDate.setHours(0,0,0,0);
     const reviewDue=reviewDate&&reviewDate<=today2&&ch.outcome==='pending';
     const daysUntil=reviewDate?Math.round((reviewDate-today2)/86400000):null;
     const dotCol=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
-    const ocTxt=ch.outcome==='win'?'✓ Worked':ch.outcome==='loss'?"✕ Didn't":(reviewDue?'⚠ Overdue':'◷ Pending');
-    const reviewTxt=reviewDate?(
-      daysUntil<0?`${Math.abs(daysUntil)}d overdue`:
-      daysUntil===0?'review today':
-      daysUntil<=7?`review in ${daysUntil}d`:
-      `review ${fmtDateShort(ch.review)}`):'no review date';
-    const reviewCol=reviewDate?(daysUntil<0?'var(--red)':daysUntil<=7?'var(--amber)':'var(--text4)'):'var(--text4)';
+    const ocTxt=ch.outcome==='win'?'✓ Worked':ch.outcome==='loss'?"✕ Didn't work":(reviewDue?'⚠ Overdue':'◷ Pending');
+    /* Reviewed items show WHEN they were reviewed — never an "overdue" label, which
+       only makes sense for items still awaiting review. */
+    const reviewTxt=reviewed
+      ? ('Reviewed '+fmtDateShort(ch.reviewedAt||ch.review||ch.date))
+      : reviewDate?(
+          daysUntil<0?`${Math.abs(daysUntil)}d overdue`:
+          daysUntil===0?'review today':
+          daysUntil<=7?`review in ${daysUntil}d`:
+          `review ${fmtDateShort(ch.review)}`):'no review date';
+    const reviewCol=reviewed?'var(--text4)':(reviewDate?(daysUntil<0?'var(--red)':daysUntil<=7?'var(--amber)':'var(--text4)'):'var(--text4)');
     const noteTag=ch.outcomeNote?'<span title="Has a result note" style="color:var(--green)">📝</span>':'';
     return`<button onclick="openChangeDetail('${x.cid}',${x.idx})" style="all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:7px;cursor:pointer;width:100%;padding:11px 13px;background:var(--panel);border:1px solid var(--border);border-left:3px solid ${dotCol};border-radius:10px;transition:.12s" onmouseover="this.style.borderColor='var(--border3)';this.style.background='var(--bg2)';this.style.borderLeftColor='${dotCol}'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--panel)';this.style.borderLeftColor='${dotCol}'">
       <div style="display:flex;align-items:center;gap:8px">
@@ -6014,7 +6038,7 @@ async function deleteOneCampSnapFromModal(campId, date){
   if(curCamp&&curCamp.id==campId)renderPerf();
 }
 /* ════════ SETTINGS DATA MODEL ════════ */
-let appSettings={targetRoas:'',maxAcos:'',marketplace:'UK',ragGreen:5,ragAmber:4,tacosGreen:10,tacosAmber:20};
+let appSettings={targetRoas:'',maxAcos:'',marketplace:'UK',ragGreen:5,ragAmber:4,tacosGreen:10,tacosAmber:20,roasDropPct:25,kwLeakSpend:2,leakMinSpend:0};
 let priceHistory={}; /* keyed by asin: [{date,price,reason}] */
 
 function getPriceHistory(asin){return priceHistory[asin]||[];}
@@ -6099,13 +6123,16 @@ function testSupabaseConnection(){
 function saveAppSettings(){
   appSettings.targetRoas=document.getElementById('cfg-target-roas').value;
   appSettings.maxAcos=document.getElementById('cfg-max-acos').value;
-  appSettings.marketplace=document.getElementById('cfg-marketplace').value;
+  appSettings.marketplace=document.getElementById('cfg-marketplace')?.value||appSettings.marketplace||'UK';
   appSettings.ragGreen=parseFloat(document.getElementById('cfg-rag-green')?.value)||5;
   appSettings.ragAmber=parseFloat(document.getElementById('cfg-rag-amber')?.value)||4;
   if(appSettings.ragAmber>appSettings.ragGreen){const t=appSettings.ragAmber;appSettings.ragAmber=appSettings.ragGreen;appSettings.ragGreen=t;}
   appSettings.tacosGreen=parseFloat(document.getElementById('cfg-tacos-green')?.value)||10;
   appSettings.tacosAmber=parseFloat(document.getElementById('cfg-tacos-amber')?.value)||20;
   if(appSettings.tacosGreen>appSettings.tacosAmber){const t=appSettings.tacosGreen;appSettings.tacosGreen=appSettings.tacosAmber;appSettings.tacosAmber=t;}
+  appSettings.roasDropPct=parseFloat(document.getElementById('cfg-alert-roasdrop')?.value)||25;
+  appSettings.kwLeakSpend=parseFloat(document.getElementById('cfg-alert-kwleak')?.value);if(isNaN(appSettings.kwLeakSpend))appSettings.kwLeakSpend=2;
+  appSettings.leakMinSpend=parseFloat(document.getElementById('cfg-alert-leakspend')?.value);if(isNaN(appSettings.leakMinSpend))appSettings.leakMinSpend=0;
   try{localStorage.setItem('bdl_app_settings',JSON.stringify(appSettings));}catch(e){}
   /* Recompute RAG for every campaign with the new bands, then re-render */
   try{campaigns.forEach(c=>{c.rag=ragOf(c.roas,c.sales,c.spend);});}catch(e){}
@@ -6118,6 +6145,9 @@ function _loadAppSettings(){
   if(!(+appSettings.ragAmber))appSettings.ragAmber=4;
   if(!(+appSettings.tacosGreen))appSettings.tacosGreen=10;
   if(!(+appSettings.tacosAmber))appSettings.tacosAmber=20;
+  if(appSettings.roasDropPct==null||isNaN(+appSettings.roasDropPct))appSettings.roasDropPct=25;
+  if(appSettings.kwLeakSpend==null||isNaN(+appSettings.kwLeakSpend))appSettings.kwLeakSpend=2;
+  if(appSettings.leakMinSpend==null||isNaN(+appSettings.leakMinSpend))appSettings.leakMinSpend=0;
 }
 
 function applyMatchColours(){
@@ -6196,7 +6226,10 @@ function renderSettings(){
   {const g=document.getElementById('cfg-rag-green');if(g)g.value=appSettings.ragGreen||5;
    const a=document.getElementById('cfg-rag-amber');if(a)a.value=appSettings.ragAmber||4;
    const tg=document.getElementById('cfg-tacos-green');if(tg)tg.value=appSettings.tacosGreen||10;
-   const ta=document.getElementById('cfg-tacos-amber');if(ta)ta.value=appSettings.tacosAmber||20;}
+   const ta=document.getElementById('cfg-tacos-amber');if(ta)ta.value=appSettings.tacosAmber||20;
+   const rd=document.getElementById('cfg-alert-roasdrop');if(rd)rd.value=appSettings.roasDropPct!=null?appSettings.roasDropPct:25;
+   const kw=document.getElementById('cfg-alert-kwleak');if(kw)kw.value=appSettings.kwLeakSpend!=null?appSettings.kwLeakSpend:2;
+   const ls=document.getElementById('cfg-alert-leakspend');if(ls)ls.value=appSettings.leakMinSpend!=null?appSettings.leakMinSpend:0;}
 
   /* Populate metrics toggle buttons (fixes template literal bug) */
   const mt=document.getElementById('cfg-metrics-toggle');
@@ -6217,9 +6250,10 @@ function renderSettings(){
 }
 
 function renderPriceHistory(){
+  const _phEl=document.getElementById('price-history-list');if(!_phEl)return;
   const byAsin={};campaigns.forEach(c=>{byAsin[c.asin]=c.product;});
   const allAsins=Object.keys(byAsin);
-  if(!allAsins.length){document.getElementById('price-history-list').innerHTML='<div class="empty">No products loaded yet.</div>';return;}
+  if(!allAsins.length){_phEl.innerHTML='<div class="empty">No products loaded yet.</div>';return;}
   const rows=allAsins.flatMap(asin=>(priceHistory[asin]||[]).map(e=>({asin,product:byAsin[asin],...e}))).sort((a,b)=>b.date.localeCompare(a.date));
   document.getElementById('price-history-list').innerHTML=rows.length
     ?`<table class="dt" style="min-width:560px"><thead><tr><th>Product</th><th>Date</th><th>Price</th><th>Reason</th><th></th></tr></thead><tbody>${
@@ -6340,13 +6374,55 @@ function renderDashPeriod(){
   renderDashMovers();
   renderDashRecentChanges();
   renderDashOverdueBanner();
+  try{renderDataIssues();}catch(e){}
   const lbl=document.getElementById('dash-camps-period-label');
   if(lbl)lbl.textContent=period==='latest'?'— latest snapshot per campaign':'— period: '+period;
   const cov=document.getElementById('dash-period-coverage');
-  if(cov){const a=_aggregatePeriod(period);cov.textContent=a.matched+' of '+campaigns.length+' campaigns have data';}
+  if(cov){const a=_aggregatePeriod(period);const miss=campaigns.length-a.matched;
+    if(miss>0){cov.innerHTML=`<span style="color:var(--amber)">⚠ ${a.matched} of ${campaigns.length} campaigns have data</span> · ${miss} without data this period`;}
+    else{cov.textContent=a.matched+' of '+campaigns.length+' campaigns have data';}}
   _dashRenderedOnce=true;_dashDirty=false;
 }
 
+
+/* Surface DATA-INTEGRITY issues so they're noticed proactively rather than by chance:
+   active campaigns with no snapshots at all, or stale data (no snapshot in 45+ days). */
+function renderDataIssues(){
+  const el=document.getElementById('dash-data-issues');if(!el)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const issues=[];
+  campaigns.filter(c=>c.status==='active').forEach(c=>{
+    const name=c.alias||c.name;
+    if(!c.snapshots||c.snapshots.length===0){
+      issues.push({cid:c.id,name,sev:'red',msg:'No data imported yet — add a snapshot'});
+      return;
+    }
+    /* stale: newest snapshot period is well in the past */
+    let newest=0;
+    c.snapshots.forEach(s=>{const t=parseGbPeriod(s.date);if(t>newest)newest=t;});
+    if(newest){const days=Math.round((today-new Date(newest))/86400000);
+      if(days>45)issues.push({cid:c.id,name,sev:'amber',msg:'No new snapshot in '+days+' days'});}
+  });
+  if(!issues.length){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='';
+  const red=issues.filter(i=>i.sev==='red').length;
+  const head=red?('var(--red)'):'var(--amber)';
+  el.innerHTML=`<div style="background:var(--bg2);border:1px solid ${head}55;border-left:3px solid ${head};border-radius:var(--r);padding:11px 14px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:${issues.length?'8px':'0'}">
+      <span style="font-size:13px">⚠</span>
+      <span style="font-size:12.5px;font-weight:700;color:${head}">${issues.length} data issue${issues.length!==1?'s':''} to investigate</span>
+      <span style="font-size:11px;color:var(--text3)">campaigns missing or stale data</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      ${issues.map(i=>`<div onclick="openCamp('${i.cid}')" style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;background:var(--panel);border:1px solid var(--border)" onmouseenter="this.style.borderColor='${i.sev==='red'?'var(--red)':'var(--amber)'}'" onmouseleave="this.style.borderColor='var(--border)'">
+        <span style="width:7px;height:7px;border-radius:50%;background:${i.sev==='red'?'var(--red)':'var(--amber)'};flex-shrink:0"></span>
+        <span style="font-size:12px;font-weight:600;color:var(--text)">${i.name}</span>
+        <span style="font-size:11px;color:var(--text3)">— ${i.msg}</span>
+        <span style="margin-left:auto;font-size:10.5px;color:var(--blue);font-weight:600">Open →</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
 
 function renderDashOverdueBanner(){
   const el=document.getElementById('dash-overdue-banner');if(!el)return;
@@ -6375,6 +6451,9 @@ function renderDashActionList(){
   const A=campaigns.filter(c=>c.status==='active');
   const T=parseFloat(document.getElementById('cfg-target-roas')?.value||5);
   const maxAcos=parseFloat(document.getElementById('cfg-max-acos')?.value||30);
+  const roasDropPct=(+appSettings.roasDropPct)||25;
+  const kwLeakSpend=appSettings.kwLeakSpend!=null?(+appSettings.kwLeakSpend):2;
+  const leakMinSpend=appSettings.leakMinSpend!=null?(+appSettings.leakMinSpend):0;
   if(!window._actionedKeys)window._actionedKeys=new Set();
   const actions=[],reviews=[];               /* actions = performance · reviews = scheduled/change reviews */
   const today=new Date();today.setHours(0,0,0,0);
@@ -6382,44 +6461,51 @@ function renderDashActionList(){
     const ls=c.snapshots[c.snapshots.length-1]||{};
     const pv=c.snapshots[c.snapshots.length-2];
     const name=c.alias||c.name;
-    if(c.noSaleSpend||c.rag==='leak') actions.push({type:'urgent',pri:0,tag:'SPEND LEAK',label:'Zero sales — pausing recommended',camp:name,sub:gbp(c.spend)+' spent · no return',cid:c.id,action:'Pause campaign or add negative keywords immediately',key:c.id+'|leak'});
+    if((c.noSaleSpend||c.rag==='leak')&&c.spend>=leakMinSpend) actions.push({type:'urgent',pri:0,tag:'SPEND LEAK',label:'Zero sales — pausing recommended',camp:name,sub:gbp(c.spend)+' spent · no return',cid:c.id,action:'Pause campaign or add negative keywords immediately',key:c.id+'|leak'});
     else if(c.roas>0&&c.roas<T) actions.push({type:'warn',pri:1,tag:'LOW ROAS',label:fmt(c.roas,2)+'× below '+fmt(T,1)+'× target',camp:name,sub:'Spend '+gbp(c.spend)+' · Sales '+gbp(c.sales),cid:c.id,action:'Lower bids or pause underperforming keywords',key:c.id+'|roas'});
     if(c.acos>maxAcos&&c.sales>0) actions.push({type:'warn',pri:2,tag:'HIGH ACOS',label:fmt(c.acos,1)+'% above '+maxAcos+'% target',camp:name,sub:gbp(c.spend)+' spend for '+gbp(c.sales)+' sales',cid:c.id,action:'Review keyword bids and match types',key:c.id+'|acos'});
-    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>25&&c.roas>=T) actions.push({type:'warn',pri:2,tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
-    (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0).forEach(t=>{actions.push({type:'urgent',pri:1,tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
+    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>roasDropPct&&c.roas>=T) actions.push({type:'warn',pri:2,tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
+    (ls.targeting||[]).filter(t=>t.spend>=kwLeakSpend&&t.sales===0).forEach(t=>{actions.push({type:'urgent',pri:1,tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
     if(ls.impressions===0&&c.snapshots.length>0) actions.push({type:'info',pri:3,tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status in Amazon',key:c.id+'|noimpr'});
-    /* ── Due for Review: scheduled frequency ── */
+    /* ── Recurring review cadence ──
+       These are soft, repeating reminders (not a specific logged action), so they
+       live in Due for Review with their cycle + due date + status — never flooding
+       Action Required, which is reserved for performance alerts and specific
+       change follow-ups that are due today or overdue. */
     if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
       const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
       if(!hasPendingReview){
-        /* Only add to "Due for Review" if actually due (within freq days of last snapshot) */
         const lastSnap=c.snapshots[c.snapshots.length-1];
-        let daysSinceLast=null;
-        if(lastSnap?.date){
-          try{
-            const d=new Date(lastSnap.date.replace(/(\d+)[–-](\d+)\s+(\w+)/,'$1 $3').replace(/(\d+)\s+(\w+)\s+(\d{4})/,'$2 $1 $3'));
-            if(!isNaN(d)){daysSinceLast=Math.round((today-d)/86400000);}
-          }catch(e){}
-        }
-        /* Only show if the review is actually due or overdue (daysSince >= reviewFreqDays) */
-        if(daysSinceLast!=null&&daysSinceLast>=c.reviewFreqDays){
-          const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+'d';
-          reviews.push({type:'review',pri:2,diff:0,urg:'scheduled',tag:'SCHEDULED',label:rfLabel+' check-in due',camp:name,sub:'Recurring '+rfLabel.toLowerCase()+' review · last data '+lastSnap.date,cid:c.id,tab:'performance',action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
+        const baseTs=parseGbPeriod(lastSnap?.date||'');
+        if(baseTs){
+          const nextDueTs=baseTs+c.reviewFreqDays*86400000;
+          const daysUntil=Math.round((nextDueTs-today)/86400000);
+          if(daysUntil<=10){
+            const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+' days';
+            const fmtND=fmtDate(new Date(nextDueTs).toISOString().slice(0,10));
+            const urg=daysUntil<0?'overdue':daysUntil===0?'today':'scheduled';
+            const status=daysUntil<0?Math.abs(daysUntil)+'d overdue':daysUntil===0?'due today':daysUntil===1?'due tomorrow':'in '+daysUntil+'d';
+            const lbl=daysUntil<0?(rfLabel+' review overdue'):daysUntil<=0?(rfLabel+' review due'):(rfLabel+' review coming up');
+            reviews.push({type:'review',pri:daysUntil,diff:daysUntil,urg,tag:'SCHEDULED',label:lbl,camp:name,sub:rfLabel+' cycle · due '+fmtND+' · '+status,cid:c.id,tab:'performance',action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
+          }
         }
       }
     }
-    /* ── Due for Review: change follow-ups ──
-       Show EVERY active (pending) change that has a review date — overdue, due
-       today, or any future date — not just those within 3 days. */
+    /* ── Change follow-up reviews — routed by timing ──
+       Overdue and due-today need action NOW → Action Required (overdue at the very
+       top, oldest first). Future reviews stay in Due For Review with their date. */
     (c.changes||[]).forEach((ch,ci)=>{
       if(ch.outcome==='pending'&&ch.review){
         try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);
-          const urg=diff<0?'overdue':diff===0?'today':'upcoming';
-          const pri=diff<0?0:diff===0?1:3;
-          const tag=diff<0?'OVERDUE':diff===0?'DUE TODAY':'UPCOMING';
-          const label=ch.what;
-          const when=diff<0?Math.abs(diff)+'d overdue':diff===0?'due today':diff===1?'due tomorrow':'due in '+diff+'d';
-          reviews.push({type:'review',pri,diff,urg,tag,label,camp:name,sub:'Review '+fmtDate(ch.review)+' · '+when,cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key:c.id+'|chreview|'+ci});
+          const key=c.id+'|chreview|'+ci;
+          if(diff<0){
+            actions.push({type:'review',pri:diff,diff,urg:'overdue',tag:'OVERDUE',label:ch.what,camp:name,sub:'Review '+fmtDate(ch.review)+' · '+Math.abs(diff)+'d overdue',cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key});
+          } else if(diff===0){
+            actions.push({type:'review',pri:0.5,diff,urg:'today',tag:'DUE TODAY',label:ch.what,camp:name,sub:'Review '+fmtDate(ch.review)+' · due today',cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key});
+          } else {
+            const when=diff===1?'due tomorrow':'due in '+diff+'d';
+            reviews.push({type:'review',pri:diff,diff,urg:'upcoming',tag:'UPCOMING',label:ch.what,camp:name,sub:'Review '+fmtDate(ch.review)+' · '+when,cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key});
+          }
         }catch(e){}
       }
     });
