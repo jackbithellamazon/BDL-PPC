@@ -34,6 +34,19 @@
   --shadow-lg:0 24px 60px rgba(0,0,0,0.65);
   --r:14px;--r-sm:10px;--r-xs:7px;
 }
+/* ── LIGHT THEME — overrides the dark variables when body.light is set. Accent
+   colours are darkened so coloured text stays legible on white; the low-alpha
+   accent tints (-bg) are left as-is so chips keep their soft fill. ── */
+body.light{
+  --bg:#f4f6fb;--bg2:#ffffff;--bg3:#eef1f7;--bg4:#e4e9f2;--bg5:#d7deec;
+  --panel:#ffffff;--panel2:#f7f9fc;
+  --border:rgba(15,23,42,0.12);--border2:rgba(15,23,42,0.20);--border3:rgba(15,23,42,0.30);
+  --text:#0f172a;--text2:#1e293b;--text3:#475569;--text4:#64748b;
+  --green:#0ca678;--amber:#c2740a;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
+  --teal:#0d9488;--coral:#e11d48;
+  --shadow-sm:0 1px 3px rgba(15,23,42,0.10);--shadow:0 8px 30px rgba(15,23,42,0.12);--shadow-lg:0 24px 60px rgba(15,23,42,0.18);
+}
+body.light{background:var(--bg)}
 html,body{min-height:100%;color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 body{background:
   radial-gradient(900px 500px at 12% -8%,rgba(91,157,255,0.10),transparent 60%),
@@ -366,7 +379,8 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
     <button class="nav-btn" data-p="settings">Settings</button>
   </div>
   <div class="sp"></div>
-  <div class="sync hide-sm"><span class="dot"></span> SYNCED · 1 JUN 2026</div>
+  <div class="sync hide-sm" id="sync-indicator"><span class="dot" id="sync-dot"></span> <span id="sync-label">CONNECTING…</span></div>
+  <button class="acct" id="theme-toggle" title="Switch theme" onclick="toggleTheme()" style="width:auto;padding:0 12px;font-size:11px;font-weight:700;gap:5px">Light Mode</button>
   <button class="acct" title="Account settings"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg></button>
 </div>
 
@@ -522,6 +536,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <select class="sel" id="cl-sort" onchange="window._clPage=0;renderChangeLog()" style="min-width:150px"><option value="recent">Sort: Newest</option><option value="oldest">Sort: Oldest</option><option value="review">Sort: Review due</option><option value="campaign">Sort: Campaign</option><option value="outcome">Sort: Outcome</option></select>
       <select class="sel" id="cl-scope" onchange="window._clPage=0;renderChangeLog()">
         <option value="flat">Flat list</option>
+        <option value="campaigns">By campaign → popup</option>
         <option value="campaign">Group: campaign</option>
         <option value="type">Group: type</option>
         <option value="outcome">Group: outcome</option>
@@ -951,7 +966,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <div class="po-hr">
         <button class="btn-sm" id="btn-edit-camp" onclick="openEditCampaign()" style="color:var(--amber);border-color:rgba(255,181,71,.3)">✎ Edit</button>
         <button class="btn-sm" id="btn-delete-camp" onclick="confirmDeleteCampaign()" style="color:var(--red);border-color:rgba(255,93,108,.25)">🗑 Delete</button>
-        <button class="btn-sm" onclick="switchTab('changes')">+ Log change</button>
+        <button class="btn-sm" id="btn-quicklog" onclick="openQuickLog()">+ Log change</button>
         <button class="btn-sm" onclick="switchTab('import')" style="color:var(--blue);border-color:rgba(91,157,255,.3)">+ Snapshot</button>
         <button class="close-btn" onclick="closePop()">✕</button>
       </div>
@@ -960,6 +975,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <button class="po-tab active" data-t="performance">Numbers</button>
       <button class="po-tab" data-t="trends">Trends</button>
       <button class="po-tab" data-t="compare">Compare</button>
+      <button class="po-tab" data-t="searchterms">Search Terms</button>
       <button class="po-tab" data-t="changes">Active Changes<span class="badge" id="potab-changes"></span></button>
       <button class="po-tab" data-t="history">Review History<span class="badge" id="potab-history" style="background:var(--green-bg);color:var(--green)"></span></button>
       <button class="po-tab" data-t="profit">Profitability</button>
@@ -970,6 +986,7 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
       <div class="po-panel active" id="tab-performance"></div>
       <div class="po-panel" id="tab-trends"></div>
       <div class="po-panel" id="tab-compare"></div>
+      <div class="po-panel" id="tab-searchterms"></div>
       <div class="po-panel" id="tab-changes"></div>
       <div class="po-panel" id="tab-history"></div>
       <div class="po-panel" id="tab-profit"></div>
@@ -1151,6 +1168,40 @@ async function sbSaveDismissed(){
 }
 /* ── Escape-to-close overlays + auto-refresh when returning to the tab (keeps laptops in sync) ── */
 let _lastSync=Date.now();
+window._lastSyncTime=null; /* timestamp of last SUCCESSFUL sync */
+function applyTheme(theme){
+  const light=theme==='light';
+  document.body.classList.toggle('light',light);
+  const btn=document.getElementById('theme-toggle');
+  if(btn)btn.textContent=light?'Dark Mode':'Light Mode';
+}
+function toggleTheme(){
+  const light=!document.body.classList.contains('light');
+  applyTheme(light?'light':'dark');
+  try{localStorage.setItem('bdl_theme',light?'light':'dark');}catch(e){}
+}
+function _loadTheme(){let t='dark';try{t=localStorage.getItem('bdl_theme')||'dark';}catch(e){}applyTheme(t);}
+function setSyncStatus(state){
+  const lbl=document.getElementById('sync-label');const dot=document.getElementById('sync-dot');const wrap=document.getElementById('sync-indicator');
+  if(!lbl)return;
+  if(state==='syncing'){lbl.textContent='SYNCING…';if(dot)dot.style.background='var(--amber)';if(wrap)wrap.style.color='var(--amber)';}
+  else if(state==='error'){lbl.textContent='SYNC FAILED';if(dot)dot.style.background='var(--red)';if(wrap)wrap.style.color='var(--red)';}
+  else if(state==='offline'){lbl.textContent='NOT CONNECTED';if(dot)dot.style.background='var(--text4)';if(wrap)wrap.style.color='var(--text3)';}
+  else if(state==='synced'){window._lastSyncTime=Date.now();if(dot)dot.style.background='var(--green)';if(wrap)wrap.style.color='';updateSyncLabel();}
+}
+function updateSyncLabel(){
+  const lbl=document.getElementById('sync-label');if(!lbl)return;
+  if(!window._lastSyncTime){return;}
+  const secs=Math.round((Date.now()-window._lastSyncTime)/1000);
+  let t;
+  if(secs<10)t='JUST NOW';
+  else if(secs<60)t=secs+'s AGO';
+  else if(secs<3600)t=Math.floor(secs/60)+'m AGO';
+  else if(secs<86400)t=Math.floor(secs/3600)+'h AGO';
+  else {const d=new Date(window._lastSyncTime);t=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}).toUpperCase();}
+  lbl.textContent='SYNCED · '+t;
+}
+setInterval(()=>{try{updateSyncLabel();}catch(e){}},20000);
 function installGlobalUX(){
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'){
@@ -1194,9 +1245,11 @@ async function loadFromSupabase(){
     /* No Supabase — show empty state prompting to connect */
     removeBootSpinner();
     showNoSupabaseState();
+    setSyncStatus('offline');
     return;
   }
   window._loadInFlight=true;
+  setSyncStatus('syncing');
   try{
     const headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
     /* Force fresh reads. Without this, an immediate reload right after saving a
@@ -1241,6 +1294,7 @@ async function loadFromSupabase(){
         /* Fix: when targeting_json is old plain-array format, ALWAYS use ad_groups_json.
            When it's the newer {targeting,adGroups} object, prefer its adGroups but fall back to ad_groups_json. */
         const ags=Array.isArray(_rawTj)?(_rawAg||[]):(_rawTj?.adGroups||_rawAg||[]);
+        const sts=Array.isArray(_rawTj)?[]:(_rawTj?.searchTerms||[]);
         const rawCpc=s.cpc||0, rawCtr=s.ctr||0;
         const builtCpc=rawCpc>0?rawCpc:((s.clicks&&s.spend)?(s.spend/s.clicks):0);
         const builtCtr=rawCtr>0?rawCtr:((s.impressions&&s.clicks)?(s.clicks/s.impressions*100):0);
@@ -1248,6 +1302,7 @@ async function loadFromSupabase(){
         sn.cpc=builtCpc; sn.ctr=builtCtr;
         if(s.total_sales!=null&&s.total_sales!=='')sn.totalSales=+s.total_sales;
         if(ags)sn.adGroups=ags;
+        if(sts&&sts.length)sn.searchTerms=sts;
         return sn;
       });
       /* The snapshots GET orders by the `period` STRING, which is NOT the same as
@@ -1260,7 +1315,7 @@ async function loadFromSupabase(){
       snaps.sort((a,b)=>parseGbPeriod(a.date)-parseGbPeriod(b.date));
       const changes=chData.filter(ch=>ch.campaign_id===row.id).map(ch=>({id:ch.id,type:ch.type,date:ch.date,what:ch.what,why:ch.why,goal:ch.goal||'',outcome:ch.outcome||'pending',outcomeNote:ch.outcome_note||'',review:ch.review_date||'',reviewedAt:ch.reviewed_at||''}));
       const product=row.product_name||row.product||row.name||'Unnamed product';
-      campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,snapshots:snaps,changes}));
+      campaigns.push(mkCamp({id:row.id,name:row.name||row.campaign_name||'Campaign '+row.id,alias:row.alias||row.name||'Campaign '+row.id,product,asin:row.asin||'—',sku:row.sku||'—',status:row.status||'active',price:row.price||0,reviewFreqDays:row.review_freq_days||14,lastReviewedAt:row.last_reviewed_at||null,dailyBudget:row.daily_budget||0,snapshots:snaps,changes}));
     });
     applyLocalOverlay();
     /* CRITICAL: loadFromSupabase rebuilds `campaigns` with brand-new objects. If a
@@ -1308,10 +1363,13 @@ async function loadFromSupabase(){
     if(document.getElementById('page-dashboard')?.classList.contains('active')){
       populateDashPeriodSelectors();renderDashPeriod();renderDashAttention();renderDashRecentChanges();
     }
+    _lastSync=Date.now();
+    setSyncStatus('synced');
   }catch(e){
     console.error('Supabase error:',e);
     removeBootSpinner();
     showSupabaseError(e.message);
+    setSyncStatus('error');
   }finally{
     window._loadInFlight=false;
   }
@@ -1575,7 +1633,7 @@ function openCamp(id){
     else if(hasPendingChange){_reviewFlag=' — pending';}
     _reviewChip=`<span class="chip" style="color:${_chipTxt};border-color:${_chipCol};cursor:pointer" onclick="switchTab('changes')" title="Click to see changes">${_rfLabel} review${_reviewFlag}</span>`;
   }
-  document.getElementById('po-sub').innerHTML=`${_copyChip('ASIN',c.asin,'color:var(--purple);border-color:rgba(183,148,255,.3);background:var(--purple-bg)')}${_copyChip('SKU',c.sku,'color:var(--text2)')}${c.price?`<span class="chip">£${fmt(c.price,2)}</span>`:''}<span class="chip" style="color:${c.status==='active'?'var(--green)':'var(--text3)'};border-color:${c.status==='active'?'rgba(46,229,157,.3)':'var(--border)'}"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${c.status==='active'?'var(--green)':'var(--text4)'};margin-right:5px;box-shadow:${c.status==='active'?'0 0 5px var(--green)':'none'}"></span>${c.status}</span><span class="chip" style="color:var(--blue);border-color:rgba(91,157,255,.3);background:var(--blue-bg)">${_ss.length}&nbsp;snapshot${_ss.length!==1?'s':''}</span><span class="chip" style="color:${c.changes.length?'var(--amber)':'var(--text2)'};border-color:${c.changes.length?'rgba(255,181,71,.3)':'var(--border)'}">${c.changes.length}&nbsp;change${c.changes.length!==1?'s':''}</span>${_reviewChip}`;
+  document.getElementById('po-sub').innerHTML=`${_copyChip('ASIN',c.asin,'color:var(--purple);border-color:rgba(183,148,255,.3);background:var(--purple-bg)')}${_copyChip('SKU',c.sku,'color:var(--text2)')}${c.price?`<span class="chip">£${fmt(c.price,2)}</span>`:''}${c.dailyBudget?`<span class="chip" title="Campaign daily budget" style="color:var(--text2)">£${fmt(c.dailyBudget,2)}/day</span>`:''}<span class="chip" style="color:${c.status==='active'?'var(--green)':'var(--text3)'};border-color:${c.status==='active'?'rgba(46,229,157,.3)':'var(--border)'}"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${c.status==='active'?'var(--green)':'var(--text4)'};margin-right:5px;box-shadow:${c.status==='active'?'0 0 5px var(--green)':'none'}"></span>${c.status}</span><span class="chip" style="color:var(--blue);border-color:rgba(91,157,255,.3);background:var(--blue-bg)">${_ss.length}&nbsp;snapshot${_ss.length!==1?'s':''}</span><span class="chip" style="color:${c.changes.length?'var(--amber)':'var(--text2)'};border-color:${c.changes.length?'rgba(255,181,71,.3)':'var(--border)'}">${c.changes.length}&nbsp;change${c.changes.length!==1?'s':''}</span>${_reviewChip}`;
   updateCampTabBadges(c);
   window._perfPeriod=null;
   window._cmpSelA=null;window._cmpSelB=null;window._cmpDataView=null;
@@ -1596,6 +1654,7 @@ function openEditCampaign(){
   document.getElementById('ec-asin').value=c.asin||'';
   document.getElementById('ec-sku').value=c.sku||'';
   document.getElementById('ec-price').value=c.price||'';
+  {const b=document.getElementById('ec-budget');if(b)b.value=c.dailyBudget||'';}
   document.getElementById('ec-status').value=c.status||'active';
   /* Campaign type — normalise legacy values to new naming */
   const typeEl=document.getElementById('ec-type');
@@ -1624,6 +1683,7 @@ async function saveEditCampaign(){
   const asin=document.getElementById('ec-asin').value.trim().toUpperCase();
   const sku=document.getElementById('ec-sku').value.trim();
   const price=parseFloat(document.getElementById('ec-price').value)||0;
+  const dailyBudget=parseFloat(document.getElementById('ec-budget')?.value)||0;
   const status=document.getElementById('ec-status').value;
   const campaignType=document.getElementById('ec-type')?.value||c.campaignType||'Auto Targeting';
   const reviewFreq=parseInt(document.getElementById('ec-review-freq').value)||0;
@@ -1631,7 +1691,7 @@ async function saveEditCampaign(){
   const statusEl=document.getElementById('ec-status-msg');
   statusEl.textContent='Saving…';statusEl.style.color='var(--text3)';
   /* Update in memory immediately so UI reflects changes right away */
-  c.name=name;c.alias=alias||name;c.product=product;c.asin=asin||c.asin;c.sku=sku;c.price=price;c.status=status;c.reviewFreqDays=reviewFreq;c.campaignType=campaignType;
+  c.name=name;c.alias=alias||name;c.product=product;c.asin=asin||c.asin;c.sku=sku;c.price=price;c.status=status;c.reviewFreqDays=reviewFreq;c.campaignType=campaignType;c.dailyBudget=dailyBudget;
   /* Rebuild computed fields */
   const last=c.snapshots[c.snapshots.length-1]||{};
   c.rag=ragOf(c.roas,c.sales,c.spend);
@@ -1649,6 +1709,7 @@ async function saveEditCampaign(){
     try{
       const hds=await sbHeaders();
       const patch=buildCampPatch(fields);
+      patch.daily_budget=dailyBudget||null;
       /* Also try to save campaign_type if the column exists */
       if(!window._sbCampCols||window._sbCampCols.includes('campaign_type'))patch.campaign_type=campaignType;
       const res=await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{
@@ -1837,6 +1898,7 @@ function switchTab(t){document.querySelectorAll('.po-tab').forEach(b=>b.classLis
       else if(t==='import')renderImport();
       else if(t==='trends')renderCampTrends();
       else if(t==='compare')renderCampCompare();
+      else if(t==='searchterms')renderSearchTerms();
       else if(t==='history')renderHistory();
     }catch(e){console.warn('switchTab render '+t,e);}
   }
@@ -3092,6 +3154,7 @@ function renderChanges(){
           <option value="30">Monthly (every 30 days)</option>
           <option value="0">No scheduled review</option>
         </select>
+        <button class="btn-sm" id="clf-mark-reviewed" onclick="markCampReviewed(curCamp&&curCamp.id)" style="color:var(--green);border-color:rgba(46,229,157,.35)">✓ Mark reviewed today</button>
         <span id="clf-review-save-status" style="font-size:11px;color:var(--green)"></span>
       </div>
     </div>
@@ -3168,7 +3231,16 @@ function renderChanges(){
       statusEl.innerHTML=`<span style="color:var(--amber);font-weight:600">Due in ${mostUrgent.diff}d — "${mostUrgent.what}"</span>`;
     } else if(rf>0){
       const rfLabel=rf===7?'Weekly':rf===14?'Fortnightly':rf===30?'Monthly':rf===3?'Every 3 days':'Every '+rf+'d';
-      statusEl.innerHTML=`<span style="color:var(--text2)">${rfLabel} reviews${pendingReviews.length?' · '+pendingReviews.length+' pending':' · no pending reviews'}</span>`;
+      const ndTs=campNextReviewTs(c);
+      let sched='';
+      if(ndTs){const nd=new Date(ndTs);nd.setHours(0,0,0,0);const du=Math.round((nd-today2)/86400000);
+        const ndLabel=fmtDate(nd.toISOString().slice(0,10));
+        sched= du<0?` · <span style="color:var(--red)">next review ${ndLabel} (${Math.abs(du)}d overdue)</span>`
+             : du===0?` · <span style="color:var(--amber)">review due today</span>`
+             : ` · next review ${ndLabel} (in ${du}d)`;}
+      statusEl.innerHTML=`<span style="color:var(--text2)">${rfLabel} reviews${sched}</span>`;
+      const lr=campLastReviewTs(c);
+      if(lr){statusEl.innerHTML+=`<span style="color:var(--text4);font-size:11px"> · last reviewed ${fmtDate(new Date(lr).toISOString().slice(0,10))}</span>`;}
     } else {
       statusEl.innerHTML=`<span style="color:var(--text4)">No review schedule set</span>`;
     }
@@ -3188,6 +3260,42 @@ function updateCampTabBadges(c){
   const hb=document.getElementById('potab-history');
   if(ab)ab.textContent=pend||'';
   if(hb)hb.textContent=done||'';
+}
+
+/* ── Scheduled review anchor (Option 2: reset on review) ──
+   The cadence clock counts from the last time you actually engaged with a
+   campaign — the most recent of: logging a change, completing a follow-up, or
+   tapping "Mark reviewed". Never engaged → anchored to the first snapshot.
+   Importing data does NOT reset it. */
+function campLastReviewTs(c){
+  let ts=0;
+  const add=d=>{if(!d)return;const t=Date.parse(String(d).slice(0,10)+'T00:00:00');if(!isNaN(t)&&t>ts)ts=t;};
+  add(c.lastReviewedAt);
+  (c.changes||[]).forEach(ch=>{add(ch.date);add(ch.reviewedAt);});
+  if(!ts&&c.snapshots&&c.snapshots.length){const t=parseGbPeriod(c.snapshots[0].date);if(t)ts=t;}
+  return ts;
+}
+function campNextReviewTs(c){
+  if(!c.reviewFreqDays||c.reviewFreqDays<=0)return 0;
+  const base=campLastReviewTs(c);
+  return base?base+c.reviewFreqDays*86400000:0;
+}
+/* "I looked, nothing to change" — stamps last-reviewed = today, pushing the next
+   scheduled review out by one cycle. One tap, no note, no Change Log entry. */
+async function markCampReviewed(cid){
+  const c=campaigns.find(x=>x.id==cid)||(curCamp&&curCamp.id==cid?curCamp:null);
+  if(!c)return;
+  const todayIso=new Date().toISOString().slice(0,10);
+  c.lastReviewedAt=todayIso;
+  if(curCamp&&curCamp.id==c.id)curCamp.lastReviewedAt=todayIso;
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{const hds=await sbHeaders();
+      await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},body:JSON.stringify({last_reviewed_at:todayIso})});
+    }catch(e){console.warn('markCampReviewed save',e);}
+  }
+  try{renderCampaigns();}catch(e){}
+  try{if(document.getElementById('camp-overlay')?.classList.contains('open')&&document.querySelector('.po-tab.active')?.dataset.t==='changes')renderChanges();}catch(e){}
+  try{if(document.getElementById('page-dashboard')?.classList.contains('active'))renderDashActionList();}catch(e){}
 }
 
 async function saveCampReviewFreq(){
@@ -3214,6 +3322,77 @@ async function saveCampReviewFreq(){
   renderChanges();
 }
 
+/* Shared: add a change to a campaign, refresh all views, persist to Supabase.
+   Used by both the Active Changes form and the always-on "+ Log change" popup. */
+async function addChangeToCampaign(c,change){
+  if(!c)return;
+  c.changes.unshift(change); // newest first
+  try{if(document.getElementById('camp-overlay')?.classList.contains('open')&&document.querySelector('.po-tab.active')?.dataset.t==='changes')renderChanges();}catch(e){}
+  try{renderCampaigns();}catch(e){}
+  try{renderChangeLog();}catch(e){}
+  try{refreshAfterSave();}catch(e){}
+  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
+    try{
+      const saved=await sbInsert('changes',{
+        campaign_id:c.id,type:change.type,date:change.date,what:change.what,why:change.why,goal:change.goal||null,
+        outcome:'pending',outcome_note:null,review_date:change.review,created_at:new Date().toISOString()
+      });
+      if(saved&&saved.id!=null){change.id=saved.id;}
+    }catch(e){console.error('Change save failed:',e);}
+  }
+}
+
+/* ── Always-on "+ Log change" popup ── */
+function qlcToggleBid(){
+  const t=document.getElementById('qlc-type')?.value;
+  const row=document.getElementById('qlc-bid-row');
+  if(row)row.style.display=(t==='PPC Bid')?'grid':'none';
+}
+function openQuickLog(){
+  const c=curCamp;if(!c)return;
+  const sub=document.getElementById('qlc-sub');if(sub)sub.textContent=c.alias||c.name||'';
+  const today=new Date().toISOString().slice(0,10);
+  const d=document.getElementById('qlc-date');if(d)d.value=today;
+  /* default review date = today + the campaign's review cycle (or 14) */
+  const rf=c.reviewFreqDays||14;const rv=new Date();rv.setDate(rv.getDate()+(rf>0?rf:14));
+  const r=document.getElementById('qlc-review');if(r)r.value=rv.toISOString().slice(0,10);
+  ['qlc-what','qlc-why','qlc-goal','qlc-bid-from','qlc-bid-to'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const ty=document.getElementById('qlc-type');if(ty)ty.value='PPC Bid';
+  qlcToggleBid();
+  const st=document.getElementById('qlc-status');if(st)st.textContent='';
+  document.getElementById('quicklog-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{const w=document.getElementById('qlc-what');if(w)w.focus();},50);
+}
+function closeQuickLog(){
+  document.getElementById('quicklog-overlay').classList.remove('open');
+  /* the campaign overlay is still open underneath */
+}
+async function saveQuickLog(){
+  const c=curCamp;if(!c)return;
+  const date=document.getElementById('qlc-date').value;
+  const type=document.getElementById('qlc-type').value;
+  let what=document.getElementById('qlc-what').value.trim();
+  const why=document.getElementById('qlc-why').value.trim();
+  const goal=document.getElementById('qlc-goal').value.trim();
+  const review=document.getElementById('qlc-review').value;
+  const st=document.getElementById('qlc-status');
+  if(!date||!what||!why||!review){if(st){st.textContent='⚠ Date, what, why and review date are all required';st.style.color='var(--red)';}return;}
+  /* Fold a bid change into the description so it's captured with no schema change */
+  if(type==='PPC Bid'){
+    const bf=parseFloat(document.getElementById('qlc-bid-from').value);
+    const bt=parseFloat(document.getElementById('qlc-bid-to').value);
+    if(!isNaN(bf)&&!isNaN(bt)){
+      const fmtp=v=>v<1?Math.round(v*100)+'p':'£'+v.toFixed(2);
+      what=what+' — bid '+fmtp(bf)+' → '+fmtp(bt);
+    }
+  }
+  const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
+  if(st){st.textContent='Saving…';st.style.color='var(--text3)';}
+  await addChangeToCampaign(c,change);
+  closeQuickLog();
+}
+
 async function saveChangeEntry(){
   const c=curCamp;if(!c)return;
   const date=document.getElementById('clf-date').value;
@@ -3230,7 +3409,6 @@ async function saveChangeEntry(){
   }
 
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
-  c.changes.unshift(change); // newest first
 
   /* Reset form */
   document.getElementById('clf-what').value='';
@@ -3239,28 +3417,9 @@ async function saveChangeEntry(){
   document.getElementById('clf-review').value='';
   document.getElementById('clf-date').value=new Date().toISOString().slice(0,10);
 
-  /* Refresh immediately — renderChanges handles the active-only list, both tab
-     badges and the Review History tab in one pass. */
-  renderChanges();
-  renderCampaigns();
-  renderChangeLog();
-  refreshAfterSave();
+  await addChangeToCampaign(c,change);
   const status2=document.getElementById('clf-status');
   if(status2){status2.textContent='✓ Change saved';status2.style.color='var(--green)';setTimeout(()=>{const s=document.getElementById('clf-status');if(s)s.textContent='';},2500);}
-
-  /* Save to Supabase in background */
-  if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
-    try{
-      const saved=await sbInsert('changes',{
-        campaign_id:c.id,type,date,what,why,goal:goal||null,
-        outcome:'pending',outcome_note:null,
-        review_date:review,created_at:new Date().toISOString()
-      });
-      if(saved&&saved.id!=null){change.id=saved.id;}
-    }catch(e){
-      console.error('Change save failed:',e);
-    }
-  }
 }
 function changeEntry(ch, campId, chIdx){
   const ic={'PPC Bid':'⊙','PPC Budget':'£','PPC Keywords':'⌗','Pricing':'฿','Listing':'≣','Stock':'▣','Other':'•'}[ch.type]||'•';
@@ -3773,6 +3932,53 @@ function parsePasteFor(type,text){
       ${matchBreakdown?`<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">${matchBreakdown}</div>`:''}
     </div>`;
     showSnapParsed();
+  } else if(type==='st'){
+    /* Search Terms — auto-detect Auto (close/loose match) vs Manual (keyword) exports.
+       Match type per row is NOT in Amazon's CSV for manual campaigns, so we keep every
+       row separate and label match only where the CSV provides it (auto close/loose). */
+    const matchMap={'close-match':'Close','loose-match':'Loose','close match':'Close','loose match':'Loose','substitutes':'Substitutes','complements':'Complements'};
+    const rows=parsed.rows.map(r=>{
+      const term=colStr(r,['Customer search term','customer_search_term','Customer Search Term','Search term','search_term'],'');
+      if(!term)return null;
+      const kwRaw=colStr(r,['Keywords','keyword','Keyword','Targeting','targeting'],'');
+      const addedAs=colStr(r,['Added as','added_as','Added As'],'');
+      const bid=colNum(r,['Target bid (GBP)','Target bid (USD)','Target bid','target_bid_gbp','target_bid'],0);
+      const clicks=Math.round(colNum(r,['Clicks','clicks'],0));
+      const cost=colNum(r,['Total cost (GBP)','Total cost (USD)','Total cost','Spend (GBP)','Spend','total_cost_gbp','total_cost'],0);
+      const cpcCsv=colNum(r,['CPC (GBP)','CPC (USD)','CPC','cpc_gbp','cpc'],0);
+      const cpc=cpcCsv>0?cpcCsv:(clicks?cost/clicks:0);
+      const purch=Math.round(colNum(r,['Purchases','purchases','Orders','orders'],0));
+      const sales=colNum(r,['Sales (GBP)','Sales (USD)','Sales','sales_gbp','sales'],0);
+      let rawAcos=colNum(r,['ACOS','acos'],0);
+      const acos=rawAcos>1?rawAcos:(rawAcos>0&&rawAcos<=1?rawAcos*100:0)||(sales?cost/sales*100:0);
+      let rawRoas=colNum(r,['ROAS','roas'],0);
+      const roas=rawRoas>0?rawRoas:(cost>0?sales/cost:0);
+      let rawPr=colNum(r,['Purchase rate','purchase_rate','Purchase Rate'],0);
+      const prate=rawPr>1?rawPr:rawPr*100;
+      const match=matchMap[kwRaw.toLowerCase()]||'';
+      return{term,kw:kwRaw,match,addedAs,bid,clicks,cost,cpc,purch,sales,acos,roas,prate};
+    }).filter(Boolean);
+    /* Keep if it converted (sales>0) OR has real traffic (clicks > threshold). Drops the
+       long tail of low-click no-sale noise so the database stays lean. */
+    const stClickFloor=(appSettings.stClickFloor!=null?+appSettings.stClickFloor:2);
+    const kept=rows.filter(r=>r.sales>0||r.clicks>stClickFloor);
+    const dropped=rows.length-kept.length;
+    window._snapSts=kept;
+    const withSales=kept.filter(r=>r.sales>0).length;
+    const leakThresh=(appSettings.kwLeakSpend!=null?+appSettings.kwLeakSpend:2);
+    const redCount=kept.filter(r=>r.sales===0&&r.cost>=leakThresh).length;
+    if(badgeEl)badgeEl.innerHTML=`<span style="color:var(--green);font-size:11px;font-weight:700">✓ ${kept.length} term${kept.length!==1?'s':''}</span>`;
+    if(previewEl)previewEl.innerHTML=`<div style="margin-top:6px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:9px 10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+        <span style="font-size:11.5px;font-weight:700;color:var(--green)">✓ ${kept.length} kept</span>
+        ${dropped?`<span style="font-size:10px;color:var(--text3)">${dropped} low-click dropped</span>`:''}
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);border-radius:4px;padding:2px 7px">${withSales} with sales</span>
+        ${redCount?`<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:4px;padding:2px 7px">⚠ ${redCount} wasting £${leakThresh}+</span>`:''}
+      </div>
+    </div>`;
+    showSnapParsed();
   } else {
     const rows=parsed.rows.map(r=>{
       const name=colStr(r,['Ad name','ad_name','Ad Name','Ad group name','ad_group_name','Ad Group'],'');
@@ -4012,6 +4218,90 @@ function updateSnapValidation(){
 }
 function checkSnapReady(){updateSnapValidation();showSnapParsed();}
 
+/* ── Search Terms viewing tab (view-only). Reads searchTerms off the campaign's
+   snapshots. Colour: green = has sales, red = no sales + spend≥leak threshold,
+   grey = no sales below threshold. Shows matched keyword + "Added as" status. ── */
+function renderSearchTerms(){
+  const el=document.getElementById('tab-searchterms');if(!el||!curCamp)return;
+  const c=curCamp;
+  const snaps=(c.snapshots||[]).map((s,i)=>({s,i})).filter(o=>o.s.searchTerms&&o.s.searchTerms.length);
+  if(!snaps.length){
+    el.innerHTML='<div style="padding:48px;text-align:center;color:var(--text3);font-size:13px">No search terms saved yet. Import a <b>Search Terms CSV</b> with a snapshot (the third upload card under <b>+ Snapshot</b>).</div>';
+    return;
+  }
+  /* default to the latest snapshot that has search terms */
+  if(window._stPeriodIdx==null||!snaps.some(o=>o.i===window._stPeriodIdx))window._stPeriodIdx=snaps[snaps.length-1].i;
+  const sel=snaps.find(o=>o.i===window._stPeriodIdx)||snaps[snaps.length-1];
+  const leakThresh=(appSettings.kwLeakSpend!=null?+appSettings.kwLeakSpend:2);
+  const rows=(sel.s.searchTerms||[]).slice().sort((a,b)=>b.cost-a.cost);
+  const withSales=rows.filter(r=>r.sales>0).length;
+  const red=rows.filter(r=>r.sales===0&&r.cost>=leakThresh).length;
+  const tot=rows.reduce((a,r)=>({c:a.c+r.cost,s:a.s+r.sales,cl:a.cl+r.clicks,p:a.p+r.purch}),{c:0,s:0,cl:0,p:0});
+  const totRoas=tot.c?tot.s/tot.c:0;
+
+  const periodOpts=snaps.map(o=>`<option value="${o.i}" ${o.i===sel.i?'selected':''}>${o.s.date||'Period '+(o.i+1)}</option>`).join('');
+
+  const addedTag=a=>{
+    if(!a)return '';
+    const low=a.toLowerCase();
+    if(low.indexOf('neg')===0||low.indexOf('neg.')>-1)return '<span style="font-size:9px;font-weight:700;color:var(--text3);background:var(--bg4);border-radius:4px;padding:1px 6px">⊘ negated</span>';
+    if(low.indexOf('keyword')===0)return '<span style="font-size:9px;font-weight:700;color:var(--green);background:var(--green-bg);border-radius:4px;padding:1px 6px">✓ keyword</span>';
+    return `<span style="font-size:9px;font-weight:700;color:var(--text3);background:var(--bg4);border-radius:4px;padding:1px 6px">${a}</span>`;
+  };
+  const matchPill=m=>m?`<span style="font-size:9px;font-weight:700;color:var(--purple);background:var(--purple-bg);border-radius:4px;padding:1px 6px;margin-left:5px">${m}</span>`:'';
+
+  const body=rows.map(r=>{
+    const hasSales=r.sales>0;
+    const isRed=!hasSales&&r.cost>=leakThresh;
+    const rowBg=hasSales?'rgba(46,229,157,0.05)':isRed?'rgba(255,93,108,0.07)':'transparent';
+    const dot=hasSales?'var(--green)':isRed?'var(--red)':'var(--text4)';
+    const roasCol=r.roas>=5?'var(--green)':r.roas>=4?'var(--amber)':r.roas>0?'var(--red)':'var(--text4)';
+    return `<tr style="background:${rowBg};border-bottom:1px solid var(--border)">
+      <td style="padding:7px 10px"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${dot};margin-right:8px;vertical-align:middle"></span><span style="font-size:12px;font-weight:600;color:var(--text)">${r.term}</span></td>
+      <td style="padding:7px 10px;font-size:11px;color:var(--text2)">${r.kw||'—'}${matchPill(r.match)}</td>
+      <td style="padding:7px 10px">${addedTag(r.addedAs)}</td>
+      <td style="padding:7px 10px;text-align:right;font-family:var(--mono);font-size:11.5px;color:var(--text2)">${intf(r.clicks)}</td>
+      <td style="padding:7px 10px;text-align:right;font-family:var(--mono);font-size:11.5px;color:${isRed?'var(--red)':'var(--text)'}">${gbp(r.cost)}</td>
+      <td style="padding:7px 10px;text-align:right;font-family:var(--mono);font-size:11.5px;color:var(--text3)">${intf(r.purch)}</td>
+      <td style="padding:7px 10px;text-align:right;font-family:var(--mono);font-size:11.5px;color:${hasSales?'var(--green)':'var(--text4)'}">${gbp(r.sales)}</td>
+      <td style="padding:7px 10px;text-align:right;font-family:var(--mono);font-size:11.5px;color:${roasCol};font-weight:700">${r.roas>0?fmt(r.roas,2):'—'}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML=`<div style="padding:16px 18px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:5px">Snapshot period</div>
+        <select class="sel" onchange="window._stPeriodIdx=+this.value;renderSearchTerms()" style="min-width:200px;font-size:13px;font-weight:600">${periodOpts}</select>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;align-items:center">
+        <span style="font-size:10.5px;font-weight:700;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 9px">${rows.length} terms</span>
+        <span style="font-size:10.5px;font-weight:700;color:var(--green);background:var(--green-bg);border-radius:6px;padding:4px 9px">${withSales} with sales</span>
+        ${red?`<span style="font-size:10.5px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:6px;padding:4px 9px">⚠ ${red} wasting £${leakThresh}+</span>`:''}
+        <span style="font-size:10.5px;font-weight:700;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 9px">ROAS ${fmt(totRoas,2)}×</span>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;min-width:720px">
+        <thead><tr style="background:var(--bg3);border-bottom:1px solid var(--border2)">
+          <th style="padding:8px 10px;text-align:left;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Search term</th>
+          <th style="padding:8px 10px;text-align:left;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Matched</th>
+          <th style="padding:8px 10px;text-align:left;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Added as</th>
+          <th style="padding:8px 10px;text-align:right;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Clicks</th>
+          <th style="padding:8px 10px;text-align:right;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Cost</th>
+          <th style="padding:8px 10px;text-align:right;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Orders</th>
+          <th style="padding:8px 10px;text-align:right;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Sales</th>
+          <th style="padding:8px 10px;text-align:right;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">ROAS</th>
+        </tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+      </div>
+    </div>
+    <div style="font-size:10.5px;color:var(--text4);margin-top:8px">Green = made sales · Red = spent £${leakThresh}+ with no sales · Grey = no sales. Only terms with sales or more than ${(appSettings.stClickFloor!=null?+appSettings.stClickFloor:2)} clicks are saved.</div>
+  </div>`;
+}
+
 function renderImport(){
   document.getElementById('tab-import').innerHTML=`<div style="max-width:1400px">
 
@@ -4071,7 +4361,7 @@ function renderImport(){
       </div>
 
       <!-- UPLOAD CARDS — compact after parse -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
         <!-- TARGETING -->
         <div style="background:var(--bg2);border:2px solid var(--blue);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column">
           <div style="background:var(--blue-bg);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
@@ -4126,6 +4416,34 @@ function renderImport(){
               <textarea class="input" style="width:100%;min-height:60px;font-family:var(--mono);font-size:10px;resize:vertical" placeholder="Paste Ad Groups CSV here…" oninput="parsePasteFor('ag',this.value)"></textarea>
             </div>
             <div id="ag-preview"></div>
+          </div>
+        </div>
+        <!-- SEARCH TERMS — third snapshot type -->
+        <div style="background:var(--bg2);border:2px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--purple-bg);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+            <div>
+              <div style="font-size:12px;font-weight:800;color:var(--purple)">Search Terms CSV</div>
+              <div style="font-size:10px;font-weight:700;color:var(--text2);margin-top:1px">Customer search terms</div>
+            </div>
+            <div id="st-badge"></div>
+          </div>
+          <div style="padding:10px;flex:1;display:flex;flex-direction:column">
+            <div class="csv-drop" id="st-drop"
+              ondragover="event.preventDefault();this.style.background='var(--purple-bg)'"
+              ondragleave="this.style.background=''"
+              ondrop="event.preventDefault();this.style.background='';handleCsvDropTo('st',event)"
+              style="padding:10px 10px;text-align:center;margin-bottom:6px">
+              <div style="font-size:11.5px;font-weight:700;color:var(--text2);margin-bottom:6px">Drop CSV here or</div>
+              <div style="display:flex;gap:5px;justify-content:center">
+                <button onclick="document.getElementById('st-file').click()" class="btn" style="font-size:11px;padding:5px 14px">Browse</button>
+                <button onclick="var el=document.getElementById('st-paste-area');el.style.display=el.style.display==='none'?'block':'none'" class="btn ghost" style="font-size:11px;padding:5px 10px">Paste</button>
+              </div>
+              <input type="file" id="st-file" accept=".csv" style="display:none" onchange="handleCsvFileTo('st',this)">
+            </div>
+            <div id="st-paste-area" style="display:none;margin-bottom:6px">
+              <textarea class="input" style="width:100%;min-height:60px;font-family:var(--mono);font-size:10px;resize:vertical" placeholder="Paste Search Terms CSV here…" oninput="parsePasteFor('st',this.value)"></textarea>
+            </div>
+            <div id="st-preview"></div>
           </div>
         </div>
       </div>
@@ -4198,7 +4516,8 @@ function renderImport(){
 async function saveSnapshot(){
   const tgts=window._snapTgts||[];
   const ags=window._snapAgs||[];
-  if(!tgts.length&&!ags.length){
+  const _sts0=window._snapSts||[];
+  if(!tgts.length&&!ags.length&&!_sts0.length){
     const note=document.getElementById('save-snap-note');
     if(note){note.textContent='⚠ Import at least one CSV first';note.style.color='var(--red)';}
     return;
@@ -4246,6 +4565,8 @@ async function saveSnapshot(){
 
   const newSnap=snap(period,totImp,totClicks,totSpend,totSales,totPurch,tgts.length?tgts:null);
   newSnap.adGroups=ags;
+  const sts=window._snapSts||[];
+  if(sts.length)newSnap.searchTerms=sts;
 
   /* Store notes and type on snap */
   newSnap.note=document.getElementById('snap-notes')?.value||'';
@@ -4276,7 +4597,7 @@ async function saveSnapshot(){
     try{
       const _note=newSnap.note||'';
       /* Pack both CSV datasets into targeting_json as a combined object */
-      const _tjObj={targeting:tgts,adGroups:ags};
+      const _tjObj={targeting:tgts,adGroups:ags,searchTerms:sts};
       const _payload={
         campaign_id:c.id,period,
         impressions:totImp,clicks:totClicks,spend:totSpend,sales:totSales,purchases:totPurch,
@@ -4337,6 +4658,7 @@ async function saveSnapshot(){
   /* Clear parsed state for next snapshot */
   window._snapTgts=null;
   window._snapAgs=null;
+  window._snapSts=null;
   window._calFromVal=null;
   window._calToVal=null;
   {const ts=document.getElementById('snap-total-sales');if(ts)ts.value='';}
@@ -4697,6 +5019,10 @@ function renderChangeLog(){
     if(_c&&_ni>=0)_renderChangeDetailBody(window._cdOpen.cid,_ni);
     else closeChangeDetail();
   }
+  if(window._clcampOpen){
+    const _cc=campaigns.find(x=>x.id==window._clcampOpen);
+    if(_cc)_renderCampChangesBody(window._clcampOpen);else closeCampChanges();
+  }
   /* Populate campaign filter */
   const cfEl=document.getElementById('cl-camp-filter');
   if(cfEl){const prev=cfEl.value;cfEl.innerHTML='<option value="all">All campaigns</option>'+campaigns.map(c=>`<option value="${c.id}" ${c.id==prev?'selected':''}>${c.alias||c.name}</option>`).join('');if(prev)cfEl.value=prev;}
@@ -4824,6 +5150,31 @@ function renderChangeLog(){
 
   if(scope==='flat'){
     document.getElementById('cl-content').innerHTML=clGrid(pageItems);
+  } else if(scope==='campaigns'){
+    /* Compact campaign rows, newest activity first; click → popup of all that
+       campaign's changes. Built from the full filtered set (not just this page). */
+    const byCamp={};
+    all.forEach(x=>{(byCamp[x.cid]=byCamp[x.cid]||{cid:x.cid,cname:x.cname,items:[]}).items.push(x);});
+    const camps=Object.values(byCamp).map(g=>{
+      const lastDate=g.items.reduce((m,x)=>(x.date||'')>m?(x.date||''):m,'');
+      const pendN=g.items.filter(x=>x.outcome==='pending').length;
+      const overN=g.items.filter(x=>x.outcome==='pending'&&x.review&&new Date((x.review||'')+'T00:00:00')<=today2).length;
+      return{...g,lastDate,pendN,overN};
+    }).sort((a,b)=>(b.lastDate||'').localeCompare(a.lastDate||''));
+    document.getElementById('cl-content').innerHTML=
+      `<div style="display:flex;flex-direction:column;gap:7px">`+camps.map(g=>{
+        const overTag=g.overN?`<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:5px;padding:2px 8px">⚠ ${g.overN} overdue</span>`:'';
+        const pendTag=g.pendN?`<span style="font-size:10px;font-weight:700;color:var(--amber);background:var(--amber-bg);border-radius:5px;padding:2px 8px">${g.pendN} pending</span>`:'';
+        return `<button onclick="openCampChanges('${g.cid}')" style="all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;padding:12px 15px;background:var(--panel);border:1px solid var(--border);border-radius:10px;transition:.12s" onmouseover="this.style.borderColor='var(--border3)';this.style.background='var(--bg2)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--panel)'">
+          <span style="font-size:14px;font-weight:700;color:var(--text)">${g.cname}</span>
+          <span style="font-size:11px;font-weight:700;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:2px 8px">${g.items.length} change${g.items.length!==1?'s':''}</span>
+          ${overTag}${pendTag}
+          <span style="margin-left:auto;display:flex;align-items:center;gap:12px">
+            <span style="font-size:11px;color:var(--text4)">last ${g.lastDate?fmtDateShort(g.lastDate):'—'}</span>
+            <span style="font-size:12px;color:var(--blue);font-weight:700">View all →</span>
+          </span>
+        </button>`;
+      }).join('')+`</div>`;
   } else {
     const groups={};
     pageItems.forEach(x=>{
@@ -4839,6 +5190,7 @@ function renderChangeLog(){
   }
 
   const totalLabel=`${intf(totalItems)} change${totalItems!==1?'s':''} ${srch||tf!=='all'||of2!=='all'||campF!=='all'||dateF!=='all'?'(filtered)':'total'}`;
+  if(scope==='campaigns'){document.getElementById('cl-pagination').innerHTML=`<span style="font-size:12px;color:#d4dff0">${totalLabel} across the campaigns above</span>`;return;}
   if(totalPages<=1){document.getElementById('cl-pagination').innerHTML=`<span style="font-size:12px;color:#d4dff0">${totalLabel}</span>`;return;}
   const paginHtml=`
     <span style="font-size:11px;color:#d4dff0">${totalLabel}</span>
@@ -4870,6 +5222,33 @@ function openChangeDetail(cid,idx){
 function closeChangeDetail(){
   window._cdOpen=null;
   const ov=document.getElementById('cd-overlay');
+  if(ov)ov.classList.remove('open');
+  if(!document.querySelector('.overlay.open'))document.body.style.overflow=curCamp?'hidden':'';
+}
+
+/* ── Change Log "By campaign" → popup listing all of one campaign's changes ── */
+function _renderCampChangesBody(cid){
+  const c=campaigns.find(x=>x.id==cid);if(!c)return;
+  const t=document.getElementById('clcamp-title');if(t)t.textContent=c.alias||c.name;
+  const sub=document.getElementById('clcamp-sub');
+  const pend=c.changes.filter(ch=>ch.outcome==='pending').length;
+  const done=c.changes.filter(ch=>ch.outcome==='win'||ch.outcome==='loss').length;
+  if(sub)sub.innerHTML=`<span class="chip">${c.changes.length} total</span><span class="chip" style="color:var(--amber)">${pend} pending</span><span class="chip" style="color:var(--green)">${done} reviewed</span>`;
+  const body=document.getElementById('clcamp-body');if(!body)return;
+  /* newest first, with original indices preserved for edit/mark/delete */
+  const ordered=c.changes.map((ch,i)=>({ch,i})).sort((a,b)=>(b.ch.date||'').localeCompare(a.ch.date||''));
+  body.innerHTML=ordered.length?ordered.map(o=>changeEntry(o.ch,c.id,o.i)).join(''):'<div class="empty">No changes logged for this campaign yet.</div>';
+}
+function openCampChanges(cid){
+  const c=campaigns.find(x=>x.id==cid);if(!c)return;
+  window._clcampOpen=cid;
+  _renderCampChangesBody(cid);
+  const ov=document.getElementById('clcamp-overlay');
+  if(ov){ov.classList.add('open');document.body.style.overflow='hidden';}
+}
+function closeCampChanges(){
+  window._clcampOpen=null;
+  const ov=document.getElementById('clcamp-overlay');
   if(ov)ov.classList.remove('open');
   if(!document.querySelector('.overlay.open'))document.body.style.overflow=curCamp?'hidden':'';
 }
@@ -6446,6 +6825,7 @@ function renderDashOverdueBanner(){
   </div>`;
 }
 
+function toggleSchedGroup(id){const x=document.getElementById(id);if(!x)return;const open=x.style.display==='none';x.style.display=open?'':'none';const c=document.getElementById(id+'-caret');if(c)c.textContent=open?'▴ tap to collapse':'▾ tap to expand';}
 function renderDashActionList(){
   const el=document.getElementById('dash-action-list');if(!el)return;
   const A=campaigns.filter(c=>c.status==='active');
@@ -6455,80 +6835,73 @@ function renderDashActionList(){
   const kwLeakSpend=appSettings.kwLeakSpend!=null?(+appSettings.kwLeakSpend):2;
   const leakMinSpend=appSettings.leakMinSpend!=null?(+appSettings.leakMinSpend):0;
   if(!window._actionedKeys)window._actionedKeys=new Set();
-  const actions=[],reviews=[];               /* actions = performance · reviews = scheduled/change reviews */
   const today=new Date();today.setHours(0,0,0,0);
+
+  /* Performance buckets (in tier-4 order), change-review buckets, scheduled buckets */
+  const pLeak=[],pNoImpr=[],pLowRoas=[],pKwLeak=[],pAcosDrop=[];
+  const chgOverdue=[],chgToday=[],chgUpcoming=[];
+  const schedOverdue=[],schedToday=[],schedUpcoming=[];
+
   A.forEach(c=>{
     const ls=c.snapshots[c.snapshots.length-1]||{};
     const pv=c.snapshots[c.snapshots.length-2];
     const name=c.alias||c.name;
-    if((c.noSaleSpend||c.rag==='leak')&&c.spend>=leakMinSpend) actions.push({type:'urgent',pri:0,tag:'SPEND LEAK',label:'Zero sales — pausing recommended',camp:name,sub:gbp(c.spend)+' spent · no return',cid:c.id,action:'Pause campaign or add negative keywords immediately',key:c.id+'|leak'});
-    else if(c.roas>0&&c.roas<T) actions.push({type:'warn',pri:1,tag:'LOW ROAS',label:fmt(c.roas,2)+'× below '+fmt(T,1)+'× target',camp:name,sub:'Spend '+gbp(c.spend)+' · Sales '+gbp(c.sales),cid:c.id,action:'Lower bids or pause underperforming keywords',key:c.id+'|roas'});
-    if(c.acos>maxAcos&&c.sales>0) actions.push({type:'warn',pri:2,tag:'HIGH ACOS',label:fmt(c.acos,1)+'% above '+maxAcos+'% target',camp:name,sub:gbp(c.spend)+' spend for '+gbp(c.sales)+' sales',cid:c.id,action:'Review keyword bids and match types',key:c.id+'|acos'});
-    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>roasDropPct&&c.roas>=T) actions.push({type:'warn',pri:2,tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
-    (ls.targeting||[]).filter(t=>t.spend>=kwLeakSpend&&t.sales===0).forEach(t=>{actions.push({type:'urgent',pri:1,tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
-    if(ls.impressions===0&&c.snapshots.length>0) actions.push({type:'info',pri:3,tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or outbid',cid:c.id,action:'Check campaign status in Amazon',key:c.id+'|noimpr'});
-    /* ── Recurring review cadence ──
-       These are soft, repeating reminders (not a specific logged action), so they
-       live in Due for Review with their cycle + due date + status — never flooding
-       Action Required, which is reserved for performance alerts and specific
-       change follow-ups that are due today or overdue. */
-    if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0){
-      const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
-      if(!hasPendingReview){
-        const lastSnap=c.snapshots[c.snapshots.length-1];
-        const baseTs=parseGbPeriod(lastSnap?.date||'');
-        if(baseTs){
-          const nextDueTs=baseTs+c.reviewFreqDays*86400000;
-          const daysUntil=Math.round((nextDueTs-today)/86400000);
-          if(daysUntil<=10){
-            const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+' days';
-            const fmtND=fmtDate(new Date(nextDueTs).toISOString().slice(0,10));
-            const urg=daysUntil<0?'overdue':daysUntil===0?'today':'scheduled';
-            const status=daysUntil<0?Math.abs(daysUntil)+'d overdue':daysUntil===0?'due today':daysUntil===1?'due tomorrow':'in '+daysUntil+'d';
-            const lbl=daysUntil<0?(rfLabel+' review overdue'):daysUntil<=0?(rfLabel+' review due'):(rfLabel+' review coming up');
-            reviews.push({type:'review',pri:daysUntil,diff:daysUntil,urg,tag:'SCHEDULED',label:lbl,camp:name,sub:rfLabel+' cycle · due '+fmtND+' · '+status,cid:c.id,tab:'performance',action:'Check ROAS, ACOS, keywords then log any changes',key:c.id+'|sched'});
-          }
-        }
-      }
-    }
-    /* ── Change follow-up reviews — routed by timing ──
-       Overdue and due-today need action NOW → Action Required (overdue at the very
-       top, oldest first). Future reviews stay in Due For Review with their date. */
+    /* ── Performance alerts ── */
+    if((c.noSaleSpend||c.rag==='leak')&&c.spend>=leakMinSpend) pLeak.push({type:'urgent',tag:'SPEND LEAK',label:'Zero sales — pausing recommended',camp:name,sub:gbp(c.spend)+' spent · no return',cid:c.id,action:'Pause campaign or add negative keywords immediately',key:c.id+'|leak'});
+    else if(c.roas>0&&c.roas<T) pLowRoas.push({type:'warn',tag:'LOW ROAS',label:fmt(c.roas,2)+'× below '+fmt(T,1)+'× target',camp:name,sub:'Spend '+gbp(c.spend)+' · Sales '+gbp(c.sales),cid:c.id,action:'Lower bids or pause underperforming keywords',key:c.id+'|roas'});
+    if(c.acos>maxAcos&&c.sales>0) pAcosDrop.push({type:'warn',tag:'HIGH ACOS',label:fmt(c.acos,1)+'% above '+maxAcos+'% target',camp:name,sub:gbp(c.spend)+' spend for '+gbp(c.sales)+' sales',cid:c.id,action:'Review keyword bids and match types',key:c.id+'|acos'});
+    if(pv&&pv.spend&&c.roas>0){const p2=pv.spend?pv.sales/pv.spend:0;const dr=(p2-c.roas)/Math.abs(p2||1)*100;if(dr>roasDropPct&&c.roas>=T) pAcosDrop.push({type:'warn',tag:'ROAS DROP',label:dr.toFixed(0)+'% drop since last snapshot',camp:name,sub:fmt(p2,2)+'× → '+fmt(c.roas,2)+'×',cid:c.id,action:'Check for budget or competitor changes',key:c.id+'|drop'});}
+    (ls.targeting||[]).filter(t=>t.spend>=kwLeakSpend&&t.sales===0).forEach(t=>{pKwLeak.push({type:'urgent',tag:'KW LEAK',label:'"'+t.kw+'" wasting budget',camp:name,sub:gbp(t.spend)+' spent · 0 sales · '+(t.match||'—')+' match',cid:c.id,action:'Add as negative keyword or pause',key:c.id+'|kwleak|'+t.kw});});
+    if(ls.impressions===0&&c.snapshots.length>0) pNoImpr.push({type:'info',tag:'NO IMPRESSIONS',label:'Zero impressions this period',camp:name,sub:'May be paused, budget-limited, or bid too low',cid:c.id,action:'Check campaign status / consider raising bid',key:c.id+'|noimpr'});
+
+    /* ── Change follow-up reviews (Type A) ── */
+    const hasPendingReview=(c.changes||[]).some(ch=>ch.outcome==='pending'&&ch.review);
     (c.changes||[]).forEach((ch,ci)=>{
       if(ch.outcome==='pending'&&ch.review){
         try{const d=new Date(ch.review+'T00:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);
           const key=c.id+'|chreview|'+ci;
-          if(diff<0){
-            actions.push({type:'review',pri:diff,diff,urg:'overdue',tag:'OVERDUE',label:ch.what,camp:name,sub:'Review '+fmtDate(ch.review)+' · '+Math.abs(diff)+'d overdue',cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key});
-          } else if(diff===0){
-            actions.push({type:'review',pri:0.5,diff,urg:'today',tag:'DUE TODAY',label:ch.what,camp:name,sub:'Review '+fmtDate(ch.review)+' · due today',cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key});
-          } else {
-            const when=diff===1?'due tomorrow':'due in '+diff+'d';
-            reviews.push({type:'review',pri:diff,diff,urg:'upcoming',tag:'UPCOMING',label:ch.what,camp:name,sub:'Review '+fmtDate(ch.review)+' · '+when,cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key});
-          }
+          const base={type:'review',diff,label:ch.what,camp:name,cid:c.id,tab:'changes',action:'Assess result and mark as worked / did not work',key};
+          if(diff<0)chgOverdue.push(Object.assign({},base,{urg:'overdue',tag:'OVERDUE',sub:'Review '+fmtDate(ch.review)+' · '+Math.abs(diff)+'d overdue'}));
+          else if(diff===0)chgToday.push(Object.assign({},base,{urg:'today',tag:'DUE TODAY',sub:'Review '+fmtDate(ch.review)+' · due today'}));
+          else chgUpcoming.push(Object.assign({},base,{urg:'upcoming',tag:'UPCOMING',sub:'Review '+fmtDate(ch.review)+' · '+(diff===1?'due tomorrow':'due in '+diff+'d')}));
         }catch(e){}
       }
     });
+
+    /* ── Scheduled recurring cadence (Type B) — anchored to last review ── */
+    if(c.reviewFreqDays&&c.reviewFreqDays>0&&c.snapshots.length>0&&!hasPendingReview){
+      const ndTs=campNextReviewTs(c);
+      if(ndTs){
+        const nd=new Date(ndTs);nd.setHours(0,0,0,0);
+        const daysUntil=Math.round((nd-today)/86400000);
+        const rfLabel=c.reviewFreqDays===7?'Weekly':c.reviewFreqDays===14?'Fortnightly':c.reviewFreqDays===30?'Monthly':'Every '+c.reviewFreqDays+' days';
+        const item={cid:c.id,camp:name,rfLabel,daysUntil,fmtND:fmtDate(nd.toISOString().slice(0,10))};
+        if(daysUntil<0)schedOverdue.push(item);
+        else if(daysUntil===0)schedToday.push(item);
+        else if(daysUntil<=10)schedUpcoming.push(item);
+      }
+    }
   });
-  actions.sort((a,b)=>a.pri-b.pri);reviews.sort((a,b)=>(a.pri-b.pri)||((a.diff??999)-(b.diff??999)));
+
+  chgOverdue.sort((a,b)=>a.diff-b.diff);
+  chgUpcoming.sort((a,b)=>a.diff-b.diff);
+  schedOverdue.sort((a,b)=>a.daysUntil-b.daysUntil);
+  schedUpcoming.sort((a,b)=>a.daysUntil-b.daysUntil);
+
+  const done=window._actionedKeys;
+  const fp=arr=>arr.filter(a=>!done.has(a.key));
+
+  /* ── Row renderer (individual items) ── */
+  const urgCol={overdue:'var(--red)',today:'var(--amber)',upcoming:'var(--purple)',scheduled:'var(--blue)'};
+  const urgBg={overdue:'var(--red-bg)',today:'var(--amber-bg)',upcoming:'var(--purple-bg)',scheduled:'var(--blue-bg)'};
   const colMap={urgent:'var(--red)',warn:'var(--amber)',info:'var(--blue)',review:'var(--purple)'};
   const bgMap={urgent:'rgba(255,93,108,.14)',warn:'rgba(255,181,71,.12)',info:'rgba(91,157,255,.12)',review:'rgba(183,148,255,.14)'};
-  const done=window._actionedKeys;
-  const visA=actions.filter(a=>!done.has(a.key));
-  const visR=reviews.filter(a=>!done.has(a.key));
-  const dismissedCount=(actions.length-visA.length)+(reviews.length-visR.length);
-
   const row=a=>{
     const k=String(a.key).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const isReview=a.type==='review';
-    /* Review urgency colours: overdue=red, due today=amber, upcoming=purple */
-    const urgCol={overdue:'var(--red)',today:'var(--amber)',upcoming:'var(--purple)',scheduled:'var(--blue)'};
-    const urgBg={overdue:'var(--red-bg)',today:'var(--amber-bg)',upcoming:'var(--purple-bg)',scheduled:'var(--blue-bg)'};
     const col=isReview?(urgCol[a.urg]||'var(--purple)'):colMap[a.type];
     const bg=isReview?(urgBg[a.urg]||'var(--purple-bg)'):bgMap[a.type];
-    const icon=isReview
-      ? (a.urg==='overdue'?'&#9888;':a.urg==='scheduled'?'&#9201;':'&#9679;')  /* ⚠ overdue, ⏱ scheduled, ● due/upcoming */
-      : '';
+    const icon=isReview?(a.urg==='overdue'?'&#9888;':a.urg==='scheduled'?'&#9201;':'&#9679;'):'';
     const click=isReview?"openReviewItem('"+a.cid+"','"+(a.tab||'changes')+"')":"openCamp('"+a.cid+"')";
     const btn=isReview
       ? '<button onclick="event.stopPropagation();openReviewItem(\''+a.cid+'\',\''+(a.tab||'changes')+'\')" style="flex-shrink:0;background:'+bg+';border:1px solid '+col+'66;color:'+col+';font-size:9.5px;font-weight:700;padding:3px 10px;border-radius:5px;cursor:pointer;font-family:var(--font);white-space:nowrap">Review &rarr;</button>'
@@ -6544,39 +6917,90 @@ function renderDashActionList(){
       + '</div>';
   };
 
-  const col=(title,accent,items,empty)=>{
-    const hasUrgent=items.some(a=>a.type==='urgent'||a.tag==='OVERDUE');
-    const bc=hasUrgent?'var(--red)':accent;
-    const badge=items.length?`<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:${bc}22;color:${bc};border:1px solid ${bc}44">${items.length}</span>`:'';
-    return`<div style="display:flex;flex-direction:column;min-width:0">
-      <div style="padding:7px 12px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;background:var(--bg3)">
-        <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">${title}</span>${badge}
-      </div>
-      ${items.length
-        ?`<div style="overflow-y:auto;max-height:260px">${items.map(row).join('')}</div>`
-        :`<div style="padding:10px 12px;font-size:11.5px;color:var(--green)">✓ ${empty}</div>`}
-    </div>`;
+  /* A single scheduled item rendered as a normal row (used when only 1 in a tier) */
+  const schedAsRow=it=>{
+    const urg=it.daysUntil<0?'overdue':it.daysUntil===0?'today':'scheduled';
+    const status=it.daysUntil<0?Math.abs(it.daysUntil)+'d overdue':it.daysUntil===0?'due today':it.daysUntil===1?'due tomorrow':'in '+it.daysUntil+'d';
+    const lbl=it.daysUntil<0?it.rfLabel+' review overdue':it.daysUntil===0?it.rfLabel+' review due':it.rfLabel+' review coming up';
+    return row({type:'review',urg,tag:'SCHEDULED',label:lbl,camp:it.camp,sub:it.rfLabel+' cycle · due '+it.fmtND+' · '+status,cid:it.cid,tab:'performance',diff:it.daysUntil,key:it.cid+'|sched'});
   };
 
-  const totalVis=visA.length+visR.length;
-  const hasUrgent=visA.some(a=>a.type==='urgent');
-  const topBadge=totalVis?`<span style="font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:12px;background:${hasUrgent?'var(--red-bg)':'rgba(255,181,71,.14)'};color:${hasUrgent?'var(--red)':'var(--amber)'};border:1px solid ${hasUrgent?'rgba(255,93,108,.4)':'rgba(255,181,71,.35)'}">${totalVis} item${totalVis!==1?'s':''}</span>`:`<span style="font-size:10.5px;font-weight:700;color:var(--green)">All clear ✓</span>`;
+  /* Grouped scheduled card (used when 2+ in a tier) — expands inline */
+  const schedCard=(items,kind)=>{
+    const col=kind==='overdue'?'var(--red)':kind==='today'?'var(--amber)':'var(--purple)';
+    const bg=kind==='overdue'?'var(--red-bg)':kind==='today'?'var(--amber-bg)':'var(--purple-bg)';
+    const icon=kind==='overdue'?'&#9888;':kind==='upcoming'?'&#9201;':'&#9679;';
+    const title=kind==='overdue'?items.length+' campaigns overdue for review'
+              :kind==='today'?items.length+' campaigns due for review today'
+              :items.length+' campaigns due for review in the next 10 days';
+    const gid='schedgrp-'+kind;
+    const rows=items.map(it=>{
+      const status=it.daysUntil<0?Math.abs(it.daysUntil)+'d overdue':it.daysUntil===0?'due today':it.daysUntil===1?'tomorrow':'in '+it.daysUntil+'d';
+      return '<div onclick="openReviewItem(\''+it.cid+'\',\'performance\')" style="display:flex;align-items:center;gap:8px;padding:6px 12px 6px 36px;border-top:1px solid var(--border);cursor:pointer" onmouseenter="this.style.background=\'var(--bg2)\'" onmouseleave="this.style.background=\'\'">'
+        + '<span style="font-size:12px;font-weight:600;color:var(--text)">'+it.camp+'</span>'
+        + '<span style="font-size:10.5px;color:var(--text3)">'+it.rfLabel+' · due '+it.fmtND+' · '+status+'</span>'
+        + '<span style="margin-left:auto;font-size:10px;color:var(--blue);font-weight:600">Review &rarr;</span>'
+        + '</div>';
+    }).join('');
+    return '<div style="border-bottom:1px solid var(--border)">'
+      + '<div onclick="toggleSchedGroup(\''+gid+'\')" style="display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer" onmouseenter="this.style.background=\'var(--bg2)\'" onmouseleave="this.style.background=\'\'">'
+      +   '<span style="color:'+col+';font-size:13px;line-height:1;width:14px;text-align:center">'+icon+'</span>'
+      +   '<span style="font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:'+bg+';color:'+col+';border:1px solid '+col+'40;white-space:nowrap">SCHEDULED</span>'
+      +   '<span style="font-size:12px;font-weight:700;color:var(--text)">'+title+'</span>'
+      +   '<span id="'+gid+'-caret" style="margin-left:auto;font-size:10.5px;color:var(--text3)">▾ tap to expand</span>'
+      + '</div>'
+      + '<div id="'+gid+'" style="display:none">'+rows+'</div>'
+      + '</div>';
+  };
+
+  /* ── Assemble ACTION REQUIRED in strict priority order ── */
+  let aHtml='';
+  aHtml+=chgOverdue.map(row).join('');
+  if(schedOverdue.length>=2)aHtml+=schedCard(schedOverdue,'overdue');
+  else if(schedOverdue.length===1)aHtml+=schedAsRow(schedOverdue[0]);
+  aHtml+=chgToday.map(row).join('');
+  if(schedToday.length>=2)aHtml+=schedCard(schedToday,'today');
+  else if(schedToday.length===1)aHtml+=schedAsRow(schedToday[0]);
+  aHtml+=fp(pLeak).map(row).join('');
+  aHtml+=fp(pNoImpr).map(row).join('');
+  aHtml+=fp(pLowRoas).map(row).join('');
+  aHtml+=fp(pKwLeak).map(row).join('');
+  aHtml+=fp(pAcosDrop).map(row).join('');
+
+  /* ── Assemble DUE FOR REVIEW (future only) ── */
+  let dHtml='';
+  dHtml+=chgUpcoming.map(row).join('');
+  if(schedUpcoming.length>=2)dHtml+=schedCard(schedUpcoming,'upcoming');
+  else if(schedUpcoming.length===1)dHtml+=schedAsRow(schedUpcoming[0]);
+
+  const aCount=chgOverdue.length+schedOverdue.length+chgToday.length+schedToday.length+fp(pLeak).length+fp(pNoImpr).length+fp(pLowRoas).length+fp(pKwLeak).length+fp(pAcosDrop).length;
+  const dCount=chgUpcoming.length+schedUpcoming.length;
+  const aUrgent=chgOverdue.length>0||schedOverdue.length>0||fp(pLeak).length>0||fp(pKwLeak).length>0;
+  const dismissedCount=[pLeak,pNoImpr,pLowRoas,pKwLeak,pAcosDrop].reduce((s,arr)=>s+(arr.length-fp(arr).length),0);
+
+  const colHtml=(title,accent,inner,count,empty,urgent)=>{
+    const bc=urgent?'var(--red)':accent;
+    const badge=count?'<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:'+bc+'22;color:'+bc+';border:1px solid '+bc+'44">'+count+'</span>':'';
+    return '<div style="display:flex;flex-direction:column;min-width:0">'
+      + '<div style="padding:7px 12px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;background:var(--bg3)">'
+      +   '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text)">'+title+'</span>'+badge
+      + '</div>'
+      + (count?'<div style="overflow-y:auto;max-height:300px">'+inner+'</div>':'<div style="padding:10px 12px;font-size:11.5px;color:var(--green)">✓ '+empty+'</div>')
+      + '</div>';
+  };
+
+  const totalVis=aCount+dCount;
+  const topBadge=totalVis?'<span style="font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:12px;background:'+(aUrgent?'var(--red-bg)':'rgba(255,181,71,.14)')+';color:'+(aUrgent?'var(--red)':'var(--amber)')+';border:1px solid '+(aUrgent?'rgba(255,93,108,.4)':'rgba(255,181,71,.35)')+'">'+totalVis+' item'+(totalVis!==1?'s':'')+'</span>':'<span style="font-size:10.5px;font-weight:700;color:var(--green)">All clear ✓</span>';
 
   el.innerHTML=
-    `<div style="padding:8px 12px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <div style="display:flex;align-items:center;gap:9px">
-        <span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text)">Actions &amp; Reviews</span>
-        ${topBadge}
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:10px;color:var(--text4)">Click row · Done to dismiss</span>
-        ${dismissedCount?`<button onclick="resetActions()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:9.5px;padding:2px 8px;border-radius:5px;cursor:pointer;font-family:var(--font)">Reset ${dismissedCount}</button>`:''}
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;border-top:none">
-      <div style="border-right:1px solid var(--border)">${col('Action Required','var(--amber)',visA,'No action needed')}</div>
-      <div>${col('Due for Review','var(--purple)',visR,'Nothing due right now')}</div>
-    </div>`;
+    '<div style="padding:8px 12px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;gap:10px">'
+    + '<div style="display:flex;align-items:center;gap:9px"><span style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text)">Actions &amp; Reviews</span>'+topBadge+'</div>'
+    + '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:10px;color:var(--text4)">Click row · Done to dismiss</span>'+(dismissedCount?'<button onclick="resetActions()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:9.5px;padding:2px 8px;border-radius:5px;cursor:pointer;font-family:var(--font)">Reset '+dismissedCount+'</button>':'')+'</div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr">'
+    +   '<div style="border-right:1px solid var(--border)">'+colHtml('Action Required','var(--amber)',aHtml,aCount,'No action needed',aUrgent)+'</div>'
+    +   '<div>'+colHtml('Due for Review','var(--purple)',dHtml,dCount,'Nothing due right now',false)+'</div>'
+    + '</div>';
 }
 function renderDashWhatsWorking(){
   const el=document.getElementById('dash-whats-working');if(!el)return;
@@ -7191,6 +7615,7 @@ async function saveGlobalChange(){
 /* boot */
 showBootSpinner();
 installGlobalUX();
+_loadTheme();
 _loadAppSettings();
 loadMatchColours();
 loadFromSupabase().then(()=>{
@@ -7364,6 +7789,69 @@ function toggleSnapExpand(){
 <!-- ════════ GLOBAL LOG CHANGE MODAL ════════ -->
 
 <!-- ════════ EDIT CAMPAIGN MODAL ════════ -->
+<div class="overlay" id="quicklog-overlay" onclick="if(event.target.id==='quicklog-overlay')closeQuickLog()">
+  <div class="popout" style="max-width:560px;width:calc(100vw - 40px);max-height:92vh;overflow-y:auto">
+    <div class="po-header">
+      <div><div class="po-title" style="font-size:16px">Log a change</div><div class="po-sub" id="qlc-sub"></div></div>
+      <div class="po-hr"><button class="close-btn" onclick="closeQuickLog()">✕</button></div>
+    </div>
+    <div style="padding:16px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px">
+        <div>
+          <div class="label" style="margin-bottom:5px">Date made <span style="color:var(--red)">*</span></div>
+          <input class="input" id="qlc-date" type="date" style="width:100%">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Change type <span style="color:var(--red)">*</span></div>
+          <select class="sel" id="qlc-type" style="width:100%" onchange="qlcToggleBid()">
+            <option value="PPC Bid">PPC Bid</option>
+            <option value="PPC Budget">PPC Budget</option>
+            <option value="PPC Keywords">PPC Keywords</option>
+            <option value="Pricing">Pricing</option>
+            <option value="Listing">Listing</option>
+            <option value="Stock">Stock</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div id="qlc-bid-row" style="display:none;grid-template-columns:1fr 16px 1fr;gap:8px;align-items:end;margin-bottom:11px">
+        <div>
+          <div class="label" style="margin-bottom:5px">Current bid (£)</div>
+          <input class="input" id="qlc-bid-from" type="number" step="0.01" placeholder="0.40" style="width:100%">
+        </div>
+        <div style="text-align:center;color:var(--text3);padding-bottom:9px">→</div>
+        <div>
+          <div class="label" style="margin-bottom:5px">New bid (£)</div>
+          <input class="input" id="qlc-bid-to" type="number" step="0.01" placeholder="0.45" style="width:100%">
+        </div>
+      </div>
+      <div style="margin-bottom:11px">
+        <div class="label" style="margin-bottom:5px">What changed <span style="color:var(--red)">*</span></div>
+        <input class="input" id="qlc-what" style="width:100%" placeholder="e.g. Lowered Exact bid on 'polyfilla'">
+      </div>
+      <div style="margin-bottom:11px">
+        <div class="label" style="margin-bottom:5px">Why <span style="color:var(--red)">*</span></div>
+        <textarea class="input" id="qlc-why" style="width:100%;min-height:54px;resize:vertical" placeholder="e.g. ROAS on Exact was only 3.6× — testing a lower bid"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px">
+        <div>
+          <div class="label" style="margin-bottom:5px">Goal (optional)</div>
+          <input class="input" id="qlc-goal" style="width:100%" placeholder="e.g. Cut spend, keep sales">
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:5px">Review by <span style="color:var(--red)">*</span></div>
+          <input class="input" id="qlc-review" type="date" style="width:100%">
+        </div>
+      </div>
+      <div id="qlc-status" style="font-size:12px;font-weight:600;margin-bottom:8px;min-height:16px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn ghost" onclick="closeQuickLog()">Cancel</button>
+        <button class="btn" id="qlc-save-btn" onclick="saveQuickLog()">Log change</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="edit-camp-overlay" onclick="if(event.target.id==='edit-camp-overlay')closeEditCampaign()">
   <div class="popout" style="max-width:560px;width:calc(100vw - 40px);max-height:80vh;overflow-y:auto">
     <div class="po-header" style="padding:16px 20px">
@@ -7398,6 +7886,10 @@ function toggleSnapExpand(){
           <div>
             <div class="label" style="margin-bottom:5px">Product price (£)</div>
             <input class="input" id="ec-price" style="width:100%" type="number" step="0.01" placeholder="0.00">
+          </div>
+          <div>
+            <div class="label" style="margin-bottom:5px">Daily budget (£)</div>
+            <input class="input" id="ec-budget" style="width:100%" type="number" step="0.50" placeholder="10.00">
           </div>
           <div>
             <div class="label" style="margin-bottom:5px">Status</div>
@@ -7504,6 +7996,16 @@ function toggleSnapExpand(){
       <button class="close-btn" onclick="closeChangeDetail()">✕</button>
     </div>
     <div style="padding:18px 20px" id="cd-body"></div>
+  </div>
+</div>
+<!-- ════════ CAMPAIGN CHANGES POPUP (Change Log → By campaign) ════════ -->
+<div class="overlay" id="clcamp-overlay" onclick="if(event.target.id==='clcamp-overlay')closeCampChanges()" style="z-index:370">
+  <div class="popout" style="max-width:640px;width:calc(100vw - 40px);max-height:90vh;overflow-y:auto;margin:auto">
+    <div class="po-header" style="padding:16px 20px">
+      <div><div class="po-title" id="clcamp-title" style="font-size:15px"></div><div class="po-sub" id="clcamp-sub"></div></div>
+      <button class="close-btn" onclick="closeCampChanges()">✕</button>
+    </div>
+    <div style="padding:14px 18px" id="clcamp-body"></div>
   </div>
 </div>
 <!-- ════════ EDIT CHANGE LOG MODAL ════════ -->
