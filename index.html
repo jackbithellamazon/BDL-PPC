@@ -1211,6 +1211,9 @@ function installGlobalUX(){
   });
   document.addEventListener('visibilitychange',function(){
     if(document.visibilityState==='visible'&&SUPABASE_URL&&SUPABASE_KEY&&!window._loadInFlight&&Date.now()-_lastSync>20000){
+      /* Never auto-refresh while the user is part-way through entering a snapshot or
+         change — re-pointing the data underneath them risks wiping unsaved work. */
+      if(popoutHasUnsavedInput()){return;}
       _lastSync=Date.now();
       loadFromSupabase();
     }
@@ -1504,8 +1507,18 @@ function popoutHasUnsavedInput(){
     if(!ov||!ov.classList.contains('open'))return false;
     const ae=document.activeElement;
     if(ae&&ov.contains(ae)&&/^(INPUT|TEXTAREA)$/.test(ae.tagName)&&!ae.readOnly)return true;
-    const ids=['clf-what','clf-why','clf-goal','clf-review','snap-notes','snap-total-sales'];
+    const ids=['clf-what','clf-why','clf-goal','clf-review','snap-notes','snap-total-sales','csv-period'];
     for(const id of ids){const el=document.getElementById(id);if(el&&el.value&&String(el.value).trim())return true;}
+    /* In-progress snapshot import: parsed-but-unsaved CSV data must NOT be wiped by
+       the tab-return auto-refresh (e.g. user flicks to Seller Central and back). */
+    if((window._snapTgts&&window._snapTgts.length)||(window._snapAgs&&window._snapAgs.length)||(window._snapSts&&window._snapSts.length))return true;
+    /* Any quick-log popup open with typed content */
+    const qlcOv=document.getElementById('quicklog-overlay');
+    if(qlcOv&&qlcOv.classList.contains('open')){
+      for(const id of ['qlc-what','qlc-why','qlc-goal']){const el=document.getElementById(id);if(el&&el.value&&el.value.trim())return true;}
+      const bn=qlcOv.querySelectorAll('.qlc-bid-name,.qlc-bid-from,.qlc-bid-to');
+      for(const el of bn){if(el.value&&el.value.trim())return true;}
+    }
     const dyn=ov.querySelectorAll('textarea[id^="rn-"],textarea[id^="he-note-"]');
     for(const el of dyn){if(el.value&&el.value.trim())return true;}
   }catch(e){}
@@ -3343,10 +3356,29 @@ async function addChangeToCampaign(c,change){
 }
 
 /* ── Always-on "+ Log change" popup ── */
+function qlcBidRowHtml(){
+  return `<div class="qlc-bid-item" style="display:grid;grid-template-columns:1.3fr 1fr 14px 1fr 22px;gap:7px;align-items:center;margin-bottom:7px">
+    <input class="input qlc-bid-name" placeholder="target (e.g. close match)" style="width:100%;font-size:12px">
+    <input class="input qlc-bid-from" type="number" step="0.01" placeholder="cur £" style="width:100%;font-size:12px">
+    <span style="text-align:center;color:var(--text3)">→</span>
+    <input class="input qlc-bid-to" type="number" step="0.01" placeholder="new £" style="width:100%;font-size:12px">
+    <button type="button" onclick="qlcRemoveBidRow(this)" title="Remove" style="all:unset;cursor:pointer;color:var(--text4);text-align:center;font-size:15px;line-height:1">×</button>
+  </div>`;
+}
+function qlcAddBidRow(){
+  const list=document.getElementById('qlc-bid-list');if(!list)return;
+  list.insertAdjacentHTML('beforeend',qlcBidRowHtml());
+}
+function qlcRemoveBidRow(btn){
+  const list=document.getElementById('qlc-bid-list');
+  const item=btn.closest('.qlc-bid-item');
+  if(item&&list&&list.querySelectorAll('.qlc-bid-item').length>1)item.remove();
+  else if(item){item.querySelectorAll('input').forEach(i=>i.value='');} /* keep at least one, just clear */
+}
 function qlcToggleBid(){
   const t=document.getElementById('qlc-type')?.value;
   const row=document.getElementById('qlc-bid-row');
-  if(row)row.style.display=(t==='PPC Bid')?'grid':'none';
+  if(row)row.style.display=(t==='PPC Bid')?'block':'none';
 }
 function openQuickLog(){
   const c=curCamp;if(!c)return;
@@ -3356,7 +3388,8 @@ function openQuickLog(){
   /* default review date = today + the campaign's review cycle (or 14) */
   const rf=c.reviewFreqDays||14;const rv=new Date();rv.setDate(rv.getDate()+(rf>0?rf:14));
   const r=document.getElementById('qlc-review');if(r)r.value=rv.toISOString().slice(0,10);
-  ['qlc-what','qlc-why','qlc-goal','qlc-bid-from','qlc-bid-to'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['qlc-what','qlc-why','qlc-goal'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const bidList=document.getElementById('qlc-bid-list');if(bidList)bidList.innerHTML=qlcBidRowHtml();
   const ty=document.getElementById('qlc-type');if(ty)ty.value='PPC Bid';
   qlcToggleBid();
   const st=document.getElementById('qlc-status');if(st)st.textContent='';
@@ -3377,16 +3410,24 @@ async function saveQuickLog(){
   const goal=document.getElementById('qlc-goal').value.trim();
   const review=document.getElementById('qlc-review').value;
   const st=document.getElementById('qlc-status');
-  if(!date||!what||!why||!review){if(st){st.textContent='⚠ Date, what, why and review date are all required';st.style.color='var(--red)';}return;}
-  /* Fold a bid change into the description so it's captured with no schema change */
+  /* Fold any number of named bid changes into the description (no schema change).
+     Each row: "<target>: 40p → 45p". Rows with both bids are included. A bids-only
+     entry is allowed — the bid summary becomes the "what". */
   if(type==='PPC Bid'){
-    const bf=parseFloat(document.getElementById('qlc-bid-from').value);
-    const bt=parseFloat(document.getElementById('qlc-bid-to').value);
-    if(!isNaN(bf)&&!isNaN(bt)){
-      const fmtp=v=>v<1?Math.round(v*100)+'p':'£'+v.toFixed(2);
-      what=what+' — bid '+fmtp(bf)+' → '+fmtp(bt);
+    const fmtp=v=>v<1?Math.round(v*100)+'p':'£'+v.toFixed(2);
+    const items=[...document.querySelectorAll('#qlc-bid-list .qlc-bid-item')].map(it=>{
+      const name=(it.querySelector('.qlc-bid-name')?.value||'').trim();
+      const bf=parseFloat(it.querySelector('.qlc-bid-from')?.value);
+      const bt=parseFloat(it.querySelector('.qlc-bid-to')?.value);
+      if(isNaN(bf)||isNaN(bt))return null;
+      return (name?name+': ':'')+fmtp(bf)+' → '+fmtp(bt);
+    }).filter(Boolean);
+    if(items.length){
+      const summary=items.join(' · ');
+      what=what?(what+' — '+summary):('Bid change — '+summary);
     }
   }
+  if(!date||!what||!why||!review){if(st){st.textContent='⚠ Date, what (or a bid change), why and review date are all required';st.style.color='var(--red)';}return;}
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
   if(st){st.textContent='Saving…';st.style.color='var(--text3)';}
   await addChangeToCampaign(c,change);
@@ -7814,16 +7855,10 @@ function toggleSnapExpand(){
           </select>
         </div>
       </div>
-      <div id="qlc-bid-row" style="display:none;grid-template-columns:1fr 16px 1fr;gap:8px;align-items:end;margin-bottom:11px">
-        <div>
-          <div class="label" style="margin-bottom:5px">Current bid (£)</div>
-          <input class="input" id="qlc-bid-from" type="number" step="0.01" placeholder="0.40" style="width:100%">
-        </div>
-        <div style="text-align:center;color:var(--text3);padding-bottom:9px">→</div>
-        <div>
-          <div class="label" style="margin-bottom:5px">New bid (£)</div>
-          <input class="input" id="qlc-bid-to" type="number" step="0.01" placeholder="0.45" style="width:100%">
-        </div>
+      <div id="qlc-bid-row" style="display:none;margin-bottom:11px">
+        <div class="label" style="margin-bottom:6px">Bid changes <span style="color:var(--text4);font-weight:600;text-transform:none;letter-spacing:0">— name each target (e.g. "close match", "polyfilla (exact)")</span></div>
+        <div id="qlc-bid-list"></div>
+        <button type="button" onclick="qlcAddBidRow()" class="btn ghost" style="font-size:11px;padding:5px 12px;margin-top:2px">+ Add another bid</button>
       </div>
       <div style="margin-bottom:11px">
         <div class="label" style="margin-bottom:5px">What changed <span style="color:var(--red)">*</span></div>
