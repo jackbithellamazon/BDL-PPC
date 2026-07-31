@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v46</title>
+<title>BDL Hub — Ads &amp; Monthly Report v49</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -141,7 +141,7 @@ table.dt thead th{font-size:10px;font-weight:800;text-transform:uppercase;letter
 table.dt thead th:first-child{text-align:left}
 table.dt thead th:hover{color:var(--text)}
 table.dt thead th.sorted{color:var(--blue)}
-table.dt tbody td{padding:8px 12px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;font-family:var(--mono);font-size:12.5px;color:var(--text)}
+table.dt tbody td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;font-family:var(--mono);font-size:12.5px;color:var(--text)}
 table.dt tbody td:first-child{text-align:left;font-family:var(--font)}
 table.dt tbody tr{transition:.12s;cursor:pointer}
 table.dt tbody tr:hover{background:var(--bg3)}
@@ -343,7 +343,39 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .csv-drop{border:2px dashed var(--border2);border-radius:var(--r);padding:14px 16px;text-align:center;cursor:pointer;transition:.15s;background:var(--bg2)}
 .csv-drop:hover,.csv-drop.drag{border-color:var(--blue);background:var(--blue-bg)}
 .csv-preview{margin-top:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden}
-@media(max-width:920px){.nav{display:none}.hide-sm{display:none}.hero-grid{grid-template-columns:repeat(2,1fr)}.subnav{overflow-x:auto}}
+/* ── Small screens: the nav used to be display:none, which left NO way to move
+   between sections (the ⌘K button is .hide-sm too). It now scrolls horizontally. ── */
+@media(max-width:920px){
+  .hide-sm{display:none}
+  .hero-grid{grid-template-columns:repeat(2,1fr)}
+  .topbar{height:auto;min-height:46px;padding:6px 12px;gap:8px;flex-wrap:wrap}
+  .nav{display:flex;order:3;width:100%;margin-left:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+  .nav::-webkit-scrollbar{display:none}
+  .nav-btn{flex:0 0 auto}
+  .subnav{position:static;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 12px;gap:2px}
+  .subnav::-webkit-scrollbar{display:none}
+  .subnav .nav-btn{flex:0 0 auto}
+  .main{padding:12px 12px 60px}
+  .ph{gap:9px;margin-bottom:10px}
+  .ctrls{gap:6px}
+  .popout{width:calc(100vw - 16px)!important;max-width:none!important}
+  .po-body{padding:12px 13px!important}
+}
+@media(max-width:700px){
+  .rep-kpis,#prod-kpis,#camp-kpis,#cl-summary,#snap-stats-bar{grid-template-columns:repeat(2,1fr)!important}
+  #dash-kpi-row{grid-template-columns:1fr!important}
+  .ins-kpis{grid-template-columns:repeat(2,1fr)}
+  .hub-row{grid-template-columns:1fr 1fr}
+  .ins-c-cols,.ins-two{grid-template-columns:1fr}
+  .home-title{font-size:20px}
+  /* long money figures get room (fewer columns) and shrink rather than clip.
+     !important is required: these base rules are defined later in the sheet. */
+  .hub-stats{grid-template-columns:repeat(2,1fr)!important}
+  .hub-stat .hv{font-size:14px!important}
+  .ins-k-v{font-size:14px!important;letter-spacing:-.4px}
+  .ins-k{padding:8px 9px}
+  .kpi .v{font-size:18px!important}
+}
 
 /* DASHBOARD KPI TILES */
 .dash-kpi{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:0;position:relative;overflow:hidden;box-shadow:var(--shadow-sm)}
@@ -539,7 +571,7 @@ table.prod-t thead tr:nth-child(2) th{top:22px}
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v46</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v49</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -622,8 +654,8 @@ table.prod-t thead tr:nth-child(2) th{top:22px}
         <div class="hub-desc">FBA prep, bundles &amp; components — runs inside the hub</div></div>
         <div class="hub-arrow">→</div>
       </div>
-      <div class="hub-stats">
-        <div class="hub-stat" style="grid-column:1/-1"><div class="hl">Live portal</div><div class="hv" style="font-size:12px;font-weight:600;color:var(--text3);white-space:normal">jackbithellamazon.github.io/BDL_Prep_Portal — embedded</div></div>
+      <div class="hub-stats" id="hub-prep-stats">
+        <div class="hub-stat" style="grid-column:1/-1"><div class="hl">Lavarion</div><div class="hv" style="font-size:12px;font-weight:600;color:var(--text3)">Connecting…</div></div>
       </div>
       <div class="hub-links">
         <button class="hub-link" onclick="event.stopPropagation();goPage('prep')">Open Prep Portal</button>
@@ -657,8 +689,10 @@ table.prod-t thead tr:nth-child(2) th{top:22px}
       <button class="btn" onclick="openRepRow(-1)">+ Add product</button>
     </div>
   </div>
+  <div id="rep-months" style="display:none;margin-bottom:8px"></div>
   <div class="rep-kpis" id="rep-kpis"></div>
   <div class="rep-chip-row" id="rep-insights"></div>
+  <div id="rep-movers" style="display:none;margin-bottom:10px"></div>
   <div class="ctrls" style="margin:0 0 10px">
     <input class="input" id="rep-search" placeholder="Search product / ASIN…" oninput="renderReport()" style="width:230px">
     <div class="sp"></div>
@@ -685,6 +719,7 @@ table.prod-t thead tr:nth-child(2) th{top:22px}
         <button class="tog on" id="pv-conn" onclick="setPrepView('connected')" style="border:none">Connected view</button>
         <button class="tog" id="pv-portal" onclick="setPrepView('portal')" style="border:none;background:none">Full portal</button>
       </div>
+      <button class="btn-sm" onclick="openPrepDevBrief()" title="Copyable improvement list for the Prep Portal, generated from its live schema">📤 Dev suggestions</button>
       <button class="btn-sm" onclick="window.open(PREP_URL,'_blank')">Open in new tab ↗</button>
     </div>
   </div>
@@ -798,7 +833,7 @@ table.prod-t thead tr:nth-child(2) th{top:22px}
       <thead><tr>
         <th data-k="name">Campaign</th>
         <th data-k="status">Status</th>
-        <th data-k="rag" class="sorted">ROAS ↓</th>
+        <th data-k="roas" class="sorted">ROAS ↓</th>
         <th data-k="spend">Spend</th>
         <th data-k="sales">Sales</th>
         <th data-k="purchases">Orders</th>
@@ -1783,7 +1818,7 @@ function campKpis(){
     {l:'Active campaigns',v:intf(A.length),c:'var(--text)',s:null},
     {l:'Total spend',v:gbp(sum.spend),c:'var(--text)',s:series('spend'),sc:'var(--text3)'},
     {l:'Total sales',v:gbp(sum.sales),c:'var(--text)',s:series('sales'),sc:'var(--text3)'},
-    {l:'Blended ROAS',v:fmt(roas,2),c:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)',s:series('roas'),sc:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)'},
+    {l:'Avg campaign ROAS',v:fmt(roas,2),c:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)',s:series('roas'),sc:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)'},
   ];
   const ragBox=`<div class="card kpi" style="padding:10px 12px">
     <div class="label" style="margin-bottom:8px">Campaign health</div>
@@ -1916,7 +1951,7 @@ function renderCampaigns(){
     const groups={}; list.forEach(c=>{(groups[c.product]=groups[c.product]||[]).push(c)});
     body.innerHTML=Object.entries(groups).map(([prod,cs])=>{
       const sp=cs.reduce((a,c)=>a+c.spend,0),sa=cs.reduce((a,c)=>a+c.sales,0);
-      return `<tr class="grouphdr"><td colspan="3"><span style="display:inline-flex;align-items:center;gap:9px">${monoTile(prod,22)}${prod} <span class="muted" style="font-weight:400">· ${cs[0].asin}</span></span></td><td>${gbp(sp)}</td><td>${gbp(sa)}</td><td colspan="7" class="muted" style="text-align:right">${cs.length} campaign${cs.length>1?'s':''}</td></tr>`+cs.map(campRow).join('');
+      return `<tr class="grouphdr"><td colspan="3"><span style="display:inline-flex;align-items:center;gap:9px">${monoTile(prod,22)}${prod} <span class="muted" style="font-weight:400">· ${cs[0].asin}</span></span></td><td>${gbp(sp)}</td><td>${gbp(sa)}</td><td colspan="8" class="muted" style="text-align:right">${cs.length} campaign${cs.length>1?'s':''}</td></tr>`+cs.map(campRow).join('');
     }).join('');
   } else {
     body.innerHTML=list.map(campRow).join('');
@@ -2424,9 +2459,10 @@ function renderCampTrends(){
     ?`<div style="margin-bottom:10px">
       ${chartCard('ROAS over time',roasV,rc,v=>fmt(v,2)+'×',true,true)}
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px">
       ${chartCard('Sales over time',salesV,'var(--blue)',v=>gbp(v))}
       ${chartCard('Spend over time',spendV,'var(--amber)',v=>gbp(v))}
+      ${chartCard('Orders over time',ordV,'var(--teal)',v=>intf(v))}
       ${chartCard('ACOS over time',acosV,'var(--red)',v=>fmt(v,1)+'%')}
     </div>`
     :`<div style="display:flex;align-items:center;gap:16px;background:var(--bg2);border:1px dashed var(--border2);border-radius:12px;padding:16px 20px;margin-bottom:14px;flex-wrap:wrap">
@@ -5732,8 +5768,8 @@ function renderProducts(){
         <span class="prod-split-l">${fmt(p.adShare,0)}%</span>`;
       return`<tr onclick="openProductPopup('${p.asin}')" style="cursor:pointer">
         <td><div class="prod-name">${monoTile(p.product,24)}<div style="min-width:0">
-          <div class="prod-n" title="${_esc(p.product||'')}">${p.leak?'<span class="flagdot"></span>':''}${_esc(p.product||'—')}</div>
-          <div class="prod-a">${_esc(p.asin||'')}${p.sku?' · '+_esc(p.sku):''}${p.hasPL?'':' <span class="prod-nopl" title="No row for this ASIN in the latest Monthly Report month">no P&amp;L</span>'}</div>
+          <div class="prod-n" title="${_esc(p.product||'')}">${p.leak?'<span class="flagdot"></span>':''}${_esc(lavName(p.asin)||p.product||'—')}</div>
+          <div class="prod-a">${_esc(p.asin||'')}${p.sku?' · '+_esc(p.sku):''}${(()=>{const sh=lavShip(p.asin);return sh?` · <span title="Lavarion: ${intf(sh.units)} units sent to FBA, last ${_esc(sh.last||'—')}" style="color:var(--blue)">⬆ ${intf(sh.units)}u</span>`:'';})()}${p.hasPL?'':' <span class="prod-nopl" title="No row for this ASIN in the latest Monthly Report month">no P&amp;L</span>'}</div>
         </div></div></td>
         <td style="text-align:center"><span class="rag ${p.rag==='leak'?'flag':p.rag}" style="font-size:11px">${p.rag==='leak'?'NO SALE':fmt(p.roas,2)}</span></td>
         <td style="text-align:center">${sparkHtml}</td>
@@ -7963,6 +7999,11 @@ loadFromSupabase().then(()=>{
   /* after data loads, render whichever page is active (Home is the landing page) */
   if(document.getElementById('page-home')?.classList.contains('active'))renderHome();
   sbLoadReport();
+  /* warm the Lavarion connection so short names + shipment chips appear everywhere */
+  try{loadPrepData().then(()=>{
+    try{if(document.getElementById('page-products')?.classList.contains('active'))renderProducts();}catch(e){}
+    try{if(document.getElementById('page-home')?.classList.contains('active'))renderHome();}catch(e){}
+  }).catch(()=>{});}catch(e){}
   if(document.getElementById('page-dashboard')?.classList.contains('active')){
     populateDashPeriodSelectors();
     renderDashPeriod();
@@ -8228,6 +8269,25 @@ function renderReport(){
     ['Net margin',fmt(margin,1)+'%',margin>=15?'var(--green)':margin>=8?'var(--amber)':'var(--red)',dl(margin,pmargin,true,false,1)],
   ].map(([l,v,c,d])=>`<div class="card kpi"><div class="label">${l}</div><div class="v" style="color:${c}">${v}</div>${d}</div>`).join('');
 
+  /* ── P&L across months — the hub's month-on-month storyline ── */
+  const mEl=document.getElementById('rep-months');
+  if(mEl){
+    if(ms.length>=2){
+      const mt=ms.map(x=>({m:x,t:repTotals(x)}));
+      const vals=mt.map(o=>o.t.real);
+      const mn=Math.min(...vals,0),mx=Math.max(...vals,0),rng=(mx-mn)||1;
+      const w=Math.max(150,ms.length*34),h=34;
+      const pts=mt.map((o,i)=>[(i/(mt.length-1))*(w-10)+5,h-5-((o.t.real-mn)/rng)*(h-10)]);
+      const dd=pts.map((pt,i)=>(i?'L':'M')+pt[0].toFixed(1)+' '+pt[1].toFixed(1)).join(' ');
+      const lastUp=vals[vals.length-1]>=(vals[vals.length-2]||0);
+      const sparkSvg=`<svg width="${w}" height="${h}" style="display:block"><path d="${dd}" fill="none" stroke="${lastUp?'var(--green)':'var(--red)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${pts.map((pt,i)=>`<circle cx="${pt[0].toFixed(1)}" cy="${pt[1].toFixed(1)}" r="${mt[i].m.id===repCur?3.5:2.2}" fill="${mt[i].m.id===repCur?'var(--blue)':(mt[i].t.real>=0?'var(--green)':'var(--red)')}"/>`).join('')}</svg>`;
+      mEl.style.display='';
+      mEl.innerHTML=`<div class="rep-chip-row" style="margin-bottom:0;align-items:center">
+        <span class="rep-chip" title="Real profit by month" style="padding:4px 11px">${sparkSvg}</span>
+        ${mt.map(o=>`<span class="rep-chip" onclick="repSelectMonth('${o.m.id}')" style="cursor:pointer;${o.m.id===repCur?'border-color:var(--blue);color:var(--text)':''}" title="${_esc(o.m.label)}: sales ${gbp(o.t.sales)} · real profit ${gbp(o.t.real)}">${_esc(o.m.label.replace(/\s*20\d\d/,''))} <b style="color:${o.t.real>0?'var(--green)':o.t.real<0?'var(--red)':'var(--text4)'}">${o.t.real>=0?'+':'−'}${gbp(Math.abs(o.t.real))}</b></span>`).join('')}
+      </div>`;
+    }else{mEl.style.display='none';mEl.innerHTML='';}
+  }
   /* insight chips */
   const rows=[...(m.rows||[])];
   const insEl=document.getElementById('rep-insights');
@@ -8251,6 +8311,31 @@ function renderReport(){
     ].filter(Boolean).join('');
   } else insEl.innerHTML='';
 
+  /* ── product movers vs the previous month — the P&L "what changed" story ── */
+  const mvEl=document.getElementById('rep-movers');
+  if(mvEl){
+    if(prev&&rows.length){
+      const pByA={};(prev.rows||[]).forEach(r=>{if(r.asin)pByA[r.asin.toUpperCase()]=r;});
+      const moved=rows.map(r=>{
+        const pr=r.asin?pByA[r.asin.toUpperCase()]:null;
+        return pr?{r,d:repRowReal(r)-repRowReal(pr)}:null;
+      }).filter(x=>x&&Math.abs(x.d)>=0.005).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+      const up=moved.filter(x=>x.d>0).slice(0,5),dn=moved.filter(x=>x.d<0).slice(0,5);
+      const maxAbs=Math.max(...moved.slice(0,10).map(x=>Math.abs(x.d)),1);
+      const bar=x=>`<div class="ins-c-row" onclick="openRepRow(${(m.rows||[]).indexOf(x.r)})">
+        <span class="ins-c-name" title="${_esc(x.r.name||'')}">${_esc(lavName(x.r.asin)||x.r.name||'—')}</span>
+        <span class="ins-c-bar"><i style="width:${Math.max(2,Math.round(Math.abs(x.d)/maxAbs*100))}%;background:${x.d>0?'var(--green)':'var(--red)'}"></i></span>
+        <span class="ins-c-val" style="color:${x.d>0?'var(--green)':'var(--red)'}">${x.d>0?'+':'−'}${gbp(Math.abs(x.d))}</span></div>`;
+      mvEl.style.display=(up.length||dn.length)?'':'none';
+      mvEl.innerHTML=(up.length||dn.length)?`<div class="ins-card" style="margin-bottom:0">
+        <div class="ins-card-h"><span class="ins-card-t">Real profit movers</span>
+          <span class="ins-card-s">${_esc(m.label)} vs ${_esc(prev.label)} · per product</span></div>
+        <div class="ins-c-cols">
+          <div><div class="ins-c-lbl" style="color:var(--green)">UP</div>${up.length?up.map(bar).join(''):'<div class="ins-act-none">Nothing up.</div>'}</div>
+          <div><div class="ins-c-lbl" style="color:var(--red)">DOWN</div>${dn.length?dn.map(bar).join(''):'<div class="ins-act-none">Nothing down.</div>'}</div>
+        </div></div>`:'';
+    }else{mvEl.style.display='none';mvEl.innerHTML='';}
+  }
   /* table */
   const prevByAsin={};if(prev)(prev.rows||[]).forEach(r=>{if(r.asin)prevByAsin[r.asin]=r;});
   let view=rows.map((r,i)=>({r,i}));
@@ -8611,6 +8696,20 @@ function renderHome(){
     ['Units',intf(lt.units),'var(--text)'],['Months',intf(ms.length),'var(--text)'],
   ].map(([l,v,c])=>`<div class="hub-stat"><div class="hl">${l}</div><div class="hv" style="color:${c}">${v}</div></div>`).join('')
   :`<div class="hub-stat" style="grid-column:1/-1"><div class="hl">No data yet</div><div class="hv" style="font-size:12px;font-weight:600;color:var(--text3)">Paste your first month from Google Sheets →</div></div>`;
+  /* prep card — live once the Lavarion DB has answered */
+  const psEl=document.getElementById('hub-prep-stats');
+  if(psEl&&window._prepData){
+    const D=window._prepData;
+    const units=(D.ships||[]).reduce((a,x)=>a+(x.units||0),0);
+    let pend=0,eta=null;
+    (D.comps||[]).forEach(c2=>{try{(JSON.parse(c2.orders||'[]')||[]).forEach(o=>{if(!o.delivered){pend+=(+o.qty||0);const t2=o.expected?Date.parse(o.expected):null;if(t2&&(!eta||t2<eta))eta=t2;}});}catch(e){}});
+    psEl.innerHTML=[
+      ['ASINs',intf((D.asins||[]).length),'var(--text)'],
+      ['Units sent',intf(units),'var(--text)'],
+      ['Shipments',intf(new Set((D.ships||[]).map(x=>x.ship_id)).size),'var(--text)'],
+      ['On order',pend?intf(pend)+(eta?' · '+new Date(eta).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''):'—',pend?'var(--blue)':'var(--text4)'],
+    ].map(([l,v,c2])=>`<div class="hub-stat"><div class="hl">${l}</div><div class="hv" style="color:${c2};font-size:${String(v).length>9?'12px':'15px'}">${v}</div></div>`).join('');
+  }
   /* tiles */
   const paused=campaigns.filter(c=>c.status==='paused').length;
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
@@ -8666,7 +8765,7 @@ function buildCk(q){
   const items=[];
   [['home','Home'],['dashboard','Ads Overview'],['campaigns','Campaigns'],['insights','Insights'],['changelog','Change Log'],['snapshots','Snapshot Log'],['products','Products'],['report','Monthly Report'],['settings','Settings']]
     .forEach(([p,n])=>{if(!q||n.toLowerCase().includes(q))items.push({ic:'▦',col:'var(--blue)',label:n,sub:'Page',run:()=>goPage(p)});});
-  [['Paste period from Amazon Ads',()=>openBulkAds()],['Log a change',()=>openGlobalChangeLog()],['Add campaign',()=>openAddCampaign()],['Ads check — monthly digest',()=>openDigest()],['Import search terms (all campaigns)',()=>openBulkST()],['Brief the team — search terms',()=>openStaffBrief()],['Prep Portal',()=>goPage('prep')],['Paste sales report (month)',()=>{goPage('report');setTimeout(openRepPaste,60);}],['Paste ads report (month)',()=>{goPage('report');setTimeout(openRepAds,60);}],['New report month',()=>{goPage('report');setTimeout(openRepMonthNew,60);}],['Export report CSV',()=>{goPage('report');setTimeout(repExportCsv,60);}]]
+  [['Paste period from Amazon Ads',()=>openBulkAds()],['Log a change',()=>openGlobalChangeLog()],['Add campaign',()=>openAddCampaign()],['Ads check — monthly digest',()=>openDigest()],['Import search terms (all campaigns)',()=>openBulkST()],['Brief the team — search terms',()=>openStaffBrief()],['Prep Portal',()=>goPage('prep')],['Prep dev suggestions',()=>openPrepDevBrief()],['Paste sales report (month)',()=>{goPage('report');setTimeout(openRepPaste,60);}],['Paste ads report (month)',()=>{goPage('report');setTimeout(openRepAds,60);}],['New report month',()=>{goPage('report');setTimeout(openRepMonthNew,60);}],['Export report CSV',()=>{goPage('report');setTimeout(repExportCsv,60);}]]
     .forEach(([n,f])=>{if(!q||n.toLowerCase().includes(q))items.push({ic:'⚡',col:'var(--amber)',label:n,sub:'Action',run:f});});
   if(q){
     (campaigns||[]).forEach(c=>{
@@ -9100,7 +9199,26 @@ function renderInsights(){
       <span class="ins-card-s">${major.length} comparable period${major.length!==1?'s':''} · click a point to jump to it</span></div>${chart}</div>
     ${contribHtml}
     <div class="ins-two">${matchHtml}${winHtml}</div>
-    ${leakHtml}`;
+    ${leakHtml}
+    <div class="ins-card"><div class="ins-card-h"><span class="ins-card-t">Period ledger</span>
+      <span class="ins-card-s">every comparable period · click a row to load it above</span></div>
+      <div style="overflow-x:auto"><table class="dt" style="min-width:760px">
+        <thead><tr><th style="text-align:left">Period</th><th>Reporting</th><th>Spend</th><th>Sales</th><th>ROAS</th><th>Orders</th><th>CPC</th><th>Δ Sales</th></tr></thead>
+        <tbody>${[...major].reverse().map((p2,i,arr)=>{
+          const b=byP[p2];const r2=roasOf(b);
+          const prevB=arr[i+1]?byP[arr[i+1]]:null;
+          const dS=prevB?b.sa-prevB.sa:null;
+          return`<tr onclick="insSetA('${String(p2).replace(/'/g,"\\'")}')" style="cursor:pointer;${p2===_insA?'background:var(--bg3)':''}">
+            <td style="font-weight:700;font-family:var(--font)">${_esc(p2)}${p2===_insA?' <span style="font-size:8.5px;font-weight:800;background:var(--blue);color:#06121a;border-radius:4px;padding:1px 6px;vertical-align:middle">VIEWING</span>':''}</td>
+            <td>${b.n} / ${campaigns.length}</td>
+            <td>${gbp(b.sp)}</td>
+            <td>${gbp(b.sa)}</td>
+            <td><span class="rag ${ragOf(r2,b.sa,b.sp)==='leak'?'flag':ragOf(r2,b.sa,b.sp)}" style="font-size:10.5px">${fmt(r2,2)}</span></td>
+            <td>${intf(b.or)}</td>
+            <td>${b.cl?gbp(b.sp/b.cl):'—'}</td>
+            <td>${dS==null?'<span class="muted">—</span>':`<span style="font-weight:700;color:${dS>=0?'var(--green)':'var(--red)'}">${dS>=0?'+':'−'}${gbp(Math.abs(dS))}</span>`}</td>
+          </tr>`;}).join('')}</tbody>
+      </table></div></div>`;
 
   const sub=document.getElementById('ins-sub');
   if(sub)sub.textContent=_insA+(B?' vs '+_insB:'')+' · '+A.n+' of '+campaigns.length+' campaigns reporting';
@@ -9428,7 +9546,8 @@ async function loadPrepData(force){
     prepFetch('lavarion_shipments','select=asin,units,cost,sent_date,ship_id&order=sent_date.desc&limit=2000'),
     prepFetch('lavarion_components','select=name,type,on_hand,orders,archived&archived=eq.false&limit=100'),
   ]);
-  _prepData={asins,ships,comps};_prepAt=Date.now();
+  _prepData={asins,ships,comps};window._prepData=_prepData;_prepAt=Date.now();
+  _buildLavMaps(_prepData);
   return _prepData;
 }
 function prepSortBy(k){if(_prepSort.k===k)_prepSort.dir*=-1;else _prepSort={k,dir:k==='name'?1:-1};renderPrep();}
@@ -9541,6 +9660,72 @@ async function renderPrep(force){
   </table></div></div>
   <div style="font-size:10.5px;color:var(--text4);margin-top:7px">Live from the Prep Portal database · refreshed ${new Date(_prepAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · <span style="color:var(--blue);cursor:pointer;font-weight:600" onclick="renderPrep(true)">refresh now</span></div>`;
 }
+
+
+/* ══════════ v47 — DEEPER LAVARION WIRING + DEV BRIEF ══════════ */
+/* Short-name + shipment lookup maps, filled whenever prep data loads. The Lavarion
+   short names ("Dove 75ml MD") beat the 120-char Amazon titles everywhere. */
+function _buildLavMaps(D){
+  const names={},ship={};
+  (D.asins||[]).forEach(a=>{if(a.asin&&a.product_name)names[a.asin.toUpperCase()]=a.product_name;});
+  (D.ships||[]).forEach(sh=>{const k=(sh.asin||'').toUpperCase();if(!k)return;
+    const b=(ship[k]=ship[k]||{units:0,last:null});b.units+=sh.units||0;
+    if(!b.last||String(sh.sent_date)>String(b.last))b.last=sh.sent_date;});
+  window._lavNames=names;window._lavShip=ship;
+}
+function lavName(asin){return (window._lavNames||{})[(asin||'').toUpperCase()]||null;}
+function lavShip(asin){return (window._lavShip||{})[(asin||'').toUpperCase()]||null;}
+
+/* ── Suggestions for the Prep Portal dev — grounded in the live schema ── */
+function buildPrepDevBrief(D){
+  const nA=(D.asins||[]).length;
+  const stock0=(D.asins||[]).filter(a=>!(+a.total_stock>0)).length;
+  const cost0=(D.asins||[]).filter(a=>!(+a.cost>0)).length;
+  const L=[];
+  L.push('PREP PORTAL — IMPROVEMENT REQUESTS (from the BDL Hub integration)');
+  L.push('');
+  L.push('Context: BDL Hub now reads lavarion_asins, lavarion_shipments and lavarion_components');
+  L.push('read-only and joins them to ad performance and monthly P&L by ASIN. These requests are');
+  L.push('ordered by value to that integration.');
+  L.push('');
+  L.push('1. POPULATE lavarion_recipes (currently 0 rows)');
+  L.push('   ASIN -> component + qty per unit. This is the single biggest unlock: with recipes,');
+  L.push('   "buildable units" per ASIN = min(component on_hand / qty). The hub will show buildable');
+  L.push('   units and restock lead-times automatically as soon as rows exist.');
+  L.push('');
+  L.push('2. MAINTAIN OR DERIVE total_stock ('+stock0+' of '+nA+' ASINs currently 0)');
+  L.push('   It is dead data today. Either keep it updated in the portal UI when stock is built/');
+  L.push('   shipped, or derive it (built units − shipped units) and expose it in a view.');
+  L.push('');
+  L.push('3. MAINTAIN cost per ASIN ('+cost0+' of '+nA+' currently 0)');
+  L.push('   Shipments carry a per-unit cost which the hub uses as a fallback, but a maintained');
+  L.push('   ASIN cost (VAT flag already exists) makes margin per ASIN exact.');
+  L.push('');
+  L.push('4. PROMOTE component orders out of JSON');
+  L.push('   lavarion_components.orders is a JSON string today. A proper table');
+  L.push('   (component_id, qty, ordered_at, expected, delivered, ref, supplier) is queryable and');
+  L.push('   safer to update concurrently. The hub parses the JSON for now, so no rush — but any');
+  L.push('   schema change here should keep qty + expected + delivered.');
+  L.push('');
+  L.push('5. ADD updated_at (default now(), update trigger) to all lavarion_* tables');
+  L.push('   Lets integrations sync incrementally and show data freshness honestly.');
+  L.push('');
+  L.push('6. ADD A SUMMARY VIEW: lavarion_asin_summary');
+  L.push('   (asin, product_name, sku, dg, units_sent_total, last_shipment_date, last_unit_cost,');
+  L.push('   buildable_units). One read instead of a three-table client-side join.');
+  L.push('');
+  L.push('7. KEEP THE SHORT NAMES MAINTAINED for every new ASIN — product_name ("Dove 75ml MD")');
+  L.push('   is now the display name across BDL Hub. Same for shipment discipline (ship_id, units,');
+  L.push('   cost, sent_date) — that data powers the hub\'s restock alerts.');
+  return L.join('\n');
+}
+async function openPrepDevBrief(){
+  let D;try{D=await loadPrepData();}catch(e){toast('Could not reach the Lavarion DB — brief needs live schema','warn');return;}
+  document.getElementById('pd-text').value=buildPrepDevBrief(D);
+  document.getElementById('prep-dev-overlay').classList.add('open');document.body.style.overflow='hidden';
+}
+function closePrepDevBrief(){document.getElementById('prep-dev-overlay').classList.remove('open');document.body.style.overflow='';}
+function copyPrepDevBrief(el){copyText(document.getElementById('pd-text').value,el);toast('✓ Copied — send it to the dev','ok');}
 
 /* module init — runs during script evaluation, after all declarations above */
 repLoadLocal();
@@ -9973,6 +10158,25 @@ repLoadLocal();
           <button class="btn ghost" onclick="closeRepAds()">Cancel</button>
           <button class="btn" onclick="repAdsImport()">Match &amp; apply</button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PREP DEV BRIEF ════════ -->
+<div class="overlay" id="prep-dev-overlay" onclick="if(event.target.id==='prep-dev-overlay')closePrepDevBrief()" style="z-index:395">
+  <div class="popout" style="max-width:720px;min-height:auto;margin:auto">
+    <div class="po-header">
+      <div><div class="po-title" style="font-size:15px">Suggestions for the Prep Portal dev</div>
+      <div class="po-sub">Generated from the live Lavarion schema — ordered by value to the hub integration</div></div>
+      <button class="close-btn" onclick="closePrepDevBrief()">✕</button>
+    </div>
+    <div class="po-body" style="padding:14px 18px">
+      <textarea class="input" id="pd-text" readonly style="width:100%;min-height:320px;resize:vertical;font-family:var(--mono);font-size:11px;line-height:1.6"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <button class="btn" onclick="copyPrepDevBrief(this)">⧉ Copy for the dev</button>
+        <div class="sp"></div>
+        <button class="btn ghost" onclick="closePrepDevBrief()">Close</button>
       </div>
     </div>
   </div>
