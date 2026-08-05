@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v78</title>
+<title>BDL Hub — Ads &amp; Monthly Report v93</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -496,8 +496,8 @@ table.rt tbody td:first-child{min-width:340px;max-width:560px}
 /* ══════════ PRODUCTS (rebuilt v40) ══════════ */
 .prod-k-s{font-size:9.5px;color:var(--text4);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 table.prod-t thead tr.prod-grp th{padding:5px 12px;font-size:8.5px;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg2);color:var(--text4);text-align:center;cursor:default;position:sticky;top:0;z-index:3}
-table.prod-t thead tr.prod-grp th.grp-ads{color:var(--blue);background:rgba(91,157,255,.10)}
-table.prod-t thead tr.prod-grp th.grp-pl{color:var(--green);background:rgba(46,229,157,.10)}
+.prod-grp th.grp-ads{color:var(--blue);background:var(--panel);box-shadow:inset 0 0 0 999px rgba(91,157,255,.10)}
+.prod-grp th.grp-pl{color:var(--green);background:var(--panel);box-shadow:inset 0 0 0 999px rgba(46,229,157,.10)}
 table.prod-t thead tr:nth-child(2) th{top:22px}
 .prod-name{display:flex;align-items:center;gap:9px;min-width:0}
 .prod-n{font-size:12px;font-weight:600;max-width:290px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1408,12 +1408,178 @@ body.has-test-bar .topbar{top:50px}
 .cm-b:hover{background:var(--bg3);color:var(--text)}
 #rep-moremenu{min-width:250px}
 
+.ph-x{position:absolute;top:14px;right:18px;background:var(--bg4);border:1px solid var(--border);color:var(--text2);
+  width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:15px;line-height:1;z-index:12;transition:.13s}
+.ph-x:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.ph{position:relative}
+.ph-top{padding-right:44px}
+.ph-edit.danger{border-color:rgba(255,93,108,.4)!important;color:var(--red)!important}
+.ph-edit.danger:hover{background:var(--red)!important;color:#fff!important;border-color:var(--red)!important}
+.rl-drop{cursor:pointer;font-family:var(--font)}
+.rl-drop:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+.btn-sm.warnbtn{border-color:var(--amber);color:var(--amber);background:var(--amber-bg);font-weight:800}
+.mi-g-row .rlink{margin-left:6px;flex-shrink:0}
+
+/* ── v80: the Products table has a grouped header — both rows must stick and be opaque ── */
+table.dt thead tr:first-child th{position:sticky;top:0;z-index:8;background:var(--bg3)}
+table.dt thead tr:nth-child(2) th{position:sticky;top:30px;z-index:7;background:var(--bg3)}
+table.dt thead tr:only-child th{top:0;z-index:8}
+.tscroll{position:relative}
+
+/* ── v80 legibility: the sub-lines were too small and too dim to read ── */
+.rsplit{font-size:11px}
+.rs-o{color:#4ade80} .rs-a{color:#7dabff}
+table.rt tbody .rn-sub{font-size:10.5px;color:var(--text3)}
+.rn-short{font-size:10px;color:var(--text3)}
+.prod-a,.psub,.rl-a{font-size:10.5px;color:var(--text3)}
+.pt-s,.dk-s,.rph-ks{font-size:10.5px;color:var(--text3)}
+.rk-s{font-size:11px;color:var(--text3)}
+table.dt tbody td{font-size:12.5px}
+.muted,.unk,.mi-g-s,.dsec-n{color:var(--text3)}
+
+.ph-tag.arch{background:var(--amber);color:#1a1002;border-color:var(--amber);font-weight:800;letter-spacing:.5px}
+table.rt tbody tr.arch td{opacity:.55}
+
+.rs-note{font-size:10.5px;color:var(--text3);font-weight:500;letter-spacing:0;text-transform:none}
+.rs-h{flex-wrap:wrap;row-gap:4px}
+
+/* KPI cards: centred reads better than ragged-left at this size */
+.rep-kpis .rk{text-align:center}
+.rep-kpis .rk-l{justify-content:center;display:flex;align-items:center;gap:4px}
+.rep-kpis .rk-v{letter-spacing:-1px}
+.rep-kpis .rk-s,.rep-kpis .dl{text-align:center}
+.rep-kpis .dl{display:block}
+
+.fx-src{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
+  background:var(--bg4);color:var(--text3);border-radius:4px;padding:2px 6px;margin-right:8px;font-family:var(--font)}
+.fx-none{font-size:10.5px;color:var(--amber);font-weight:600;margin-top:5px;line-height:1.45;font-family:var(--font)}
+.fx-mh{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text3);
+  width:100%;margin-bottom:2px;font-family:var(--font)}
+.fxrow{scroll-margin-top:90px}
+
+/* the ADS / PROFIT & LOSS group row is tinted; tint must sit ON an opaque base or
+   the table body shows straight through it when the header sticks */
+table.dt thead tr.prod-grp th{position:sticky;top:0;z-index:9;background:var(--panel)}
+table.dt thead tr.prod-grp th.grp-ads{box-shadow:inset 0 0 0 999px rgba(91,157,255,.13)}
+table.dt thead tr.prod-grp th.grp-pl{box-shadow:inset 0 0 0 999px rgba(46,229,157,.11)}
+table.dt thead tr.prod-grp+tr th{position:sticky;top:28px;z-index:8;background:var(--bg3)}
+
+/* ══ Monthly Report totals row freezes at the bottom, like the header does at the top ══ */
+table.rt tfoot{position:sticky;bottom:0;z-index:5}
+table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
+  border-top:2px solid var(--border3);box-shadow:0 -6px 16px -8px rgba(0,0,0,.85)}
+
+/* ══ KPI strip, rebuilt: one surface, hairline dividers, Real Profit made dominant ══ */
+.rep-kpis{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;margin-bottom:12px;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.rep-kpis .rk{background:var(--bg2);border:none!important;border-radius:0!important;box-shadow:none!important;
+  padding:14px 16px 15px;text-align:left;position:relative;cursor:pointer;transition:background .15s;overflow:hidden}
+.rep-kpis .rk:before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--rk);opacity:.9}
+.rep-kpis .rk:hover{background:var(--bg3)}
+.rep-kpis .rk-l{display:flex;align-items:center;gap:5px;justify-content:flex-start;
+  font-size:9.5px;font-weight:800;letter-spacing:.95px;text-transform:uppercase;color:var(--text3)}
+.rep-kpis .rk-v{font-family:var(--display);font-weight:800;letter-spacing:-1.2px;line-height:1.05;
+  font-size:27px;margin:6px 0 5px;text-align:left}
+.rep-kpis .rk-s{font-size:10.5px;color:var(--text3);font-weight:600;text-align:left;line-height:1.4}
+.rep-kpis .dl{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10.5px;
+  font-weight:800;border-radius:5px;padding:2px 7px;margin-bottom:4px}
+.rep-kpis .dl.up{color:var(--green);background:var(--green-bg)}
+.rep-kpis .dl.dn{color:var(--red);background:var(--red-bg)}
+.rep-kpis .dl.fl{color:var(--text3);background:var(--bg4)}
+/* Real Profit is the scoreboard — give it the weight */
+.rep-kpis .rk.hero{background:linear-gradient(160deg,var(--green-bg),var(--bg2) 62%)}
+.rep-kpis .rk.hero .rk-v{font-size:31px}
+.rep-kpis .rk.hero:hover{background:linear-gradient(160deg,var(--green-bg),var(--bg3) 62%)}
+@media(max-width:900px){.rep-kpis{grid-template-columns:repeat(2,1fr)}}
+
+/* Home numbers + section-card stats: same language as the report KPI strip */
+.hm-hl-r{gap:1px;background:var(--border);border:1px solid var(--border);border-radius:15px;overflow:hidden}
+.hm-hn{background:var(--bg2);padding:12px 17px 13px;min-width:118px;position:relative;transition:background .15s}
+.hm-hn:before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--a,var(--blue));opacity:.9}
+.hm-hn:hover{background:var(--bg3)}
+.hm-hnl{font-size:9.5px;font-weight:800;letter-spacing:.95px;text-transform:uppercase;color:var(--text3)}
+.hm-hnv{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.9px;margin:5px 0 4px;line-height:1.05}
+.hm-d{font-family:var(--mono);font-size:10.5px;font-weight:800;border-radius:5px;padding:2px 7px}
+.hm-stats{border-radius:12px;gap:1px}
+.hm-stats>div,.hm-stats .hub-tile{padding:10px 12px}
+.hm-stats .tn{font-size:9px;letter-spacing:.9px;color:var(--text3)}
+.hm-stats .tv{font-size:18px;letter-spacing:-.7px}
+.hm-headline{border-radius:16px;padding:17px 20px}
+.hm-hl-t{font-size:22px}
+
+/* ══ v86 — readability: grey-on-black was failing. Sub-text lifted to --text2, sizes up,
+   and the analysis popup given room to breathe. ══ */
+#rep-an-overlay .popout{max-width:min(1440px,96vw)}
+#an-body{padding:18px 24px}
+.an-grid{gap:9px}
+.an-l{padding:13px 16px}
+.an-t{font-size:13.5px;line-height:1.55;color:var(--text)}
+.an-s{font-size:12.5px;line-height:1.6;color:var(--text2);margin-top:6px}
+.pv-b{font-size:13px;line-height:1.65;color:var(--text2)}
+.pv-h{font-size:17px}
+.an-tv{font-size:23px}
+.an-tl{font-size:10px}
+.an-spl{font-size:10.5px}
+.an-spk2{font-size:11.5px;color:var(--text2)}
+.an-nods{font-size:13px;color:var(--text2)}
+/* the same lift everywhere sub-text sits on a dark card */
+.pnl p{font-size:13px;line-height:1.65;color:var(--text2)}
+.dsec-n,.psub,.pt-s,.pfact-s,.bmk-t{color:var(--text2)}
+.pt-s,.pfact-s{font-size:10.5px}
+.bmk-t{font-size:12px;line-height:1.6}
+.rk-s{color:var(--text2)}
+.hm-hl-s,.hm-c-s,.hm-rt span{color:var(--text2)}
+.tm-why,.rs-r span{color:var(--text2);font-size:12.5px}
+.fx-s{color:var(--text2)}
+.mi-g-s{color:var(--text2);font-size:11.5px}
+
+.fx-once{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2);font-weight:600;
+  cursor:pointer;margin-top:2px;font-family:var(--font)}
+.fx-once input{accent-color:var(--amber);cursor:pointer}
+.fx-once:hover{color:var(--text)}
+
+.btn.danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.danger:hover{filter:brightness(1.08)}
+.cf-list{margin-top:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;max-height:280px;overflow-y:auto}
+.cf-lh{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--text3);padding:10px 14px 8px;position:sticky;top:0;background:var(--bg2);border-bottom:1px solid var(--border)}
+.cf-i{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;font-size:12.5px;color:var(--text2);border-bottom:1px solid var(--border);font-family:var(--font)}
+.cf-i:last-child{border-bottom:none}
+.cf-i span{font-family:var(--mono);font-size:11.5px;color:var(--text3);white-space:nowrap}
+.cf-more{padding:8px 14px;font-size:11.5px;color:var(--text3);font-weight:600}
+.cf-safe{margin-top:12px;background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:11px 14px;font-size:12.5px;line-height:1.6;color:var(--text2)}
+.cf-safe b{color:var(--text)}
+
+/* import screen: it had grown cramped as steps were added */
+#month-import-overlay .popout{max-width:min(880px,95vw)}
+#month-import-overlay .po-body{padding:16px 22px 18px}
+.mi-box{border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.mi-h{gap:10px;margin-bottom:10px}
+.mi-h b{font-size:14px}
+.mi-hint{font-size:11.5px;color:var(--text2)}
+.mi-drop{border-radius:12px;padding:16px 18px;min-height:78px}
+.mi-drop-s{font-size:11px;color:var(--text2)}
+.mi-state{font-size:12px;margin-top:9px;line-height:1.6;color:var(--text2)}
+#mi-month{font-size:14px;padding:11px 14px}
+.mi-paste summary{font-size:12px;color:var(--text2);padding:7px 0}
+.mi-ta{min-height:110px;font-size:12px}
+
+.cf-share{background:var(--red-bg);border:1px solid rgba(255,93,108,.35);border-radius:11px;
+  padding:11px 14px;margin-top:11px;font-size:13px;line-height:1.55;color:var(--text2)}
+.cf-share b{color:var(--red);font-weight:800}
+.fx-tally{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--amber-bg);
+  border:1px solid rgba(255,181,71,.35);border-radius:12px;padding:11px 14px;margin-bottom:12px}
+.fx-tally>div{flex:1;min-width:220px}
+.fx-tally b{display:block;font-size:13px;color:var(--amber)}
+.fx-tally span{display:block;font-size:11px;color:var(--text2);font-family:var(--mono);margin-top:3px}
+
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v78</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v93</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -1539,7 +1705,7 @@ body.has-test-bar .topbar{top:50px}
       <select class="sel" id="rep-compare" onchange="repSetCmp(this.value)" style="min-width:160px"></select>
       <button class="btn" onclick="openRepAnalysis()" title="Why the month moved, in plain English">Analysis</button>
       <button class="btn" onclick="openMonthImport()" title="Upload or paste both monthly reports">Import month</button>
-      <button class="btn ghost icon" onclick="openRepSettings()" title="Monthly Report settings — months, columns, backup, delete">⚙</button>
+      <button class="btn ghost" onclick="openRepSettings()" title="Months, columns, backup, version history and delete — affects the Monthly Report only">⚙ Report settings</button>
     </div>
   </div>
   <div id="rep-months" style="display:none;margin-bottom:8px"></div>
@@ -6403,7 +6569,14 @@ function closeProdPopup(){document.getElementById('prod-popup-overlay').classLis
 function openProductPopup(asin){
   const byAsin={};campaigns.forEach(c=>{if(!byAsin[c.asin])byAsin[c.asin]={asin:c.asin,product:c.product,sku:c.sku,price:c.price,status:c.status,camps:[]};byAsin[c.asin].camps.push(c);});
   const p=byAsin[asin];
-  if(!p){alert('Product not found.');return;}
+  if(!p){
+    /* No campaign uses this ASIN — but the Monthly Report almost certainly knows it,
+       so open the full product breakdown there instead of dead-ending. */
+    const known=(typeof repSortedMonths==='function')&&repSortedMonths()
+      .some(m=>(m.rows||[]).some(r=>(r.asin||'').toUpperCase()===String(asin||'').toUpperCase()));
+    if(known&&typeof openRepProduct==='function'){openRepProduct(asin);return;}
+    toast('No campaign or monthly data for '+asin+' yet','warn');return;
+  }
 
   const sp=p.camps.reduce((a,c)=>a+c.spend,0),sa=p.camps.reduce((a,c)=>a+c.sales,0),or=p.camps.reduce((a,c)=>a+c.purchases,0);
   const roas=sp?sa/sp:0,acos=sa?sp/sa*100:0,rg=ragOf(roas,sa,sp);
@@ -6571,11 +6744,13 @@ function prodModel(){
 function renderProducts(){
   const q=(document.getElementById('prod-search')?.value||'').toLowerCase();
   const {list,month}=prodModel();
-  let rows=list.filter(p=>!q||((p.product||'')+(p.asin||'')+(p.sku||'')).toLowerCase().includes(q));
-  const archN=list.filter(p=>isArchived(p.asin)).length;
+  /* anything Jack has said is not his stays out of every list, everywhere */
+  const keptList=list.filter(p=>!(typeof asinDropped==='function'&&asinDropped(p.asin)));
+  let rows=keptList.filter(p=>!q||((p.product||'')+(p.asin||'')+(p.sku||'')).toLowerCase().includes(q));
+  const archN=keptList.filter(p=>isArchived(p.asin)).length;
   rows=rows.filter(p=>_prodView==='archived'?isArchived(p.asin):!isArchived(p.asin));
   const vEl=document.getElementById('prod-views');
-  if(vEl)vEl.innerHTML=['active','archived'].map(v=>`<button class="tog ${_prodView===v?'on':''}" onclick="setProdView('${v}')">${v==='active'?'Active':'Archived'} <span style="opacity:.7">${v==='active'?(list.length-archN):archN}</span></button>`).join('');
+  if(vEl)vEl.innerHTML=['active','archived'].map(v=>`<button class="tog ${_prodView===v?'on':''}" onclick="setProdView('${v}')">${v==='active'?'Active':'Archived'} <span style="opacity:.7">${v==='active'?(keptList.length-archN):archN}</span></button>`).join('');
 
   const hasPL=list.some(p=>p.hasPL);
   const kv=p=>{
@@ -6596,20 +6771,22 @@ function renderProducts(){
 
   /* ── KPI strip ── */
   const T={spend:0,adSales:0,total:0,real:0,units:0,profit:0};
-  list.forEach(p=>{T.spend+=p.spend;T.adSales+=p.adSales;
+  keptList.forEach(p=>{T.spend+=p.spend;T.adSales+=p.adSales;
     if(p.hasPL){T.total+=p.totalSales||0;T.real+=p.real||0;T.units+=p.units||0;T.profit+=p.profit||0;}});
   const accTacos=T.total?T.spend/T.total*100:null;
   const accMargin=T.total?T.real/T.total*100:null;
-  const losers=list.filter(p=>p.hasPL&&p.real<0).length;
+  const losers=keptList.filter(p=>p.hasPL&&p.real<0).length;
   const kEl=document.getElementById('prod-kpis');
   if(kEl)kEl.innerHTML=[
-    ['Products',intf(list.length),'var(--text)','advertised'],
+    ['Products',intf(keptList.length),'var(--text)','advertised'],
     ['Ad spend',gbp(T.spend),'var(--amber)','latest snapshot'],
     ['Ad sales',gbp(T.adSales),'var(--text)',T.spend?fmt(T.adSales/T.spend,2)+'× blended':''],
     hasPL?['Total sales',gbp(T.total),'var(--text)',month?_esc(month.label):'']
          :['Total sales','—','var(--text4)','no P&L month yet'],
-    hasPL?['TACOS',fmt(accTacos,1)+'%',accTacos<=15?'var(--green)':accTacos<=25?'var(--amber)':'var(--red)','ad spend ÷ total sales']
-         :['TACOS','—','var(--text4)','needs Monthly Report'],
+    (()=>{const tgt=cfgTargetRoas(),ro=T.spend?T.adSales/T.spend:0;
+      return T.spend?['ROAS',fmt(ro,2)+'×',ro>=tgt?'var(--green)':ro>=tgt*0.7?'var(--amber)':'var(--red)',
+        'target '+fmt(tgt,1)+'×'+(hasPL&&accTacos!=null?' · '+fmt(accTacos,1)+'% TACOS':'')]
+        :['ROAS','—','var(--text3)','no ad spend'];})(),
     hasPL?['Real profit',gbp(T.real),T.real>=0?'var(--green)':'var(--red)',(accMargin!=null?fmt(accMargin,1)+'% margin':'')+(losers?' · '+losers+' losing':'')]
          :['Real profit','—','var(--text4)','paste a month to unlock'],
   ].map(([l,v,c,s])=>`<div class="card kpi"><div class="label">${l}</div><div class="v" style="color:${c};font-size:${String(v).length>11?'16px':'20px'}">${v}</div>${s?`<div class="prod-k-s">${s}</div>`:''}</div>`).join('');
@@ -9090,9 +9267,12 @@ function repAdsKnown(m){
   if(typeof m.adsKnown==='boolean')return m.adsKnown;
   return (m.rows||[]).some(r=>r.adSales!=null||(+r.ads||0)>0||(+r.adUnits||0)>0);
 }
-function repTotals(m){const t={sales:0,profit:0,ads:0,units:0,real:0,adUnits:0,organic:0};(m?.rows||[]).forEach(r=>{t.sales+=+r.sales||0;t.profit+=+r.profit||0;t.ads+=+r.ads||0;t.units+=+r.units||0;t.adUnits+=+r.adUnits||0;t.organic+=Math.max(0,(+r.units||0)-(+r.adUnits||0));t.real+=repRowReal(r);});return t;}
-function repLoadLocal(){try{const d=repMigrate(JSON.parse(localStorage.getItem(REP_LS)));if(d)repData=d;}catch(e){}
-  const ms=repSortedMonths();if(ms.length)repCur=ms[ms.length-1].id;}
+function repTotals(m){const t={sales:0,profit:0,ads:0,units:0,real:0,adUnits:0,organic:0,adSales:0};(m?.rows||[]).forEach(r=>{t.sales+=+r.sales||0;t.profit+=+r.profit||0;t.ads+=+r.ads||0;t.adSales+=(r.adSales!=null?(+r.adSales||0):0);t.units+=+r.units||0;t.adUnits+=+r.adUnits||0;t.organic+=Math.max(0,(+r.units||0)-(+r.adUnits||0));t.real+=repRowReal(r);});return t;}
+function repLoadLocal(){
+  /* nothing is kept locally any more — clear anything an earlier build left behind */
+  try{localStorage.removeItem(REP_LS);}catch(e){}
+  repData={months:[],updatedAt:0,schema:REP_SCHEMA};
+}
 /* Every saved payload carries its schema version. A future build can migrate an old
    one forward; an OLD build meeting a NEWER payload refuses to overwrite it rather
    than silently downgrading Jack's data. */
@@ -9107,12 +9287,13 @@ function repMigrate(d){
   }
   return d;
 }
+/* Supabase is the ONLY store for the Monthly Report. Nothing is written to this
+   browser — a local copy that could be newer than the cloud one is exactly how a bad
+   local state shadowed a good remote one and could not be cleared. */
 function repSave(){
   if(repData&&repData._future){toast('This report was saved by a newer version of the hub — not overwriting it','warn');return;}
   repData.schema=REP_SCHEMA;repData.updatedAt=Date.now();
-  if(typeof TEST_MODE!=='undefined'&&TEST_MODE){try{renderReport();}catch(e){}return;}
-  try{localStorage.setItem(REP_LS,JSON.stringify(repData));}catch(e){}
-  clearTimeout(_repSaveT);_repSaveT=setTimeout(sbSaveReport,900);}
+  clearTimeout(_repSaveT);_repSaveT=setTimeout(sbSaveReport,700);}
 async function sbLoadReport(){
   if(typeof TEST_MODE!=='undefined'&&TEST_MODE)return;
   if(!SUPABASE_URL||!SUPABASE_KEY)return;
@@ -9123,9 +9304,9 @@ async function sbLoadReport(){
     const rows=await res.json();
     if(rows[0]&&rows[0].value){
       const remote=repMigrate(JSON.parse(rows[0].value));
-      if(remote&&Array.isArray(remote.months)&&((remote.updatedAt||0)>(repData.updatedAt||0)||!repData.months.length)){
+      if(remote&&Array.isArray(remote.months)){
+        /* Supabase is authoritative — no timestamp race, nothing local to lose */
         repData=remote;
-        try{localStorage.setItem(REP_LS,JSON.stringify(repData));}catch(e){}
         const ms=repSortedMonths();
         if(!repMonth()&&ms.length)repCur=ms[ms.length-1].id;
         if(document.getElementById('page-report')?.classList.contains('active'))renderReport();
@@ -9196,18 +9377,25 @@ function renderReport(){
   const adShare=t.sales?adRev/t.sales*100:0;
   const K=[
     {k:'sales', l:'Sales',       v:gbp(t.sales),  c:'var(--blue)',  d:dl(t.sales,pt?.sales,true,true)},
-    {k:'profit',l:'Profit',      v:gbp(t.profit), c:'var(--teal)',  d:dl(t.profit,pt?.profit,true,true),s:'before ads'},
     {k:'ads',   l:'Ad spend',    v:gbp(t.ads),    c:'var(--amber)', d:dl(t.ads,pt?.ads,false,true),s:t.sales?fmt(t.ads/t.sales*100,1)+'% of sales':''},
     {k:'units', l:'Units',       v:intf(t.units), c:'var(--purple)',d:dl(t.units,pt?.units,true,false),s:intf(t.organic)+' organic + '+intf(t.adUnits)+' ads'},
     {k:'real',  l:'Real profit', v:gbp(t.real),   c:t.real>=0?'var(--green)':'var(--red)', d:dl(t.real,pt?.real,true,true),hero:true},
     {k:'margin',l:'Real margin', v:fmt(margin,1)+'%', c:margin>=15?'var(--green)':margin>=8?'var(--amber)':'var(--red)', d:dl(margin,pmargin,true,false,1),s:'of sales'},
+    (()=>{const known=repAdsKnown(m),adS=rows0AdSales(m),tgt=cfgTargetRoas();
+      const ro=(known&&t.ads)?adS/t.ads:null;
+      const pro=(known&&prev&&pt&&pt.ads&&repAdsKnown(prev))?rows0AdSales(prev)/pt.ads:null;
+      return{k:'roas',l:'ROAS',v:ro==null?'—':fmt(ro,2)+'×',
+        c:ro==null?'var(--text3)':ro>=tgt?'var(--green)':ro>=tgt*0.7?'var(--amber)':'var(--red)',
+        d:ro==null?'':dl(ro,pro,true,false,2),
+        s:ro==null?(t.ads?'ad sales not in this month\u2019s import':'no ad spend')
+                  :('target '+fmt(tgt,1)+'× · '+fmt(t.sales?t.ads/t.sales*100:0,1)+'% TACOS')};})(),
   ];
   document.getElementById('rep-kpis').innerHTML=K.map(x=>`
     <div class="rk${x.hero?' hero':''}" style="--rk:${x.c}" onclick="openRepKpi('${x.k}')" title="Open the ${x.l} trend">
       <div class="rk-l">${x.l}<span class="rk-go">›</span></div>
       <div class="rk-v" style="color:${x.c}">${x.v}</div>
-      ${x.d||(x.s?`<div class="rk-s">${x.s}</div>`:'<div class="rk-s">&nbsp;</div>')}
-      ${x.s&&x.d?`<div class="rk-s">${x.s}</div>`:''}
+      ${x.d||''}
+      ${x.s?`<div class="rk-s">${x.s}</div>`:''}
     </div>`).join('');
 
   /* revenue split bar — organic vs advertised */
@@ -9216,8 +9404,9 @@ function renderReport(){
     if(t.sales>0&&repAdsKnown(m)){
       sbEl.style.display='';
       sbEl.innerHTML=`<div class="rs-h"><b>Where the revenue came from</b>
-        <span class="rs-k"><i style="background:var(--green)"></i>Organic ${gbp(orgRev)} · ${fmt(100-adShare,0)}%</span>
-        <span class="rs-k"><i style="background:var(--blue)"></i>Advertised ${gbp(adRev)} · ${fmt(adShare,0)}%</span></div>
+        <span class="rs-note">revenue Amazon attributed to an ad — not the same as ad spend, which was ${fmt(t.sales?t.ads/t.sales*100:0,1)}% of sales</span>
+        <span class="rs-k"><i style="background:var(--green)"></i>Organic revenue ${gbp(orgRev)} · ${fmt(100-adShare,0)}%</span>
+        <span class="rs-k"><i style="background:var(--blue)"></i>Advertised revenue ${gbp(adRev)} · ${fmt(adShare,0)}%</span></div>
       <div class="rs-bar"><i class="rs-org" style="width:${(100-adShare).toFixed(1)}%"></i><i class="rs-ad" style="width:${adShare.toFixed(1)}%"></i></div>`;
     } else {sbEl.style.display='none';}
   }
@@ -11159,11 +11348,26 @@ function miRangeCheck(){
     const fm=x=>x?x.toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'}):'?';
     bits.push(`<div class="mi-warn ok">Both files cover ${_esc(lbl)} — ads report ${fm(_miAds.from)} → ${fm(_miAds.to)}.</div>`);
   }
+  if(!_miSales&&_miAds&&_miAds.to){
+    const el=document.getElementById('mi-month');
+    if(el&&!el.value){const d=_miAds.to;el.value=MI_SHORT[d.getUTCMonth()]+' '+d.getUTCFullYear();}
+  }
   if(_miSales&&_miAds&&!_miSales.rows.length)bits.push('<div class="mi-warn bad"><b>The sales report has no Lavarion rows.</b> Check the Brand column in the export.</div>');
   el.innerHTML=bits.join('');el.style.display=bits.length?'':'none';
 }
 
 /* ── month label helpers ── */
+/* "2026 July", "SellerToolKit…2026-04-30_To_2026-05-31", "Jul 2026" → "Jul 2026".
+   Jack wants short month + year, filled in for him but always overridable. */
+const MI_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function miNiceLabel(raw){
+  const ym=miYm(raw);
+  if(ym){const[y,m]=ym.split('-').map(Number);if(m>=1&&m<=12)return MI_SHORT[m-1]+' '+y;}
+  /* fall back to a date range in the filename: …_To_2026-05-31 */
+  const r=/(\d{4})-(\d{2})-\d{2}\s*$|_To_(\d{4})-(\d{2})-\d{2}/.exec(String(raw||''));
+  if(r){const y=+(r[1]||r[3]),m=+(r[2]||r[4]);if(m>=1&&m<=12)return MI_SHORT[m-1]+' '+y;}
+  return String(raw||'').trim();
+}
 function miYm(label){
   const M={january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12,
     jan:1,feb:2,mar:3,apr:4,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
@@ -11187,6 +11391,14 @@ function miBulk(group,on){
   const g=miGroups();
   (g[group]||[]).forEach(r=>{const a=r.asin.toUpperCase();if(on)_miExclude.delete(a);else _miExclude.add(a);});
   miPreview();
+}
+function miNeverAgain(asin){
+  const A=String(asin||'').toUpperCase();
+  window._asinDropped=[...new Set((window._asinDropped||[]).concat([A]))];
+  sbSaveDropped();
+  _miExclude.add(A);
+  miPreview();
+  toast(A+' will be skipped on every import');
 }
 function miToggleGroup(id){
   const el=document.getElementById(id);if(!el)return;
@@ -11289,6 +11501,17 @@ function miTakePaste(which,text){
   if(!String(text||'').trim()){miSet(which,null,'');return;}
   miSet(which,delimRows(text),'pasted');
 }
+/* Ads exports routinely contain ASINs that are not yours, and rows with no spend and
+   no sales at all. Neither belongs in the report, so both start EXCLUDED and Jack has
+   to consciously include them. */
+function miAutoExclude(){
+  const g=miGroups();
+  (g.adsOnly||[]).forEach(r=>{
+    const A=String(r.asin||'').toUpperCase();
+    if(asinDropped(A)){_miExclude.add(A);return;}
+    if(!(+r.spend>0))_miExclude.add(A);          /* nothing spent, nothing sold */
+  });
+}
 function miSet(which,rows,src){
   const st=document.getElementById(which==='sales'?'mi-sales-state':'mi-ads-state');
   if(!rows){ if(which==='sales')_miSales=null;else _miAds=null; st.textContent=''; miPreview(); return; }
@@ -11302,7 +11525,7 @@ function miSet(which,rows,src){
         +(src?' · '+_esc(src):'');
       st.style.color='';
       const m=document.getElementById('mi-month');
-      if(!m.value&&r.label)m.value=r.label;
+      if(!m.value&&r.label)m.value=miNiceLabel(r.label);
       st.innerHTML+=' <button class="mi-clear" onclick="miClear(\'sales\')" title="Wrong file or wrong paste? Clear this one and start again">Clear</button>';
     }
   }else{
@@ -11319,6 +11542,7 @@ function miSet(which,rows,src){
       st.style.color='';
     }
   }
+  try{miAutoExclude();}catch(e){}
   miPreview();
 }
 function miMerge(){
@@ -11327,7 +11551,7 @@ function miMerge(){
   /* "Ads known" means we have the unit/sales detail, not merely a spend figure. */
   const adsSupplied=!!(_miAds&&(!_miAds.bare||_miAds.cols>2));
   const by={};
-  const keep=a=>!_miExclude.has(String(a||'').toUpperCase());
+  const keep=a=>!_miExclude.has(String(a||'').toUpperCase())&&!asinDropped(a);
   sales.filter(s=>keep(s.asin)).forEach(s=>{by[s.asin]={id:_uid(),asin:s.asin,url:s.url,name:s.name,units:s.units,sales:s.sales,
     profit:s.profit,stock:s.stock,ads:0,adUnits:0,adSales:null};});
   Object.values(ads).filter(a=>keep(a.asin)).forEach(a=>{
@@ -11366,21 +11590,26 @@ function miPreview(){
   const lostU=rows.reduce((a,r)=>a+((r.adUnitsRaw||0)-(r.adUnits||0)),0);
   const G=miGroups();
   const inc=a=>!_miExclude.has(String(a||'').toUpperCase());
+  const adsOnlyIn=(G.adsOnly||[]).filter(r=>inc(r.asin)).length;
   const grp=(id,label,list,tone,note)=>{
     if(!list.length)return '';
     const on=list.filter(r=>inc(r.asin)).length;
+    const isReview=id==='mi-g-adsOnly';
     return `<div class="mi-g">
       <div class="mi-g-h">
         <span class="mi-g-n" style="background:${tone};color:${tone==='var(--amber)'?'#1a1002':tone==='var(--green)'?'#04120b':'#06121a'}">${list.length}</span>
         <div style="flex:1;min-width:0"><b>${label}</b><div class="mi-g-s">${note}</div></div>
         <span class="mi-g-inc">${on} of ${list.length} in</span>
-        <button class="btn-sm" id="${id}-c" onclick="miToggleGroup('${id}')">review</button>
+        <button class="btn-sm${isReview&&on?' warnbtn':''}" id="${id}-c" onclick="miToggleGroup('${id}')">${isReview?(on?'review '+on+' →':'review'):'review'}</button>
       </div>
       <div id="${id}" style="display:none">
         <div class="mi-g-bulk"><button class="btn-sm" onclick="miBulk('${id.replace('mi-g-','')}',true)">Include all</button>
           <button class="btn-sm" onclick="miBulk('${id.replace('mi-g-','')}',false)">Exclude all</button></div>
         ${list.map(r=>`<label class="mi-g-row">
           <input type="checkbox" ${inc(r.asin)?'checked':''} onchange="miToggleExclude('${r.asin}',event)">
+          <a class="rlink rl-az" href="https://www.amazon.co.uk/dp/${_esc(r.asin)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open on Amazon">AMZ</a>
+          <a class="rlink rl-sas" href="https://sas.selleramp.com/sas/lookup?SasLookup%5Bsearch_term%5D=${_esc(r.asin)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Look it up on SellerAmp">SAS</a>
+          <button class="rlink rl-drop" onclick="event.preventDefault();event.stopPropagation();miNeverAgain('${_esc(r.asin)}')" title="Not one of yours — exclude it now and skip it on every future import">not mine</button>
           <span class="mi-g-name" title="${_esc(r.name||'')}">${_esc(r.name||r.asin)}</span>
           <span class="mi-g-asin">${_esc(r.asin)}</span>
           <span class="mi-g-num">${r.sales?gbp(r.sales):'<span style="color:var(--text4)">no sales</span>'}</span>
@@ -11394,7 +11623,8 @@ function miPreview(){
     <div class="mi-maths">${intf(G.both.length+G.salesOnly.length)} sold + ${intf(G.both.length+G.adsOnly.length)} advertised → <b>${intf(G.both.length+G.salesOnly.length+G.adsOnly.length)} unique products</b> (${intf(G.both.length)} appear in both)</div>
     ${grp('mi-g-both','In both reports',G.both,'var(--green)','Sold and advertised — the normal case')}
     ${grp('mi-g-salesOnly','Sold, no ad spend',G.salesOnly,'var(--blue)','Lavarion products with sales but no advertising this month')}
-    ${grp('mi-g-adsOnly','Ad spend, no sales',G.adsOnly,'var(--amber)','Spent money and sold nothing — untick any you do not want in the report')}
+    ${grp('mi-g-adsOnly','Ads report only — check these are yours',G.adsOnly,'var(--amber)',
+      'These ASINs are in the ads file but never sold, so nothing confirms they are Lavarion. Anything with no spend is already excluded. Check the rest on Amazon or SellerAmp before letting them in.')}
     ${clamped?`<div style="font-size:11.5px;color:var(--amber);margin-top:7px">⚠ ${clamped} product${clamped!==1?'s report':' reports'} more advertised units than units sold (${intf(lostU)} in total). Advertised units capped so organic + advertised = total.</div>`:''}`;
 }
 async function miImport(){
@@ -11840,6 +12070,9 @@ function copyRepAnalysis(btn){
 /* Tabbed, high-contrast, and actually full of data. Five tabs off one hero band. */
 
 let _rphAsin='',_rphMetric='real',_rphTab='overview';
+/* Removals in the current match session. Individually each "Not mine" looks harmless;
+   thirteen of them took a month from 31 products to 3. Keep a visible tally. */
+let _fxRemoved=[];
 
 const RPH_METRICS={
   real:{l:'Real profit',s:'Real',fmt:v=>gbp(v),good:1,c:'var(--green)',
@@ -11987,6 +12220,7 @@ function openRepProduct(asin,keep){
   };
   const hero=`<div class="ph">
     <div class="ph-top">
+      <button class="ph-x" onclick="closeRepProduct()" title="Close (or press Escape)">✕</button>
       <div class="ph-id">
         ${monoTile(short||full,40)}
         <div class="ph-nm">
@@ -11995,6 +12229,7 @@ function openRepProduct(asin,keep){
             ${short&&short!==full?`<span class="ph-tag">${_esc(short)}</span>`:''}
             <span class="ph-tag mono" onclick="copyText('${_esc(A)}',this)" title="Copy ASIN">${_esc(A)}</span>
             <span class="ph-tag">${V.length} month${V.length===1?'':'s'}</span>
+            ${isArchived(A)?'<span class="ph-tag arch">ARCHIVED</span>':''}
             <span class="ph-tag">${_ord(share.rank)} of ${share.of} by real profit</span>
             <a class="ph-tag lk" href="https://www.amazon.co.uk/dp/${_esc(A)}" target="_blank" rel="noopener">AMZ ↗</a>
             <a class="ph-tag lk t" href="https://sas.selleramp.com/sas/lookup?SasLookup%5Bsearch_term%5D=${_esc(A)}" target="_blank" rel="noopener">SellerAmp ↗</a>
@@ -12022,6 +12257,8 @@ function openRepProduct(asin,keep){
           <button class="ph-arw" ${N.next?`onclick="rphJump(1)" title="${_esc(repName(N.next))}"`:'disabled'}>›</button>
         </span>`;})()}
       <button class="ph-edit" onclick="rphCompare()" title="Compare this product against your others">⇄ Compare</button>
+      <button class="ph-edit" onclick="rphArchive('${_esc(A)}')" title="${isArchived(A)?'Bring it back into the active lists':'Still yours, but you no longer sell it — keep the history, hide it from the active lists'}">${isArchived(A)?'↺ Unarchive':'⇩ Archive'}</button>
+      <button class="ph-edit danger" onclick="closeRepProduct();repDropAsin('${_esc(A)}')" title="Not one of yours at all? Remove it from the report and skip it on every future import">Remove</button>
       <button class="ph-edit" onclick="rphEdit()">Edit ${_esc(last.lab)}</button></div>
   </div>`;
 
@@ -12041,14 +12278,15 @@ function openRepProduct(asin,keep){
       <div class="pf"><span style="background:var(--amber)"></span>Ad spend<b>−${gbp(last.ads)}</b></div>
       <div class="pf tot"><span style="background:${last.real>=0?'var(--green)':'var(--red)'}"></span>Real profit<b style="color:${last.real>=0?'var(--green)':'var(--red)'}">${gbp(last.real)}</b></div>
     </div></div>`;
+  const adsK=repAdsKnown(last.m);
   const facts=[
     ['Selling price',last.units?gbp(last.sales/last.units):'—','avg this month'],
     ['Profit per unit',last.units?gbp(last.real/last.units):'—','after ads'],
-    ['Ad cost per unit',last.units?gbp(last.ads/last.units):'—',last.adUnits?gbp(last.ads/last.adUnits)+' per ad unit':''],
+    ['Ad cost per unit',last.units?gbp(last.ads/last.units):'—',(adsK&&last.adUnits)?gbp(last.ads/last.adUnits)+' per ad unit':''],
     ['TACOS',fmt(last.tacos,1)+'%','ads ÷ all sales'],
-    ['ROAS',last.ads?fmt(last.roas,2)+'×':'—','target '+fmt(tgt,1)+'×'],
+    ['ROAS',(adsK&&last.ads)?fmt(last.roas,2)+'×':'—',adsK?'target '+fmt(tgt,1)+'×':'needs the ads export'],
     ['Break-even ROAS',last.margin>0?fmt(1/(last.margin/100),2)+'×':'n/a','from this margin'],
-    ['Organic share',last.units?fmt(last.organic/last.units*100,0)+'%':'—','of units'],
+    ['Organic share',(adsK&&last.units)?fmt(last.organic/last.units*100,0)+'%':'—',adsK?'of units':'needs the ads export'],
     ['Share of profit',fmt(share.real,1)+'%','of the account'],
   ].map(([l,v,s])=>`<div class="pfact"><div class="pfact-l">${l}</div><div class="pfact-v">${v}</div><div class="pfact-s">${s||'&nbsp;'}</div></div>`).join('');
   const panel=(c,t,l)=>`<div class="pnl ${c}"><div class="pnl-h">${t}</div>${l.map(x=>`<p>${x}</p>`).join('')}</div>`;
@@ -12231,6 +12469,17 @@ function rphCompare(){
     _cmpSel=[A].concat(near.filter(x=>x!==A)).slice(0,5);
   }else _cmpSel=[A];
   closeRepProduct();openCompare(true);
+}
+/* Backdated months contain products he no longer sells. Archiving keeps every figure
+   in the history but takes them out of the active Products and Prep lists. */
+function rphArchive(asin){
+  const A=String(asin||'').toUpperCase();if(!A)return;
+  const on=isArchived(A);
+  toggleArchive(A);
+  try{renderProducts();}catch(e){}
+  try{renderReport();}catch(e){}
+  openRepProduct(A,'tab');
+  toast(on?'Unarchived — back in the active lists':'Archived — history kept, hidden from the active lists');
 }
 function rphEdit(){
   const i=(repMonth()?.rows||[]).findIndex(r=>(r.asin||'').toUpperCase()===_rphAsin);
@@ -12448,16 +12697,41 @@ const REP_KPIS={
     get:t=>t.organic, per:r=>Math.max(0,(+r.units||0)-Math.min(+r.adUnits||0,+r.units||0)),
     means:'Units that sold with no advertising attached. Rank, reviews and repeat buyers doing the work.',
     watch:'Growing organic units while ad spend holds steady is the strongest signal in this report — it means you own the position rather than renting it.'},
+  roas:{l:'ROAS',c:'var(--teal)',fmt:v=>fmt(v,2)+'×',good:1,
+    get:t=>t.ads?(t.adSales||0)/t.ads:0, per:r=>(+r.ads||0)?(+r.adSales||0)/(+r.ads):0,
+    means:'Advertised sales divided by ad spend. It only exists where the ads export gave us advertised sales — a spend-only paste cannot produce it.',
+    watch:'Above your target it is worth pushing; below it you are buying sales you cannot afford. Read it next to Real Profit — a high ROAS on a thin-margin product still loses money.'},
   tacos:{l:'TACOS',c:'var(--coral)',fmt:v=>fmt(v,1)+'%',good:-1,
     get:t=>t.sales?t.ads/t.sales*100:0, per:r=>(+r.sales||0)?(+r.ads||0)/(+r.sales)*100:0,
     means:'Ad spend as a share of ALL sales, not just advertised sales. How dependent the whole account is on advertising.',
     watch:'Rising TACOS on flat sales means advertising is getting more expensive for the same business. That is the number to challenge your staff on.'},
 };
 let _kpiKey='real';
+/* metrics that only exist when the ads export gave us advertised sales/units */
+const KPI_NEEDS_ADS={roas:1,organic:1};
 function openRepKpi(k){
   const K=REP_KPIS[k];if(!K)return;
   _kpiKey=k;
   const ms=repSortedMonths();if(!ms.length)return;
+  if(KPI_NEEDS_ADS[k]&&!repAdsKnown(repMonth())){
+    const m=repMonth();
+    document.getElementById('kpi-title').textContent=K.l;
+    document.getElementById('kpi-sub').innerHTML=`<span class="chip">${_esc(m.label)}</span><span class="chip" style="color:var(--amber)">not available for this month</span>`;
+    document.getElementById('kpi-body').innerHTML=`
+      <div class="pverdict warn"><div class="pv-h">${_esc(K.l)} needs the ads export, and ${_esc(m.label)} does not have it</div>
+        <div class="pv-b">${K.means} Only the full Sponsored Products “Advertised product” report carries advertised sales and units — ad <b>spend</b> on its own cannot produce this figure.</div></div>
+      <div class="an-grid" style="margin-top:12px">
+        <div class="an-l good"><div class="an-t">Still exact for ${_esc(m.label)}</div>
+          <div class="an-s">Sales · Units · Ad spend · TACOS · Real profit · Real margin.</div></div>
+        <div class="an-l info"><div class="an-t">How to fill it in</div>
+          <div class="an-s">Re-import this month with the Advertised product export and ${_esc(K.l)} appears everywhere — nothing else changes.</div></div>
+      </div>
+      <div class="mg-foot" style="margin-top:12px">
+        <button class="btn" onclick="closeRepKpi();openMonthImport()">Re-import ${_esc(m.label)}</button>
+        <button class="btn ghost" onclick="closeRepKpi();openRepKpi('real')">Show Real profit instead</button></div>`;
+    document.getElementById('rep-kpi-overlay').classList.add('open');document.body.style.overflow='hidden';
+    return;
+  }
   const S=ms.map(m=>({m,lab:m.label,id:m.id,t:repTotals(m),v:K.get(repTotals(m))}));
   const cur=S[S.length-1],prev=S[S.length-2]||null;
   const vals=S.map(x=>x.v);
@@ -12555,6 +12829,16 @@ function fixNameRows(){
   const m=repMonth();if(!m)return[];
   return (m.rows||[]).map((r,i)=>({r,i})).filter(({r})=>!r.name||String(r.name).trim().toUpperCase()===String(r.asin||'').toUpperCase());
 }
+function fxUndoAll(){
+  if(!_fxRemoved.length)return;
+  const m=repMonth();if(!m)return;
+  const back=_fxRemoved.slice();
+  window._asinDropped=(window._asinDropped||[]).filter(a=>!back.some(x=>x.asin===a));
+  back.forEach(x=>{if(x.row&&!(m.rows||[]).some(r=>(r.asin||'').toUpperCase()===x.asin))m.rows.push(x.row);});
+  _fxRemoved=[];
+  sbSaveDropped();repSave();renderReport();openFixNames();
+  toast(`Put ${back.length} product${back.length===1?'':'s'} back`);
+}
 function openFixNames(focus){
   const m=repMonth();if(!m)return;
   const L=fixNameRows();
@@ -12569,25 +12853,34 @@ function openFixNames(focus){
       <div class="pnl b" style="margin-bottom:12px"><div class="pnl-h">What matching does</div>
         <p>The ads report lists an ASIN you spent on; the sales report only lists what sold. An ASIN with spend and no sales appears in one file and not the other, so there is no title to take.
         Matching gives it a name and an Amazon link. <b>Its ad spend, campaigns and search terms already join on the ASIN</b>, so those appear the moment it has an identity.</p></div>
+      ${_fxRemoved.length?`<div class="fx-tally"><div><b>${_fxRemoved.length} removed in this session</b>
+        <span>${_fxRemoved.slice(-6).map(x=>_esc(x.asin)).join(' · ')}${_fxRemoved.length>6?' · +'+(_fxRemoved.length-6)+' more':''}</span></div>
+        <button class="btn-sm" onclick="fxUndoAll()">Put them all back</button></div>`:''}
+      <datalist id="fx-namelist">${(()=>{const S=fxSources();
+        return [...new Set([].concat(S.prep,S.ads,S.rep))].map(n=>`<option value="${_esc(n)}">`).join('');})()}</datalist>
       <div class="fxlist">${L.map(({r,i})=>{
         const guess=lavName(r.asin)||'';
         const hits=fxMatch(r.asin);
+        const src=(+r.units||0)||(+r.sales||0)?'sales report':'ads report only';
+        const spend=+r.ads||0;
         return`<div class="fxrow${(focus&&(r.asin||'').toUpperCase()===String(focus).toUpperCase())?' hi':''}" id="fx-${_esc(r.asin||i)}">
           <div class="fx-l">
             <div class="fx-a"><span class="mono" onclick="copyText('${_esc(r.asin||'')}',this)" title="Copy ASIN">${_esc(r.asin||'—')}</span>
-              <a href="https://www.amazon.co.uk/dp/${_esc(r.asin||'')}" target="_blank" rel="noopener" class="fx-lk">Look it up on Amazon ↗</a></div>
-            <div class="fx-s">${gbp(+r.ads||0)} ad spend · ${intf(+r.units||0)} units · ${gbp(repRowReal(r))} real profit</div>
+              <a class="rlink rl-az" href="https://www.amazon.co.uk/dp/${_esc(r.asin||'')}" target="_blank" rel="noopener" title="Open on Amazon">AMZ</a>
+              <a class="rlink rl-sas" href="https://sas.selleramp.com/sas/lookup?SasLookup%5Bsearch_term%5D=${_esc(r.asin||'')}" target="_blank" rel="noopener" title="Look it up on SellerAmp">SAS</a>
+              <button class="rlink rl-drop" onclick="repDropAsin('${_esc(r.asin||'')}',true)" title="Not one of yours — removes it and skips it on every future import. You can undo.">Not mine</button></div>
+            <div class="fx-s"><span class="fx-src">${src}</span>${spend>0?gbp(spend)+' spend':'no spend'} · ${intf(+r.units||0)} units · ${gbp(repRowReal(r))} real profit</div>
+            ${hits.length?'':`<div class="fx-none">Nothing in the Prep Portal, your campaigns or previous months uses this ASIN — so it may not be yours.</div>`}
           </div>
           <div class="fx-c">
-            <input class="input fx-in" data-i="${i}" placeholder="Type a name…" value="${_esc(r.name&&String(r.name).trim().toUpperCase()!==String(r.asin||'').toUpperCase()?r.name:'')}">
-            <select class="sel fx-sel" onchange="fxUse(${i},this.value);this.selectedIndex=0">
-              <option value="">Match to a product you already have…</option>
-              ${(()=>{const S=fxSources();return [['Prep Portal',S.prep],['Ads campaigns',S.ads],['Monthly Report',S.rep]]
-                .filter(([,l])=>l.length).map(([g,l])=>`<optgroup label="${g}">${l.map(n=>`<option value="${_esc(n)}">${_esc(n)}</option>`).join('')}</optgroup>`).join('');})()}
-            </select>
+            <input class="input fx-in" data-i="${i}" list="fx-namelist" autocomplete="off"
+              placeholder="Start typing — it searches every product you have…"
+              value="${_esc(r.name&&String(r.name).trim().toUpperCase()!==String(r.asin||'').toUpperCase()?r.name:'')}">
+            <label class="fx-once" title="On (default): names this month's row only — nothing else in the app is touched. Off: remembered, so the same ASIN is named automatically on every future import.">
+              <input type="checkbox" class="fx-once-cb" data-i="${i}" checked> just this month only</label>
           </div>
           ${guess?`<button class="btn-sm" onclick="fxUse(${i},'${_esc(guess).replace(/'/g,"\\'")}' )">Use “${_esc(guess)}”</button>`:''}
-          ${hits.length?`<div class="fx-m">${hits.map(h=>`<button class="fx-hit" onclick="fxUse(${i},'${_esc(h.name).replace(/'/g,"\\'")}')" title="${_esc(h.why)}">
+          ${hits.length?`<div class="fx-m"><span class="fx-mh">This ASIN is already known as:</span>${hits.map(h=>`<button class="fx-hit" onclick="fxUse(${i},'${_esc(h.name).replace(/'/g,"\\'")}')" title="${_esc(h.why)}">
             <span class="fx-hs">${_esc(h.src)}</span><b>${_esc(h.name)}</b><span class="fx-hu">use ›</span></button>`).join('')}</div>`:''}
         </div>`;}).join('')}</div>
       <div class="fxfoot"><button class="btn" onclick="fxSave(this)">Save matches</button>
@@ -12629,7 +12922,7 @@ function fxMatch(asin){
   }));
   return out;
 }
-function closeFixNames(){document.getElementById('rep-fix-overlay').classList.remove('open');document.body.style.overflow='';}
+function closeFixNames(){document.getElementById('rep-fix-overlay').classList.remove('open');document.body.style.overflow='';_fxRemoved=[];}
 function fxUse(i,name){
   const el=document.querySelector('.fx-in[data-i="'+i+'"]');
   if(el){el.value=name;el.focus();}
@@ -12660,14 +12953,17 @@ async function sbLoadNames(){
 }
 function fxSave(btn){
   const m=repMonth();if(!m)return;
-  let n=0;
+  let n=0,oneOff=0;
   document.querySelectorAll('.fx-in').forEach(el=>{
     const i=+el.dataset.i,v=String(el.value||'').trim();
     if(!v)return;
     const r=(m.rows||[])[i];if(!r)return;
     r.name=v;n++;
     if(!r.url&&r.asin)r.url='https://www.amazon.co.uk/dp/'+r.asin;
-    /* remember it so the same ASIN is named on every future import */
+    /* one-off: applies to this month's row and nowhere else */
+    const once=document.querySelector('.fx-once-cb[data-i="'+i+'"]');
+    if(once&&once.checked){oneOff++;return;}
+    /* otherwise remember it so the same ASIN is named on every future import */
     if(TEST_MODE)return;
     try{const map=JSON.parse(localStorage.getItem('bdl_asin_names')||'{}');
       if(r.asin)map[r.asin.toUpperCase()]=v;
@@ -12676,10 +12972,66 @@ function fxSave(btn){
   });
   repSave();sbSaveNames();renderReport();
   closeFixNames();
-  if(typeof toast==='function')toast(n?`Matched ${n} product${n===1?'':'s'}`:'Nothing to save');
+  if(typeof toast==='function')toast(n?`Matched ${n} product${n===1?'':'s'}`+(oneOff?` · ${oneOff} kept to this month only`:''):'Nothing to save');
 }
 try{window._asinNames=JSON.parse(localStorage.getItem('bdl_asin_names')||'{}');}catch(e){window._asinNames={};}
-setTimeout(()=>{try{sbLoadNames();}catch(e){}try{repPrefsLoad();}catch(e){}try{uiPrefsLoad();}catch(e){}},1500);
+/* ASINs Jack has said are not his. Dropped from every future import automatically —
+   an ads export can contain other sellers' ASINs, and they only clutter the report. */
+try{window._asinDropped=JSON.parse(localStorage.getItem('bdl_asin_dropped')||'[]');}catch(e){window._asinDropped=[];}
+function asinDropped(a){return (window._asinDropped||[]).indexOf(String(a||'').toUpperCase())>=0;}
+async function sbSaveDropped(){
+  try{localStorage.setItem('bdl_asin_dropped',JSON.stringify(window._asinDropped||[]));}catch(e){}
+  if(!SUPABASE_URL||!SUPABASE_KEY)return;
+  try{const hds=await sbHeaders();
+    await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
+      headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
+      body:JSON.stringify({id:'asin_dropped_v1',key:'asin_dropped_v1',value:JSON.stringify(window._asinDropped||[])})});
+  }catch(e){console.warn('dropped save',e);}
+}
+async function sbLoadDropped(){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return;
+  try{const hds=await sbHeaders();
+    const res=await fetch(SUPABASE_URL+'/rest/v1/settings?id=eq.asin_dropped_v1&select=value',{headers:hds});
+    if(!res.ok)return;
+    const rows=await res.json();
+    if(rows[0]&&rows[0].value){
+      const remote=JSON.parse(rows[0].value)||[];
+      window._asinDropped=[...new Set((window._asinDropped||[]).concat(remote))];
+      try{localStorage.setItem('bdl_asin_dropped',JSON.stringify(window._asinDropped));}catch(e){}
+    }
+  }catch(e){}
+}
+/* Remove a product from the open month and never import it again. */
+function repDropAsin(asin,fromFix){
+  const A=String(asin||'').toUpperCase();if(!A)return;
+  const m=repMonth();
+  const r=m?(m.rows||[]).find(x=>(x.asin||'').toUpperCase()===A):null;
+  const nm=r?repName(r):A;
+  /* Inside the match screen he is working through a list, so no confirm — an Undo in
+     the toast is the right trade. Outside it, a single deliberate action, so confirm. */
+  if(!fromFix&&!confirm(`Remove ${nm}?\n\n${A} is dropped from ${m?m.label:'this month'} and skipped on every future import. Use this for ASINs that are not yours.`))return;
+  const snapshot=r?JSON.parse(JSON.stringify(r)):null;
+  if(m)m.rows=(m.rows||[]).filter(x=>(x.asin||'').toUpperCase()!==A);
+  window._asinDropped=[...new Set((window._asinDropped||[]).concat([A]))];
+  sbSaveDropped();repSave();renderReport();
+  if(fromFix){
+    _fxRemoved.push({asin:A,row:snapshot});
+    openFixNames();
+    if(typeof toastUndo==='function')toastUndo(`Removed ${A}`,()=>repUndropAsin(A,snapshot));
+    else toast('Removed '+A);
+  } else toast('Removed '+A+' — it will not come back');
+}
+function repUndropAsin(A,row){
+  window._asinDropped=(window._asinDropped||[]).filter(x=>x!==A);
+  sbSaveDropped();
+  const m=repMonth();
+  if(m&&row&&!(m.rows||[]).some(x=>(x.asin||'').toUpperCase()===A))m.rows.push(row);
+  repSave();renderReport();openFixNames();
+  toast('Put '+A+' back');
+}
+/* the report comes from Supabase, immediately, every load */
+try{sbLoadReport();}catch(e){}
+setTimeout(()=>{try{sbLoadNames();}catch(e){}try{repPrefsLoad();}catch(e){}try{uiPrefsLoad();}catch(e){}try{sbLoadDropped();}catch(e){}},1200);
 
 
 /* ── Monthly Report table: column choice, quick filters, density ── */
@@ -13075,9 +13427,18 @@ function hmHeadline(){
          ['Ad spend',gbp(t.ads),'var(--amber)',d(t.ads,pt&&pt.ads,gbp,-1)],
          ['Real profit',gbp(t.real),t.real>=0?'var(--green)':'var(--red)',d(t.real,pt&&pt.real,gbp,1)],
          ['Margin',fmt(marg,1)+'%','var(--teal)',d(marg,pt&&pt.sales?pt.real/pt.sales*100:null,v=>fmt(v,1)+'pt',1)]]
-        .map(a=>`<div class="hm-hn" onclick="event.stopPropagation();goPage('report')"><div class="hm-hnl">${a[0]}</div><div class="hm-hnv" style="color:${a[2]}">${a[1]}</div>${a[3]||'<i class="hm-d fl">&nbsp;</i>'}</div>`).join('')}
+        .map(a=>`<div class="hm-hn" style="--a:${a[2]}" onclick="event.stopPropagation();goPage('report')">
+          <div class="hm-hnl">${a[0]}</div><div class="hm-hnv" style="color:${a[2]}">${a[1]}</div>${a[3]||''}</div>`).join('')}
     </div>
     <button class="hm-hl-go" onclick="goPage('report');setTimeout(openRepAnalysis,120)">Why it moved →</button>`;
+}
+/* 2026-08-04 → 4 Aug 2026. Leaves anything that is not an ISO date alone. */
+function hmDate(d){
+  const str=String(d||'');
+  const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(str);
+  if(!m)return str;
+  const dt=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
+  return dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
 }
 function hmRecent(){
   const el=document.getElementById('hm-recent');if(!el)return;
@@ -13098,7 +13459,7 @@ function hmRecent(){
   el.innerHTML=out.length?out.slice(0,7).map(x=>`<div class="hm-r" onclick="${x.k==='month'?`goPage('report');repSelectMonth('${x.id}')`:`goPage('changelog')`}">
       <span class="hm-ri ${x.k}">${ICO[x.k]}</span>
       <div class="hm-rt"><b>${_esc(String(x.title).slice(0,64))}</b><span>${_esc(x.sub)}</span></div>
-      <span class="hm-rd">${_esc(x.d||'')}</span></div>`).join('')
+      <span class="hm-rd">${_esc(hmDate(x.d))}</span></div>`).join('')
     :'<div class="hm-none">Nothing logged yet. Changes you record and months you import show up here.</div>';
 }
 
@@ -13188,8 +13549,13 @@ function openRepSettings(){
             <button class="btn-sm" onclick="rsBackup()">Download</button></div>
           <div class="rs-r"><div><b>Restore from a backup</b><span>Replaces everything currently in the report.</span></div>
             <label class="btn-sm" style="cursor:pointer">Choose file…<input type="file" accept=".json" hidden onchange="rsRestore(this)"></label></div>
+          <div class="rs-r"><div><b>Reload from Supabase</b><span>The report lives in Supabase only — nothing is stored in this browser, so what you see is always what is in the cloud. Use this to pull the latest if someone changed it on another machine while you had this open.</span></div>
+            <button class="btn-sm" onclick="rsForceCloud()">Reload now</button></div>
           <div class="rs-r"><div><b>Undo — go back to an earlier version</b><span>Supabase keeps the last 30 versions of the report. Pick one and it comes straight back, no file needed.</span></div>
             <button class="btn-sm" onclick="rsHistory()">Version history</button></div>
+          <div class="rs-r"><div><b>Empty rows</b><span>${(()=>{const n=rsEmptyRows(repMonth()).length;
+            return n?n+' row'+(n===1?'':'s')+' in this month '+(n===1?'has':'have')+' no sales, no units and no ad spend — nothing to report on.':'Every row in this month carries a figure.';})()}</span></div>
+            <button class="btn-sm" onclick="rsClearEmpty()">Clear empty rows</button></div>
           <div class="rs-r"><div><b>Duplicate names</b><span>${(()=>{const n=(typeof mgAllGroups==='function')?mgAllGroups().length:0;return n?n+' name'+(n===1?'':'s')+' used by more than one ASIN — one of them is named wrong.':'Every product name is used by exactly one ASIN.';})()}</span></div>
             <button class="btn-sm" onclick="closeRepSettings();openMergePreview()">Review</button></div>
           <div class="rs-r"><div><b>Matched product names</b><span>${intf(Object.keys(window._asinNames||{}).length)} ASINs named by hand. Applied automatically to every future import.</span></div>
@@ -13200,7 +13566,7 @@ function openRepSettings(){
       <div class="pcard danger" style="grid-column:1/-1">
         <div class="pc-h" style="color:var(--red)">Danger zone</div>
         <div class="rs-rows">
-          <div class="rs-r"><div><b>Wipe every month</b><span>Deletes all ${ms.length} month${ms.length===1?'':'s'} here and in Supabase. Download a backup first.</span></div>
+          <div class="rs-r"><div><b>Wipe every month</b><span>Deletes all ${ms.length} month${ms.length===1?'':'s'} here and in Supabase. <b>Only the Monthly Report</b> — your campaigns, snapshots, change log, Prep data and every other app in this database are untouched. Version history still has the last 30 saves, and Download a backup gives you a file.</span></div>
             <button class="btn-sm danger" onclick="rsWipe()">Wipe the report</button></div>
         </div>
       </div>
@@ -13228,17 +13594,30 @@ function rsRename(id){
 }
 function rsDeleteMonth(id){
   const m=repData.months.find(x=>x.id===id);if(!m)return;
-  if(!confirm(`Delete ${m.label}?\n\n${(m.rows||[]).length} products will be removed from the report. This cannot be undone unless you have a backup.`))return;
-  repData.months=repData.months.filter(x=>x.id!==id);
-  if(repCur===id){const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;}
-  repSave();renderReport();openRepSettings();
-  toast(`Deleted ${m.label}`,'warn');
+  const t=repTotals(m);
+  bdlConfirm({title:'Delete '+m.label+'?',tone:'bad',confirmLabel:'Delete '+m.label,
+    headline:`${(m.rows||[]).length} products · ${gbp(t.sales)} of sales · ${gbp(t.real)} real profit`,
+    detail:`Every product row for ${_esc(m.label)} is removed. Your other months, campaigns, snapshots, change log and Prep data are untouched.`,
+    items:(m.rows||[]).slice().sort((a,b)=>repRowReal(b)-repRowReal(a)).map(r=>`${_esc(repName(r))} <span>${gbp(repRowReal(r))}</span>`),
+    itemLabel:'product',
+    saves:'The month is deleted here <b>and in Supabase</b>, so it is gone on every machine.',
+    onConfirm:()=>{
+      repData.months=repData.months.filter(x=>x.id!==id);
+      if(repCur===id){const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;}
+      repSave();renderReport();openRepSettings();toast(`Deleted ${m.label}`,'warn');}});
 }
 function rsWipe(){
   const n=repData.months.length;
   if(!n){toast('Nothing to wipe');return;}
-  if(!confirm(`Wipe every month?\n\n${n} month${n===1?'':'s'} will be deleted here and in Supabase. Download a backup first if you might want it back.`))return;
-  if(!confirm('Last check — this really does delete everything in the Monthly Report.'))return;
+  const ms=repSortedMonths();
+  bdlConfirm({title:'Wipe the whole Monthly Report?',tone:'bad',confirmLabel:'Wipe all '+n+' month'+(n===1?'':'s'),
+    headline:`${n} month${n===1?'':'s'} · ${intf(ms.reduce((a,m)=>a+(m.rows||[]).length,0))} product rows`,
+    detail:'<b>Only the Monthly Report is affected.</b> Your campaigns, snapshots, change log, Prep data and every other app sharing this database are untouched.',
+    items:ms.map(m=>`${_esc(m.label)} <span>${(m.rows||[]).length} products · ${gbp(repTotals(m).real)}</span>`),itemLabel:'month',
+    saves:'Wiped here <b>and in Supabase</b>.',
+    onConfirm:()=>{rsWipeGo();}});
+}
+function rsWipeGo(){
   repData.months=[];repCur=null;
   repSave();renderReport();openRepSettings();
   toast('Monthly Report wiped','warn');
@@ -13258,16 +13637,46 @@ function rsRestore(input){
     let d=null;
     try{d=repMigrate(JSON.parse(rd.result));}catch(e){}
     if(!d||!Array.isArray(d.months)){toast('That file is not a Monthly Report backup','warn');return;}
-    if(!confirm(`Restore ${d.months.length} month${d.months.length===1?'':'s'}?\n\nEverything currently in the report is replaced.`))return;
-    repData=d;const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;
-    repSave();renderReport();openRepSettings();
-    toast(`Restored ${d.months.length} month${d.months.length===1?'':'s'}`);
+    bdlConfirm({title:'Restore from this backup?',tone:'warn',confirmLabel:'Restore '+d.months.length+' month'+(d.months.length===1?'':'s'),
+      headline:`${d.months.length} month${d.months.length===1?'':'s'} from the file`,
+      detail:`Everything currently in the report is replaced. You have ${repData.months.length} month${repData.months.length===1?'':'s'} live right now.`,
+      items:(d.months||[]).map(m=>`${_esc(m.label)} <span>${(m.rows||[]).length} products</span>`),itemLabel:'month',
+      saves:'Written here <b>and to Supabase</b>.',
+      onConfirm:()=>{repData=d;const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;
+        repSave();renderReport();openRepSettings();
+        toast(`Restored ${d.months.length} month${d.months.length===1?'':'s'}`);}});
   };
   rd.readAsText(f);
   input.value='';
 }
 /* Undo, without touching SQL. Reads bdl_hub_history — the table the setup script
    creates — so a wipe or a bad import is always recoverable from inside the app. */
+/* The local copy wins when its updatedAt is newer, which is right almost always — but
+   it means a bad local state can shadow a good cloud one with no way out. This is the
+   way out: discard local, take Supabase verbatim. */
+async function rsForceCloud(){
+  if(!SUPABASE_URL||!SUPABASE_KEY){toast('Not connected to Supabase','warn');return;}
+  let remote=null;
+  try{
+    const hds=await sbHeaders();
+    const res=await fetch(SUPABASE_URL+'/rest/v1/settings?id=eq.monthly_report_v1&select=value',{headers:hds});
+    const rows=await res.json();
+    remote=repMigrate(JSON.parse((rows[0]||{}).value||'{}'));
+  }catch(e){toast('Could not reach Supabase — '+(e.message||''),'warn');return;}
+  if(!remote||!Array.isArray(remote.months)){toast('Nothing readable in Supabase','warn');return;}
+  const localN=(repData.months||[]).reduce((a,m)=>a+(m.rows||[]).length,0);
+  const cloudN=(remote.months||[]).reduce((a,m)=>a+(m.rows||[]).length,0);
+  bdlConfirm({title:'Take the Supabase copy?',tone:'warn',confirmLabel:'Use the Supabase copy',
+    headline:`Supabase has ${remote.months.length} month${remote.months.length===1?'':'s'} · ${cloudN} product rows`,
+    detail:`This browser currently shows ${repData.months.length} month${repData.months.length===1?'':'s'} · ${localN} rows. The local copy is discarded and replaced with what is in Supabase.`,
+    items:(remote.months||[]).map(m=>`${_esc(m.label)} <span>${(m.rows||[]).length} products</span>`),itemLabel:'month',
+    saves:'Nothing new is written — this only pulls down what Supabase already holds.',
+    onConfirm:()=>{
+      repData=remote;
+      const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;
+      renderReport();openRepSettings();
+      toast(`Loaded ${cloudN} product rows from Supabase`);}});
+}
 async function rsHistory(){
   if(TEST_MODE){toast('Turn test mode off to reach the version history','warn');return;}
   if(!SUPABASE_URL||!SUPABASE_KEY){toast('Not connected to Supabase','warn');return;}
@@ -13310,26 +13719,53 @@ async function rsHistory(){
     <div class="mg-foot" style="margin-top:12px"><button class="btn ghost" onclick="openRepSettings()">Back to settings</button></div>`;
 }
 async function rsRollback(hid){
-  if(!confirm('Restore this version?\n\nEverything currently in the Monthly Report is replaced. The version you are replacing is itself kept in the history, so this is reversible.'))return;
-  try{
-    const hds=await sbHeaders();
-    const res=await fetch(SUPABASE_URL+'/rest/v1/bdl_hub_history?id=eq.'+encodeURIComponent(hid)+'&select=value',{headers:hds});
-    const rows=await res.json();
-    const d=repMigrate(JSON.parse((rows[0]||{}).value||'{}'));
-    if(!d||!Array.isArray(d.months)){toast('That version could not be read','warn');return;}
-    repData=d;const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;
-    repSave();renderReport();openRepSettings();
-    toast(`Restored ${d.months.length} month${d.months.length===1?'':'s'}`);
-  }catch(e){toast('Restore failed — '+(e.message||''),'warn');}
+  const go=async()=>{
+    try{
+      const hds=await sbHeaders();
+      const res=await fetch(SUPABASE_URL+'/rest/v1/bdl_hub_history?id=eq.'+encodeURIComponent(hid)+'&select=value',{headers:hds});
+      const rows=await res.json();
+      const d=repMigrate(JSON.parse((rows[0]||{}).value||'{}'));
+      if(!d||!Array.isArray(d.months)){toast('That version could not be read','warn');return;}
+      repData=d;const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;
+      repSave();renderReport();openRepSettings();
+      toast(`Restored ${d.months.length} month${d.months.length===1?'':'s'}`);
+    }catch(e){toast('Restore failed — '+(e.message||''),'warn');}
+  };
+  bdlConfirm({title:'Restore this version?',tone:'warn',confirmLabel:'Restore it',
+    headline:'Everything currently in the Monthly Report is replaced',
+    detail:'The version you are replacing is itself saved to the history first, so this is reversible — you can come straight back and restore what you have now.',
+    saves:'Written here <b>and to Supabase</b>.',onConfirm:go});
+}
+/* Rows that came in before the import filter existed: no sales, no spend, no name.
+   Nothing to report on and nothing to match — offer to clear them in one go. */
+function rsEmptyRows(m){
+  return (m&&m.rows||[]).filter(r=>!(+r.units||0)&&!(+r.sales||0)&&!(+r.ads||0));
+}
+function rsClearEmpty(){
+  const m=repMonth();if(!m)return;
+  const L=rsEmptyRows(m);
+  if(!L.length){toast('Nothing empty to clear');return;}
+  bdlConfirm({title:'Clear empty rows from '+m.label+'?',tone:'warn',confirmLabel:'Clear '+L.length+' row'+(L.length===1?'':'s'),
+    headline:`${L.length} row${L.length===1?'':'s'} with no sales, no units and no ad spend`,
+    detail:'These carry no information, so nothing is lost from your figures — the month totals do not change. They are removed from this month only and are <b>not</b> added to the "not mine" list, so they can come back on a future import.',
+    items:L.map(r=>`${_esc(repName(r))} <span>${_esc(r.asin||'')}</span>`),itemLabel:'row',ofTotal:(m.rows||[]).length,
+    saves:'Removed here <b>and in Supabase</b>.',
+    onConfirm:()=>{const drop=new Set(L.map(r=>r.id));
+      m.rows=(m.rows||[]).filter(r=>!drop.has(r.id));
+      repSave();renderReport();openRepSettings();toast(`Cleared ${L.length} empty row${L.length===1?'':'s'}`);}});
 }
 function rsClearNames(){
   const n=Object.keys(window._asinNames||{}).length;
   if(!n){toast('No matched names to clear');return;}
-  if(!confirm(`Clear ${n} matched product name${n===1?'':'s'}?\n\nUnmatched ASINs will show as "Unnamed product" again on future imports.`))return;
-  window._asinNames={};
-  try{localStorage.removeItem('bdl_asin_names');}catch(e){}
-  try{sbSaveNames();}catch(e){}
-  openRepSettings();toast('Matched names cleared','warn');
+  bdlConfirm({title:'Clear matched product names?',tone:'warn',confirmLabel:'Clear '+n+' name'+(n===1?'':'s'),
+    headline:`${n} ASIN${n===1?'':'s'} you have named by hand`,
+    detail:'Those ASINs will show as <b>Unnamed product</b> again on future imports and you will have to match them once more. Names already written into a month stay as they are.',
+    items:Object.entries(window._asinNames||{}).map(([a,v])=>`${_esc(v)} <span>${_esc(a)}</span>`),itemLabel:'name',
+    saves:'Cleared here <b>and in Supabase</b>.',recover:false,
+    onConfirm:()=>{window._asinNames={};
+      try{localStorage.removeItem('bdl_asin_names');}catch(e){}
+      try{sbSaveNames();}catch(e){}
+      openRepSettings();toast('Matched names cleared','warn');}});
 }
 
 
@@ -13497,6 +13933,38 @@ async function uiPrefsLoad(){
       orig(k,v);if(UI_MIRROR.indexOf(k)>=0)try{uiPrefsSave();}catch(e){}};
   }catch(e){}
 })();
+
+
+/* ══════════ v88 — a real confirm dialog: shows WHAT goes before it goes ══════════
+   Native confirm() is ugly and, worse, it cannot list what is about to be deleted.
+   That is exactly how 31 products became 3 without Jack seeing it coming. */
+let _cfCb=null;
+function bdlConfirm(o){
+  _cfCb=o.onConfirm||null;
+  document.getElementById('cf-title').textContent=o.title||'Are you sure?';
+  /* Proportion guard: "3 products will be removed" reads harmlessly until you realise
+     it is half the month. Say what share of the month is going. */
+  let share='';
+  if(o.items&&o.items.length&&o.ofTotal){
+    const pct=Math.round(o.items.length/o.ofTotal*100);
+    if(pct>=25)share=`<div class="cf-share"><b>That is ${pct}% of this month</b> — ${o.items.length} of ${o.ofTotal} rows. Check the list below before you commit.</div>`;
+  }
+  document.getElementById('cf-body').innerHTML=`
+    <div class="pverdict ${o.tone||'bad'}"><div class="pv-h">${o.headline||''}</div>
+      <div class="pv-b">${o.detail||''}</div></div>${share}
+    ${o.items&&o.items.length?`<div class="cf-list"><div class="cf-lh">${o.items.length} ${o.itemLabel||'item'}${o.items.length===1?'':'s'} will be removed</div>
+      ${o.items.slice(0,40).map(t=>`<div class="cf-i">${t}</div>`).join('')}
+      ${o.items.length>40?`<div class="cf-more">+${o.items.length-40} more</div>`:''}</div>`:''}
+    <div class="cf-safe"><b>Where this saves</b> ${o.saves||'This writes straight to Supabase, so it applies everywhere you open the hub.'}
+      ${o.recover===false?'':'<br>You can put it back from <b>⚙ Report settings → Undo — go back to an earlier version</b>, which keeps the last 30 saves.'}</div>`;
+  const b=document.getElementById('cf-go');
+  b.textContent=o.confirmLabel||'Delete';
+  document.getElementById('rep-cf-overlay').classList.add('open');document.body.style.overflow='hidden';
+  setTimeout(()=>{try{document.getElementById('cf-cancel').focus();}catch(e){}},60);
+}
+function closeBdlConfirm(){document.getElementById('rep-cf-overlay').classList.remove('open');
+  if(!document.querySelector('.overlay.open'))document.body.style.overflow='';_cfCb=null;}
+function bdlConfirmGo(){const cb=_cfCb;closeBdlConfirm();if(cb)try{cb();}catch(e){console.warn(e);}}
 
 /* module init — runs during script evaluation, after all declarations above */
 repLoadLocal();
@@ -13953,6 +14421,20 @@ repLoadLocal();
   </div>
 </div>
 
+<!-- ════════ CONFIRM ════════ -->
+<div class="overlay" id="rep-cf-overlay" onclick="if(event.target.id==='rep-cf-overlay')closeBdlConfirm()" style="z-index:420">
+  <div class="popout" style="max-width:min(680px,94vw);max-height:90vh;display:flex;flex-direction:column">
+    <div class="po-header"><div><div class="po-title" style="font-size:17px" id="cf-title">Are you sure?</div></div>
+      <button class="close-btn" onclick="closeBdlConfirm()">✕</button></div>
+    <div class="po-body" id="cf-body" style="padding:15px 20px;overflow-y:auto"></div>
+    <div style="display:flex;gap:9px;align-items:center;padding:12px 20px;border-top:1px solid var(--border)">
+      <div class="sp"></div>
+      <button class="btn ghost" id="cf-cancel" onclick="closeBdlConfirm()">Cancel</button>
+      <button class="btn danger" id="cf-go" onclick="bdlConfirmGo()">Delete</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════ MERGE DUPLICATES ════════ -->
 <div class="overlay" id="rep-mg-overlay" onclick="if(event.target.id==='rep-mg-overlay')closeMergePreview()" style="z-index:398">
   <div class="popout" style="max-width:min(1180px,95vw);max-height:94vh;display:flex;flex-direction:column">
@@ -14069,7 +14551,7 @@ repLoadLocal();
     <div class="po-body" style="padding:14px 18px">
       <div style="margin-bottom:12px">
         <div class="label" style="margin-bottom:5px">Month name <span style="color:var(--red)">*</span></div>
-        <input class="input" id="mi-month" style="width:100%" placeholder="e.g. 2026 July — filled in from the sales report" oninput="miPreview()">
+        <input class="input" id="mi-month" style="width:100%" placeholder="Jan 2026 — filled in automatically, change it if you like" oninput="miPreview()">
       </div>
 
       <div class="mi-box">
