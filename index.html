@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v93</title>
+<title>BDL Hub — Ads &amp; Monthly Report v95</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1579,7 +1579,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v93</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v95</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -9320,6 +9320,21 @@ async function sbSaveReport(){
   if(!SUPABASE_URL||!SUPABASE_KEY)return;
   try{
     const hds=await sbHeaders();
+    /* SAFEGUARD. An empty report must never silently overwrite a full one — that is
+       how a load race, a failed fetch or a bad boot destroys real data. Wiping is a
+       deliberate act (rsWipe / rsDeleteMonth set _repIntentionalEmpty first). */
+    if(!(repData.months||[]).length&&!window._repIntentionalEmpty){
+      const chk=await fetch(SUPABASE_URL+'/rest/v1/settings?id=eq.monthly_report_v1&select=value',{headers:hds});
+      if(chk.ok){
+        const rows=await chk.json();
+        let had=0;try{const d=JSON.parse((rows[0]||{}).value||'{}');(d.months||[]).forEach(m=>had+=(m.rows||[]).length);}catch(e){}
+        if(had>0){
+          console.warn('Refused to overwrite '+had+' rows in Supabase with an empty report');
+          try{toast('Not saving — the report is empty here but Supabase has '+had+' rows. Reload from Supabase in ⚙ Report settings.','warn');}catch(e){}
+          return;
+        }
+      }
+    }
     await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({id:'monthly_report_v1',key:'monthly_report_v1',value:JSON.stringify(repData)})});
   }catch(e){console.warn('report save',e);}
 }
@@ -9334,6 +9349,14 @@ function renderReport(){
   const emptyEl=document.getElementById('rep-empty');
   const show=on=>['rep-kpis','rep-insights','rep-tablewrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=on?'':'none';});
   selEl.innerHTML=ms.length?ms.map(m=>`<option value="${m.id}" ${m.id===repCur?'selected':''}>${_esc(m.label)}</option>`).join(''):'<option>No months yet</option>';
+  if(!ms.length&&window._repLoading){
+    show(false);emptyEl.style.display='';
+    emptyEl.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;min-height:40vh">
+      <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--text2)">${spinnerHtml(14)} Loading your report from Supabase…</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:7px">Nothing is stored in this browser, so it comes fresh from the cloud every time.</div></div></div>`;
+    document.getElementById('rep-sub').textContent='Loading…';
+    return;
+  }
   if(!ms.length){
     show(false);emptyEl.style.display='';
     emptyEl.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;min-height:46vh">
@@ -13029,8 +13052,6 @@ function repUndropAsin(A,row){
   repSave();renderReport();openFixNames();
   toast('Put '+A+' back');
 }
-/* the report comes from Supabase, immediately, every load */
-try{sbLoadReport();}catch(e){}
 setTimeout(()=>{try{sbLoadNames();}catch(e){}try{repPrefsLoad();}catch(e){}try{uiPrefsLoad();}catch(e){}try{sbLoadDropped();}catch(e){}},1200);
 
 
@@ -13602,7 +13623,9 @@ function rsDeleteMonth(id){
     itemLabel:'product',
     saves:'The month is deleted here <b>and in Supabase</b>, so it is gone on every machine.',
     onConfirm:()=>{
+      if(repData.months.length===1)window._repIntentionalEmpty=true;
       repData.months=repData.months.filter(x=>x.id!==id);
+      setTimeout(()=>{window._repIntentionalEmpty=false;},4000);
       if(repCur===id){const ms=repSortedMonths();repCur=ms.length?ms[ms.length-1].id:null;}
       repSave();renderReport();openRepSettings();toast(`Deleted ${m.label}`,'warn');}});
 }
@@ -13968,6 +13991,11 @@ function bdlConfirmGo(){const cb=_cfCb;closeBdlConfirm();if(cb)try{cb();}catch(e
 
 /* module init — runs during script evaluation, after all declarations above */
 repLoadLocal();
+/* the report lives in Supabase only, so fetch it straight away — AFTER the reset above,
+   or the reset lands on top of the fetch result and blanks the page. */
+window._repLoading=true;
+try{sbLoadReport().finally(()=>{window._repLoading=false;try{renderReport();}catch(e){}});}
+catch(e){window._repLoading=false;}
 </script>
 
 <!-- ════════ GLOBAL LOG CHANGE MODAL ════════ -->
