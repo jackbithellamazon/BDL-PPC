@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v103</title>
+<title>BDL Hub — Ads &amp; Monthly Report v104</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -465,6 +465,8 @@ table.rt tbody td{padding:8px 12px;border-bottom:1px solid var(--border);font-fa
 table.rt tbody td:first-child{text-align:left;font-family:var(--font)}
 table.rt tbody tr{cursor:pointer;transition:.12s}
 table.rt tbody tr:hover{background:var(--bg2)}
+/* `dead` = nothing happened at all: no units, no sales, no spend. Fading it is right.
+   `burn` = spend with nothing back. NEVER fade that one — see .e-burn below. */
 table.rt tbody tr.dead td{opacity:.62}
 table.rt tbody tr.dead td:first-child{opacity:1}          /* never dim what you must click */
 table.rt tbody tr.dead .rn-top b,table.rt tbody tr.dead .rn-sub{opacity:.62}
@@ -1045,8 +1047,18 @@ table.rt thead th .eqop{display:inline-block;color:var(--text4);font-weight:800;
 .cm-f{display:flex;gap:6px;padding:8px 6px 2px;border-top:1px solid var(--border);margin-top:5px}
 .cm-f .btn-sm{flex:1}
 table.rt tbody tr.e-loss td:first-child{box-shadow:inset 3px 0 0 var(--red)}
-table.rt tbody tr.e-burn td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
 table.rt tbody tr.e-win td:first-child{box-shadow:inset 3px 0 0 var(--green)}
+/* Burning: money going out, nothing coming back. Faint red wash across the whole row,
+   a heavier red edge and full opacity, so it pulls the eye instead of receding.
+   The tint sits on the td (not the tr) or the sticky first column paints over it. */
+table.rt tbody tr.e-burn td{background:rgba(255,93,108,.075)}
+table.rt tbody tr.e-burn td:first-child{box-shadow:inset 4px 0 0 var(--red)}
+table.rt tbody tr.e-burn:hover td{background:rgba(255,93,108,.13)}
+/* 7.5% red reads clearly on the dark panel but almost vanishes on white */
+body.light table.rt tbody tr.e-burn td{background:rgba(220,38,38,.085)}
+body.light table.rt tbody tr.e-burn:hover td{background:rgba(220,38,38,.15)}
+table.rt tbody tr.e-burn td,table.rt tbody tr.e-burn .rn-top b,table.rt tbody tr.e-burn .rn-sub{opacity:1}
+table.rt tbody tr.e-burn .rt-ads,table.rt tbody tr.e-burn .rp-neg{font-weight:800}
 table.rt tbody tr:nth-child(even){background:rgba(148,163,184,0.028)}
 table.rt tbody tr:hover{background:var(--bg3)}
 .rowtag{font-size:8.5px;font-weight:800;letter-spacing:.4px;border-radius:4px;padding:1px 6px;font-family:var(--font);text-transform:uppercase}
@@ -1786,7 +1798,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v103</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v104</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -10622,7 +10634,8 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
       const short=lavName(r.asin)||'';
       const disp=noName?(short||'Unnamed product'):String(r.name).trim();
       const edge=burn?'burn':real<0?'loss':top3.has((r.asin||'').toUpperCase())?'win':'';
-      return`<tr class="${dead?'dead ':''}${noName?'needsfix ':''}${edge?'e-'+edge:''}" onclick="${r.asin?`openRepProduct('${_esc(r.asin)}')`:`openRepRow(${i})`}">
+      /* burning rows are never faded — they are the ones he most needs to see */
+      return`<tr class="${dead&&!burn?'dead ':''}${noName?'needsfix ':''}${edge?'e-'+edge:''}" onclick="${r.asin?`openRepProduct('${_esc(r.asin)}')`:`openRepRow(${i})`}">
         <td><div class="rep-name">${monoTile(disp,24)}
           <div class="rn-txt">
             <div class="rn-top"><b title="${_esc(disp)}">${_esc(disp)}</b>${noName?`<button class="fixtag" title="Match this ASIN to a product you already have — Prep Portal, Ads campaigns or a previous month" onclick="event.stopPropagation();openFixNames('${_esc(r.asin||'')}')">match</button>`:''}${burn?'<span class="rowtag burn" title="Ad spend with no sales at all">burning</span>':''}</div>
