@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v110</title>
+<title>BDL Hub — Ads &amp; Monthly Report v115</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -47,7 +47,18 @@ body.light{
   --shadow-sm:0 1px 3px rgba(15,23,42,0.10);--shadow:0 8px 30px rgba(15,23,42,0.12);--shadow-lg:0 24px 60px rgba(15,23,42,0.18);
 }
 body.light{background:var(--bg)}
-html,body{min-height:100%;color:var(--text);font-family:var(--font);font-size:13.5px;line-height:1.45;-webkit-font-smoothing:antialiased}
+html,body{min-height:100%;color:var(--text);font-family:var(--font);font-size:13.5px;line-height:1.45;
+  /* grayscale AA on dark backgrounds: subpixel rendering makes light-on-dark text
+     bloom, which reads as fuzzy no matter how good the font is */
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;font-synthesis:none}
+/* Roboto Mono ships 400–700. Anything heavier was being synthesised, which is why the
+   figures looked soft next to the labels. font-synthesis:none above makes a missing
+   weight fail visibly rather than silently smear, so cap the mono scale at 700. */
+.mono,.rag,.mtag,.outcome,.ins-mt-r,.rph-kv,.rl-kv,.ry-bv,.dk-v,.kb-v,.pt-v,.mp-v,
+.fxq-a,.fxb-m,.pk-a,.dp-a,.pa-a,.ry-c,.ry-sum,.hm-rd,.hm-d,.an-dl,.tspark-n,
+[style*="var(--mono)"]{font-synthesis:none}
+.mono[style*="font-weight:800"],.rag,.mtag,.outcome{font-weight:700!important}
 body{background:var(--bg)}
 ::selection{background:rgba(91,157,255,0.3);color:#fff}
 ::-webkit-scrollbar{width:10px;height:10px}
@@ -87,7 +98,15 @@ body{font-variant-numeric:tabular-nums}
 /* MAIN */
 .main{padding:15px 22px 70px;max-width:none;margin:0 auto;width:100%}
 @media(min-width:2100px){main{max-width:2000px}}   /* only rein it in on very wide screens */
-.page{display:none}.page.active{display:block;animation:fadeUp .4s cubic-bezier(.4,0,.2,1)}
+/* ── Page transition: opacity ONLY ──────────────────────────────────────────────
+   fadeUp animated transform:translateY(10px). A transformed ancestor becomes the
+   containing block for every position:sticky descendant, so for the first 400ms of
+   EVERY page render the report's sticky header and totals row measured against the
+   page instead of the window — pinning them 10px out and pushing the totals below the
+   fold. That 10px was literally the translate distance.
+   Never animate transform on a container that holds sticky children. */
+.page{display:none}.page.active{display:block;animation:pgIn .3s cubic-bezier(.4,0,.2,1)}
+@keyframes pgIn{from{opacity:0}to{opacity:1}}
 
 .ph{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:11px}
 .ph h1{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.4px}
@@ -808,6 +827,60 @@ table.prep-t td{font-size:12px}
 .mi-warn b{color:var(--text);font-weight:800}
 
 .pest.guess{color:var(--amber)}
+/* ══════════ v115 — PREP IS A DECISION BOARD, NOT A DATA DUMP ══════════
+   The old page showed six KPIs, a banner, three alert cards, a chip soup of
+   components and an eleven-column table, all at once, and answered none of the
+   only question this page exists for: what do I send to FBA, and how much.
+   Everything below is built around that answer. */
+.pv-run{display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  background:linear-gradient(180deg,var(--bg2),var(--panel));border:1px solid var(--border);
+  border-left:3px solid var(--blue);border-radius:12px;padding:13px 16px;margin-bottom:9px}
+.pv-run.none{border-left-color:var(--green)}
+.pv-run-n{font-family:var(--display);font-size:27px;font-weight:800;line-height:1;color:var(--blue);font-synthesis:none}
+.pv-run.none .pv-run-n{color:var(--green)}
+.pv-run-l{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--text4);margin-bottom:4px}
+.pv-run-s{font-size:11.5px;color:var(--text3);line-height:1.5}
+.pv-run-sp{flex:1;min-width:14px}
+.pv-seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg2)}
+.pv-seg button{border:0;background:transparent;color:var(--text3);font:inherit;font-size:11px;font-weight:700;
+  padding:5px 11px;cursor:pointer;transition:background .15s,color .15s}
+.pv-seg button:hover{color:var(--text)}
+.pv-seg button.on{background:var(--blue);color:#04101f}
+.pv-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.pv-tools .lbl{font-size:10px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text4)}
+tr.pv-grp td{background:var(--bg3);font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--text3);padding:7px 12px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+tr.pv-grp .n{color:var(--text4);font-weight:700;letter-spacing:.3px;text-transform:none;margin-left:7px}
+.pv-qty{font-family:var(--display);font-size:15px;font-weight:800;color:var(--blue);font-synthesis:none}
+.pv-qty.soft{color:var(--text4);font-weight:700;font-size:13px}
+.pv-cov{display:inline-block;min-width:52px}
+.pv-bar{height:4px;border-radius:3px;background:var(--bg3);overflow:hidden;margin:5px auto 0;max-width:64px}
+.pv-bar i{display:block;height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.pv-transit{font-size:9px;font-weight:800;color:var(--blue);background:var(--blue-bg);border-radius:4px;padding:1px 5px;margin-left:5px}
+/* `table.dt thead th{top:0}` ties on specificity and is declared later, so it won.
+   The #prep-conn id settles it. 48px = the topbar; the Ads sub-nav is hidden here. */
+#prep-conn table.prep-t thead th{position:sticky;top:48px;z-index:6;background:var(--panel)}
+#prep-conn .tablecard{overflow:visible}
+.pv-comp{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:7px;margin-top:9px}
+.pv-comp-i{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:8px 11px}
+.pv-comp-n{font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv-comp-s{font-size:10.5px;color:var(--text4);margin-top:2px}
+/* ── conflict modal ── */
+.rc-ok,.rc-bad{border-radius:9px;padding:9px 12px;font-size:12.5px;margin-bottom:11px;line-height:1.5}
+.rc-ok{background:var(--green-bg);color:var(--green);border-left:3px solid var(--green)}
+.rc-bad{background:var(--amber-bg);color:var(--amber);border-left:3px solid var(--amber)}
+.rc-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.rc-col{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 10px;min-width:0}
+.rc-h{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text4);margin-bottom:6px}
+.rc-i{font-size:12px;font-weight:600;padding:4px 0;border-bottom:1px solid var(--border)}
+.rc-i:last-child{border-bottom:0}
+.rc-i.clash{color:var(--amber)}
+.rc-n{display:block;font-size:10px;font-weight:600;color:var(--text4)}
+.rc-e{font-size:11.5px;color:var(--text4)}
+.rc-same{font-size:11.5px;color:var(--text4);margin-top:9px}
+/* Under 1180px the table has to scroll sideways, and an overflow ancestor kills
+   position:sticky — the pinned header is the thing we give up, not the columns. */
+@media(max-width:1180px){#prep-conn .tablecard{overflow-x:auto}#prep-conn table.prep-t thead th{position:static}}
 table.prep-t{table-layout:fixed}
 table.prep-t td,table.prep-t th{overflow:hidden;text-overflow:ellipsis}
 
@@ -915,7 +988,11 @@ table.dct{border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .ph-d.dn{color:var(--red);background:var(--red-bg)}
 .ph-d.flat{color:var(--text3);background:var(--bg4)}
 .ph-ns{font-size:10.5px;color:var(--text3);font-weight:600}
-.ph-tabs{display:flex;gap:2px;align-items:center;flex-wrap:wrap;row-gap:0}
+.ph-tabs{display:flex;gap:2px;align-items:center;flex-wrap:wrap;row-gap:4px}
+/* the action buttons travel together — they used to wrap one at a time and land in a
+   ragged second row under the tabs */
+.ph-acts{display:inline-flex;gap:5px;align-items:center;flex-wrap:nowrap;margin-left:auto;padding-bottom:4px}
+@media(max-width:820px){.ph-acts{margin-left:0;width:100%;justify-content:flex-start;flex-wrap:wrap}}
 .ph-tabs button{background:none;border:none;border-bottom:2.5px solid transparent;color:var(--text3);font-family:var(--font);font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:.13s;white-space:nowrap}
 .ph-tabs button:hover{color:var(--text2)}
 .ph-tabs button.on{color:var(--text);border-bottom-color:var(--blue)}
@@ -1216,8 +1293,9 @@ table.rt tbody .rsplit{flex-wrap:wrap;white-space:normal;row-gap:0}
 table.rt tbody .rsplit span{white-space:nowrap}
 
 /* analysis: two columns so the width earns its keep, and tighter cards */
-.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;align-items:start}
-@media(max-width:880px){.an-grid{grid-template-columns:1fr}}
+.an-grid{column-count:2;column-gap:9px}
+.an-grid>*{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;margin-bottom:9px;display:block}
+@media(max-width:880px){.an-grid{column-count:1}}
 .an-sec{margin-bottom:13px}
 .an-l{padding:9px 12px 10px;margin-bottom:0;border-radius:12px}
 .an-t{font-size:12.5px;line-height:1.5}
@@ -1507,6 +1585,190 @@ table.rt tbody .rsplit span{white-space:nowrap}
 .dp-m{font-size:10.5px;color:var(--text4);font-weight:600;white-space:nowrap}
 .dp-act{display:flex;gap:6px;padding:9px 13px;flex-wrap:wrap;background:var(--panel);border-top:1px solid var(--border)}
 .prod-n.noname{color:var(--text4);font-style:italic;font-weight:600}
+/* Month strip: a horizontal rail that survives a full year, with the open month
+   scrolled into view. The old 34px line chart beside it is gone — three points made a
+   diagonal and twelve made a scribble; each pill already carries its own bar. */
+.mstrip{display:flex;align-items:stretch;gap:9px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:13px;padding:8px 10px}
+.ms-k{display:flex;flex-direction:column;justify-content:center;flex-shrink:0;padding-right:11px;
+  border-right:1px solid var(--border);font-size:9.5px;font-weight:800;letter-spacing:.9px;
+  text-transform:uppercase;color:var(--text3);white-space:nowrap}
+.ms-k em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--text4);margin-top:2px}
+.ms-l{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;flex:1;min-width:0;scroll-behavior:smooth;padding-bottom:1px}
+.ms-l::-webkit-scrollbar{height:5px}
+.ms-l::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.mpill{flex:0 0 auto;min-width:92px}
+.mp-best{font-style:normal;color:var(--amber);font-size:9px;margin-left:4px}
+/* ── Report table sticks to the WINDOW, not to a box ────────────────────────────
+   Two things were breaking it:
+   1. `.tablecard{overflow:auto}` — ANY ancestor with a non-visible overflow becomes the
+      containing block for position:sticky, so the header and totals were pinning to the
+      card (which never scrolls) instead of the viewport. Every ancestor has to be
+      overflow:visible for a sticky child to see the window.
+   2. top:84px assumed topbar(48) + subnav(36), but the Ads sub-nav is display:none on
+      the Monthly Report — so the header floated 36px too low and sat over the first row. */
+#rep-tablewrap{overflow:visible}
+.rep-flow{overflow:visible;max-height:none}
+table.rt thead th{top:48px}
+table.rt tfoot td{box-shadow:0 -10px 22px -12px rgba(0,0,0,.95)}
+@media(max-width:920px){table.rt thead th{top:0}}
+/* small multiples — every metric at a glance */
+.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border)}
+@media(max-width:900px){.mini-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.mini-grid{grid-template-columns:1fr}}
+.mini-c{background:var(--bg2);padding:9px 12px 8px;min-width:0}
+.mini-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
+.mini-h span{font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);white-space:nowrap}
+.mini-h b{font-family:var(--mono);font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bmini{display:block;width:100%;height:56px;overflow:visible}
+.mini-f{font-size:9.5px;color:var(--text4);font-weight:600;margin-top:3px;font-family:var(--mono)}
+.mini-f i{font-style:normal;color:var(--text3);font-weight:700}
+.mini-none{font-size:10.5px;color:var(--text4);padding:16px 0;text-align:center}
+/* ══ v112 — chart chrome ══════════════════════════════════════════════════════
+   Axes recede, the line is thinner, the fill is a real gradient, and every point has
+   an invisible hit band that reveals a crosshair + readout on hover. */
+.bc-grid{stroke:rgba(148,163,184,.09);stroke-width:1}
+.bc-zero{stroke:var(--border3);stroke-width:1.25;stroke-dasharray:4 4}
+.bc-y{fill:var(--text4);font-size:9.5px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.bc-x{fill:var(--text4);font-size:10px;font-family:var(--font);font-weight:600}
+.bc-last{font-size:11px;font-family:var(--mono);font-weight:700}
+.bc-line{stroke-linejoin:round}
+.bc-area{opacity:0;animation:bcFade .5s cubic-bezier(.32,.72,0,1) .12s forwards}
+@keyframes bcFade{to{opacity:1}}
+.bchart .bc-line{stroke-dasharray:2400;stroke-dashoffset:2400;animation:bcDraw 1s cubic-bezier(.32,.72,0,1) forwards}
+@keyframes bcDraw{to{stroke-dashoffset:0}}
+.bc-dot{opacity:0;animation:bcFade .4s ease .55s forwards}
+/* hover layer */
+.bc-hot .bc-cross,.bc-hot .bc-halo,.bc-hot .bc-dot-h,.bc-hot .bc-tip{opacity:0;transition:opacity .13s;pointer-events:none}
+.bc-hot:hover .bc-cross{opacity:1}
+.bc-hot:hover .bc-halo{opacity:.18}
+.bc-hot:hover .bc-dot-h{opacity:1}
+.bc-hot:hover .bc-tip{opacity:1}
+.bc-cross{stroke:var(--border3);stroke-width:1;stroke-dasharray:3 3}
+.bc-tipbg{fill:var(--panel);stroke:var(--border2);stroke-width:1;filter:drop-shadow(0 6px 16px rgba(0,0,0,.55))}
+.bc-tipl{fill:var(--text4);font-size:9px;font-family:var(--font);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.bc-tipv{font-size:13px;font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+/* the shared multi-series tooltip: one row per product, value right-aligned so the
+   column reads as a ranked list rather than a paragraph */
+.bc-tipn{fill:var(--text2);font-size:10.5px;font-family:var(--font);font-weight:600}
+svg.ic{display:inline-block;vertical-align:-2px;flex:0 0 auto}
+button svg.ic,.btn svg.ic,.btn-sm svg.ic{margin-right:5px}
+.hm-ico svg.ic,.ck-ic svg.ic,.fxp-i svg.ic{margin:0;vertical-align:0}
+/* Compare's metric bar has eight tabs; `.pmet button{flex:1}` stretched them across
+   1366px of popout with cavernous gaps. Only here, let them size to their text. */
+#rep-cmp-body .pmet{flex:0 1 auto;margin:0}
+#rep-cmp-body .pmet button{flex:0 0 auto;min-width:0;padding:8px 15px}
+svg .bc-tip .bc-tipv{font-size:11px}
+@media (prefers-reduced-motion:reduce){
+  .bchart .bc-line{animation:none;stroke-dashoffset:0}
+  .bc-area,.bc-dot{animation:none;opacity:1}
+}
+/* ══ v112 — TYPE ═══════════════════════════════════════════════════════════════
+   Every surface that shows a figure gets tabular, slashed-zero-free numerals so
+   columns align and a changing value does not reflow its own row. */
+.pt-v,.rk-v,.hm-bnv,.hm-hnv,.tv,.ph-nv,.pfact-v,.kb-v,.mp-v,.dp-sp,.ry-c,.ry-sum,
+.kpi .v,.ins-k-v,.rph-kv,.rl-kv,.dk-v,.hub-stat .hv,.fxd-money .v,.hm-stats .tv,
+table.rt td,table.dt td,table.ptab td,.simple-tbl td,.rph-t td{
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0,"ss01" 0}
+/* Small caps labels were 8.5–9px with wide tracking — legible only if you already knew
+   what they said. One step up, one step tighter. */
+.pt-l,.rk-l,.hm-bnl,.hm-hnl,.tn,.ph-nl,.pfact-l,.pnl-h,.pc-h,.ins-card-t,.hm-h,
+.fxd-sec,.fxq-h,.label,.mv-h,.ms-k,.dp-why{font-size:10px;letter-spacing:.55px}
+.hm-stats .tn,.ry-t thead th{font-size:9.5px;letter-spacing:.5px}
+/* Figures lead, labels support — the display face at a real 800 now carries it */
+.pt-v,.hm-bnv,.rk-v,.ph-nv{letter-spacing:-.6px}
+/* ══ v111 — All months, rebuilt for a full year of columns ══════════════════════
+   Twelve months is the real shape of this table, not three. Cells carry compact money
+   (£1.2k), the product column stays put while the months scroll under it, and the
+   colour ramp gets a legend so the greens mean something. */
+.ry-t{border-collapse:separate;border-spacing:0}
+col.ry-pc{width:230px} col.ry-mc{width:66px} col.ry-sc{width:82px}
+.ry-t th,.ry-t td{white-space:nowrap}
+.ry-t thead th{position:sticky;top:0;z-index:3;background:var(--bg3);font-size:9px;letter-spacing:.7px;padding:7px 6px}
+.ry-t thead th:first-child{z-index:4;text-align:left;padding-left:12px}
+.ry-c{text-align:center;font-family:var(--mono);font-size:10.5px;font-weight:700;padding:6px 4px;
+  border-right:1px solid rgba(148,163,184,.07);color:var(--text)}
+.ry-c.ry-x{color:var(--text4);background:transparent;font-weight:400}
+.ry-p{background:var(--bg2);border-right:1px solid var(--border2);padding:7px 12px;max-width:230px}
+.ry-p b{display:block;font-size:12px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ry-p .rl-a{font-size:9.5px;color:var(--text4);font-family:var(--mono);margin-top:1px}
+.ry-t tbody tr:hover .ry-p{background:var(--bg3)}
+.ry-t tbody tr:hover .ry-c{filter:brightness(1.22)}
+.ry-sum{border-left:1px solid var(--border2);text-align:center;font-family:var(--mono);font-size:11px;font-weight:700}
+.ry-t tbody td:not(.ry-p):not(.ry-c){text-align:center;font-family:var(--mono);font-size:11px;padding:6px 8px}
+.ry-tot td{background:var(--bg3);font-weight:800;border-top:2px solid var(--border3);position:sticky;bottom:0;z-index:2}
+.ry-key{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;color:var(--text4);letter-spacing:.4px}
+.ry-key .k{width:15px;height:9px;border-radius:2px;display:inline-block}
+.ry-key .k.n{background:rgba(255,93,108,.55)} .ry-key .k.n2{background:rgba(255,93,108,.22)}
+.ry-key .k.z{background:var(--bg4)}
+.ry-key .k.p2{background:rgba(0,214,143,.22)} .ry-key .k.p{background:rgba(0,214,143,.55)}
+/* Compare picker: selected products as tokens, everything else behind one search */
+.cmp-sel{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.ctok{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border2);
+  border-radius:20px;padding:4px 5px 4px 10px;max-width:250px}
+.ctok i{width:8px;height:8px;border-radius:50%;background:var(--c);flex-shrink:0}
+.ctok b{font-size:11.5px;font-weight:700;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctok button{background:var(--bg4);border:none;color:var(--text3);width:18px;height:18px;border-radius:50%;
+  cursor:pointer;font-size:10px;line-height:1;flex-shrink:0;transition:.13s}
+.ctok button:hover{background:var(--red);color:#fff}
+.cmp-none{font-size:11.5px;color:var(--text4);font-weight:600}
+.cmp-add{position:relative;margin-left:auto}
+.cmp-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:40;width:320px;background:var(--panel);
+  border:1px solid var(--border2);border-radius:12px;box-shadow:0 18px 44px rgba(0,0,0,.55);padding:9px;display:none}
+.cmp-menu.open{display:block}
+.cmp-menu .input{width:100%;font-size:12.5px;margin-bottom:7px}
+.cmp-list{max-height:260px;overflow-y:auto;display:grid;gap:2px}
+.cmp-i{display:flex;align-items:baseline;gap:9px;background:none;border:none;text-align:left;padding:7px 9px;
+  border-radius:8px;cursor:pointer;font-family:var(--font);transition:.12s}
+.cmp-i:hover{background:var(--bg3)}
+.cmp-i b{flex:1;min-width:0;font-size:12px;font-weight:600;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-i span{font-family:var(--mono);font-size:10.5px;color:var(--text4);white-space:nowrap}
+.cmp-i-none{padding:10px;font-size:11.5px;color:var(--text3)}
+.cmp-pre{display:flex;gap:6px;flex-wrap:wrap}
+/* ══ v111 — KPI / product popup density ══════════════════════════════════════
+   Same content, roughly a third less height. The popups had grown a card-per-idea
+   layout where every panel carried equal weight and equal padding, which is what
+   makes a screen feel machine-generated rather than designed. */
+#kpi-body .ptile,#rep-prod-overlay .ptile{padding:8px 12px}
+#kpi-body .pt-v,#rep-prod-overlay .pt-v{font-size:17px;margin-top:1px}
+#kpi-body .pt-l,#rep-prod-overlay .pt-l{font-size:8.5px;letter-spacing:.7px}
+#kpi-body .pt-s,#rep-prod-overlay .pt-s{font-size:9.5px;margin-top:1px}
+#kpi-body .pnl,#rep-prod-overlay .pnl{padding:9px 12px;border-radius:11px}
+#kpi-body .pnl p,#rep-prod-overlay .pnl p{font-size:11.5px;line-height:1.5;margin-bottom:5px}
+#kpi-body .pnl-h,#rep-prod-overlay .pnl-h{font-size:9px;margin-bottom:4px}
+#kpi-body .pcard,#rep-prod-overlay .pcard{border-radius:11px}
+#kpi-body .pc-h,#rep-prod-overlay .pc-h{padding:8px 13px;font-size:9.5px}
+#kpi-body .kbars{padding:0 12px 7px}
+#kpi-body .kbar{padding:3px 0;gap:8px}
+#kpi-body .kb-n{font-size:11px;flex-basis:32%}
+#kpi-body .kb-t{height:6px}
+#kpi-body .kb-v{font-size:11px}
+#kpi-body .pbody,#rep-prod-overlay .pbody{padding:12px 16px 16px}
+#kpi-body .pcols,#rep-prod-overlay .pcols{gap:10px}
+#kpi-body .pstack,#rep-prod-overlay .pstack{gap:8px}
+#kpi-body table.ptab td,#kpi-body table.ptab th{padding:6px 10px;font-size:11.5px}
+#rep-prod-overlay .ph-nv{font-size:20px}
+#rep-prod-overlay .ph-n{padding:8px 11px 9px}
+#rep-prod-overlay .pfact{padding:7px 11px}
+#rep-prod-overlay .pfact-v{font-size:15px}
+/* Trend column: mini bars, not a 2-point line. A line between two months is a
+   diagonal stroke carrying no information the delta beside it does not already give. */
+.tspark{display:block;margin:0 auto;overflow:visible}
+.tspark-n{color:var(--text4);font-size:14px}
+tr:hover .tspark{filter:brightness(1.15)}
+/* compact movers strip — one line, replaces the old two-column bar chart card */
+.mv-strip{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:var(--bg2);
+  border:1px solid var(--border);border-radius:11px;padding:7px 11px}
+.mv-h{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--text3);white-space:nowrap}
+.mv-h em{font-style:normal;font-weight:700;letter-spacing:0;text-transform:none;color:var(--text4)}
+.mv-g{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;font-weight:800}
+.mv-g.up{color:var(--green)} .mv-g.dn{color:var(--red)}
+.mv-c{display:inline-flex;align-items:baseline;gap:6px;background:var(--panel);border:1px solid var(--border);
+  border-radius:7px;padding:3px 9px;cursor:pointer;transition:.13s;max-width:230px}
+.mv-c:hover{border-color:var(--border3);background:var(--bg3)}
+.mv-c b{font-size:11px;font-weight:700;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mv-c i{font-style:normal;font-family:var(--mono);font-size:10.5px;font-weight:800;white-space:nowrap}
+.mv-strip .btn-sm{margin-left:auto}
 /* live sync: a newer version exists, shown without touching what is on screen */
 .live-newer{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);z-index:520;
   display:flex;align-items:center;gap:13px;max-width:min(760px,calc(100vw - 32px));
@@ -1521,8 +1783,17 @@ table.rt tbody .rsplit span{white-space:nowrap}
 .live-newer span:not(.ln-d){display:block;font-size:11px;color:var(--text3);margin-top:2px;line-height:1.45}
 .live-newer .btn,.live-newer .btn-sm{flex-shrink:0}
 @media(max-width:700px){.live-newer{flex-wrap:wrap}}
+/* Row density: 77px per row only showed 7 products between the frozen header and the
+   frozen total. Trimming the padding and the sublines buys an eighth without losing
+   anything — the product name still gets its two lines. */
+table.rt tbody td{padding:6px 12px}
+table.rt tbody tr{height:auto}
+table.rt tbody .rep-name{gap:8px}
+table.rt tbody .rn-top b{line-height:1.32}
+table.rt tbody .rn-sub{margin-top:1px}
+.rsplit{margin-top:1px}
 /* 3px organic/ads split under each sales figure — the mix at a glance */
-.rs-mini{display:flex;height:3px;border-radius:2px;overflow:hidden;margin-top:3px;margin-left:auto;width:76px;background:var(--bg4)}
+.rs-mini{display:flex;height:3px;border-radius:2px;overflow:hidden;margin-top:2px;margin-left:auto;width:76px;background:var(--bg4)}
 .rs-mini .o{background:var(--green)}
 .rs-mini .a{background:var(--blue)}
 tr.dead .rs-mini{display:none}
@@ -1758,7 +2029,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
    and the analysis popup given room to breathe. ══ */
 #rep-an-overlay .popout{max-width:min(1440px,96vw)}
 #an-body{padding:18px 24px}
-.an-grid{gap:9px}
+.an-grid{column-gap:9px}
 .an-l{padding:13px 16px}
 .an-t{font-size:13.5px;line-height:1.55;color:var(--text)}
 .an-s{font-size:12.5px;line-height:1.6;color:var(--text2);margin-top:6px}
@@ -1829,7 +2100,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v110</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v115</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -1886,7 +2157,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
   <div class="hm-cards">
     <a class="hm-card ads" onclick="goPage('ads')">
       <div class="hm-c-top">
-        <span class="hm-ico">📈</span>
+        <span class="hm-ico"><svg class="ic" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 11.2 6 7l2.6 2.6L14 4.2"/><path d="M10.4 4.2H14v3.6"/></svg></span>
         <div style="min-width:0"><div class="hm-c-t">Ads · PPC</div><div class="hm-c-s">Campaigns, snapshots, change log &amp; reviews</div></div>
         <span class="hm-go">→</span>
       </div>
@@ -1903,7 +2174,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 
     <a class="hm-card rep" onclick="goPage('report')">
       <div class="hm-c-top">
-        <span class="hm-ico">📊</span>
+        <span class="hm-ico"><svg class="ic" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 13.5h12"/><path d="M4 11V7"/><path d="M7.3 11V3.5"/><path d="M10.7 11V8.6"/><path d="M14 11V5.5"/></svg></span>
         <div style="min-width:0"><div class="hm-c-t">Monthly Report</div><div class="hm-c-s">Product P&amp;L by month — sales, profit, ads, real profit</div></div>
         <span class="hm-go">→</span>
       </div>
@@ -1920,7 +2191,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 
     <a class="hm-card prep" onclick="goPage('prep')">
       <div class="hm-c-top">
-        <span class="hm-ico">📦</span>
+        <span class="hm-ico"><svg class="ic" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.9 14 5v6L8 14.1 2 11V5l6-3.1Z"/><path d="M2 5l6 3.1L14 5"/><path d="M8 8.1v6"/></svg></span>
         <div style="min-width:0"><div class="hm-c-t">Prep Portal <span class="hm-tag">LAVARION</span></div><div class="hm-c-s">FBA prep, bundles &amp; components — runs inside the hub</div></div>
         <span class="hm-go">→</span>
       </div>
@@ -1991,7 +2262,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
       <div class="colmenu" id="rep-moremenu"></div>
     </div>
   </div>
-  <div class="tablecard" id="rep-tablewrap"><div class="tscroll" style="max-height:66vh">
+  <div class="tablecard" id="rep-tablewrap"><div class="tscroll rep-flow" id="rep-tscroll">
     <table class="rt" id="rep-table">
       <colgroup id="rep-cols"></colgroup>
       <thead id="rep-head"></thead>
@@ -2013,7 +2284,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
         <button class="tog on" id="pv-conn" onclick="setPrepView('connected')" style="border:none">Connected view</button>
         <button class="tog" id="pv-portal" onclick="setPrepView('portal')" style="border:none;background:none">Full portal</button>
       </div>
-      <button class="btn-sm" onclick="openPrepDevBrief()" title="Copyable improvement list for the Prep Portal, generated from its live schema">📤 Dev suggestions</button>
+      <button class="btn-sm" onclick="openPrepDevBrief()" title="Copyable improvement list for the Prep Portal, generated from its live schema">${ico('export')}Dev suggestions</button>
       <button class="btn-sm" onclick="window.open(PREP_URL,'_blank')">Open in new tab ↗</button>
     </div>
   </div>
@@ -2035,7 +2306,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <select class="sel" id="dash-period-sel" onchange="renderDashPeriod()" style="min-width:190px"><option value="latest">Latest snapshot</option></select>
       <select class="sel" id="dash-compare-sel" onchange="renderDashPeriod()" style="min-width:160px"><option value="none">No comparison</option></select>
-      <button class="btn ghost" onclick="openDigest()" title="Monthly account check — leaks first, copyable for the team">📋 Ads check</button>
+      <button class="btn ghost" onclick="openDigest()" title="Monthly account check — leaks first, copyable for the team">${ico('board')}Ads check</button>
       <span id="dash-period-coverage" style="font-size:11px;color:var(--text3)"></span>
     </div>
   </div>
@@ -2114,7 +2385,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
       <option value="has-targeting">Has targeting CSV</option>
       <option value="has-ads">Has ad group CSV</option>
       <option value="has-st">Has search terms</option>
-      <option value="missing-st">⚠ Missing search terms</option>
+      <option value="missing-st">Missing search terms</option>
       <option value="recently-changed">Recently changed</option>
       <option value="has-notes">Has notes</option>
     </select>
@@ -2485,7 +2756,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 
   <!-- DANGER ZONE -->
   <div style="margin-top:24px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:7px">⚠ Danger zone</div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:7px">Danger zone</div>
     <div style="background:var(--red-bg);border:1px solid rgba(255,93,108,.3);border-radius:var(--r);padding:16px">
       <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;margin-bottom:12px">
         <div style="flex:1;min-width:200px">
@@ -2809,6 +3080,41 @@ function markActionDone(key){if(!window._actionedKeys)window._actionedKeys=new S
 function openReviewItem(cid,tab){try{openCamp(cid);if(tab&&curCamp)switchTab(tab);}catch(e){console.warn('openReviewItem',e);}}
 function resetActions(){window._actionedKeys=new Set();lsClearDone();sbSaveDismissed();renderDashActionList();}
 /* ── On-screen feedback toast ── */
+/* ══════════ v115 — ONE ICON LANGUAGE ══════════
+   The app was speaking three at once: emoji in the home cards, the command palette,
+   the wins list and four buttons; bare arrow glyphs elsewhere; and coloured RAG pills
+   for status. Emoji also render differently on every machine and cannot be recoloured,
+   so a "green" one stayed green on a red card.
+
+   One stroked set instead, 16px grid, 1.6 stroke, currentColor so every icon takes the
+   colour of whatever it sits in. Native <option> elements cannot hold an SVG, so those
+   dropdowns simply lost their emoji rather than gaining a second language. */
+function icoPath(n){switch(n){
+  case 'warn':    return '<path d="M8 2.6 1.9 13.4h12.2L8 2.6Z"/><path d="M8 6.6v3"/><circle cx="8" cy="11.6" r=".5" fill="currentColor" stroke="none"/>';
+  case 'chart':   return '<path d="M2 13.5h12"/><path d="M4 11V7"/><path d="M7.3 11V3.5"/><path d="M10.7 11V8.6"/><path d="M14 11V5.5"/>';
+  case 'trend':   return '<path d="M2 11.2 6 7l2.6 2.6L14 4.2"/><path d="M10.4 4.2H14v3.6"/>';
+  case 'down':    return '<path d="M2 4.8 6 9l2.6-2.6L14 11.8"/><path d="M10.4 11.8H14V8.2"/>';
+  case 'box':     return '<path d="M8 1.9 14 5v6L8 14.1 2 11V5l6-3.1Z"/><path d="M2 5l6 3.1L14 5"/><path d="M8 8.1v6"/>';
+  case 'bolt':    return '<path d="M9 1.8 3.6 9h3.7l-.7 5.2L12.4 7H8.6l.4-5.2Z"/>';
+  case 'target':  return '<circle cx="8" cy="8" r="5.6"/><circle cx="8" cy="8" r="2.6"/>';
+  case 'search':  return '<circle cx="7.1" cy="7.1" r="4.4"/><path d="M10.4 10.4 14 14"/>';
+  case 'export':  return '<path d="M8 10.6V2.4"/><path d="M5 5.4 8 2.4l3 3"/><path d="M2.6 9.6v3.2h10.8V9.6"/>';
+  case 'import':  return '<path d="M8 2.4v8.2"/><path d="M5 7.6 8 10.6l3-3"/><path d="M2.6 9.6v3.2h10.8V9.6"/>';
+  case 'board':   return '<rect x="3.2" y="2.4" width="9.6" height="11.2" rx="1.6"/><path d="M5.8 5.6h4.4"/><path d="M5.8 8.2h4.4"/><path d="M5.8 10.8h2.6"/>';
+  case 'note':    return '<path d="M12.8 6.6v6.2a.9.9 0 0 1-.9.9H4.1a.9.9 0 0 1-.9-.9V3.2a.9.9 0 0 1 .9-.9h4.3Z"/><path d="M8.4 2.3v4.3h4.4"/>';
+  case 'pause':   return '<path d="M6.2 3.4v9.2"/><path d="M9.8 3.4v9.2"/>';
+  case 'dot':     return '<circle cx="8" cy="8" r="3.4" fill="currentColor" stroke="none"/>';
+  case 'alert':   return '<circle cx="8" cy="8" r="5.8"/><path d="M8 5.2v3.4"/><circle cx="8" cy="10.9" r=".55" fill="currentColor" stroke="none"/>';
+  case 'coin':    return '<circle cx="8" cy="8" r="5.8"/><path d="M8 4.9v6.2"/><path d="M9.7 6.3a1.9 1.9 0 0 0-1.7-.8c-1 0-1.8.5-1.8 1.3 0 1.9 3.6.9 3.6 2.7 0 .8-.8 1.3-1.8 1.3a2 2 0 0 1-1.8-.9"/>';
+  case 'refresh': return '<path d="M13.2 8a5.2 5.2 0 1 1-1.6-3.7"/><path d="M13.4 2.4v3.2h-3.2"/>';
+  case 'check':   return '<path d="M3 8.4 6.4 11.8 13 4.8"/>';
+  default:        return '<circle cx="8" cy="8" r="5.6"/>';
+}}
+function ico(n,sz){
+  const S=sz||15;
+  return '<svg class="ic" width="'+S+'" height="'+S+'" viewBox="0 0 16 16" fill="none" stroke="currentColor" '+
+    'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icoPath(n)+'</svg>';
+}
 function toast(msg,kind){
   var bg=kind==='err'?'var(--red)':kind==='warn'?'var(--amber)':'var(--green)';
   var fg=kind==='err'?'#fff':'#06121a';
@@ -2848,10 +3154,7 @@ async function sbLoadDismissed(){
 }
 async function sbSaveDismissed(){
   if(!SUPABASE_URL||!SUPABASE_KEY)return;
-  try{
-    var hds=await sbHeaders();
-    await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({id:'bdlhub_dismissed_actions',key:'bdlhub_dismissed_actions',value:JSON.stringify([...window._actionedKeys])})});
-  }catch(e){}
+  await sbWrite('bdlhub_dismissed_actions',JSON.stringify([...window._actionedKeys]),'Dismissed actions');
 }
 /* ── Escape-to-close overlays + auto-refresh when returning to the tab (keeps laptops in sync) ── */
 let _lastSync=Date.now();
@@ -2878,6 +3181,14 @@ function setSyncStatus(state){
 }
 function updateSyncLabel(){
   const lbl=document.getElementById('sync-label');if(!lbl)return;
+  /* A held write outranks the clock — "SYNCED · 2m AGO" while three renames sit in
+     the queue is the exact lie this version exists to stop telling. */
+  if(window._sbQ&&window._sbQ.size){
+    lbl.textContent=window._sbQ.size+' UNSAVED';
+    const dot=document.getElementById('sync-dot');if(dot)dot.style.background='var(--red)';
+    const wrap=document.getElementById('sync-indicator');if(wrap)wrap.style.color='var(--red)';
+    return;
+  }
   if(!window._lastSyncTime){return;}
   const secs=Math.round((Date.now()-window._lastSyncTime)/1000);
   let t;
@@ -3242,7 +3553,7 @@ function campRow(c){
     }
     const nextDue=daysSince!=null?rf-daysSince:null;
     if(mostUrgent!=null&&mostUrgent<=0){
-      reviewBadge=`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--red-bg);color:var(--red);border:1px solid rgba(255,93,108,.3);white-space:nowrap">⚠ ${Math.abs(mostUrgent)}d overdue</span>`;
+      reviewBadge=`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--red-bg);color:var(--red);border:1px solid rgba(255,93,108,.3);white-space:nowrap">${Math.abs(mostUrgent)}d overdue</span>`;
     } else if(mostUrgent!=null&&mostUrgent<=3){
       reviewBadge=`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--amber-bg);color:var(--amber);border:1px solid rgba(255,181,71,.3);white-space:nowrap">Due in ${mostUrgent}d</span>`;
     } else if(nextDue!=null&&nextDue<=2&&nextDue>=0){
@@ -3257,7 +3568,7 @@ function campRow(c){
       <b>${hl?'<span class="flagdot"></span>':''}${c.alias||c.name}</b>
       <span>${c.asin} · ${c.sku}</span></div>
       <span class="rowact">
-        <button class="btn-sm" title="Log a change for this campaign" onclick="event.stopPropagation();quickLogFor('${c.id}')">⚡ Log</button>
+        <button class="btn-sm" title="Log a change for this campaign" onclick="event.stopPropagation();quickLogFor('${c.id}')">${ico('bolt',13)}Log</button>
         <button class="btn-sm" title="Add a snapshot for this campaign" onclick="event.stopPropagation();addSnapFor('${c.id}')">+ Snap</button>
       </span></div></td>
     <td style="text-align:right"><span style="font-size:11px;color:${c.status==='active'?'var(--green)':'var(--text3)'}">${c.status}</span></td>
@@ -3339,7 +3650,7 @@ function openCamp(id){
     });
     const _urgentDiff=_pendingDiffs.length?Math.min(..._pendingDiffs):null;
     let _chipCol='rgba(91,157,255,.3)',_chipTxt='var(--blue)',_reviewFlag='';
-    if(_urgentDiff!=null&&_urgentDiff<=0){_chipCol='rgba(255,93,108,.4)';_chipTxt='var(--red)';_reviewFlag=' ⚠ '+Math.abs(_urgentDiff)+'d overdue';}
+    if(_urgentDiff!=null&&_urgentDiff<=0){_chipCol='rgba(255,93,108,.4)';_chipTxt='var(--red)';_reviewFlag=' '+Math.abs(_urgentDiff)+'d overdue';}
     else if(_urgentDiff!=null&&_urgentDiff<=3){_chipCol='rgba(255,181,71,.4)';_chipTxt='var(--amber)';_reviewFlag=' — due in '+_urgentDiff+'d';}
     else if(hasPendingChange){_reviewFlag=' — pending';}
     _reviewChip=`<span class="chip" style="color:${_chipTxt};border-color:${_chipCol};cursor:pointer" onclick="switchTab('changes')" title="Click to see changes">${_rfLabel} review${_reviewFlag}</span>`;
@@ -3398,7 +3709,7 @@ async function saveEditCampaign(){
   const status=document.getElementById('ec-status').value;
   const campaignType=document.getElementById('ec-type')?.value||c.campaignType||'Auto Targeting';
   const reviewFreq=parseInt(document.getElementById('ec-review-freq').value)||0;
-  if(!name){document.getElementById('ec-status-msg').textContent='⚠ Campaign name is required';document.getElementById('ec-status-msg').style.color='var(--red)';return;}
+  if(!name){document.getElementById('ec-status-msg').textContent='Campaign name is required';document.getElementById('ec-status-msg').style.color='var(--red)';return;}
   const statusEl=document.getElementById('ec-status-msg');
   statusEl.textContent='Saving…';statusEl.style.color='var(--text3)';
   /* Update in memory immediately so UI reflects changes right away */
@@ -3431,7 +3742,7 @@ async function saveEditCampaign(){
       dbOk=true;
       toast('✓ Saved to Supabase','ok');
     }catch(e){
-      toast('⚠ Supabase save failed — kept on this laptop only','warn');
+      toast('Supabase save failed — kept on this laptop only','warn');
     }
   } else {
     toast('Saved on this laptop only — no Supabase connection','warn');
@@ -3540,7 +3851,7 @@ async function saveNewCampaign(){
   const reviewFreq=parseInt(document.getElementById('ac-review-freq')?.value||14);
 
   if(!name||!product||!asin){
-    document.getElementById('add-camp-status').textContent='⚠ Campaign name, product name and ASIN are required.';
+    document.getElementById('add-camp-status').textContent='Campaign name, product name and ASIN are required.';
     document.getElementById('add-camp-status').style.color='var(--red)';
     return;
   }
@@ -3576,7 +3887,7 @@ async function saveNewCampaign(){
       document.getElementById('add-camp-status').style.color='var(--green)';
     }catch(e){
       console.error('Supabase save failed:',e);
-      document.getElementById('add-camp-status').textContent='⚠ Supabase save failed — saved locally only';
+      document.getElementById('add-camp-status').textContent='Supabase save failed — saved locally only';
       document.getElementById('add-camp-status').style.color='var(--amber)';
     }
   }
@@ -4712,8 +5023,8 @@ function renderPerf(){
           ${tabBtn('targeting','Targeting',tgts.length,startView==='targeting')}
           ${tabBtn('adgroups','Ad Groups',ags.length,startView==='adgroups')}
         </div>
-        ${dataSnap?`<span style="font-size:10.5px;color:var(--text2);font-weight:500">${dataSnap===last?'Latest snapshot':'Data from'}: <b style="color:var(--text)">${dataSnap.date||''}</b></span>`:(hasAnySnap?`<span style="font-size:10.5px;color:var(--amber);font-weight:600">⚠ No CSV data — upload below</span>`:'')}
-        ${leaks?`<span style="font-size:11px;color:var(--amber);font-weight:600">⚠ ${leaks} spend leak${leaks>1?'s':''} — wasted spend with £0 return</span>`:(tgts.length||ags.length?'<span style="font-size:10.5px;color:var(--green)">✓ No spend leaks</span>':'')}
+        ${dataSnap?`<span style="font-size:10.5px;color:var(--text2);font-weight:500">${dataSnap===last?'Latest snapshot':'Data from'}: <b style="color:var(--text)">${dataSnap.date||''}</b></span>`:(hasAnySnap?`<span style="font-size:10.5px;color:var(--amber);font-weight:600">No CSV data — upload below</span>`:'')}
+        ${leaks?`<span style="font-size:11px;color:var(--amber);font-weight:600">${leaks} spend leak${leaks>1?'s':''} — wasted spend with £0 return</span>`:(tgts.length||ags.length?'<span style="font-size:10.5px;color:var(--green)">✓ No spend leaks</span>':'')}
       </div>
       <div id="data-view-targeting" style="display:${startView==='targeting'?'block':'none'};overflow-x:auto;max-height:40vh;overflow-y:auto">
         ${tgts.length?`<table class="simple-tbl" style="min-width:820px">
@@ -4979,7 +5290,7 @@ function renderChanges(){
     });
     const mostUrgent=pendingReviews.sort((a,b)=>a.diff-b.diff)[0];
     if(mostUrgent&&mostUrgent.diff<=0){
-      statusEl.innerHTML=`<span style="color:var(--red);font-weight:600">⚠ ${Math.abs(mostUrgent.diff)}d overdue — "${mostUrgent.what}"</span>`;
+      statusEl.innerHTML=`<span style="color:var(--red);font-weight:600">${Math.abs(mostUrgent.diff)}d overdue — "${mostUrgent.what}"</span>`;
     } else if(mostUrgent&&mostUrgent.diff<=5){
       statusEl.innerHTML=`<span style="color:var(--amber);font-weight:600">Due in ${mostUrgent.diff}d — "${mostUrgent.what}"</span>`;
     } else if(rf>0){
@@ -5178,7 +5489,7 @@ async function saveQuickLog(){
       what=what?(what+' — '+summary):('Bid change — '+summary);
     }
   }
-  if(!date||!what||!why||!review){if(st){st.textContent='⚠ Date, what (or a bid change), why and review date are all required';st.style.color='var(--red)';}return;}
+  if(!date||!what||!why||!review){if(st){st.textContent='Date, what (or a bid change), why and review date are all required';st.style.color='var(--red)';}return;}
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
   if(st){st.textContent='Saving…';st.style.color='var(--text3)';}
   await addChangeToCampaign(c,change);
@@ -5196,7 +5507,7 @@ async function saveChangeEntry(){
   const status=document.getElementById('clf-status');
 
   if(!date||!what||!why||!review){
-    if(status){status.textContent='⚠ Date, what, why and review date are all required';status.style.color='var(--red)';}
+    if(status){status.textContent='Date, what, why and review date are all required';status.style.color='var(--red)';}
     return;
   }
 
@@ -5556,7 +5867,7 @@ function renderProfit(){
   if(!currentPrice&&!hasPPU){
     document.getElementById('tab-profit').innerHTML=`
       <div style="text-align:center;padding:36px 20px">
-        <div style="font-size:28px;margin-bottom:12px">📊</div>
+        <div style="margin-bottom:12px;color:var(--text4)">${ico('chart',30)}</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:8px">Set up profitability tracking</div>
         <div style="font-size:12.5px;color:var(--text3);max-width:440px;margin:0 auto 20px">Add your product's list price and profit per unit to see whether PPC is making you money.</div>
         <div style="display:flex;gap:10px;justify-content:center">
@@ -5720,7 +6031,7 @@ function parsePasteFor(type,text){
     if(previewEl)previewEl.innerHTML=`<div style="margin-top:6px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:9px 10px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
         <span style="font-size:11.5px;font-weight:700;color:var(--green)">✓ Parsed</span>
-        ${tgtLeakCount?`<span style="font-size:10px;font-weight:700;color:var(--amber)">⚠ ${tgtLeakCount} leak${tgtLeakCount>1?'s':''}</span>`:'<span style="font-size:10px;color:var(--green)">No leaks</span>'}
+        ${tgtLeakCount?`<span style="font-size:10px;font-weight:700;color:var(--amber)">${tgtLeakCount} leak${tgtLeakCount>1?'s':''}</span>`:'<span style="font-size:10px;color:var(--green)">No leaks</span>'}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:7px">
         ${[['Spend',gbp(tot.sp),'var(--text)'],['Sales',gbp(tot.sa),'var(--text)'],['ROAS',fmt(totRoas,2),roasCol2]].map(([l,v,c])=>`<div style="background:var(--bg2);border-radius:4px;padding:5px 7px"><div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--text)">${l}</div><div style="font-family:var(--mono);font-size:12.5px;font-weight:800;color:${c};margin-top:1px">${v}</div></div>`).join('')}
@@ -5771,7 +6082,7 @@ function parsePasteFor(type,text){
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">
         <span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);border-radius:4px;padding:2px 7px">${withSales} with sales</span>
-        ${redCount?`<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:4px;padding:2px 7px">⚠ ${redCount} wasting £${leakThresh}+</span>`:''}
+        ${redCount?`<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:4px;padding:2px 7px">${redCount} wasting £${leakThresh}+</span>`:''}
       </div>
     </div>`;
     showSnapParsed();
@@ -6114,7 +6425,7 @@ function renderSearchTerms(){
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;align-items:center">
         <span style="font-size:10.5px;font-weight:700;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 9px">${rows.length} terms</span>
         <span style="font-size:10.5px;font-weight:700;color:var(--green);background:var(--green-bg);border-radius:6px;padding:4px 9px">${withSales} with sales</span>
-        ${red?`<span style="font-size:10.5px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:6px;padding:4px 9px">⚠ ${red} wasting £${leakThresh}+</span>`:''}
+        ${red?`<span style="font-size:10.5px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:6px;padding:4px 9px">${red} wasting £${leakThresh}+</span>`:''}
         <span style="font-size:10.5px;font-weight:700;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 9px">ROAS ${fmt(totRoas,2)}×</span>
       </div>
     </div>
@@ -6356,7 +6667,7 @@ async function saveSnapshot(){
   const _sts0=window._snapSts||[];
   if(!tgts.length&&!ags.length&&!_sts0.length){
     const note=document.getElementById('save-snap-note');
-    if(note){note.textContent='⚠ Import at least one CSV first';note.style.color='var(--red)';}
+    if(note){note.textContent='Import at least one CSV first';note.style.color='var(--red)';}
     return;
   }
   const _fEl=document.getElementById('csv-date-from');
@@ -6366,7 +6677,7 @@ async function saveSnapshot(){
   const period=(document.getElementById('csv-period')?.value||'').trim();
   if(!dateFrom||!dateTo||!period){
     const note=document.getElementById('save-snap-note');
-    if(note){note.textContent='⚠ Set a date range first';note.style.color='var(--red)';}
+    if(note){note.textContent='Set a date range first';note.style.color='var(--red)';}
     return;
   }
   /* Enforce a REAL, ordered date range so every snapshot has a reliably sortable
@@ -6376,15 +6687,15 @@ async function saveSnapshot(){
     const _fd=new Date(dateFrom+'T00:00:00'), _td=new Date(dateTo+'T00:00:00');
     const note=document.getElementById('save-snap-note');
     if(isNaN(_fd)||isNaN(_td)){
-      if(note){note.textContent='⚠ Invalid date range — pick valid From and To dates';note.style.color='var(--red)';}
+      if(note){note.textContent='Invalid date range — pick valid From and To dates';note.style.color='var(--red)';}
       return;
     }
     if(_fd>_td){
-      if(note){note.textContent='⚠ The "From" date must be on or before the "To" date';note.style.color='var(--red)';}
+      if(note){note.textContent='The "From" date must be on or before the "To" date';note.style.color='var(--red)';}
       return;
     }
     if(!parseGbPeriod(period)){
-      if(note){note.textContent='⚠ Could not read the period — re-pick the date range';note.style.color='var(--red)';}
+      if(note){note.textContent='Could not read the period — re-pick the date range';note.style.color='var(--red)';}
       return;
     }
   }
@@ -6637,7 +6948,7 @@ function renderChangeLog(){
     const reviewDue=reviewDate&&reviewDate<=today2&&ch.outcome==='pending';
     const daysUntil=reviewDate?Math.round((reviewDate-today2)/86400000):null;
     const dotCol=ch.outcome==='win'?'var(--green)':ch.outcome==='loss'?'var(--red)':'var(--amber)';
-    const ocTxt=ch.outcome==='win'?'✓ Worked':ch.outcome==='loss'?"✕ Didn't work":(reviewDue?'⚠ Overdue':'◷ Pending');
+    const ocTxt=ch.outcome==='win'?'✓ Worked':ch.outcome==='loss'?"✕ Didn't work":(reviewDue?'Overdue':'◷ Pending');
     /* Reviewed items show WHEN they were reviewed — never an "overdue" label, which
        only makes sense for items still awaiting review. */
     const reviewTxt=reviewed
@@ -6686,7 +6997,7 @@ function renderChangeLog(){
     }).sort((a,b)=>(b.lastDate||'').localeCompare(a.lastDate||''));
     document.getElementById('cl-content').innerHTML=
       `<div style="display:flex;flex-direction:column;gap:7px">`+camps.map(g=>{
-        const overTag=g.overN?`<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:5px;padding:2px 8px">⚠ ${g.overN} overdue</span>`:'';
+        const overTag=g.overN?`<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--red-bg);border-radius:5px;padding:2px 8px">${g.overN} overdue</span>`:'';
         const pendTag=g.pendN?`<span style="font-size:10px;font-weight:700;color:var(--amber);background:var(--amber-bg);border-radius:5px;padding:2px 8px">${g.pendN} pending</span>`:'';
         return `<button onclick="openCampChanges('${g.cid}')" style="all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;padding:12px 15px;background:var(--panel);border:1px solid var(--border);border-radius:10px;transition:.12s" onmouseover="this.style.borderColor='var(--border3)';this.style.background='var(--bg2)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--panel)'">
           <span style="font-size:14px;font-weight:700;color:var(--text)">${g.cname}</span>
@@ -6811,7 +7122,7 @@ async function saveEditChangeLog(){
   const goal=document.getElementById('ecl-goal').value.trim();
   const review=document.getElementById('ecl-review').value;
   const outcome=document.getElementById('ecl-outcome').value;
-  if(!date||!what||!why){document.getElementById('ecl-status-msg').textContent='⚠ Date, what, and why are required';document.getElementById('ecl-status-msg').style.color='var(--red)';return;}
+  if(!date||!what||!why){document.getElementById('ecl-status-msg').textContent='Date, what, and why are required';document.getElementById('ecl-status-msg').style.color='var(--red)';return;}
   /* Update in memory immediately */
   ch.date=date;ch.type=type;ch.what=what;ch.why=why;ch.goal=goal;ch.review=review;ch.outcome=outcome;
   /* Refresh UI immediately */
@@ -6989,9 +7300,11 @@ function openProductPopup(asin,keepTab){
       <div class="ph-ns">${sb||'&nbsp;'}</div></div>`).join('')}</div>
     <div class="ph-tabs">${TABS.map(([k,l])=>`<button class="${k===_ppTab?'on':''}" onclick="ppGo('${k}')">${l}</button>`).join('')}
       <span class="sp"></span>
-      ${MS.length?`<button class="ph-edit" onclick="closeProdPopup();openRepProduct('${_esc(A)}')" title="Full month-by-month P&L, trends and narrative">Full P&amp;L history ↗</button>`:''}
-      <button class="ph-edit" onclick="ppArchive('${_esc(A)}')" title="${isArchived(A)?'Bring it back into the active lists':'Still yours, but you no longer sell it — keep the history, hide it from the active lists'}">${isArchived(A)?'↺ Unarchive':'⇩ Archive'}</button>
-      <button class="ph-edit" onclick="closeProdPopup();openProductEdit('${_esc(A)}')">✎ Edit</button></div>
+      <span class="ph-acts">
+        ${MS.length?`<button class="ph-edit" onclick="closeProdPopup();openRepProduct('${_esc(A)}')" title="Full month-by-month P&L, trends and narrative">P&amp;L history ↗</button>`:''}
+        <button class="ph-edit" onclick="ppArchive('${_esc(A)}')" title="${isArchived(A)?'Bring it back into the active lists':'Still yours, but you no longer sell it — keep the history, hide it from the active lists'}">${isArchived(A)?'↺ Unarchive':'⇩ Archive'}</button>
+        <button class="ph-edit" onclick="closeProdPopup();openProductEdit('${_esc(A)}')" title="Edit name, SKU and status">✎ Edit</button>
+      </span></div>
   </div>`;
 
   /* ── OVERVIEW ── the one screen that answers "is this product making money" ── */
@@ -8241,7 +8554,7 @@ function _renderSnapModal(){
     <span class="chip" style="color:var(--green)">£${fmt(a.sales,2)} sales</span>
     <span class="chip" style="color:var(--blue)">£${fmt(a.spend,2)} spend</span>
     <span class="chip">${intf(a.orders)} orders</span>
-    ${a.leaks?`<span class="chip" style="color:var(--amber)">⚠ ${a.leaks} leak${a.leaks>1?'s':''}</span>`:'<span class="chip" style="color:var(--green)">✓ No leaks</span>'}`;
+    ${a.leaks?`<span class="chip" style="color:var(--amber)">${a.leaks} leak${a.leaks>1?'s':''}</span>`:'<span class="chip" style="color:var(--green)">✓ No leaks</span>'}`;
 
   let bodyHtml='';
   rows.sort((x,y)=>y.s.spend-x.s.spend).forEach(({c,s})=>{
@@ -8731,7 +9044,7 @@ function settingsDirty(){document.getElementById('cfg-status').textContent='Unsa
 function saveSupabaseConfig(){
   const url=document.getElementById('cfg-url').value.trim();
   const key=document.getElementById('cfg-key').value.trim();
-  if(!url||!key){document.getElementById('cfg-status').textContent='⚠ Both URL and key required';return;}
+  if(!url||!key){document.getElementById('cfg-status').textContent='Both URL and key required';return;}
   SUPABASE_URL=url;SUPABASE_KEY=key;
   document.getElementById('cfg-status').textContent='Connecting…';
   loadMatchColours();
@@ -8779,14 +9092,14 @@ async function checkAndMigrateSchema(){
     if(!hasReviewFreq)missing.push('ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS review_freq_days integer DEFAULT 14;');
     const sql=missing.join('\n');
     infoEl.innerHTML=`
-      <div style="color:var(--amber);font-weight:700;margin-bottom:8px">⚠ Missing columns: ${[!hasTj?'targeting_json':'',!hasAg?'ad_groups_json':''].filter(Boolean).join(', ')}</div>
+      <div style="color:var(--amber);font-weight:700;margin-bottom:8px">Missing columns: ${[!hasTj?'targeting_json':'',!hasAg?'ad_groups_json':''].filter(Boolean).join(', ')}</div>
       <div style="color:var(--text2);margin-bottom:10px">These columns store your CSV data. Without them, keyword and ad group data can't be saved or loaded. Run this SQL in your Supabase project → SQL Editor:</div>
       <pre style="background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:11px;font-family:var(--mono);white-space:pre-wrap;margin:0 0 10px;color:var(--green)">${sql}</pre>
       <div style="display:flex;gap:8px">
         <button onclick="navigator.clipboard.writeText('${sql.replace(/'/g,"\'")}').then(()=>this.textContent='Copied ✓')" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;font-family:var(--font)">Copy SQL</button>
         <a href="${url.replace('/rest/v1','').replace('https://','https://')}/project/default/sql" target="_blank" style="display:inline-flex;align-items:center;background:var(--blue-bg);border:1px solid rgba(91,157,255,.3);color:var(--blue);font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;font-family:var(--font);text-decoration:none">Open Supabase SQL Editor ↗</a>
       </div>`;
-    document.getElementById('cfg-status').textContent='⚠ Schema needs updating';
+    document.getElementById('cfg-status').textContent='Schema needs updating';
     document.getElementById('cfg-status').style.color='var(--amber)';
   }catch(e){
     infoEl.innerHTML='<span style="color:var(--red)">Error checking schema: '+e.message+'</span>';
@@ -8922,11 +9235,11 @@ function renderSettings(){
   /* Populate filter preset buttons (fixes template literal bug) */
   const fp=document.getElementById('cfg-filter-presets');
   if(fp&&!fp.querySelector('button')){
-    fp.innerHTML=[['active','🟢 Active only'],['paused','⏸ Paused'],['high-spend','💸 High spend'],
-      ['low-roas','📉 Low ROAS'],['high-acos','⚠ High ACOS'],['no-sales','🔴 No sales / leaks'],
+    fp.innerHTML=[['active','Active only'],['paused','Paused'],['high-spend','High spend'],
+      ['low-roas','Low ROAS'],['high-acos','High ACOS'],['no-sales','No sales / leaks'],
       ['no-impressions','👁 No impressions'],['needs-review','🔔 Needs review'],
-      ['recently-changed','✏ Recently changed'],['has-notes','📝 Has notes'],
-      ['has-targeting','🎯 Has targeting CSV'],['has-ads','📦 Has ad group CSV']].map(([v,l])=>
+      ['recently-changed','✏ Recently changed'],['has-notes','Has notes'],
+      ['has-targeting','Has targeting CSV'],['has-ads','Has ad group CSV']].map(([v,l])=>
       `<button class="tog on" data-flt="${v}" onclick="this.classList.toggle('on')" style="font-size:10.5px;padding:4px 10px">${l}</button>`).join('');
   }
   renderPriceHistory();
@@ -9147,9 +9460,9 @@ function renderDashPeriod(){
        it obvious when the VA isn't exporting the search-term data */
     const stN=campaigns.filter(c=>(c.snapshots||[]).some(s=>s.searchTerms&&s.searchTerms.length)).length;
     const stHtml=stN<campaigns.length
-      ?` · <span style="color:var(--amber);cursor:pointer;font-weight:700;text-decoration:underline dotted" title="Click to open a ready-to-send brief for the team" onclick="openStaffBrief()">⚠ ${stN} of ${campaigns.length} have search terms — brief the team</span>`
+      ?` · <span style="color:var(--amber);cursor:pointer;font-weight:700;text-decoration:underline dotted" title="Click to open a ready-to-send brief for the team" onclick="openStaffBrief()">${stN} of ${campaigns.length} have search terms — brief the team</span>`
       :` · <span style="color:var(--green)">✓ search terms on all campaigns</span>`;
-    if(miss>0){cov.innerHTML=`<span style="color:var(--amber)">⚠ ${a.matched} of ${campaigns.length} campaigns have data</span> · ${miss} without data this period${stHtml}`;}
+    if(miss>0){cov.innerHTML=`<span style="color:var(--amber)">${a.matched} of ${campaigns.length} campaigns have data</span> · ${miss} without data this period${stHtml}`;}
     else{cov.innerHTML=a.matched+' of '+campaigns.length+' campaigns have data'+stHtml;}}
   _dashRenderedOnce=true;_dashDirty=false;
 }
@@ -9187,7 +9500,7 @@ function renderDataIssues(){
       </div>`;
   el.innerHTML=`<div style="background:var(--bg2);border:1px solid ${head}55;border-left:3px solid ${head};border-radius:var(--r);padding:10px 14px">
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <span style="font-size:13px">⚠</span>
+      <span style="font-size:13px">${ico('warn',13)}</span>
       <span style="font-size:12.5px;font-weight:700;color:${head}">${issues.length} campaign${issues.length!==1?'s':''} with missing or stale data</span>
       <span style="font-size:11px;color:var(--text3)">${red?red+' with no data at all · ':''}stale = no period ending in the last 45 days</span>
       <button class="btn-sm" style="margin-left:auto" onclick="window._diOpen=!window._diOpen;renderDataIssues()">${open?'Hide list ▴':'Show all ▾'}</button>
@@ -9602,7 +9915,7 @@ function renderDashQuickWins(){
     const pv=c.snapshots[c.snapshots.length-2];
     /* High ROAS exact keywords — scale candidates */
     (ls.targeting||[]).filter(t=>t.roas>=6&&t.sales>0&&t.match==='Exact').forEach(t=>{
-      wins.push({icon:'🚀',text:'Scale: '+t.kw,sub:'Exact · ROAS '+fmt(t.roas,2)+'× — increase bid 10-15%',col:'var(--green)',pri:1});
+      wins.push({icon:ico('trend'),text:'Scale: '+t.kw,sub:'Exact · ROAS '+fmt(t.roas,2)+'× — increase bid 10-15%',col:'var(--green)',pri:1});
     });
     /* Spend leaks */
     (ls.targeting||[]).filter(t=>t.spend>=2&&t.sales===0).forEach(t=>{
@@ -9614,7 +9927,7 @@ function renderDashQuickWins(){
     });
     /* Declining ROAS */
     if(pv&&pv.roas>4&&c.roas<4){
-      wins.push({icon:'🔍',text:'Review: '+c.alias,sub:'ROAS dropped from '+fmt(pv.roas,2)+'× to '+fmt(c.roas,2)+'× — audit budget & bids',col:'var(--amber)',pri:1});
+      wins.push({icon:ico('search'),text:'Review: '+c.alias,sub:'ROAS dropped from '+fmt(pv.roas,2)+'× to '+fmt(c.roas,2)+'× — audit budget & bids',col:'var(--amber)',pri:1});
     }
   });
   wins.sort((a,b)=>a.pri-b.pri);
@@ -9744,7 +10057,7 @@ function renderDashKPIs(period,cmpPeriod){
         <span style="font-family:var(--display);font-size:33px;font-weight:800;letter-spacing:-1.4px;color:${roasCol};line-height:1">${fmt(cur.roas,2)}</span>
         ${cmp?dTag(cur.roas,cmp.roas,true):'<span style="font-size:10px;color:var(--text4)">vs prev</span>'}
       </div>
-      <div style="font-size:10.5px;color:${roasCol};font-weight:700;margin-bottom:10px">${roasColor(cur.roas)==='var(--green)'?'✓ Above '+fmt(cfgTargetRoas(),1)+'× target':roasColor(cur.roas)==='var(--amber)'?'⚠ Below '+fmt(cfgTargetRoas(),1)+'× target — watch closely':'✕ Below target — action needed'}</div>
+      <div style="font-size:10.5px;color:${roasCol};font-weight:700;margin-bottom:10px">${roasColor(cur.roas)==='var(--green)'?'✓ Above '+fmt(cfgTargetRoas(),1)+'× target':roasColor(cur.roas)==='var(--amber)'?'Below '+fmt(cfgTargetRoas(),1)+'× target — watch closely':'✕ Below target — action needed'}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px">
         ${[['ACOS',cur.acos>0?fmt(cur.acos,1)+'%':'—'],['CTR',cur.ctr>0?fmt(cur.ctr,2)+'%':'—'],['Impr',intf(cur.impressions||0)],['Clicks',intf(cur.clicks||0)]].map(([l,v])=>`<div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:5px 8px"><div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">${l}</div><div style="font-size:12px;font-weight:700;color:var(--text);margin-top:1px">${v}</div></div>`).join('')}
       </div>
@@ -9886,24 +10199,24 @@ function renderDashAttention(){
     }
   }
   A.forEach(c=>{
-    if(c.noSaleSpend)flags.push({col:'var(--red)',icon:'🔴',text:c.alias||c.name,sub:'Spending £'+fmt(c.spend,2)+' — zero sales. Pause immediately.',id:c.id});
+    if(c.noSaleSpend)flags.push({col:'var(--red)',icon:ico('alert'),text:c.alias||c.name,sub:'Spending £'+fmt(c.spend,2)+' — zero sales. Pause immediately.',id:c.id});
     else if(c.rag==='r')flags.push({col:'var(--red)',icon:'↘',text:c.alias||c.name,sub:'ROAS '+fmt(c.roas,2)+'× — below 4.0× target',id:c.id});
     else{
       const ls=c.snapshots[c.snapshots.length-1];
       const pv=c.snapshots[c.snapshots.length-2];
       if(pv&&ls&&pv.spend>5){
         const spendInc=(ls.spend-pv.spend)/pv.spend;
-        if(spendInc>0.3&&ls.roas<pv.roas)flags.push({col:'var(--amber)',icon:'💸',text:c.alias||c.name,sub:'Spend ↑'+Math.round(spendInc*100)+'% but ROAS declining',id:c.id});
+        if(spendInc>0.3&&ls.roas<pv.roas)flags.push({col:'var(--amber)',icon:ico('coin'),text:c.alias||c.name,sub:'Spend ↑'+Math.round(spendInc*100)+'% but ROAS declining',id:c.id});
       }
       if(pv&&ls&&pv.impressions>50){
         const drop=(pv.impressions-ls.impressions)/pv.impressions;
-        if(drop>0.35)flags.push({col:'var(--amber)',icon:'📉',text:c.alias||c.name,sub:'Impressions dropped '+Math.round(drop*100)+'% — listing or budget issue?',id:c.id});
+        if(drop>0.35)flags.push({col:'var(--amber)',icon:ico('down'),text:c.alias||c.name,sub:'Impressions dropped '+Math.round(drop*100)+'% — listing or budget issue?',id:c.id});
       }
     }
     /* High ACOS keywords */
     const ls2=c.snapshots[c.snapshots.length-1]||{};
     (ls2.targeting||[]).forEach(t=>{
-      if(t.spend>=2&&t.sales>0&&t.spend/t.sales*100>50)flags.push({col:'var(--amber)',icon:'⚠',text:t.kw||'Keyword',sub:c.alias+' · ACOS '+fmt(t.spend/t.sales*100,0)+'% — consider reducing bid',id:c.id});
+      if(t.spend>=2&&t.sales>0&&t.spend/t.sales*100>50)flags.push({col:'var(--amber)',icon:ico('warn'),text:t.kw||'Keyword',sub:c.alias+' · ACOS '+fmt(t.spend/t.sales*100,0)+'% — consider reducing bid',id:c.id});
     });
   });
   const sectionHdr='<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)">Needs Attention</span>'+(flags.length?`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--red-bg);color:var(--red)">${Math.min(flags.length,6)}</span>`:'')+'</div>';
@@ -10003,7 +10316,7 @@ async function saveGlobalChange(){
   const goal=document.getElementById('gcl-goal').value.trim();
   const status=document.getElementById('gcl-status');
   if(!date||!what||!why||!review){
-    if(status){status.textContent='⚠ All fields marked * are required';status.style.color='var(--red)';}
+    if(status){status.textContent='All fields marked * are required';status.style.color='var(--red)';}
     return;
   }
   const change={type,date,what,why,goal,outcome:'pending',outcomeNote:'',review};
@@ -10050,7 +10363,7 @@ loadFromSupabase().then(()=>{
   if(window._missingTargetingCol){
     const b=document.createElement('div');
     b.style.cssText='position:fixed;bottom:20px;right:20px;background:var(--amber-bg,#2a200a);border:1px solid var(--amber,var(--amber));color:var(--amber,var(--amber));padding:11px 16px;border-radius:10px;font-size:12px;font-weight:600;z-index:9999;max-width:320px;line-height:1.5;cursor:pointer';
-    b.innerHTML='⚠ Supabase schema needs updating — CSV data cannot save.<br><span style="font-weight:400;font-size:11px">Go to Settings → Check schema for the SQL fix.</span>';
+    b.innerHTML='Supabase schema needs updating — CSV data cannot save.<br><span style="font-weight:400;font-size:11px">Go to Settings → Check schema for the SQL fix.</span>';
     b.onclick=()=>{document.querySelector('[data-p=settings]')?.click();setTimeout(()=>checkAndMigrateSchema(),300);b.remove();};
     document.body.appendChild(b);
     setTimeout(()=>b?.remove(),12000);
@@ -10083,7 +10396,7 @@ function showSnapParsed(){
   const leaks=tgts.filter(r=>r.spend>0&&r.sales===0);
 
   if(leakBadge)leakBadge.innerHTML=leaks.length
-    ?`<span style="font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber);padding:2px 9px;border-radius:5px">⚠ ${leaks.length} spend leak${leaks.length>1?'s':''}</span>`
+    ?`<span style="font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber);padding:2px 9px;border-radius:5px">${leaks.length} spend leak${leaks.length>1?'s':''}</span>`
     :'<span style="font-size:11px;font-weight:600;color:var(--green)">✓ No leaks</span>';
 
   /* Hero KPIs — ROAS coloured, everything else white */
@@ -10297,6 +10610,7 @@ async function sbLoadReport(){
       if(remote&&Array.isArray(remote.months)){
         /* Supabase is authoritative — no timestamp race, nothing local to lose */
         repData=remote;
+        await repRevSync();          /* we are now level with Supabase */
         const ms=repSortedMonths();
         if(!repMonth()&&ms.length)repCur=ms[ms.length-1].id;
         if(document.getElementById('page-report')?.classList.contains('active'))renderReport();
@@ -10325,6 +10639,22 @@ async function sbSaveReport(){
         }
       }
     }
+    /* ── COMPARE AND SWAP ────────────────────────────────────────────────────
+       The live poll runs every 12 seconds, which leaves a 12-second window where
+       Jack can save on top of a change his VA made and neither of them ever hears
+       about it. The report is one JSON blob, so that is not a merge — it is one of
+       them losing an afternoon.
+
+       The blob is ~148KB, far too big to re-read before every save, and the table's
+       updated_at column is not maintained by a trigger (it reads a day stale), so
+       neither can act as the guard. A tiny companion row can: 51 bytes, written
+       after every successful save, checked before the next one. */
+    const clash=await repRevCheck();
+    if(clash){
+      window._repWriting=false;
+      openRepConflict(clash);
+      return;
+    }
     const _body=JSON.stringify({id:'monthly_report_v1',key:'monthly_report_v1',value:JSON.stringify(repData)});
     /* keepalive lets a write survive the tab being closed, but the browser caps it at
        64KB and a full year of products is well past that — so only ask for it when the
@@ -10335,6 +10665,7 @@ async function sbSaveReport(){
     if(!_res.ok)throw new Error('HTTP '+_res.status);
     window._repSaveFailed=false;
     _liveSeen=+repData.updatedAt||0;   /* our own write must not read as someone else's */
+    repRevStamp(+repData.updatedAt||Date.now());
     try{setSyncStatus('synced');}catch(e){}
   }catch(e){
     console.warn('report save',e);
@@ -10342,10 +10673,10 @@ async function sbSaveReport(){
     try{setSyncStatus('error');}catch(_){}
     if(!window._repSaveFailed){
       window._repSaveFailed=true;
-      try{toast('⚠ Save failed — your latest change is NOT in Supabase yet. Retrying…','warn');}catch(_){}
+      try{toast('Save failed — your latest change is NOT in Supabase yet. Retrying…','warn');}catch(_){}
       setTimeout(()=>{try{sbSaveReport();}catch(_){}},4000);
     } else {
-      try{toast('⚠ Still cannot save to Supabase. Check your connection and edit any cell to trigger another save.','warn');}catch(_){}
+      try{toast('Still cannot save to Supabase. Check your connection and edit any cell to trigger another save.','warn');}catch(_){}
     }
   }
 }
@@ -10360,10 +10691,12 @@ document.addEventListener('visibilitychange',()=>{
   }
 });
 window.addEventListener('beforeunload',e=>{
-  if(_repSaveT||window._repWriting||window._repSaveFailed){
+  if(_repSaveT||window._repWriting||window._repSaveFailed||(window._sbQ&&window._sbQ.size)){
     if(_repSaveT){clearTimeout(_repSaveT);_repSaveT=null;window._repUnloading=true;try{sbSaveReport();}catch(_){}}
     e.preventDefault();
-    e.returnValue='Your latest change is still saving to Supabase.';
+    e.returnValue=(window._sbQ&&window._sbQ.size)
+      ? window._sbQ.size+' change'+(window._sbQ.size===1?'':'s')+' have not saved to Supabase yet.'
+      : 'Your latest change is still saving to Supabase.';
   }
 });
 /* ══════════ v109 — SUPABASE IS THE ONLY SOURCE OF TRUTH ══════════
@@ -10517,10 +10850,162 @@ async function liveTakeTheirs(){
   try{renderReport();}catch(e){}
   toast('Loaded the newer version','ok');
 }
+
+/* ══════════ v115 — NOBODY'S AFTERNOON GETS OVERWRITTEN ══════════
+   window._repTab, not a const: this file is one giant script and a top-level const
+   read during boot is the TDZ trap that has hung this app before. */
+const REP_REV_ID='bdlhub_report_rev';
+window._repTab=window._repTab||('t'+Math.floor(Math.random()*1e9).toString(36)+Date.now().toString(36).slice(-4));
+window._repRev=window._repRev||null;      /* the revision this tab is level with */
+
+async function repRevRead(){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return null;
+  try{
+    const h=await sbHeaders();
+    const r=await fetch(SUPABASE_URL+'/rest/v1/settings?id=eq.'+REP_REV_ID+'&select=value',{headers:h});
+    if(!r.ok)return null;
+    const rows=await r.json();
+    if(!rows[0]||!rows[0].value)return null;
+    const v=JSON.parse(rows[0].value)||{};
+    return {at:+v.at||0, by:String(v.by||''), tab:String(v.tab||'')};
+  }catch(e){return null;}
+}
+/* Called after a load: whatever is out there, we are level with it now. */
+async function repRevSync(){
+  const rev=await repRevRead();
+  window._repRev=rev||{at:+((repData||{}).updatedAt)||0,by:'',tab:window._repTab};
+}
+function repRevStamp(at){
+  window._repRev={at:at,by:'',tab:window._repTab};
+  /* fire and forget — sbWrite queues and retries it if the network is down */
+  try{sbWrite(REP_REV_ID,JSON.stringify({at:at,tab:window._repTab,when:new Date().toISOString()}),'Report revision marker');}catch(e){}
+}
+/* Returns null when it is safe to write, or the other side's data when it is not. */
+async function repRevCheck(){
+  if(!window._repRev)return null;                 /* never loaded — nothing to clash with */
+  const rev=await repRevRead();
+  if(!rev||!rev.at)return null;                   /* no marker yet — first save wins, fine */
+  if(rev.tab===window._repTab)return null;        /* our own last write */
+  if(rev.at<=window._repRev.at)return null;       /* nothing new since we synced */
+  /* Somebody else has written since we last loaded. Pull theirs to compare — this is
+     the one time the 148KB is worth fetching. */
+  try{
+    const h=await sbHeaders();
+    const r=await fetch(SUPABASE_URL+'/rest/v1/settings?id=eq.monthly_report_v1&select=value',{headers:h});
+    if(!r.ok)return null;
+    const rows=await r.json();
+    const theirs=repMigrate(JSON.parse((rows[0]||{}).value||'{}'));
+    if(!theirs||!Array.isArray(theirs.months))return null;
+    return {theirs:theirs, rev:rev};
+  }catch(e){return null;}
+}
+
+/* ── What actually differs, month by month ──────────────────────────────────
+   Most real clashes are disjoint: Jack imports August while his VA fixes July.
+   That is not a conflict at all, it is a merge, and the app should just do it.
+   Only a month BOTH sides changed needs him to choose. */
+function repDiffMonths(mine,theirs){
+  const sig=m=>JSON.stringify((m.rows||[]).map(r=>[r.asin,r.sales,r.profit,r.ads,r.units,r.adSales,r.adUnits,r.rank,r.name]));
+  const A={},B={};
+  (mine.months||[]).forEach(m=>A[m.id]=m);
+  (theirs.months||[]).forEach(m=>B[m.id]=m);
+  const onlyMine=[],onlyTheirs=[],both=[],same=[];
+  Object.keys(A).forEach(id=>{
+    if(!B[id])onlyMine.push(A[id]);
+    else if(sig(A[id])===sig(B[id]))same.push(A[id]);
+    else both.push({id:id,mine:A[id],theirs:B[id]});
+  });
+  Object.keys(B).forEach(id=>{if(!A[id])onlyTheirs.push(B[id]);});
+  return {onlyMine,onlyTheirs,both,same};
+}
+function openRepConflict(clash){
+  const d=repDiffMonths(repData,clash.theirs);
+  window._repClash={clash:clash,diff:d};
+  const when=clash.rev.at?new Date(clash.rev.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'just now';
+  const lbl=m=>_esc(m.label||m.id)+' <span class="rc-n">'+((m.rows||[]).length)+' rows</span>';
+  const clean=!d.both.length;
+  let el=document.getElementById('rep-conflict-overlay');
+  if(!el){
+    el=document.createElement('div');el.id='rep-conflict-overlay';el.className='overlay';
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`<div class="popout" style="max-width:620px">
+    <div class="po-h"><div><b>Someone else saved at ${_esc(when)}</b>
+      <div class="po-sub">Your change has not been written yet. Nothing is lost — pick what happens next.</div></div>
+      <button class="po-x" onclick="closeRepConflict()">&times;</button></div>
+    <div class="po-b">
+      ${clean?`<div class="rc-ok"><b>These do not overlap.</b> You and they changed different months, so both sets of work can be kept.</div>`
+             :`<div class="rc-bad"><b>${d.both.length} month${d.both.length===1?'':'s'} changed on both sides.</b> Only one version of ${d.both.length===1?'it':'those'} can survive.</div>`}
+      <div class="rc-cols">
+        <div class="rc-col"><div class="rc-h">Only on this screen</div>
+          ${d.onlyMine.length?d.onlyMine.map(m=>`<div class="rc-i">${lbl(m)}</div>`).join(''):'<div class="rc-e">nothing</div>'}</div>
+        <div class="rc-col"><div class="rc-h">Only in Supabase</div>
+          ${d.onlyTheirs.length?d.onlyTheirs.map(m=>`<div class="rc-i">${lbl(m)}</div>`).join(''):'<div class="rc-e">nothing</div>'}</div>
+        <div class="rc-col"><div class="rc-h">Changed on both</div>
+          ${d.both.length?d.both.map(b=>`<div class="rc-i clash">${_esc(b.mine.label||b.id)}
+            <span class="rc-n">yours ${(b.mine.rows||[]).length} rows · theirs ${(b.theirs.rows||[]).length}</span></div>`).join(''):'<div class="rc-e">nothing</div>'}</div>
+      </div>
+      ${d.same.length?`<div class="rc-same">${d.same.length} month${d.same.length===1?'':'s'} identical on both sides.</div>`:''}
+    </div>
+    <div class="po-f">
+      <button class="btn ghost" onclick="repClashTakeTheirs()">Discard mine, load theirs</button>
+      <div style="flex:1"></div>
+      ${clean?`<button class="btn" onclick="repClashMerge()">Keep both</button>`
+             :`<button class="btn ghost" onclick="repClashMerge()">Keep both, mine wins the overlap</button>
+               <button class="btn" onclick="repClashKeepMine()">Overwrite with mine</button>`}
+    </div></div>`;
+  el.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeRepConflict(){
+  const el=document.getElementById('rep-conflict-overlay');
+  if(el)el.classList.remove('open');
+  document.body.style.overflow='';
+}
+async function repClashTakeTheirs(){
+  closeRepConflict();
+  clearTimeout(_repSaveT);_repSaveT=null;
+  window._repSaveFailed=false;
+  await sbLoadReport();
+  try{renderReport();}catch(e){}
+  toast('Loaded their version','ok');
+}
+function repClashKeepMine(){
+  closeRepConflict();
+  /* deliberate overwrite: move our marker past theirs so the guard lets it through */
+  window._repRev={at:(window._repClash?.clash.rev.at||0)+1,by:'',tab:window._repTab};
+  repData.updatedAt=Date.now();
+  sbSaveReport();
+  toast('Saving your version over theirs','warn');
+}
+function repClashMerge(){
+  const C=window._repClash; if(!C){closeRepConflict();return;}
+  closeRepConflict();
+  /* Their months, then ours on top — so a month only they have is kept, and a month
+     both sides touched resolves to the copy on this screen (which is what the button
+     says it does). */
+  const out={}; (C.clash.theirs.months||[]).forEach(m=>out[m.id]=m);
+  (repData.months||[]).forEach(m=>out[m.id]=m);
+  repData.months=Object.keys(out).map(k=>out[k]);
+  repData.updatedAt=Date.now();
+  window._repRev={at:(C.clash.rev.at||0)+1,by:'',tab:window._repTab};
+  sbSaveReport();
+  try{renderReport();}catch(e){}
+  const kept=C.diff.onlyTheirs.length;
+  toast(kept?'Merged — kept '+kept+' month'+(kept===1?'':'s')+' of theirs':'Merged','ok');
+}
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'){liveStart();livePoll();}
 });
 setTimeout(liveStart,3000);
+
+/* The report table no longer scrolls inside its own box — the PAGE scrolls, the header
+   sticks under the two navs (48px + 36px) and the totals row sticks to the bottom of
+   the window. Every product stays reachable and the total is always in view.
+   (An earlier version sized an inner scrollbox to the free space on screen; with the
+   KPI band and toolbar above it that free space is small, so the table collapsed to
+   three rows. Constraining the table was the wrong instinct.) */
+function repFitTable(){}
 
 function repSelectMonth(id){repCur=id;renderReport();}
 function repSortBy(k){if(_repSort.k===k)_repSort.dir*=-1;else _repSort={k,dir:k==='name'?1:-1};renderReport();}
@@ -10597,7 +11082,10 @@ function renderReport(){
     {k:'ads',   l:'Ad spend',    v:gbp(t.ads),    c:'var(--amber)', d:dl(t.ads,pt?.ads,false,true),s:t.sales?fmt(t.ads/t.sales*100,1)+'% of sales':''},
     {k:'units', l:'Units',       v:intf(t.units), c:'var(--purple)',d:dl(t.units,pt?.units,true,false),
       /* only claim the split when the advertised-units column was actually imported */
-      s:repAdsKnown(m)?(intf(t.organic)+' organic + '+intf(t.adUnits)+' ads')
+      /* the split as a share, not just counts — "27% organic" answers "how much of
+         this business do I actually own" in a way two raw numbers do not */
+      s:repAdsKnown(m)?(t.units?`${intf(t.organic)} organic (${fmt(t.organic/t.units*100,0)}%) + ${intf(t.adUnits)} ads (${fmt(t.adUnits/t.units*100,0)}%)`
+                               :(intf(t.organic)+' organic + '+intf(t.adUnits)+' ads'))
                       :(repAdSpendKnown(m)?'organic / ad split not in this import':'no ads data')},
     {k:'real',  l:'Real profit', v:gbp(t.real),   c:t.real>=0?'var(--green)':'var(--red)', d:dl(t.real,pt?.real,true,true),hero:true},
     {k:'margin',l:'Real margin', v:fmt(margin,1)+'%', c:margin>=15?'var(--green)':margin>=8?'var(--amber)':'var(--red)', d:dl(margin,pmargin,true,false,1),s:'of sales'},
@@ -10636,26 +11124,27 @@ function renderReport(){
   if(mEl){
     if(ms.length>=2){
       const mt=ms.map(x=>({m:x,t:repTotals(x)}));
-      const vals=mt.map(o=>o.t.real);
-      const mn=Math.min(...vals,0),mx=Math.max(...vals,0),rng=(mx-mn)||1;
-      const w=Math.max(150,ms.length*34),h=34;
-      const pts=mt.map((o,i)=>[(i/(mt.length-1))*(w-10)+5,h-5-((o.t.real-mn)/rng)*(h-10)]);
-      const dd=pts.map((pt,i)=>(i?'L':'M')+pt[0].toFixed(1)+' '+pt[1].toFixed(1)).join(' ');
-      const lastUp=vals[vals.length-1]>=(vals[vals.length-2]||0);
-      const sparkSvg=`<svg width="${w}" height="${h}" style="display:block"><path d="${dd}" fill="none" stroke="${lastUp?'var(--green)':'var(--red)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${pts.map((pt,i)=>`<circle cx="${pt[0].toFixed(1)}" cy="${pt[1].toFixed(1)}" r="${mt[i].m.id===repCur?3.5:2.2}" fill="${mt[i].m.id===repCur?'var(--blue)':(mt[i].t.real>=0?'var(--green)':'var(--red)')}"/>`).join('')}</svg>`;
-      mEl.style.display='';
+      /* The old strip drew a 34px line chart next to the pills — at three months it was
+         a diagonal stroke, and at twelve it would be an illegible scribble. The pills
+         already carry a bar each, so the shape is in the row itself. */
       const pmax=Math.max(...mt.map(o=>Math.abs(o.t.real)),1);
+      const best=Math.max(...mt.map(o=>o.t.real));
+      mEl.style.display='';
       mEl.innerHTML=`<div class="mstrip">
-        <div class="mstrip-k"><span>Real profit</span><b>by month</b>${sparkSvg}</div>
-        <div class="mstrip-l">${mt.map(o=>{
-          const pos=o.t.real>=0;
-          return`<button class="mpill${o.m.id===repCur?' on':''}" onclick="repSelectMonth('${o.m.id}')" title="${_esc(o.m.label)} · sales ${gbp(o.t.sales)} · ${intf(o.t.units)} units">
-            <span class="mp-l">${_esc(o.m.label.replace(/\s*20\d\d/,''))}</span>
+        <span class="ms-k">Real profit<em>${mt.length} months</em></span>
+        <div class="ms-l" id="ms-scroll">${mt.map(o=>{
+          const pos=o.t.real>=0, isBest=o.t.real===best&&mt.length>2;
+          return`<button class="mpill${o.m.id===repCur?' on':''}" onclick="repSelectMonth('${o.m.id}')"
+            title="${_esc(o.m.label)} · ${gbp(o.t.sales)} sales · ${intf(o.t.units)} units · ${gbp(o.t.ads)} ads">
+            <span class="mp-l">${_esc(o.m.label.replace(/\s*20\d\d/,''))}${isBest?'<i class="mp-best" title="Best month so far">★</i>':''}</span>
             <span class="mp-v" style="color:${pos?'var(--green)':'var(--red)'}">${pos?'+':'−'}${gbp(Math.abs(o.t.real))}</span>
             <span class="mp-bar"><i style="width:${Math.max(4,Math.abs(o.t.real)/pmax*100).toFixed(0)}%;background:${pos?'var(--green)':'var(--red)'}"></i></span>
           </button>`;}).join('')}</div>
         <button class="mpill add" onclick="openMonthImport()" title="Import another month">+ Month</button>
       </div>`;
+      /* keep the open month in view once there are more months than fit */
+      setTimeout(()=>{const sc=document.getElementById('ms-scroll'),on=sc&&sc.querySelector('.mpill.on');
+        if(sc&&on)sc.scrollLeft=Math.max(0,on.offsetLeft-sc.clientWidth/2+on.offsetWidth/2);},0);
     }else{mEl.style.display='none';mEl.innerHTML='';}
   }
   /* insight chips */
@@ -10708,20 +11197,19 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
         const pr=r.asin?pByA[r.asin.toUpperCase()]:null;
         return pr?{r,d:repRowReal(r)-repRowReal(pr)}:null;
       }).filter(x=>x&&Math.abs(x.d)>=0.005).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
-      const up=moved.filter(x=>x.d>0).slice(0,5),dn=moved.filter(x=>x.d<0).slice(0,5);
-      const maxAbs=Math.max(...moved.slice(0,10).map(x=>Math.abs(x.d)),1);
-      const bar=x=>`<div class="ins-c-row" onclick="openRepRow(${(m.rows||[]).indexOf(x.r)})">
-        <span class="ins-c-name" title="${_esc(x.r.name||'')}">${_esc(lavName(x.r.asin)||x.r.name||'—')}</span>
-        <span class="ins-c-bar"><i style="width:${Math.max(2,Math.round(Math.abs(x.d)/maxAbs*100))}%;background:${x.d>0?'var(--green)':'var(--red)'}"></i></span>
-        <span class="ins-c-val" style="color:${x.d>0?'var(--green)':'var(--red)'}">${x.d>0?'+':'−'}${gbp(Math.abs(x.d))}</span></div>`;
+      const up=moved.filter(x=>x.d>0).slice(0,3),dn=moved.filter(x=>x.d<0).slice(0,3);
+      /* compact: a name and a number, no bars — the full picture is one click away in
+         Analysis, and this strip only has to say "these three moved it" */
+      const chip=x=>`<span class="mv-c" onclick="openRepProduct('${_esc(x.r.asin||'')}')" title="${_esc(repFullName(x.r))}">
+        <b>${_esc((lavName(x.r.asin)||repName(x.r)||'—').slice(0,26))}</b>
+        <i style="color:${x.d>0?'var(--green)':'var(--red)'}">${x.d>0?'+':'−'}${gbp(Math.abs(x.d))}</i></span>`;
       mvEl.style.display=(up.length||dn.length)?'':'none';
-      mvEl.innerHTML=(up.length||dn.length)?`<div class="ins-card" style="margin-bottom:0">
-        <div class="ins-card-h"><span class="ins-card-t">Real profit movers</span>
-          <span class="ins-card-s">${_esc(m.label)} vs ${_esc(prev.label)} · per product</span></div>
-        <div class="ins-c-cols">
-          <div><div class="ins-c-lbl" style="color:var(--green)">UP</div>${up.length?up.map(bar).join(''):'<div class="ins-act-none">Nothing up.</div>'}</div>
-          <div><div class="ins-c-lbl" style="color:var(--red)">DOWN</div>${dn.length?dn.map(bar).join(''):'<div class="ins-act-none">Nothing down.</div>'}</div>
-        </div></div>`:'';
+      mvEl.innerHTML=(up.length||dn.length)?`<div class="mv-strip">
+        <span class="mv-h">Moved it <em>vs ${_esc(prev.label)}</em></span>
+        ${up.length?`<span class="mv-g up">▲ ${up.map(chip).join('')}</span>`:''}
+        ${dn.length?`<span class="mv-g dn">▼ ${dn.map(chip).join('')}</span>`:''}
+        <button class="btn-sm" onclick="openRepAnalysis()">Why →</button>
+      </div>`:'';
     }else{mvEl.style.display='none';mvEl.innerHTML='';}
   }
   /* table */
@@ -10772,11 +11260,27 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
     if(!rr.asin)return;const k=rr.asin.toUpperCase();(histBy[k]=histBy[k]||[]).push(repRowReal(rr));}));
   const spark=(A)=>{
     const h=histBy[(A||'').toUpperCase()]||[];
-    if(h.length<2)return '<span class="tspark-n">—</span>';
-    const mn=Math.min(...h,0),mx=Math.max(...h,0),rg=(mx-mn)||1,W=46,H=16;
-    const pts=h.map((v,i)=>[(i/(h.length-1))*(W-2)+1,H-2-((v-mn)/rg)*(H-4)]);
+    if(!h.length)return '<span class="tspark-n">·</span>';
+    if(h.length<2)return '<span class="tspark-n" title="Only one month imported">·</span>';
+    const W=58,H=22,PADY=3;
+    let mn=Math.min(...h),mx=Math.max(...h);
+    if(mn===mx){mn-=Math.max(.5,Math.abs(mn)*.08);mx+=Math.max(.5,Math.abs(mx)*.08);}
+    const rg=(mx-mn)||1;
+    const P=h.map((v,i)=>[1+(i/(h.length-1))*(W-2),H-PADY-((v-mn)/rg)*(H-PADY*2)]);
     const up=h[h.length-1]>=h[h.length-2];
-    return `<svg class="tspark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><path d="${pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${up?'var(--green)':'var(--red)'}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="2" fill="${up?'var(--green)':'var(--red)'}"/></svg>`;
+    const col=up?'var(--green)':'var(--red)';
+    const id='sp'+Math.round(Math.random()*1e6);
+    /* same smoothing as the full-size charts so the two read as one family */
+    const d=(typeof _bdlSmooth==='function')?_bdlSmooth(P,0.16)
+      :P.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');
+    const last=P[P.length-1];
+    return `<svg class="tspark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" title="${h.length} months · latest ${gbp(h[h.length-1])}">
+      <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${col}" stop-opacity=".38"/>
+        <stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+      <path d="${d} L${last[0].toFixed(1)} ${H} L1 ${H} Z" fill="url(#${id})"/>
+      <path d="${d}" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="${col}" stroke="var(--bg2)" stroke-width="1.5"/></svg>`;
   };
   const tacosOf=r=>(+r.sales||0)?(+r.ads||0)/(+r.sales)*100:0;
   const roasOf=r=>(+r.ads||0)?(+r.adSales||0)/(+r.ads):0;
@@ -10894,6 +11398,7 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
       </tr>`;
     }).join('');
   }
+  setTimeout(repFitTable,0);
   document.getElementById('rep-foot').innerHTML=rows.length?`<tr>
     <td class="ft-l">Total · ${rows.length} products${view.length!==rows.length?` <span class="ft-f">${view.length} shown</span>`:''}</td>
     ${shown.map(c=>`<td>${c.f?c.f():''}</td>`).join('')}
@@ -11394,13 +11899,13 @@ function buildCk(q){
   [['home','Home'],['dashboard','Ads Overview'],['campaigns','Campaigns'],['insights','Insights'],['changelog','Change Log'],['snapshots','Snapshot Log'],['products','Products'],['report','Monthly Report'],['settings','Settings']]
     .forEach(([p,n])=>{if(!q||n.toLowerCase().includes(q))items.push({ic:'▦',col:'var(--blue)',label:n,sub:'Page',run:()=>goPage(p)});});
   [['Paste period from Amazon Ads',()=>openBulkAds()],['Log a change',()=>openGlobalChangeLog()],['Add campaign',()=>openAddCampaign()],['Ads check — monthly digest',()=>openDigest()],['Import search terms (all campaigns)',()=>openBulkST()],['Brief the team — search terms',()=>openStaffBrief()],['Prep Portal',()=>goPage('prep')],['Prep dev suggestions',()=>openPrepDevBrief()],['Paste sales report (month)',()=>{goPage('report');setTimeout(openRepPaste,60);}],['Paste ads report (month)',()=>{goPage('report');setTimeout(openRepAds,60);}],['New report month',()=>{goPage('report');setTimeout(openRepMonthNew,60);}],['Export report CSV',()=>{goPage('report');setTimeout(repExportCsv,60);}]]
-    .forEach(([n,f])=>{if(!q||n.toLowerCase().includes(q))items.push({ic:'⚡',col:'var(--amber)',label:n,sub:'Action',run:f});});
+    .forEach(([n,f])=>{if(!q||n.toLowerCase().includes(q))items.push({ic:ico('bolt'),col:'var(--amber)',label:n,sub:'Action',run:f});});
   if(q){
     (campaigns||[]).forEach(c=>{
       const hay=((c.alias||'')+' '+(c.name||'')+' '+(c.asin||'')+' '+(c.product||'')).toLowerCase();
       if(hay.includes(q))items.push({ic:monoLetters(c.alias||c.name),col:'var(--purple)',label:c.alias||c.name,sub:(c.asin||'campaign')+(c.product?' · '+c.product:''),run:()=>openCamp(c.id)});
     });
-    repSortedMonths().forEach(m=>{if((m.label||'').toLowerCase().includes(q))items.push({ic:'📊',col:'var(--green)',label:'Report — '+m.label,sub:'Monthly Report',run:()=>{repCur=m.id;goPage('report');}});});
+    repSortedMonths().forEach(m=>{if((m.label||'').toLowerCase().includes(q))items.push({ic:ico('chart'),col:'var(--green)',label:'Report — '+m.label,sub:'Monthly Report',run:()=>{repCur=m.id;goPage('report');}});});
   }
   _ckItems=items.slice(0,14);_ckSel=0;renderCk();
 }
@@ -11489,7 +11994,7 @@ function bulkPreview(){
   const{matched,unmatched}=bulkMatch(rows);
   const sp=matched.reduce((a,m)=>a+m.r.spend,0),sa=matched.reduce((a,m)=>a+m.r.sales,0);
   el.innerHTML=`<div style="margin-bottom:6px"><b style="color:var(--green)">✓ ${matched.length} of ${rows.length} campaigns matched</b> · Spend ${gbp(sp)} · Sales ${gbp(sa)} · ROAS ${sp?fmt(sa/sp,2)+'×':'—'}</div>`+
-    (unmatched.length?`<div style="color:var(--amber);font-size:11px;line-height:1.6">⚠ No match (will be skipped): ${unmatched.slice(0,6).map(r=>_esc(r.name)).join(' · ')}${unmatched.length>6?' +'+(unmatched.length-6)+' more':''}<br><span style="color:var(--text4)">Tip: names must match the campaign names in this app — edit a campaign's name/alias if one keeps missing.</span></div>`:'');
+    (unmatched.length?`<div style="color:var(--amber);font-size:11px;line-height:1.6">No match (will be skipped): ${unmatched.slice(0,6).map(r=>_esc(r.name)).join(' · ')}${unmatched.length>6?' +'+(unmatched.length-6)+' more':''}<br><span style="color:var(--text4)">Tip: names must match the campaign names in this app — edit a campaign's name/alias if one keeps missing.</span></div>`:'');
 }
 function openBulkAds(){
   document.getElementById('ba-text').value='';
@@ -11502,11 +12007,11 @@ function closeBulkAds(){document.getElementById('bulk-ads-overlay').classList.re
 async function bulkImport(){
   const period=document.getElementById('ba-period').value.trim();
   const status=document.getElementById('ba-status');
-  if(!period){status.textContent='⚠ Set the period first (pick the dates or type a label).';status.style.color='var(--amber)';return;}
+  if(!period){status.textContent='Set the period first (pick the dates or type a label).';status.style.color='var(--amber)';return;}
   const{rows,err}=bulkParse();
-  if(err||!rows.length){status.textContent='⚠ '+(err||'Nothing pasted yet.');status.style.color='var(--amber)';return;}
+  if(err||!rows.length){status.textContent=(err||'Nothing pasted yet.');status.style.color='var(--amber)';return;}
   const{matched,unmatched}=bulkMatch(rows);
-  if(!matched.length){status.textContent='⚠ No campaigns matched — check the names.';status.style.color='var(--amber)';return;}
+  if(!matched.length){status.textContent='No campaigns matched — check the names.';status.style.color='var(--amber)';return;}
   status.textContent='Importing '+matched.length+' snapshots…';status.style.color='var(--text3)';
   const btn=document.getElementById('ba-import-btn');btn.disabled=true;
   /* in-memory update first (instant UI) */
@@ -12009,8 +12514,8 @@ function bulkSTPreview(){
   const noSnap=period?groups.filter(g=>!(g.c.snapshots||[]).some(s=>s.date===period)):[];
   const kept=groups.reduce((a,g)=>a+g.rows.filter(r=>r.sales>0||r.clicks>(appSettings.stClickFloor!=null?+appSettings.stClickFloor:2)).length,0);
   el.innerHTML=`<div style="margin-bottom:6px"><b style="color:var(--green)">✓ ${groups.length} campaign${groups.length!==1?'s':''} matched</b> · ${intf(total)} search terms read · ${intf(kept)} will be kept after the low-click filter</div>`
-    +(unmatched.length?`<div style="color:var(--amber);font-size:11px;line-height:1.6;margin-bottom:5px">⚠ ${unmatched.length} campaign name${unmatched.length!==1?'s':''} in the file didn't match anything here (skipped): ${unmatched.slice(0,5).map(u=>_esc(u.name)).join(' · ')}${unmatched.length>5?' +'+(unmatched.length-5)+' more':''}</div>`:'')
-    +(noSnap.length?`<div style="color:var(--amber);font-size:11px;line-height:1.6">⚠ ${noSnap.length} matched campaign${noSnap.length!==1?'s have':' has'} no snapshot for “${_esc(period)}” yet — paste the period numbers first, or these will be skipped.</div>`:'');
+    +(unmatched.length?`<div style="color:var(--amber);font-size:11px;line-height:1.6;margin-bottom:5px">${unmatched.length} campaign name${unmatched.length!==1?'s':''} in the file didn't match anything here (skipped): ${unmatched.slice(0,5).map(u=>_esc(u.name)).join(' · ')}${unmatched.length>5?' +'+(unmatched.length-5)+' more':''}</div>`:'')
+    +(noSnap.length?`<div style="color:var(--amber);font-size:11px;line-height:1.6">${noSnap.length} matched campaign${noSnap.length!==1?'s have':' has'} no snapshot for “${_esc(period)}” yet — paste the period numbers first, or these will be skipped.</div>`:'');
 }
 function openBulkST(){
   ['bst-text','bst-period','bst-from','bst-to'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
@@ -12022,9 +12527,9 @@ function closeBulkST(){document.getElementById('bulk-st-overlay').classList.remo
 async function bulkSTImport(){
   const st=document.getElementById('bst-status');
   const period=document.getElementById('bst-period').value.trim();
-  if(!period){st.textContent='⚠ Set the period first — it must match a period you already have snapshots for.';st.style.color='var(--amber)';return;}
+  if(!period){st.textContent='Set the period first — it must match a period you already have snapshots for.';st.style.color='var(--amber)';return;}
   const {groups,err,noCamp}=bulkSTParse();
-  if(err||noCamp||!groups.length){st.textContent='⚠ '+(err||'Nothing to import yet.');st.style.color='var(--amber)';return;}
+  if(err||noCamp||!groups.length){st.textContent=(err||'Nothing to import yet.');st.style.color='var(--amber)';return;}
   const floor=(appSettings.stClickFloor!=null?+appSettings.stClickFloor:2);
   const btn=document.getElementById('bst-btn');btn.disabled=true;
   st.textContent='Importing…';st.style.color='var(--text3)';
@@ -12086,7 +12591,7 @@ function buildDigest(){
   const A=byP[P];
   const roas=b=>b&&b.sp?b.sa/b.sp:0;
   const pd=(c,p)=>p?(((c-p)/Math.abs(p))*100):null;
-  const dtxt=(c,p,inv)=>{const d=pd(c,p);if(d==null)return'';const good=inv?d<0:d>0;return' ('+(d>0?'+':'')+d.toFixed(1)+'% vs '+PB+(good?'':' ⚠')+')';};
+  const dtxt=(c,p,inv)=>{const d=pd(c,p);if(d==null)return'';const good=inv?d<0:d>0;return' ('+(d>0?'+':'')+d.toFixed(1)+'% vs '+PB+(good?'':' ')+')';};
 
   /* leaks — campaign level, THE priority */
   const leaks=[];const kwLeaks=[];
@@ -12266,11 +12771,64 @@ async function renderPrep(force){
       run,stock,stockSrc,firm,cover,daysSince,status,statusT,sold:s?s.units:0};
   });
 
+  /* ── THE DECISION LAYER ───────────────────────────────────────────────────
+     Everything above works out what IS. This works out what to DO: how many units
+     of each product to send to FBA so it lands on the target months of cover.
+
+         need = run rate × target months − stock on hand − units already in transit
+
+     Two rules, both inherited the hard way:
+     • A GUESSED stock figure never drives a firm instruction. Where stock is the
+       sent-minus-sold fallback, the suggestion is shown greyed, tagged, and left
+       OUT of the prep-run totals — a guess must never put units on a van.
+     • Unknown ≠ zero. No run rate means no suggestion at all, not "send 0".        */
+  const TARGET=prepCoverTarget();
+  const TRANSIT_DAYS=21;
+  rows.forEach(r=>{
+    r.transit=ships.reduce((a,sh)=>{
+      if((sh.asin||'').toUpperCase()!==(r.asin||'').toUpperCase())return a;
+      const t=sh.sent_date?Date.parse(sh.sent_date):0;
+      return (t&&(now-t)/86400000<=TRANSIT_DAYS)?a+(+sh.units||0):a;},0);
+    r.send=null;r.sendFirm=false;
+    if(r.run>0&&r.stock!=null){
+      let n=Math.round(r.run*TARGET)-r.stock-r.transit;
+      if(n>0){
+        if(n>=40)n=Math.ceil(n/10)*10;               /* nobody ships 47 units */
+        r.send=n;r.sendFirm=r.firm;
+      }else r.send=0;
+    }
+    r.coverAfter=(r.stock!=null&&r.run>0)?(r.stock+r.transit+(r.send||0))/r.run:null;
+  });
+
+  /* Lanes. The order IS the priority — a page you read top-down and stop when the
+     work runs out. Sorting still applies, but only WITHIN a lane. */
+  /* Lanes. First cut of this put 22 of 29 products in a single "send" pile, which is
+     the same wall the rebuild exists to remove. Two splits fix it:
+       • URGENT vs TOP UP — running out inside a month is a different job from
+         topping up something with two months left.
+       • a floor on the suggestion. A "send 3 units" line is noise; below five units
+         (or a third of a month's sales) it is not worth a line on a packing list. */
+  const MIN_SEND=5;
+  rows.forEach(r=>{
+    r.coverNow=(r.stock!=null&&r.run>0)?(r.stock+r.transit)/r.run:null;
+    r.worthSending=r.sendFirm&&r.send>=Math.max(MIN_SEND,Math.round(r.run*0.25));
+  });
+  const laneOf=r=>{
+    if(r.status==='nosale')return 'burn';
+    if(r.sendFirm&&r.send>0&&r.coverNow!=null&&r.coverNow<1)return 'urgent';
+    if(r.worthSending)return 'send';
+    if(r.run>0&&!r.firm)return 'blind';            /* selling with no real stock figure */
+    if(r.status==='stale')return 'blind';
+    if(r.run>0)return 'ok';
+    return 'idle';
+  };
+  rows.forEach(r=>{r.lane=laneOf(r);});
+
   const kv=r=>{switch(_prepSort.k){
     case 'name':return (r.name||'').toLowerCase();
     case 'lastShip':return r.lastShip;
     case 'real':return r.real==null?-Infinity:r.real;
-    case 'cover':return r.cover==null?Infinity:r.cover;
+    case 'cover':{const c=r.coverNow!=null?r.coverNow:r.cover;return c==null?Infinity:c;}
     default:return +r[_prepSort.k]||0;}};
   rows.sort((a,b)=>{const x=kv(a),y=kv(b);return(x<y?-1:x>y?1:0)*_prepSort.dir;});
 
@@ -12294,63 +12852,174 @@ async function renderPrep(force){
   const SP={crit:['CRITICAL','var(--red)'],low:['LOW','var(--amber)'],nosale:['NO SALES','var(--red)'],
     stale:['CHECK','var(--amber)'],idle:['IDLE','var(--text4)'],ok:['OK','var(--green)'],none:['—','var(--text4)']};
 
+  const lanes=[
+    ['urgent','Out of stock within a month — send now','var(--red)'],
+    ['send','Top up','var(--blue)'],
+    ['blind','No stock figure — check before sending','var(--amber)'],
+    ['burn','Ad spend, nothing sold','var(--red)'],
+    ['ok','Enough for now','var(--green)'],
+    ['idle','Not selling','var(--text4)'],
+  ];
+  const sendRows=rows.filter(r=>r.lane==='urgent'||r.lane==='send')
+                     .sort((a,b)=>(a.coverNow??99)-(b.coverNow??99));
+  const urgent=rows.filter(r=>r.lane==='urgent');
+  const sendUnits=sendRows.reduce((a,r)=>a+r.send,0);
+  const sendCost=sendRows.reduce((a,r)=>a+r.send*(r.unitCost||0),0);
+  const blind=rows.filter(r=>r.lane==='blind');
+  const transitU=rows.reduce((a,r)=>a+(r.transit||0),0);
+  window._prepRows=rows;   /* the copy-list button reads this */
+
   el.innerHTML=`
-  <div class="rph-ks-row" style="margin-bottom:9px">
-    ${K(M?'Sold in '+M.label.replace(/\s*20\d\d/,''):'Sold last month',M?gbp(mSales):'—','var(--blue)',M?intf(mUnits)+' units across '+selling.length+' products':'Import a month on the Monthly Report first')}
-    ${K('Real profit',M?gbp(mReal):'—',mReal>=0?'var(--green)':'var(--red)',M&&mSales?fmt(mReal/mSales*100,1)+'% margin':'&nbsp;')}
-    ${K('Running at',intf(Math.round(rows.reduce((a,r)=>a+r.run,0)))+'u','var(--purple)','a month, averaged over the last '+Math.min(3,months.length)+' month'+(Math.min(3,months.length)===1?'':'s'))}
-    ${K('Worth checking',check.length?intf(check.length):'0',check.length?'var(--amber)':'var(--green)',check.length?(risk.length?risk.length+' low on stock':'')+(risk.length&&stale.length?' · ':'')+(stale.length?stale.length+' selling, nothing shipped in 60d':''):'nothing low or overdue a shipment')}
-    ${K('Spending, not selling',nosale.length?intf(nosale.length):'0',nosale.length?'var(--red)':'var(--green)',nosale.length?gbp(nosale.reduce((a,r)=>a+r.adSp,0))+' of ad spend':'no dead ad spend')}
-    ${K('Sent to FBA',intf(totSent),'var(--text2)',intf(new Set(ships.map(s=>s.ship_id)).size)+' shipments, all time')}
-  </div>
-  ${!M?`<div class="prep-warn">No Monthly Report imported yet — the sales, run-rate and cover columns stay empty until you
+  ${(()=>{
+    /* The Prep page reads sales, run rate and real profit from the Monthly Report —
+       if the newest month is not last month, every cover figure here is quietly out
+       of date, and nothing used to say so. */
+    if(!M)return '';
+    const now2=new Date(), ym=String(M.ym||'');
+    let lag=null;
+    const mm=/^(\d{4})-(\d{2})$/.exec(ym);
+    if(mm)lag=(now2.getFullYear()-+mm[1])*12+(now2.getMonth()+1-+mm[2]);
+    else{const t=(typeof miYm==='function')?miYm(M.label):null;
+      const m2=t&&/^(\d{4})-(\d{2})$/.exec(t);
+      if(m2)lag=(now2.getFullYear()-+m2[1])*12+(now2.getMonth()+1-+m2[2]);}
+    if(lag==null||lag<1)return '';
+    const nm=now2.toLocaleDateString('en-GB',{month:'long'});
+    return `<div class="prep-warn" style="border-left-color:var(--blue)">
+      <b>Every figure below is built on ${_esc(M.label)}</b> — it is ${_esc(nm)} now, so run rate,
+      cover and the send quantities are ${lag} month${lag===1?'':'s'} behind.
+      ${lag===1?'Normal mid-month; they catch up the moment you import.':'Import before you act on the send quantities.'}
+      <button class="btn-sm" style="margin-left:9px" onclick="goPage('report');setTimeout(openMonthImport,140)">Import ${_esc(nm)} &rarr;</button></div>`;})()}
+  ${!M?`<div class="prep-warn">No Monthly Report imported yet — run rate, cover and send quantities all come from it, so they stay empty until you
     <span class="lnk" onclick="goPage('report');openMonthImport()">import a month</span>.</div>`:''}
-  ${(check.length||nosale.length)?`<div class="prep-alerts">
-    ${risk.length?`<div class="prep-al warn"><b>${risk.length} low on stock</b><span>${risk.slice(0,4).map(r=>_esc(r.name)+(r.cover!=null?' ('+fmt(r.cover,1)+' mo)':'')).join(' · ')}${risk.length>4?' · +'+(risk.length-4)+' more':''}</span></div>`:''}
-    ${stale.length?`<div class="prep-al warn"><b>${stale.length} selling with no recent shipment</b><span>${stale.slice(0,4).map(r=>_esc(r.name)+' ('+r.daysSince+'d)').join(' · ')}${stale.length>4?' · +'+(stale.length-4)+' more':''}</span></div>`:''}
-    ${nosale.length?`<div class="prep-al bad"><b>${gbp(nosale.reduce((a,r)=>a+r.adSp,0))} spent, nothing sold</b><span>${nosale.slice(0,4).map(r=>_esc(r.name)).join(' · ')}${nosale.length>4?' · +'+(nosale.length-4)+' more':''}</span></div>`:''}
-  </div>`:''}
-  ${compActive.length?`<div class="prep-comp"><div class="prep-comp-h"><b>Components</b>
-      <span class="prep-comp-s">${compActive.length} with stock or on order · ${compPend.length} tracked</span></div>
-      <div class="rep-chip-row" style="margin:8px 0 0">${compActive.map(c=>`<span class="rep-chip"><b>${_esc(c.name)}</b>${c.on>0?` · ${intf(c.on)} on hand`:''}${c.pend?` · <b style="color:var(--blue)">${intf(c.pend)} arriving${c.eta?' '+new Date(c.eta).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}</b>`:''}</span>`).join('')}</div></div>`
-    :`<div class="prep-thin">Components: <b>${compPend.length} tracked</b>, none with stock or orders recorded in the Prep Portal yet.</div>`}
-  <div class="tablecard"><div class="tscroll" style="max-height:60vh"><table class="dt prep-t" style="min-width:1180px">
-    <colgroup><col style="width:290px"><col style="width:88px"><col><col><col><col><col style="width:78px"><col><col style="width:88px"><col style="width:82px"><col style="width:104px"></colgroup>
+
+  <div class="pv-run ${sendUnits?'':'none'}">
+    <div>
+      <div class="pv-run-l">Next prep run</div>
+      <div class="pv-run-n">${sendUnits?intf(sendUnits)+' units':'Nothing due'}</div>
+    </div>
+    <div class="pv-run-s">
+      ${sendUnits
+        ? `across <b>${sendRows.length}</b> product${sendRows.length===1?'':'s'} to reach <b>${TARGET} month${TARGET===1?'':'s'}</b> of cover${urgent.length?`<br><b style="color:var(--red)">${urgent.length} of them run out inside a month</b>`:''}${sendCost>0?`<br>roughly <b>${gbp(sendCost)}</b> at your recorded unit costs`:''}${transitU?`<br><b style="color:var(--blue)">${intf(transitU)} units</b> already sent in the last 21 days and counted`:''}`
+        : (blind.length
+            ? `Nothing has a confirmed stock figure low enough to act on — but <b style="color:var(--amber)">${blind.length} selling product${blind.length===1?'':'s'}</b> have no real stock number, so this total is not the whole picture.`
+            : `Every selling product is above ${TARGET} months of cover.`)}
+    </div>
+    <div class="pv-run-sp"></div>
+    ${sendUnits?`<button class="btn" onclick="prepCopyRun()">Copy send list</button>`:''}
+    <button class="btn ghost" onclick="renderPrep(true)">Refresh</button>
+  </div>
+
+  <div class="rph-ks-row" style="margin-bottom:9px">
+    ${K(M?'Sold in '+M.label.replace(/\s*20\d\d/,''):'Sold last month',M?gbp(mSales):'—','var(--blue)',M?intf(mUnits)+' units across '+selling.length+' products':'Import a month first')}
+    ${K('Real profit',M?gbp(mReal):'—',mReal>=0?'var(--green)':'var(--red)',M&&mSales?fmt(mReal/mSales*100,1)+'% margin':'&nbsp;')}
+    ${K('Selling at',intf(Math.round(rows.reduce((a,r)=>a+r.run,0)))+'u','var(--purple)','a month, averaged over the last '+Math.min(3,months.length)+' month'+(Math.min(3,months.length)===1?'':'s'))}
+    ${K('Running out',urgent.length?intf(urgent.length):'0',urgent.length?'var(--red)':'var(--green)',urgent.length?'out of stock inside a month':(risk.length?risk.length+' under two months, none critical':'nothing confirmed low'))}
+    ${K('Flying blind',blind.length?intf(blind.length):'0',blind.length?'var(--amber)':'var(--green)',blind.length?'selling with no real stock number':'every selling product has a stock figure')}
+    ${K('Dead ad spend',nosale.length?gbp(nosale.reduce((a,r)=>a+r.adSp,0)):'£0',nosale.length?'var(--red)':'var(--green)',nosale.length?intf(nosale.length)+' products spending with no sales':'nothing spending without selling')}
+  </div>
+
+  <div class="pv-tools">
+    <span class="lbl">Target cover</span>
+    <span class="pv-seg">${[2,3,4,6].map(n=>`<button class="${n===TARGET?'on':''}" onclick="prepSetCover(${n})">${n} mo</button>`).join('')}</span>
+    <span class="pv-run-s">Send quantities aim for this many months of stock at the current run rate.</span>
+  </div>
+
+  <div class="tablecard"><table class="dt prep-t" style="min-width:860px">
+    <colgroup><col><col style="width:72px"><col style="width:92px"><col style="width:98px"><col style="width:92px"><col style="width:86px"><col style="width:96px"><col style="width:102px"></colgroup>
     <thead><tr>
       ${TH('name','Product')}
-      <th title="Health of this product right now">Status</th>
-      ${TH('mUnits',M?M.label.replace(/\s*20\d\d/,'')+' units':'Units','Units sold in the latest Monthly Report month')}
-      ${TH('run','Run rate','Average units a month over the last 3 imported months')}
-      ${TH('mSales','Sales','Sales in the latest Monthly Report month')}
-      ${TH('adSp','Ad spend','Latest snapshot across this ASIN’s campaigns')}
-      ${TH('roas','ROAS')}
-      ${TH('real','Real profit',M?('Profit before ads − ad spend, '+M.label):'Import a month to fill this')}
+      ${TH('mUnits',M?M.label.replace(/\s*20\d\d/,''):'Units','Units sold in the latest Monthly Report month')}
+      ${TH('run','Selling','Average units a month over the last 3 imported months')}
       ${TH('stock','Stock','Prep Portal stock where it exists, otherwise Current_Stock_QTY from the sales export, otherwise a rough sent-minus-sold guess')}
-      ${TH('cover','Cover','Months of stock left at the current run rate — greyed out when the stock figure is only a guess')}
-      ${TH('lastShip','Last sent')}
+      ${TH('cover','Cover','Months of stock left at the current run rate, counting anything already in transit — greyed when the stock figure is only a guess')}
+      ${TH('send','Send','Units to send so this product lands on '+TARGET+' months of cover, after stock on hand and anything already in transit')}
+      ${TH('lastShip','Sent','When the last shipment went to FBA')}
+      ${TH('real','Real profit',M?('Profit before ads − ad spend, '+M.label):'Import a month to fill this')}
     </tr></thead>
-    <tbody>${rows.map(r=>{
+    <tbody>${lanes.map(([id,label,col])=>{
+      let set=rows.filter(r=>r.lane===id);
+      if(!set.length)return '';
+      /* the two send lanes always read most-urgent-first, whatever the column sort is */
+      if(id==='urgent'||id==='send')set=set.slice().sort((a,b)=>(a.coverNow??99)-(b.coverNow??99));
+      const sub=(id==='send'||id==='urgent')?intf(set.reduce((a,r)=>a+r.send,0))+' units'
+        :id==='burn'?gbp(set.reduce((a,r)=>a+r.adSp,0))+' of spend'
+        :id==='ok'?set.length+' product'+(set.length===1?'':'s')+' · nothing worth sending yet'
+        :set.length+' product'+(set.length===1?'':'s');
+      return `<tr class="pv-grp"><td colspan="8" style="color:${col}">${_esc(label)}<span class="n">${sub}</span></td></tr>`
+        + set.map(r=>{
       const [sl,sc]=SP[r.status]||SP.none;
       const last=r.lastDate?new Date(r.lastShip).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
-      const covC=r.cover==null?'var(--text4)':r.cover<1?'var(--red)':r.cover<2?'var(--amber)':'var(--green)';
-      return`<tr onclick="openRepProduct('${_esc(r.asin)}')" style="cursor:pointer" title="Open the product history">
+      /* Show cover INCLUDING units already in transit. The lanes are decided on that
+         figure, so showing stock-only here put a product reading "1.1 mo" under
+         HEALTHY — the column contradicting the heading right next to it. */
+      const cov=r.coverNow!=null?r.coverNow:r.cover;
+      const covC=cov==null?'var(--text4)':cov<1?'var(--red)':cov<2?'var(--amber)':'var(--green)';
+      /* an empty track reads as "nothing left"; a 4% sliver just read as a smudge */
+      const covPct=cov==null?0:Math.min(100,cov/Math.max(TARGET,1)*100);
+      return`<tr onclick="openRepProduct('${_esc(r.asin)}')" style="cursor:pointer" title="${_esc(r.statusT)} — click for the full history">
         <td><div class="prod-name">${monoTile(r.name,24)}<div style="min-width:0">
           <div class="prod-n">${_esc(r.name)}${r.dg?' <span class="dgb" title="Dangerous goods">DG</span>':''}</div>
           <div class="prod-a">${_esc(r.asin)}${r.unitCost>0?' · '+gbp(r.unitCost)+'/u':''}${r.campN?'':' <span class="prod-nopl" title="No campaign in the hub uses this ASIN">no ads</span>'}</div>
         </div></div></td>
-        <td style="text-align:center"><span class="pst" style="color:${sc};border-color:${sc}" title="${_esc(r.statusT)}">${sl}</span></td>
         <td style="text-align:center;font-weight:800;font-size:13px">${r.mUnits?intf(r.mUnits):'<span class="muted">0</span>'}</td>
         <td style="text-align:center">${r.run>0?intf(Math.round(r.run))+'<span class="pu">/mo</span>':'<span class="muted">—</span>'}</td>
-        <td style="text-align:center">${r.mSales?gbp(r.mSales):'<span class="muted">—</span>'}</td>
-        <td style="text-align:center;color:${r.adSp>0?'var(--amber)':'var(--text4)'}">${r.campN?gbp(r.adSp):'<span class="muted">—</span>'}</td>
-        <td style="text-align:center">${r.campN&&r.adSp?`<span class="rag ${ragOf(r.roas,r.adSa,r.adSp)==='leak'?'flag':ragOf(r.roas,r.adSa,r.adSp)}" style="font-size:11px">${fmt(r.roas,2)}</span>`:'<span class="muted">—</span>'}</td>
-        <td style="text-align:center">${r.real!=null?`<span class="${r.real>0?'rp-pos':r.real<0?'rp-neg':'rp-zero'}">${gbp(r.real)}</span>`:'<span class="muted">—</span>'}</td>
-        <td style="text-align:center">${r.stock!=null?`${intf(r.stock)}${r.stockSrc==='report'?'<span class="pest" title="Current_Stock_QTY from the sales export — accurate as at that month">rep</span>':r.stockSrc==='derived'?'<span class="pest guess" title="Rough guess: units sent to FBA minus units sold. Only as good as how far back your Monthly Report goes — it never triggers an alert.">guess</span>':''}`:'<span class="muted">—</span>'}</td>
-        <td style="text-align:center;color:${r.firm?covC:'var(--text4)'};font-weight:700">${r.cover!=null?fmt(r.cover,1)+'<span class="pu">mo</span>':'<span class="muted">—</span>'}</td>
+        <td style="text-align:center">${r.stock!=null?`${intf(r.stock)}${r.stockSrc==='report'?'<span class="pest" title="Current_Stock_QTY from the sales export — accurate as at that month">rep</span>':r.stockSrc==='derived'?'<span class="pest guess" title="Rough guess: units sent to FBA minus units sold. Only as good as how far back your Monthly Report goes — it never triggers an alert and never drives a send quantity.">guess</span>':''}${r.transit?`<span class="pv-transit" title="${intf(r.transit)} units sent in the last 21 days, already counted against what you need to send">+${intf(r.transit)}</span>`:''}`:'<span class="muted">—</span>'}</td>
+        <td style="text-align:center;color:${r.firm?covC:'var(--text4)'};font-weight:700">
+          ${cov!=null?`<span class="pv-cov">${fmt(cov,1)}<span class="pu">mo</span></span><div class="pv-bar"><i style="width:${covPct}%;background:${r.firm?covC:'var(--text4)'}"></i></div>`:'<span class="muted">—</span>'}</td>
+        <td style="text-align:center">${r.send==null?'<span class="muted">—</span>'
+          :r.send===0?'<span class="muted">none</span>'
+          :r.sendFirm?`<span class="pv-qty">${intf(r.send)}</span>`
+          :`<span class="pv-qty soft" title="Based on a guessed stock figure — confirm the real stock before sending">${intf(r.send)}?</span>`}</td>
         <td style="text-align:center">${last}${r.daysSince!=null&&r.daysSince>60?`<div style="font-size:9px;font-weight:700;color:var(--amber)">${r.daysSince}d</div>`:''}</td>
-      </tr>`;}).join('')}</tbody>
-  </table></div></div>
-  <div style="font-size:10.5px;color:var(--text4);margin-top:7px">Sales, run rate and real profit come from your Monthly Report${M?' ('+_esc(M.label)+')':''}${noStock?` · <b style="color:var(--amber)">${noStock} products have no confirmed stock figure</b> — the Prep Portal records 0 for every ASIN, so those rows fall back to a guess`:''} · shipments live from the Prep Portal database, refreshed ${new Date(_prepAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · <span class="lnk" onclick="renderPrep(true)">refresh now</span></div>`;
+        <td style="text-align:center">${r.real!=null?`<span class="${r.real>0?'rp-pos':r.real<0?'rp-neg':'rp-zero'}">${gbp(r.real)}</span>`:'<span class="muted">—</span>'}</td>
+      </tr>`;}).join('');}).join('')}</tbody>
+  </table></div>
+
+  ${compActive.length?`<div class="prep-comp" style="margin-top:9px"><div class="prep-comp-h"><b>Components</b>
+      <span class="prep-comp-s">${compActive.length} with stock or on order · ${compPend.length} tracked in the Prep Portal</span></div>
+      <div class="pv-comp">${compActive.map(c=>`<div class="pv-comp-i">
+        <div class="pv-comp-n" title="${_esc(c.name)}">${_esc(c.name)}</div>
+        <div class="pv-comp-s">${c.on>0?intf(c.on)+' on hand':'none on hand'}${c.pend?` · <b style="color:var(--blue)">${intf(c.pend)} arriving${c.eta?' '+new Date(c.eta).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}</b>`:''}</div>
+      </div>`).join('')}</div></div>`
+    :`<div class="prep-thin" style="margin-top:9px">Components: <b>${compPend.length} tracked</b>, none with stock or orders recorded in the Prep Portal yet.</div>`}
+
+  <div style="font-size:10.5px;color:var(--text4);margin-top:7px">Sales, run rate and real profit come from your Monthly Report${M?' ('+_esc(M.label)+')':''}${noStock?` · <b style="color:var(--amber)">${noStock} products have no confirmed stock figure</b> — the Prep Portal records 0 for every ASIN, so those rows fall back to a guess and never drive a firm send quantity`:''} · stock and shipments live from the Prep Portal, refreshed ${new Date(_prepAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · <span class="lnk" onclick="renderPrep(true)">refresh now</span></div>`;
+}
+
+/* ── Target cover: how many months of stock a send should land on. Mirrored to
+      Supabase with the rest of the UI prefs, so it is the same on both laptops. ── */
+function prepCoverTarget(){
+  const n=+(localStorage.getItem('bdl_prep_cover')||3);
+  return (n>=1&&n<=12)?n:3;
+}
+function prepSetCover(n){
+  try{localStorage.setItem('bdl_prep_cover',String(n));}catch(e){}
+  try{uiPrefsSave();}catch(e){}
+  renderPrep();
+}
+/* The send list is meant to leave the app — it goes to whoever picks and packs. */
+function prepCopyRun(){
+  const rows=(window._prepRows||[]).filter(r=>r.lane==='urgent'||r.lane==='send')
+             .sort((a,b)=>(a.coverNow??99)-(b.coverNow??99));   /* pack the urgent ones first */
+  if(!rows.length){toast('Nothing due to send','warn');return;}
+  const T=prepCoverTarget();
+  const L=['PREP RUN — target '+T+' months of cover','Generated '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}),''];
+  rows.forEach(r=>{
+    L.push(intf(r.send)+' x  '+r.name+'  ('+r.asin+')'+(r.lane==='urgent'?'   ** URGENT **':''));
+    L.push('        stock '+intf(r.stock)+(r.transit?', '+intf(r.transit)+' in transit':'')+' · selling '+intf(Math.round(r.run))+'/mo · '+fmt(r.cover,1)+' months left');
+  });
+  L.push('');
+  L.push('TOTAL '+intf(rows.reduce((a,r)=>a+r.send,0))+' units across '+rows.length+' products');
+  const blind=(window._prepRows||[]).filter(r=>r.lane==='blind');
+  if(blind.length){
+    L.push('');
+    L.push('NOT INCLUDED — no confirmed stock figure, check these by hand:');
+    blind.forEach(r=>L.push('  '+r.name+'  ('+r.asin+')'+(r.send?'  — would be ~'+intf(r.send)+' if stock really is '+intf(r.stock):'')));
+  }
+  const txt=L.join('\n');
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject())
+    .then(()=>toast('Send list copied — '+rows.length+' products'))
+    .catch(()=>{try{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Send list copied');}catch(e){toast('Could not copy','warn');}});
 }
 
 /* ══════════ v47 — DEEPER LAVARION WIRING + DEV BRIEF ══════════ */
@@ -12876,7 +13545,7 @@ function miSet(which,rows,src){
   if(!rows){ if(which==='sales')_miSales=null;else _miAds=null; st.textContent=''; miPreview(); return; }
   if(which==='sales'){
     const r=miParseSales(rows);
-    if(r.err){_miSales=null;st.textContent='⚠ '+r.err;st.style.color='var(--amber)';}
+    if(r.err){_miSales=null;st.textContent=r.err;st.style.color='var(--amber)';}
     else{
       _miSales=r;
       st.innerHTML='<b style="color:var(--green)">✓ '+intf(r.rows.length)+' Lavarion products</b>'
@@ -12889,7 +13558,7 @@ function miSet(which,rows,src){
     }
   }else{
     const r=miParseAds(rows);
-    if(r.err){_miAds=null;st.textContent='⚠ '+r.err;st.style.color='var(--amber)';}
+    if(r.err){_miAds=null;st.textContent=r.err;st.style.color='var(--amber)';}
     else{
       _miAds=r;
       const tot=Object.values(r.map).reduce((a,x)=>a+x.spend,0);
@@ -12984,15 +13653,15 @@ function miPreview(){
     ${grp('mi-g-salesOnly','Sold, no ad spend',G.salesOnly,'var(--blue)','Lavarion products with sales but no advertising this month')}
     ${grp('mi-g-adsOnly','Ads report only — check these are yours',G.adsOnly,'var(--amber)',
       'These ASINs are in the ads file but never sold, so nothing confirms they are Lavarion. Anything with no spend is already excluded. Check the rest on Amazon or SellerAmp before letting them in.')}
-    ${clamped?`<div style="font-size:11.5px;color:var(--amber);margin-top:7px">⚠ ${clamped} product${clamped!==1?'s report':' reports'} more advertised units than units sold (${intf(lostU)} in total). Advertised units capped so organic + advertised = total.</div>`:''}`;
+    ${clamped?`<div style="font-size:11.5px;color:var(--amber);margin-top:7px">${clamped} product${clamped!==1?'s report':' reports'} more advertised units than units sold (${intf(lostU)} in total). Advertised units capped so organic + advertised = total.</div>`:''}`;
 }
 async function miImport(){
   const st=document.getElementById('mi-status');
   const label=document.getElementById('mi-month').value.trim();
-  if(!label){st.textContent='⚠ Give the month a name first.';st.style.color='var(--amber)';return;}
-  if(!_miSales&&!_miAds){st.textContent='⚠ Nothing loaded yet.';st.style.color='var(--amber)';return;}
+  if(!label){st.textContent='Give the month a name first.';st.style.color='var(--amber)';return;}
+  if(!_miSales&&!_miAds){st.textContent='Nothing loaded yet.';st.style.color='var(--amber)';return;}
   const rows=miMerge();
-  if(!rows.length){st.textContent='⚠ No Lavarion products found.';st.style.color='var(--amber)';return;}
+  if(!rows.length){st.textContent='No Lavarion products found.';st.style.color='var(--amber)';return;}
   const ym=miYm(label)||label;
   let m=repData.months.find(x=>x.ym===ym||x.label===label);
   const wasNew=!m;
@@ -13075,12 +13744,86 @@ async function sbGetSetting(newId,legacyId){
   if(v===undefined&&legacyId)v=await get(legacyId);
   return v===undefined?null:v;
 }
-async function sbPutSetting(id,value){
-  if(!SUPABASE_URL||!SUPABASE_KEY)return;
-  const h=await sbHeaders();
-  await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
-    headers:Object.assign({},h,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-    body:JSON.stringify({id,key:id,value})});
+/* ══════════ v115 — ONE WRITE PATH, AND IT TELLS YOU WHEN IT FAILS ══════════
+   Ten functions wrote to the settings table and NINE of them fired the POST and
+   never looked at the response. A rename that hit a network blip, an expired
+   token, an RLS refusal or a dead wifi connection returned exactly the same thing
+   as a rename that saved: nothing. The Monthly Report was the only row that
+   noticed, retried and said so.
+
+   Everything now goes through sbWrite(). It checks the status, and anything that
+   fails is HELD in a queue keyed by row id (last value per row wins) and retried
+   on a backoff, when the connection returns, and when the tab is refocused.
+   Nothing is dropped on the floor.
+
+   window._sbQ, not `const` — a top-level const in this one giant script is a TDZ
+   landmine for anything that runs during boot. */
+window._sbQ = window._sbQ || new Map();
+window._sbQT = null; window._sbQFails = 0; window._sbToldFail = false;
+function sbPending(){return window._sbQ.size;}
+function _sbRetryLater(){
+  if(window._sbQT||!window._sbQ.size)return;
+  const wait=Math.min(60000,3000*Math.pow(2,Math.min(window._sbQFails,4)));
+  window._sbQT=setTimeout(()=>{window._sbQT=null;sbFlushQueue();},wait);
+}
+async function sbFlushQueue(){
+  if(!window._sbQ.size)return;
+  if(typeof navigator!=='undefined'&&navigator.onLine===false){
+    try{setSyncStatus('offline');}catch(e){}
+    _sbRetryLater();return;
+  }
+  const items=[...window._sbQ.entries()];
+  let ok=0;
+  for(const [id,rec] of items){
+    const done=await sbWrite(id,rec.value,rec.label,true);
+    if(done)ok++;
+  }
+  if(!window._sbQ.size){
+    window._sbQFails=0;
+    if(window._sbToldFail){
+      window._sbToldFail=false;
+      try{toast(ok+' held change'+(ok===1?'':'s')+' saved to Supabase','ok');}catch(e){}
+    }
+    try{setSyncStatus('synced');}catch(e){}
+  }else{
+    window._sbQFails++;_sbRetryLater();
+  }
+}
+async function sbWrite(id,value,label,_isRetry){
+  if(typeof TEST_MODE!=='undefined'&&TEST_MODE)return false;   /* test mode writes nothing, anywhere */
+  if(!SUPABASE_URL||!SUPABASE_KEY)return false;
+  try{
+    const h=await sbHeaders();
+    const res=await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
+      headers:Object.assign({},h,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
+      body:JSON.stringify({id,key:id,value})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    window._sbQ.delete(id);
+    if(!window._sbQ.size){try{setSyncStatus('synced');}catch(e){}}
+    return true;
+  }catch(e){
+    console.warn('save failed: '+(label||id),e);
+    window._sbQ.set(id,{value:value,label:label||id});
+    try{setSyncStatus((typeof navigator!=='undefined'&&navigator.onLine===false)?'offline':'error');}catch(_){}
+    if(!window._sbToldFail){
+      window._sbToldFail=true;
+      try{toast('\u26a0 '+(label||id)+' has not saved to Supabase yet \u2014 held and retrying','warn');}catch(_){}
+    }
+    _sbRetryLater();
+    return false;
+  }
+}
+window.addEventListener('online',()=>{
+  window._sbQFails=0;clearTimeout(window._sbQT);window._sbQT=null;
+  if(window._sbQ.size)sbFlushQueue();
+  else{try{setSyncStatus('synced');}catch(e){}}
+});
+window.addEventListener('offline',()=>{try{setSyncStatus('offline');}catch(e){}});
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&window._sbQ.size)sbFlushQueue();
+});
+async function sbPutSetting(id,value,label){
+  return sbWrite(id,value,label);
 }
 
 /* ── Products archive: never deleted, only archived. Synced via the settings table. ── */
@@ -13662,10 +14405,11 @@ function openRepProduct(asin,keep){
           <select class="ph-sel" onchange="rphPick(this.value)" title="Jump to another product">${N.list.map(r=>`<option value="${_esc(r.asin)}" ${(r.asin||'').toUpperCase()===A?'selected':''}>${_esc(repName(r))}</option>`).join('')}</select>
           <button class="ph-arw" ${N.next?`onclick="rphJump(1)" title="${_esc(repName(N.next))}"`:'disabled'}>›</button>
         </span>`;})()}
+      <span class="ph-acts">
       <button class="ph-edit" onclick="rphCompare()" title="Compare this product against your others">⇄ Compare</button>
       <button class="ph-edit" onclick="rphArchive('${_esc(A)}')" title="${isArchived(A)?'Bring it back into the active lists':'Still yours, but you no longer sell it — keep the history, hide it from the active lists'}">${isArchived(A)?'↺ Unarchive':'⇩ Archive'}</button>
       <button class="ph-edit danger" onclick="closeRepProduct();repDropAsin('${_esc(A)}')" title="Not one of yours at all? Remove it from the report and skip it on every future import">Remove</button>
-      <button class="ph-edit" onclick="rphEdit()">Edit ${_esc(last.lab)}</button></div>
+      <button class="ph-edit" onclick="rphEdit()" title="Edit this product's row in ${_esc(last.lab)}">✎ Edit</button></span></div>
   </div>`;
 
   /* ── OVERVIEW ── */
@@ -13734,6 +14478,7 @@ function openRepProduct(asin,keep){
     ${run>=2?`<div class="pchips"><span class="pchip ${dir===M.good?'good':'bad'}">${dir>0?'↑':'↓'} ${run} months in a row</span>${V.length>=3?`<span class="pchip ${((cur-V[V.length-3][_rphMetric])>0?1:-1)===M.good?'good':'bad'}">${cur>=V[V.length-3][_rphMetric]?'↗ up':'↘ down'} over 3 months</span>`:''}</div>`:''}
     ${V.length>1?`<div class="pcard" style="margin-top:10px"><div class="pc-h">${_esc(M.l)} by month</div>
       ${bdlChart(V.map(v=>({lab:v.lab.replace(/\s*20\d\d/,''),v:v[_rphMetric]})),{col:M.c,fmt:M.fmt,w:1180,h:250,id:'tr'+_rphMetric})}</div>`:''}
+    ${rphAllCharts(V)}
     <div class="pcard" style="margin-top:10px"><div class="pc-h">Every month <span>click a row to open it</span></div>
       <table class="ptab"><thead><tr><th class="l">Month</th><th>${_esc(M.l)}</th><th>Change</th>${HC.map(x=>`<th>${x.h}</th>`).join('')}</tr></thead>
       <tbody>${V.slice().reverse().map((v,i)=>{const older=V[V.length-2-i],ch=older?v[_rphMetric]-older[_rphMetric]:null;
@@ -13973,19 +14718,6 @@ function renderRepYear(){
   const T=MT.reduce((a,x)=>({sales:a.sales+x.t.sales,profit:a.profit+x.t.profit,ads:a.ads+x.t.ads,units:a.units+x.t.units,real:a.real+x.t.real,organic:a.organic+x.t.organic,adUnits:a.adUnits+x.t.adUnits}),{sales:0,profit:0,ads:0,units:0,real:0,organic:0,adUnits:0});
   const best=MT.slice().sort((a,b)=>b.t.real-a.t.real)[0],worst=MT.slice().sort((a,b)=>a.t.real-b.t.real)[0];
 
-  /* month bars — sales with the real-profit line on top */
-  const maxS=Math.max(...MT.map(x=>x.t.sales),1);
-  const maxR=Math.max(...MT.map(x=>Math.abs(x.t.real)),1);
-  const bars=MT.map(x=>{
-    const hS=Math.max(3,Math.round(x.t.sales/maxS*100));
-    const hA=x.t.sales?Math.round(x.t.ads/x.t.sales*hS):0;
-    const rp=Math.round(Math.abs(x.t.real)/maxR*100);
-    return `<div class="ry-b ${x.m.id===repCur?'cur':''}" onclick="repSetView('month');repSelectMonth('${x.m.id}')" title="${_esc(x.m.label)} — sales ${gbp(x.t.sales)}, real profit ${gbp(x.t.real)}">
-      <div class="ry-bv">${gbp(x.t.real)}</div>
-      <div class="ry-bw"><i class="ry-bs" style="height:${hS}%"><b class="ry-ba" style="height:${Math.min(100,hA*100/Math.max(hS,1))}%"></b></i>
-        <i class="ry-br ${x.t.real>=0?'p':'n'}" style="height:${rp}%"></i></div>
-      <div class="ry-bl">${_esc(x.m.label.replace(/\s*20\d\d/,''))}</div></div>`;}).join('');
-
   /* every product × every month */
   const all={};
   MT.forEach(({m})=>(m.rows||[]).forEach(r=>{if(!r.asin)return;const k=r.asin.toUpperCase();
@@ -13995,11 +14727,16 @@ function renderRepYear(){
     if(repName(r)&&repName(r)!=='Unnamed product')e.name=repName(r);}));
   const prods=Object.values(all).sort((a,b)=>b.real-a.real);
   const mxAbs=Math.max(...prods.flatMap(p=>Object.values(p.by).map(v=>Math.abs(v.real))),1);
+  /* £1,234.56 in twelve columns is a horizontal scrollbar. £1.2k is not. */
+  const gbpK=v=>{const a=Math.abs(v);
+    if(a>=1000)return (v<0?'−£':'£')+(a/1000).toFixed(a>=10000?0:1)+'k';
+    if(a>=100)return (v<0?'−£':'£')+Math.round(a);
+    return (v<0?'−£':'£')+a.toFixed(2).replace(/\.00$/,'');};
   const cell=v=>{
-    if(!v)return '<td class="ry-c ry-x">—</td>';
+    if(!v)return '<td class="ry-c ry-x">·</td>';
     const a=Math.min(1,Math.abs(v.real)/mxAbs);
-    const bg=v.real>=0?`rgba(0,214,143,${(0.10+a*0.55).toFixed(2)})`:`rgba(255,93,108,${(0.10+a*0.55).toFixed(2)})`;
-    return `<td class="ry-c" style="background:${bg}" title="sales ${gbp(v.sales)} · ads ${gbp(v.ads)} · ${intf(v.units)}u">${gbp(v.real)}</td>`;
+    const bg=v.real>=0?`rgba(0,214,143,${(0.08+a*0.5).toFixed(2)})`:`rgba(255,93,108,${(0.08+a*0.5).toFixed(2)})`;
+    return `<td class="ry-c" style="background:${bg}" title="${gbp(v.real)} real profit · sales ${gbp(v.sales)} · ads ${gbp(v.ads)} · ${intf(v.units)} units">${gbpK(v.real)}</td>`;
   };
   const K=(l,v,c,s)=>`<div class="rph-k"><div class="rph-kl">${l}</div><div class="rph-kv" style="color:${c}">${v}</div><div class="rph-ks">${s||'&nbsp;'}</div></div>`;
 
@@ -14026,23 +14763,6 @@ function renderRepYear(){
       {name:'Ad spend',col:'var(--amber)',v:MT.map(x=>x.t.ads)},
       {name:'Real profit',col:'var(--green)',v:MT.map(x=>x.t.real)}],
       {fmt:gbp,w:1240,h:300,id:'yrchart'})}</div>`:''}
-  <div class="ry-chart" style="display:none"><div class="ry-ch"><b>Sales and real profit by month</b>
-    <span class="rs-k"><i style="background:var(--blue)"></i>Sales</span>
-    <span class="rs-k"><i style="background:var(--amber)"></i>Ads inside sales</span>
-    <span class="rs-k"><i style="background:var(--green)"></i>Real profit</span></div>
-    <div class="ry-bars">${bars}</div>
-    <div class="ry-mtw" style="display:none"><table class="rph-t ry-mt"><thead><tr><th style="text-align:left">Month</th><th>Sales</th><th>Ad spend</th><th>TACOS</th><th>Units</th><th>Organic</th><th>Real profit</th><th>Margin</th></tr></thead>
-      <tbody>${MT.slice().reverse().map(x=>{const marg=x.t.sales?x.t.real/x.t.sales*100:0,tac=repTacos(x.t);
-        return `<tr class="${x.m.id===repCur?'now':''}" onclick="repSetView('month');repSelectMonth('${x.m.id}')" title="Open ${_esc(x.m.label)}">
-          <td style="text-align:left;font-weight:700">${_esc(x.m.label)}${x.m.id===repCur?' <span class="rph-now">now</span>':''}</td>
-          <td>${gbp(x.t.sales)}</td>
-          <td style="color:${x.t.ads>0?'var(--amber)':'var(--text4)'}">${gbp(x.t.ads)}</td>
-          <td style="color:${tac>35?'var(--red)':tac>20?'var(--amber)':'var(--text2)'}">${fmt(tac,1)}%</td>
-          <td>${intf(x.t.units)}</td>
-          <td style="color:var(--green)">${x.t.units?fmt(x.t.organic/x.t.units*100,0)+'%':'—'}</td>
-          <td><span class="${x.t.real>0?'rp-pos':x.t.real<0?'rp-neg':'rp-zero'}">${gbp(x.t.real)}</span></td>
-          <td style="color:${marg>=15?'var(--green)':marg>=8?'var(--amber)':'var(--red)'};font-weight:700">${fmt(marg,1)}%</td>
-        </tr>`;}).join('')}</tbody></table></div></div>
   <div class="pcard" style="margin-bottom:10px"><div class="pc-h">Month by month <span>click a row to open that month</span></div>
     <table class="ptab"><thead><tr><th class="l">Month</th><th>Sales</th><th>Ad spend</th><th>TACOS</th><th>Units</th><th>Organic</th><th>Real profit</th><th>Margin</th></tr></thead>
     <tbody>${MT.slice().reverse().map(x=>{const marg=x.t.sales?x.t.real/x.t.sales*100:0,tac=repTacos(x.t);
@@ -14054,17 +14774,18 @@ function renderRepYear(){
         <td><span class="${x.t.real>0?'rp-pos':x.t.real<0?'rp-neg':'rp-zero'}">${gbp(x.t.real)}</span></td>
         <td style="color:${marg>=15?'var(--green)':marg>=8?'var(--amber)':'var(--red)'};font-weight:700">${fmt(marg,1)}%</td></tr>`;}).join('')}
     </tbody></table></div>
-  <div class="pcard"><div class="pc-h">Every product, every month <span>real profit · greener is better · click a row for the full breakdown</span></div>
-  <div class="tscroll" style="max-height:56vh"><table class="rph-t ry-t">
-    <colgroup><col style="width:262px">${MT.map(()=>'<col>').join('')}<col><col><col></colgroup>
+  <div class="pcard"><div class="pc-h">Every product, every month
+    <span class="ry-key">real profit <i class="k n"></i><i class="k n2"></i><i class="k z"></i><i class="k p2"></i><i class="k p"></i> loss → profit</span></div>
+  <div class="tscroll ry-scroll" style="max-height:58vh"><table class="rph-t ry-t">
+    <colgroup><col class="ry-pc">${MT.map(()=>'<col class="ry-mc">').join('')}<col class="ry-sc"><col class="ry-sc"><col class="ry-sc"></colgroup>
     <thead><tr><th style="text-align:left;position:sticky;left:0;z-index:3;background:var(--bg2)">Product</th>
       ${MT.map(x=>`<th>${_esc(x.m.label.replace(/\s*20\d\d/,''))}</th>`).join('')}
       <th style="border-left:1px solid var(--border2)">Total real</th><th>Sales</th><th>Ads</th></tr></thead>
     <tbody>${prods.map(p=>`<tr onclick="openRepProduct('${_esc(p.asin)}')" title="Open the product history">
-      <td class="ry-p" style="text-align:left;position:sticky;left:0;z-index:2"><b>${_esc(p.name)}</b><div class="rl-a">${_esc(p.asin)} · ${p.n}/${MT.length} months</div></td>
+      <td class="ry-p" style="text-align:left;position:sticky;left:0;z-index:2"><b title="${_esc(p.name)}">${_esc(p.name)}</b><div class="rl-a">${p.n}/${MT.length} months</div></td>
       ${MT.map(x=>cell(p.by[x.m.id])).join('')}
-      <td style="border-left:1px solid var(--border2)"><span class="${p.real>0?'rp-pos':p.real<0?'rp-neg':'rp-zero'}">${gbp(p.real)}</span></td>
-      <td>${gbp(p.sales)}</td><td style="color:var(--amber)">${gbp(p.ads)}</td></tr>`).join('')}
+      <td class="ry-sum"><span class="${p.real>0?'rp-pos':p.real<0?'rp-neg':'rp-zero'}">${gbpK(p.real)}</span></td>
+      <td>${gbpK(p.sales)}</td><td style="color:var(--amber)">${gbpK(p.ads)}</td></tr>`).join('')}
       <tr class="ry-tot"><td style="text-align:left;position:sticky;left:0;z-index:2;background:var(--bg3)">Total · ${prods.length} products</td>
       ${MT.map(x=>`<td><span class="${x.t.real>0?'rp-pos':'rp-neg'}">${gbp(x.t.real)}</span></td>`).join('')}
       <td style="border-left:1px solid var(--border2)"><span class="${T.real>0?'rp-pos':'rp-neg'}">${gbp(T.real)}</span></td>
@@ -14168,7 +14889,8 @@ function openRepKpi(k){
   document.getElementById('kpi-sub').innerHTML=`<span class="chip">${_esc(now.lab)}</span><span class="chip">${K.fmt(now.v)}</span>${pNow?`<span class="chip" style="color:${gd(d1)}">${dv(d1)} vs ${_esc(pNow.lab)}</span>`:''}`;
 
   const W=1180;
-  const chart=S.length>1?bdlChart(S.map(x=>({lab:x.lab.replace(/\s*20\d\d/,''),v:x.v})),{col:K.c,fmt:K.fmt,w:W,h:260,id:'kpi'+k}):'';
+  /* height follows the data: two months does not need 260px of plot */
+  const chart=S.length>1?bdlChart(S.map(x=>({lab:x.lab.replace(/\s*20\d\d/,''),v:x.v})),{col:K.c,fmt:K.fmt,w:W,h:S.length<=3?185:225,id:'kpi'+k}):'';
   /* with a single month, month-on-month tiles all print the same figure — swap them
      for a breakdown of the month itself, which is the only real information there is. */
   const pv=contrib.map(x=>x.v).filter(v=>isFinite(v)).sort((a,b)=>a-b);
@@ -14263,8 +14985,8 @@ function fxProvenance(r){
   const spent=(+r.ads||0)>0;
   if(spent)out.push({ic:'📣',t:'Ads report — '+(m?m.label:'this month'),s:gbp(+r.ads||0)+' of spend'+((+r.adUnits||0)?' · '+intf(r.adUnits)+' ad units':''),tone:'blue'});
   if(sold)out.push({ic:'🧾',t:'Sales report — '+(m?m.label:'this month'),s:intf(+r.units||0)+' units · '+gbp(+r.sales||0)+' sales',tone:'green'});
-  if(spent&&!sold)out.push({ic:'⚠',t:'Not in the sales file',s:'It spent money but sold nothing, so there was no title to take — that is why it has no name',tone:'amber'});
-  if(!spent&&!sold)out.push({ic:'⚠',t:'No spend and no sales',s:'It arrived with nothing attached. Safe to remove if you do not recognise it.',tone:'amber'});
+  if(spent&&!sold)out.push({ic:ico('warn'),t:'Not in the sales file',s:'It spent money but sold nothing, so there was no title to take — that is why it has no name',tone:'amber'});
+  if(!spent&&!sold)out.push({ic:ico('warn'),t:'No spend and no sales',s:'It arrived with nothing attached. Safe to remove if you do not recognise it.',tone:'amber'});
   /* every other month this ASIN turns up in */
   repSortedMonths().forEach(mm=>{
     if(m&&mm.id===m.id)return;
@@ -14582,7 +15304,7 @@ function fxOneOff(){
       sbSaveHubProducts();
       if(!_archived.has(A)){_archived.add(A);
         try{localStorage.setItem('bdl_archived_asins',JSON.stringify([..._archived]));}catch(e){}
-        sbPutSetting('bdlhub_archived_asins',JSON.stringify([..._archived])).catch(()=>{});}
+        sbWrite('bdlhub_archived_asins',JSON.stringify([..._archived]),'Archived products');}
       delete _fxDraft[A];
       repSaveNow();
       const at=_fxI;
@@ -14809,12 +15531,7 @@ window._hubProducts=(()=>{try{return JSON.parse(localStorage.getItem('bdl_hub_pr
 function hubProduct(a){return (window._hubProducts||{})[String(a||'').toUpperCase()]||null;}
 async function sbSaveHubProducts(){
   try{localStorage.setItem('bdl_hub_products',JSON.stringify(window._hubProducts||{}));}catch(e){}
-  if(!SUPABASE_URL||!SUPABASE_KEY)return;
-  try{const h=await sbHeaders();
-    await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
-      headers:Object.assign({},h,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-      body:JSON.stringify({id:'hub_products_v1',key:'hub_products_v1',value:JSON.stringify(window._hubProducts||{})})});
-  }catch(e){console.warn('hub products save',e);}
+  await sbWrite('hub_products_v1',JSON.stringify(window._hubProducts||{}),'Your added products');
 }
 async function sbLoadHubProducts(){
   if(!SUPABASE_URL||!SUPABASE_KEY)return;
@@ -14925,9 +15642,7 @@ function paCommit(){
   sbSaveHubProducts();
   if(arc){
     try{localStorage.setItem('bdl_archived_asins',JSON.stringify([..._archived]));}catch(e){}
-    if(SUPABASE_URL&&SUPABASE_KEY)sbHeaders().then(h=>fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
-      headers:Object.assign({},h,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-      body:JSON.stringify({id:'bdlhub_archived_asins',key:'bdlhub_archived_asins',value:JSON.stringify([..._archived])})})).catch(()=>{});
+    sbWrite('bdlhub_archived_asins',JSON.stringify([..._archived]),'Archived products');
   }
   closePpcAdd();
   try{renderProducts();}catch(e){}
@@ -14947,13 +15662,7 @@ function hubProductForget(asin){
 
 /* the ASIN → name map is real work; push it to Supabase alongside the report */
 async function sbSaveNames(){
-  if(TEST_MODE||!SUPABASE_URL||!SUPABASE_KEY)return;
-  try{
-    const hds=await sbHeaders();
-    await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
-      headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-      body:JSON.stringify({id:'asin_names_v1',key:'asin_names_v1',value:JSON.stringify(window._asinNames||{})})});
-  }catch(e){console.warn('names save',e);}
+  await sbWrite('asin_names_v1',JSON.stringify(window._asinNames||{}),'Product names');
 }
 async function sbLoadNames(){
   if(TEST_MODE||!SUPABASE_URL||!SUPABASE_KEY)return;
@@ -14976,12 +15685,7 @@ try{window._asinDropped=JSON.parse(localStorage.getItem('bdl_asin_dropped')||'[]
 function asinDropped(a){return (window._asinDropped||[]).indexOf(String(a||'').toUpperCase())>=0;}
 async function sbSaveDropped(){
   try{localStorage.setItem('bdl_asin_dropped',JSON.stringify(window._asinDropped||[]));}catch(e){}
-  if(!SUPABASE_URL||!SUPABASE_KEY)return;
-  try{const hds=await sbHeaders();
-    await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
-      headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-      body:JSON.stringify({id:'asin_dropped_v1',key:'asin_dropped_v1',value:JSON.stringify(window._asinDropped||[])})});
-  }catch(e){console.warn('dropped save',e);}
+  await sbWrite('asin_dropped_v1',JSON.stringify(window._asinDropped||[]),'Dropped products');
 }
 async function sbLoadDropped(){
   if(!SUPABASE_URL||!SUPABASE_KEY)return;
@@ -15063,14 +15767,7 @@ function repPrefsSave(){
   try{localStorage.setItem('bdl_rep_cols',JSON.stringify(_repCols));localStorage.setItem('bdl_rep_dense',_repDense?'1':'0');}catch(e){}
   clearTimeout(_prefsT);
   _prefsT=setTimeout(async()=>{
-    if(TEST_MODE||!SUPABASE_URL||!SUPABASE_KEY)return;
-    try{
-      const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
-        headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-        body:JSON.stringify({id:'report_prefs_v1',key:'report_prefs_v1',
-          value:JSON.stringify({cols:_repCols,dense:_repDense,updatedAt:Date.now()})})});
-    }catch(e){console.warn('prefs save',e);}
+    await sbWrite('report_prefs_v1',JSON.stringify({cols:_repCols,dense:_repDense,updatedAt:Date.now()}),'Report column choice');
   },800);
 }
 async function repPrefsLoad(){
@@ -15158,6 +15855,72 @@ document.addEventListener('click',e=>{
 /* ══════════════════════════ v59 — CHARTS, BENCHMARKS, POPUP LINKING ══════════════════════════ */
 
 /* ── a proper chart: labelled Y axis, gridlines, area fill, range toggle ── */
+/* ══════════ v112 — CHARTS ══════════
+   Rebuilt: thinner stroke, a real gradient fill, catmull-rom smoothing, axis lines
+   that recede instead of competing, and a hover layer that tracks the nearest point
+   with a crosshair and a floating readout. Draws itself in on first paint. */
+function _bdlSmooth(P,tension){
+  /* catmull-rom → cubic bezier. A monthly series is a curve, not a polyline, but the
+     tension is kept low so it never invents a peak between two real points. */
+  if(P.length<3)return P.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const t=tension==null?0.18:tension;
+  let d='M'+P[0][0].toFixed(1)+' '+P[0][1].toFixed(1);
+  for(let i=0;i<P.length-1;i++){
+    const p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||P[i+1];
+    const c1x=p1[0]+(p2[0]-p0[0])*t, c1y=p1[1]+(p2[1]-p0[1])*t;
+    const c2x=p2[0]-(p3[0]-p1[0])*t, c2y=p2[1]-(p3[1]-p1[1])*t;
+    d+=`C${c1x.toFixed(1)} ${c1y.toFixed(1)},${c2x.toFixed(1)} ${c2y.toFixed(1)},${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+/* A postcard-sized version of bdlChart for small-multiple grids: same gradient, same
+   smoothing, no axes — the point of a grid is shape comparison, not precise reading. */
+function bdlMini(pts,opt){
+  const o=Object.assign({col:'var(--blue)',fmt:v=>fmt(v,0),w:230,h:64,id:'m'+Math.round(Math.random()*1e6)},opt||{});
+  if(!pts||pts.length<2)return '<div class="mini-none">Needs two months</div>';
+  const vals=pts.map(p=>p.v);
+  let mn=Math.min(...vals),mx=Math.max(...vals);
+  if(mn===mx){mn-=Math.max(.5,Math.abs(mn)*.08);mx+=Math.max(.5,Math.abs(mx)*.08);}
+  if(mn>0)mn=Math.min(mn,mn-(mx-mn)*0.12);
+  const rg=(mx-mn)||1,W=o.w,H=o.h,PAD=6;
+  const P=pts.map((p,i)=>[2+(i/(pts.length-1))*(W-4),H-PAD-((p.v-mn)/rg)*(H-PAD*2)]);
+  const d=_bdlSmooth(P,0.16);
+  const last=P[P.length-1];
+  return`<svg class="bmini" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <defs><linearGradient id="${o.id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${o.col}" stop-opacity=".32"/>
+      <stop offset="1" stop-color="${o.col}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d} L${last[0].toFixed(1)} ${H} L2 ${H} Z" fill="url(#${o.id})"/>
+    <path d="${d}" fill="none" stroke="${o.col}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.8" fill="${o.col}" stroke="var(--bg2)" stroke-width="1.6"/></svg>`;
+}
+/* Every metric at once — sales, ads, ROAS, units, organic, ad units, real profit. */
+function rphAllCharts(V){
+  if(!V||V.length<2)return '';
+  const labs=V.map(v=>v.lab.replace(/\s*20\d\d/,''));
+  const M=[
+    ['Sales',       'var(--blue)',  v=>v.sales,   gbp],
+    ['Real profit', 'var(--green)', v=>v.real,    gbp],
+    ['Ad spend',    'var(--amber)', v=>v.ads,     gbp],
+    ['Units',       'var(--purple)',v=>v.units,   intf],
+    ['Organic units','var(--green)',v=>v.organic, intf],
+    ['Ad units',    'var(--blue)',  v=>v.adUnits, intf],
+    ['ROAS',        'var(--teal)',  v=>v.roas,    x=>fmt(x,2)+'×'],
+    ['TACOS',       'var(--coral)', v=>v.tacos,   x=>fmt(x,1)+'%'],
+    ['Margin',      'var(--teal)',  v=>v.margin,  x=>fmt(x,1)+'%'],
+  ];
+  return`<div class="pcard" style="margin-top:10px"><div class="pc-h">Every metric across ${V.length} months <span>same shape, same scale — hover the big chart above for exact figures</span></div>
+    <div class="mini-grid">${M.map(([l,c,get,f])=>{
+      const vals=V.map(get).map(x=>isFinite(x)?x:0);
+      const first=vals[0],last=vals[vals.length-1];
+      const d=last-first;
+      const pc=first?(d/Math.abs(first)*100):null;
+      return`<div class="mini-c">
+        <div class="mini-h"><span>${l}</span><b style="color:${c}">${f(last)}</b></div>
+        ${bdlMini(V.map((v,i)=>({lab:labs[i],v:vals[i]})),{col:c,fmt:f})}
+        <div class="mini-f">${d===0?'level':(d>0?'▲ ':'▼ ')+f(Math.abs(d))}${pc!=null&&isFinite(pc)&&Math.abs(pc)>=1?` <i>${d>0?'+':'−'}${fmt(Math.abs(pc),0)}%</i>`:''} since ${_esc(labs[0])}</div>
+      </div>`;}).join('')}</div></div>`;
+}
 function bdlChart(pts,opt){
   /* pts: [{lab, v}] · opt: {col, fmt, w, h, id} */
   const o=Object.assign({col:'var(--blue)',fmt:v=>fmt(v,0),w:640,h:250,id:'c'+Math.round(Math.random()*1e6)},opt||{});
@@ -15167,27 +15930,45 @@ function bdlChart(pts,opt){
   if(mn===mx){mn=mn-Math.max(1,Math.abs(mn)*0.15);mx=mx+Math.max(1,Math.abs(mx)*0.15);}
   else{const pad=(mx-mn)*0.16;mn-=pad;mx+=pad;}
   if(mn>0&&mn<(mx-mn)*0.9)mn=0;
-  const L=76,R=14,TP=16,B=28;                       /* axis gutters */
+  const L=76,R=16,TP=18,B=30;
   const W=o.w,H=o.h,pw=W-L-R,ph=H-TP-B;
   const Y=v=>TP+ph-((v-mn)/((mx-mn)||1))*ph;
   const X=i=>pts.length>1?L+(i/(pts.length-1))*pw:L+pw/2;
   const TICKS=5;
   const grid=Array.from({length:TICKS},(_,i)=>{
     const v=mn+((mx-mn)/(TICKS-1))*i,y=Y(v);
-    return`<line x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/>
-      <text x="${L-9}" y="${(y+3.5).toFixed(1)}" text-anchor="end" class="bc-y">${o.fmt(v)}</text>`;}).join('');
+    return`<line x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}" class="bc-grid"/>
+      <text x="${L-11}" y="${(y+3.5).toFixed(1)}" text-anchor="end" class="bc-y">${o.fmt(v)}</text>`;}).join('');
   const P=pts.map((p,i)=>[X(i),Y(p.v)]);
-  const line=P.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const line=_bdlSmooth(P);
   const area=P.length>1?line+` L${P[P.length-1][0].toFixed(1)} ${TP+ph} L${P[0][0].toFixed(1)} ${TP+ph} Z`:'';
-  const zero=(mn<0&&mx>0)?`<line x1="${L}" y1="${Y(0).toFixed(1)}" x2="${W-R}" y2="${Y(0).toFixed(1)}" stroke="var(--border3)" stroke-width="1.5" stroke-dasharray="4 3"/>`:'';
+  const zero=(mn<0&&mx>0)?`<line x1="${L}" y1="${Y(0).toFixed(1)}" x2="${W-R}" y2="${Y(0).toFixed(1)}" class="bc-zero"/>`:'';
+  /* one invisible band per point catches the pointer — no JS listeners to leak */
+  const hot=pts.map((p,i)=>{
+    const bw=pw/Math.max(1,pts.length-1);
+    const cx=X(i);
+    return`<g class="bc-hot">
+      <rect x="${(cx-bw/2).toFixed(1)}" y="${TP}" width="${bw.toFixed(1)}" height="${ph}" fill="transparent"/>
+      <line class="bc-cross" x1="${cx.toFixed(1)}" y1="${TP}" x2="${cx.toFixed(1)}" y2="${(TP+ph).toFixed(1)}"/>
+      <circle class="bc-halo" cx="${cx.toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="9" fill="${o.col}"/>
+      <circle class="bc-dot-h" cx="${cx.toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="4.5" fill="${o.col}"/>
+      <g class="bc-tip" transform="translate(${Math.min(Math.max(cx,L+52),W-R-52).toFixed(1)},${Math.max(TP+14,P[i][1]-16).toFixed(1)})">
+        <rect x="-52" y="-25" width="104" height="34" rx="8" class="bc-tipbg"/>
+        <text x="0" y="-12" text-anchor="middle" class="bc-tipl">${_esc(pts[i].lab)}</text>
+        <text x="0" y="2" text-anchor="middle" class="bc-tipv" fill="${o.col}">${o.fmt(pts[i].v)}</text>
+      </g></g>`;}).join('');
   return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" class="bchart" preserveAspectRatio="xMidYMid meet">
-    <defs><linearGradient id="${o.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${o.col}" stop-opacity=".28"/><stop offset="1" stop-color="${o.col}" stop-opacity="0"/></linearGradient></defs>
+    <defs><linearGradient id="${o.id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${o.col}" stop-opacity=".34"/>
+      <stop offset="55%" stop-color="${o.col}" stop-opacity=".08"/>
+      <stop offset="1" stop-color="${o.col}" stop-opacity="0"/></linearGradient></defs>
     ${grid}${zero}
-    ${area?`<path d="${area}" fill="url(#${o.id})"/>`:''}
-    <path d="${line}" fill="none" stroke="${o.col}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-    ${P.map((p,i)=>`<g><circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${i===P.length-1?5.5:4}" fill="${o.col}" stroke="var(--panel)" stroke-width="2.5"><title>${_esc(pts[i].lab)}: ${o.fmt(pts[i].v)}</title></circle>
-      ${i===P.length-1?`<text x="${(p[0]-9).toFixed(1)}" y="${(p[1]-11).toFixed(1)}" text-anchor="end" class="bc-last" fill="${o.col}">${o.fmt(pts[i].v)}</text>`:''}
-      <text x="${p[0].toFixed(1)}" y="${H-8}" text-anchor="${i===0?'start':i===P.length-1?'end':'middle'}" class="bc-x">${_esc(pts[i].lab)}</text></g>`).join('')}</svg>`;
+    ${area?`<path d="${area}" fill="url(#${o.id})" class="bc-area"/>`:''}
+    <path d="${line}" fill="none" stroke="${o.col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="bc-line"/>
+    ${P.map((p,i)=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${i===P.length-1?4:2.6}" fill="${o.col}" stroke="var(--panel)" stroke-width="${i===P.length-1?2.5:1.6}" class="bc-dot"/>`).join('')}
+    <text x="${(P[P.length-1][0]-9).toFixed(1)}" y="${(P[P.length-1][1]-12).toFixed(1)}" text-anchor="end" class="bc-last" fill="${o.col}">${o.fmt(pts[pts.length-1].v)}</text>
+    ${pts.map((p,i)=>`<text x="${X(i).toFixed(1)}" y="${H-9}" text-anchor="${i===0?'start':i===pts.length-1?'end':'middle'}" class="bc-x">${_esc(p.lab)}</text>`).join('')}
+    ${hot}</svg>`;
 }
 /* two series on one set of axes — spend against the sales it bought */
 function bdlChart2(pts,opt){
@@ -15281,24 +16062,63 @@ function rphPick(asin){if(asin)openRepProduct(asin,'tab');}
 
 /* multi-series line chart on shared axes */
 function bdlChartN(labels,series,opt){
+  /* v115 — the multi-series chart never got the v112 treatment: straight polylines,
+     a 2.6px stroke and native <title> tooltips that show one product at a time and
+     take a second to appear. On a COMPARISON chart the tooltip is the whole point,
+     and it has to show every product at that month at once — otherwise you are
+     hovering five times to read one column. Same smoothing, same axes, same
+     CSS-only hover (no JS listeners) as bdlChart. */
   const o=Object.assign({fmt:v=>fmt(v,0),w:900,h:280,id:'m'+Math.round(Math.random()*1e6)},opt||{});
   if(!labels.length||!series.length)return '';
-  const all=series.flatMap(s=>s.v);
-  let mn=Math.min(0,...all),mx=Math.max(...all);
-  if(mn===mx)mx=mn+1;
-  mx+=(mx-mn)*0.14;
-  const L=68,R=16,TP=14,B=28,W=o.w,H=o.h,pw=W-L-R,ph=H-TP-B;
-  const Y=v=>TP+ph-((v-mn)/((mx-mn)||1))*ph, X=i=>labels.length>1?L+(i/(labels.length-1))*pw:L+pw/2;
-  const grid=Array.from({length:5},(_,i)=>{const v=mn+((mx-mn)/4)*i,y=Y(v);
-    return`<line x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/><text x="${L-9}" y="${(y+3.5).toFixed(1)}" text-anchor="end" class="bc-y">${o.fmt(v)}</text>`;}).join('');
-  const zero=(mn<0&&mx>0)?`<line x1="${L}" y1="${Y(0).toFixed(1)}" x2="${W-R}" y2="${Y(0).toFixed(1)}" stroke="var(--border3)" stroke-width="1.5" stroke-dasharray="4 3"/>`:'';
-  const lines=series.map(s=>{
-    const P=s.v.map((v,i)=>[X(i),Y(v)]);
-    return`<path d="${P.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${s.col}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-      ${P.map((p,i)=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="${s.col}" stroke="var(--panel)" stroke-width="2.5"><title>${_esc(s.name)} · ${_esc(labels[i])}: ${o.fmt(s.v[i])}</title></circle>`).join('')}`;}).join('');
+  const all=series.flatMap(s=>s.v).filter(v=>isFinite(v));
+  if(!all.length)return '';
+  let mn=Math.min(...all),mx=Math.max(...all);
+  if(mn===mx){mn=mn-Math.max(1,Math.abs(mn)*0.15);mx=mx+Math.max(1,Math.abs(mx)*0.15);}
+  else{const pad=(mx-mn)*0.16;mn-=pad;mx+=pad;}
+  if(mn>0&&mn<(mx-mn)*0.9)mn=0;
+  const L=76,R=16,TP=18,B=30,W=o.w,H=o.h,pw=W-L-R,ph=H-TP-B;
+  const Y=v=>TP+ph-((v-mn)/((mx-mn)||1))*ph;
+  const X=i=>labels.length>1?L+(i/(labels.length-1))*pw:L+pw/2;
+  const TICKS=5;
+  const grid=Array.from({length:TICKS},(_,i)=>{
+    const v=mn+((mx-mn)/(TICKS-1))*i,y=Y(v);
+    return`<line x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}" class="bc-grid"/>
+      <text x="${L-11}" y="${(y+3.5).toFixed(1)}" text-anchor="end" class="bc-y">${o.fmt(v)}</text>`;}).join('');
+  const zero=(mn<0&&mx>0)?`<line x1="${L}" y1="${Y(0).toFixed(1)}" x2="${W-R}" y2="${Y(0).toFixed(1)}" class="bc-zero"/>`:'';
+  const PTS=series.map(s=>s.v.map((v,i)=>[X(i),Y(v)]));
+  const lines=series.map((s,si)=>
+    `<path d="${_bdlSmooth(PTS[si])}" fill="none" stroke="${s.col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="bc-line"/>`
+  ).join('');
+  const dots=series.map((s,si)=>PTS[si].map(p=>
+    `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="${s.col}" class="bc-dot"/>`).join('')).join('');
+
+  /* one invisible band per month reveals a crosshair and a single shared tooltip
+     listing every series at that month, ranked — read a column in one hover. */
+  const RH=15, TIPW=Math.min(230,Math.max(150,...series.map(s=>s.name.length*6.6+70)));
+  const hot=labels.map((lab,i)=>{
+    const bw=pw/Math.max(1,labels.length-1), cx=X(i);
+    const rank=series.map((s,si)=>({n:s.name,c:s.col,v:s.v[i],y:PTS[si][i][1]}))
+                     .sort((a,b)=>b.v-a.v);
+    const th=RH*rank.length+24;
+    const tx=Math.min(Math.max(cx, L+TIPW/2+4), W-R-TIPW/2-4);
+    const ty=Math.max(TP+6, Math.min(TP+ph-th-6, TP+ph/2-th/2));
+    return`<g class="bc-hot">
+      <rect x="${(cx-bw/2).toFixed(1)}" y="${TP}" width="${bw.toFixed(1)}" height="${ph}" fill="transparent"/>
+      <line class="bc-cross" x1="${cx.toFixed(1)}" y1="${TP}" x2="${cx.toFixed(1)}" y2="${(TP+ph).toFixed(1)}"/>
+      ${rank.map(r=>`<circle class="bc-halo" cx="${cx.toFixed(1)}" cy="${r.y.toFixed(1)}" r="7" fill="${r.c}"/>
+        <circle class="bc-dot-h" cx="${cx.toFixed(1)}" cy="${r.y.toFixed(1)}" r="3.6" fill="${r.c}"/>`).join('')}
+      <g class="bc-tip" transform="translate(${tx.toFixed(1)},${ty.toFixed(1)})">
+        <rect x="${(-TIPW/2).toFixed(1)}" y="0" width="${TIPW.toFixed(1)}" height="${th}" rx="9" class="bc-tipbg"/>
+        <text x="${(-TIPW/2+11).toFixed(1)}" y="15" class="bc-tipl" text-anchor="start">${_esc(lab)}</text>
+        ${rank.map((r,ri)=>`<circle cx="${(-TIPW/2+15).toFixed(1)}" cy="${(28+ri*RH-3.5).toFixed(1)}" r="3.2" fill="${r.c}"/>
+          <text x="${(-TIPW/2+24).toFixed(1)}" y="${(28+ri*RH)}" class="bc-tipn" text-anchor="start">${_esc(r.n.length>20?r.n.slice(0,19)+'…':r.n)}</text>
+          <text x="${(TIPW/2-11).toFixed(1)}" y="${(28+ri*RH)}" class="bc-tipv" text-anchor="end" fill="${r.c}">${o.fmt(r.v)}</text>`).join('')}
+      </g></g>`;}).join('');
+
   return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" class="bchart" preserveAspectRatio="xMidYMid meet">
-    ${grid}${zero}${lines}
-    ${labels.map((l,i)=>`<text x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="${i===0?'start':i===labels.length-1?'end':'middle'}" class="bc-x">${_esc(l)}</text>`).join('')}</svg>`;
+    ${grid}${zero}${lines}${dots}
+    ${labels.map((l,i)=>`<text x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="${i===0?'start':i===labels.length-1?'end':'middle'}" class="bc-x">${_esc(l)}</text>`).join('')}
+    ${hot}</svg>`;
 }
 
 const CMP_COLS=['var(--blue)','var(--green)','var(--amber)','var(--purple)','var(--teal)','var(--coral)','var(--red)','#8ab4ff'];
@@ -15394,14 +16214,27 @@ function openCompare(keep){
 
   document.getElementById('rep-cmp-body').innerHTML=`
     <div class="cmp-bar">
-      <div class="pmet" style="margin:0;flex:1">${Object.keys(CMP_M).map(k=>`<button class="${k===_cmpMetric?'on':''}" style="--a:var(--blue)" onclick="cmpMetric('${k}')">${CMP_M[k].l}</button>`).join('')}</div>
+      <div class="pmet" style="margin:0">${Object.keys(CMP_M).map(k=>`<button class="${k===_cmpMetric?'on':''}" style="--a:var(--blue)" onclick="cmpMetric('${k}')">${CMP_M[k].l}</button>`).join('')}</div>
     </div>
     <div class="cmp-pick">
+      <div class="cmp-sel">
+        ${_cmpSel.length?_cmpSel.map((A,i)=>{const r=all.find(x=>(x.asin||'').toUpperCase()===A);
+          return`<span class="ctok" style="--c:${CMP_COLS[i%CMP_COLS.length]}">
+            <i></i><b title="${_esc(r?repFullName(r):A)}">${_esc(r?repName(r):A)}</b>
+            <button onclick="cmpToggle('${_esc(A)}')" title="Remove from the comparison">✕</button></span>`;}).join('')
+          :'<span class="cmp-none">Nothing picked yet</span>'}
+        <div class="cmp-add">
+          <button class="btn-sm" onclick="cmpAddOpen(event)">+ Add product</button>
+          <div class="cmp-menu" id="cmp-menu">
+            <input class="input" id="cmp-search" placeholder="Search a product…" autocomplete="off"
+              oninput="cmpAddRender()" onkeydown="if(event.key==='Escape'){event.stopPropagation();cmpAddClose();}">
+            <div class="cmp-list" id="cmp-list"></div>
+          </div>
+        </div>
+      </div>
       <div class="cmp-pre">${[['top','Top 5'],['worst','Worst 5'],['spend','Biggest spenders'],['moved','Biggest movers']]
         .map(([k,l])=>`<button class="btn-sm" onclick="cmpPreset('${k}')">${l}</button>`).join('')}
         ${_cmpSel.length?`<button class="btn-sm" onclick="_cmpSel=[];openCompare(true)">Clear</button>`:''}</div>
-      <div class="cmp-chips">${all.map(r=>{const A=r.asin.toUpperCase(),on=_cmpSel.indexOf(A);
-        return`<button class="cchip${on>=0?' on':''}" ${on>=0?`style="--c:${CMP_COLS[on%CMP_COLS.length]}"`:''} onclick="cmpToggle('${_esc(r.asin)}')">${on>=0?'<span class="cdot" style="background:'+CMP_COLS[on%CMP_COLS.length]+'"></span>':''}${_esc(repName(r))}</button>`;}).join('')}</div>
     </div>
     ${picked.length?read:''}
     ${picked.length&&ms.length>1?`<div class="pcard" style="margin-top:10px"><div class="pc-h">${_esc(M.l)} across ${ms.length} months
@@ -15410,6 +16243,34 @@ function openCompare(keep){
     ${grid}${summary}
     ${!picked.length?`<div class="pempty"><b>Pick some products</b><p>Choose up to 8 above, or use one of the presets, and they will be charted against each other across every month you have imported.</p></div>`:''}`;
   document.getElementById('rep-cmp-overlay').classList.add('open');document.body.style.overflow='hidden';
+}
+/* One searchable picker instead of a wall of every product in the report. Uses the
+   same tiered search as everywhere else, so "A" gives you things starting with A. */
+function cmpAddOpen(ev){
+  if(ev)ev.stopPropagation();
+  const mn=document.getElementById('cmp-menu');if(!mn)return;
+  mn.classList.add('open');
+  cmpAddRender();
+  const inp=document.getElementById('cmp-search');if(inp){inp.value='';inp.focus();}
+  setTimeout(()=>document.addEventListener('mousedown',cmpAddAway),0);
+}
+function cmpAddAway(e){
+  const mn=document.getElementById('cmp-menu');
+  if(mn&&!mn.contains(e.target)&&!e.target.closest('.cmp-add'))cmpAddClose();
+}
+function cmpAddClose(){
+  const mn=document.getElementById('cmp-menu');if(mn)mn.classList.remove('open');
+  document.removeEventListener('mousedown',cmpAddAway);
+}
+function cmpAddRender(){
+  const el=document.getElementById('cmp-list');if(!el)return;
+  const m=repMonth();if(!m)return;
+  const q=(document.getElementById('cmp-search')||{}).value||'';
+  const pool=(m.rows||[]).filter(r=>r.asin&&_cmpSel.indexOf(r.asin.toUpperCase())<0);
+  const hits=searchFilter(pool,q,r=>[repName(r),r.asin]).slice(0,40);
+  el.innerHTML=hits.length?hits.map(r=>`<button class="cmp-i" onclick="cmpToggle('${_esc(r.asin)}');cmpAddClose();">
+      <b>${_esc(repName(r))}</b><span>${gbp(repRowReal(r))} real profit</span></button>`).join('')
+    :`<div class="cmp-i-none">${_cmpSel.length>=8?'Eight is the maximum — remove one first.':'Nothing matches.'}</div>`;
 }
 function closeCompare(){document.getElementById('rep-cmp-overlay').classList.remove('open');document.body.style.overflow='';}
 
@@ -15519,7 +16380,7 @@ function hmRecent(){
     });
   }catch(e){}
   out.sort((a,b)=>b.t-a.t);
-  const ICO={change:'✎',month:'📊',snap:'◫'};
+  const ICO={change:ico('note',13),month:ico('chart',13),snap:ico('board',13)};
   const GO={change:m=>`goPage('changelog')`,month:m=>`goPage('report');repSelectMonth('${m.id}')`,snap:m=>`goPage('snapshots')`};
   el.innerHTML=out.length?out.slice(0,8).map(x=>`<div class="hm-r" onclick="${GO[x.k](x)}">
       <span class="hm-ri ${x.k}">${ICO[x.k]}</span>
@@ -15988,20 +16849,14 @@ function mgApplyAllGo(){
    is pushed to settings/ui_prefs_v1 whenever it changes and restored on the next
    machine. Theme and test mode are deliberately NOT mirrored — those are per-device
    choices, and syncing test mode across machines is how you lose a day's work. */
-const UI_MIRROR=['bdl_app_settings','bdl_camp_prefs','bdl_display_prefs','bdl_archived_asins',
+const UI_MIRROR=['bdl_app_settings','bdl_camp_prefs','bdl_display_prefs','bdl_archived_asins','bdl_prep_cover',
                  'matchColExact','matchColPhrase','matchColBroad'];
 let _uiT=null;
 function uiPrefsSave(){
   clearTimeout(_uiT);
   _uiT=setTimeout(async()=>{
-    if(TEST_MODE||!SUPABASE_URL||!SUPABASE_KEY)return;
     const bag={};UI_MIRROR.forEach(k=>{try{const v=localStorage.getItem(k);if(v!=null)bag[k]=v;}catch(e){}});
-    try{
-      const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',
-        headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-        body:JSON.stringify({id:'ui_prefs_v1',key:'ui_prefs_v1',value:JSON.stringify({keys:bag,updatedAt:Date.now()})})});
-    }catch(e){console.warn('ui prefs save',e);}
+    await sbWrite('ui_prefs_v1',JSON.stringify({keys:bag,updatedAt:Date.now()}),'Your settings');
   },900);
 }
 async function uiPrefsLoad(){
@@ -16823,7 +17678,8 @@ catch(e){window._repLoading=false;}
 
 <!-- ════════ PRODUCT HISTORY ════════ -->
 <div class="overlay" id="rep-prod-overlay" onclick="if(event.target.id==='rep-prod-overlay')closeRepProduct()" style="z-index:398">
-  <div class="popout" style="max-width:900px;max-height:92vh;display:flex;flex-direction:column">
+  <!-- 900px forced the tabs, the product nav and the four action buttons onto two rows -->
+  <div class="popout" style="max-width:1120px;width:calc(100vw - 44px);max-height:92vh;display:flex;flex-direction:column">
     <div class="po-header">
       <div style="min-width:0"><div class="po-title" style="font-size:16px" id="rph-title">Product</div>
       <div class="po-sub" id="rph-sub"></div></div>
