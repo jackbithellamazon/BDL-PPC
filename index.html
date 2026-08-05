@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v104</title>
+<title>BDL Hub — Ads &amp; Monthly Report v110</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@ body.light{
   --panel:#ffffff;--panel2:#f7f9fc;
   --border:rgba(15,23,42,0.12);--border2:rgba(15,23,42,0.20);--border3:rgba(15,23,42,0.30);
   --text:#0f172a;--text2:#1e293b;--text3:#475569;--text4:#64748b;
-  --green:#0ca678;--amber:#c2740a;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
+  --green:#0b8f60;--amber:#b45309;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
   --teal:#0d9488;--coral:#e11d48;
   --shadow-sm:0 1px 3px rgba(15,23,42,0.10);--shadow:0 8px 30px rgba(15,23,42,0.12);--shadow-lg:0 24px 60px rgba(15,23,42,0.18);
 }
@@ -285,12 +285,14 @@ table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .bidinput{width:62px;background:var(--bg4);border:1px solid var(--border);color:var(--text);font-size:11px;padding:3px 7px;border-radius:6px;text-align:right;font-family:var(--mono)}
 .bidinput:focus{outline:none;border-color:var(--blue)}
 .mtag{font-family:var(--mono);font-size:10px;font-weight:800;padding:3px 11px;border-radius:5px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;display:inline-block;text-align:center;min-width:60px}
-.mtag-exact{background:var(--match-exact-bg);color:var(--match-exact);border:1.5px solid var(--match-exact)}
-.mtag-phrase{background:var(--match-phrase-bg);color:var(--match-phrase);border:1.5px solid var(--match-phrase)}
-.mtag-broad{background:var(--match-broad-bg);color:var(--match-broad);border:1.5px solid var(--match-broad)}
-.mtag-auto{background:var(--match-auto-bg);color:var(--match-auto);border:1.5px solid var(--match-auto)}
-.mtag-close{background:var(--match-close-bg);color:var(--match-close);border:1.5px solid var(--match-close)}
-.mtag-loose{background:var(--match-loose-bg);color:var(--match-loose);border:1.5px solid var(--match-loose)}
+/* solid pills: the picked colour is the BACKGROUND with dark text, so a bright
+   dark-mode colour stays readable on the light theme too */
+.mtag-exact{background:var(--match-exact);color:#06210f;border:1.5px solid var(--match-exact)}
+.mtag-phrase{background:var(--match-phrase);color:#04121e;border:1.5px solid var(--match-phrase)}
+.mtag-broad{background:var(--match-broad);color:#211804;border:1.5px solid var(--match-broad)}
+.mtag-auto{background:var(--match-auto);color:#170426;border:1.5px solid var(--match-auto)}
+.mtag-close{background:var(--match-close);color:#04121e;border:1.5px solid var(--match-close)}
+.mtag-loose{background:var(--match-loose);color:#211804;border:1.5px solid var(--match-loose)}
 
 /* change log entries */
 .cl-list{display:flex;flex-direction:column}
@@ -1193,6 +1195,13 @@ table.ptab tbody tr{transition:background .16s}
 .kbar i,.pbar i,.bmk-me{transition:width .3s cubic-bezier(.32,.72,0,1),left .3s cubic-bezier(.32,.72,0,1)}
 .btn,.btn-sm,.fchip,.cchip,.cm-r{transition:background .15s,border-color .15s,color .15s,transform .12s}
 .btn:active,.btn-sm:active,.fchip:active,.cchip:active{transform:scale(.975)}
+/* ── keyboard focus — visible position for tab users, invisible to the mouse ── */
+.btn:focus-visible,.btn-sm:focus-visible,.tog:focus-visible,.sel:focus-visible,.input:focus-visible,
+.po-tab:focus-visible,.nav-btn:focus-visible,.fchip:focus-visible,.close-btn:focus-visible,
+.hm-q:focus-visible,.hm-card:focus-visible,.fxalt:focus-visible{
+  outline:2px solid var(--blue);outline-offset:2px;border-radius:8px}
+.input:focus-visible,.sel:focus-visible{outline-offset:0}
+
 .btn-sm.on{background:var(--panel);color:var(--text);border-color:var(--border3)}
 /* the report table breathes a little more */
 table.rt tbody tr{transition:background .15s}
@@ -1202,7 +1211,9 @@ table.rt tfoot td{background:var(--bg3);border-top:2px solid var(--border3);padd
 table.rt tfoot .rsplit{display:flex;flex-direction:column;align-items:flex-end;gap:1px;margin-top:3px;white-space:normal;font-weight:700}
 table.rt tfoot .rsplit span{white-space:nowrap}
 table.rt tfoot td.ft-l{background:var(--bg3);font-size:11px}
-table.rt tbody .rsplit{overflow:hidden;text-overflow:ellipsis}
+/* never clip money: when the column is tight the ads half wraps to its own line */
+table.rt tbody .rsplit{flex-wrap:wrap;white-space:normal;row-gap:0}
+table.rt tbody .rsplit span{white-space:nowrap}
 
 /* analysis: two columns so the width earns its keep, and tighter cards */
 .an-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;align-items:start}
@@ -1496,6 +1507,25 @@ table.rt tbody .rsplit{overflow:hidden;text-overflow:ellipsis}
 .dp-m{font-size:10.5px;color:var(--text4);font-weight:600;white-space:nowrap}
 .dp-act{display:flex;gap:6px;padding:9px 13px;flex-wrap:wrap;background:var(--panel);border-top:1px solid var(--border)}
 .prod-n.noname{color:var(--text4);font-style:italic;font-weight:600}
+/* live sync: a newer version exists, shown without touching what is on screen */
+.live-newer{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);z-index:520;
+  display:flex;align-items:center;gap:13px;max-width:min(760px,calc(100vw - 32px));
+  background:var(--panel);border:1px solid var(--amber);border-left:4px solid var(--amber);
+  border-radius:13px;padding:12px 15px;box-shadow:0 18px 46px rgba(0,0,0,.5);
+  transition:transform .3s cubic-bezier(.32,.72,0,1);pointer-events:none}
+.live-newer.show{transform:translate(-50%,0);pointer-events:auto}
+.live-newer .ln-d{width:9px;height:9px;border-radius:50%;background:var(--amber);flex-shrink:0;
+  animation:lnPulse 1.6s ease-in-out infinite}
+@keyframes lnPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.live-newer b{display:block;font-size:12.5px;color:var(--text)}
+.live-newer span:not(.ln-d){display:block;font-size:11px;color:var(--text3);margin-top:2px;line-height:1.45}
+.live-newer .btn,.live-newer .btn-sm{flex-shrink:0}
+@media(max-width:700px){.live-newer{flex-wrap:wrap}}
+/* 3px organic/ads split under each sales figure — the mix at a glance */
+.rs-mini{display:flex;height:3px;border-radius:2px;overflow:hidden;margin-top:3px;margin-left:auto;width:76px;background:var(--bg4)}
+.rs-mini .o{background:var(--green)}
+.rs-mini .a{background:var(--blue)}
+tr.dead .rs-mini{display:none}
 .pm-f{margin-top:2px}
 .pm-f .label{margin-bottom:6px}
 .pm-f .input{width:100%;font-size:14px;padding:10px 13px}
@@ -1554,6 +1584,7 @@ table.rt tbody .rsplit{overflow:hidden;text-overflow:ellipsis}
 .an-tl{display:flex;align-items:center;gap:7px;font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--text3)}
 .an-dl{font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:0;text-transform:none;border-radius:4px;padding:1px 5px}
 .an-dl.up{color:var(--green);background:var(--green-bg)} .an-dl.dn{color:var(--red);background:var(--red-bg)}
+.an-dl.fl{color:var(--text3);background:var(--bg4)}
 .an-tv{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.8px;margin:3px 0 2px}
 .an-spk{display:block;width:100%;height:26px}
 .an-spk-n{font-size:9.5px;color:var(--text4);font-weight:600;height:26px;display:flex;align-items:center}
@@ -1798,7 +1829,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v104</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v110</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -2173,7 +2204,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <div class="page" id="page-products">
   <div class="ph"><div><h1>Products</h1><div class="sub" id="prod-sub"></div></div>
     <div class="ctrls">
-      <input class="input" id="prod-search" placeholder="Search product / ASIN / SKU…" style="width:220px" oninput="renderProducts()">
+      <input class="input" id="prod-search" placeholder="Search product / ASIN / SKU…" style="width:220px" oninput="clearTimeout(window._prodSearchT);window._prodSearchT=setTimeout(renderProducts,140)">
       <button class="btn" onclick="openProductEdit(null)">+ Add product</button>
     </div>
   </div>
@@ -2333,8 +2364,8 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 
   <div class="card pad" style="display:flex;align-items:center;justify-content:space-between;gap:14px">
     <div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:2px">BDL PPC Manager <span style="font-family:var(--mono);font-size:10px;color:var(--text2);font-weight:400;margin-left:6px">v10 · Jun 2026</span></div>
-      <div style="font-size:11.5px;color:var(--text2)">Data stored in Supabase. Connected to ffbdazepqrsyurhouxif.</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:2px">BDL Hub <span id="set-appver" style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:700;margin-left:6px"></span></div>
+      <div style="font-size:11.5px;color:var(--text3)">Everything lives in Supabase — campaigns, snapshots, changes and the Monthly Report all sync across your laptops.</div>
     </div>
     <button class="btn ghost" style="color:var(--red);border-color:rgba(255,93,108,.3)" onclick="confirmResetLocal()">Reset local data</button>
   </div>
@@ -2639,7 +2670,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <button class="btn-sm" id="snap-modal-rename-btn" onclick="renamePeriodFromModal()" style="color:var(--blue);border-color:rgba(91,157,255,.3)">✎ Edit date</button>
-        <button class="btn-sm" id="snap-modal-delete-btn" onclick="deletePeriodFromModal()" style="color:var(--red);border-color:rgba(255,93,108,.3)">Delete period</button>
+        <button class="btn-sm danger-t" id="snap-modal-delete-btn" onclick="deletePeriodFromModal()">Delete period</button>
         <button class="close-btn" onclick="closeSnap()">✕</button>
       </div>
     </div>
@@ -7817,8 +7848,8 @@ function renderSnapshots(){
             </div>
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0">
-            <button onclick="renamePeriodAll('${safeP}')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:var(--font);font-weight:600">✎ Rename period</button>
-            <button onclick="confirmDeletePeriodAll('${p}')" style="background:var(--red-bg);border:1px solid rgba(255,93,108,.3);color:var(--red);font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:var(--font);font-weight:600">🗑 Delete period</button>
+            <button class="btn-sm" onclick="renamePeriodAll('${safeP}')">✎ Rename period</button>
+            <button class="btn-sm danger-t" onclick="confirmDeletePeriodAll('${p}')">🗑 Delete period</button>
           </div>
         </div>
         <!-- Per-campaign rows -->
@@ -10182,7 +10213,7 @@ const REP_LS='bdl_monthly_report_v1';
 let repData={months:[],updatedAt:0};
 let repCur=null;
 let _repSort={k:'real',dir:-1};
-let _repSaveT=null,_repEditIdx=-1,_repMonthMode='new';
+let _repSaveT=null,_repSaveLast=0,_repEditIdx=-1,_repMonthMode='new';
 const REP_MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const repYmLabel=ym=>{const[y,m]=String(ym).split('-').map(Number);return(REP_MN[m-1]||'?')+' '+y;};
 const repRowReal=r=>(+r.profit||0)-(+r.ads||0);
@@ -10226,10 +10257,23 @@ function repMigrate(d){
 /* Supabase is the ONLY store for the Monthly Report. Nothing is written to this
    browser — a local copy that could be newer than the cloud one is exactly how a bad
    local state shadowed a good remote one and could not be cleared. */
+const REP_SAVE_COOLDOWN=900;
 function repSave(){
   if(repData&&repData._future){toast('This report was saved by a newer version of the hub — not overwriting it','warn');return;}
   repData.schema=REP_SCHEMA;repData.updatedAt=Date.now();
-  clearTimeout(_repSaveT);_repSaveT=setTimeout(sbSaveReport,700);}
+  const now=Date.now();
+  /* Leading edge: the first change goes NOW, so "edit then close the tab" has no
+     window to lose data in. A burst (an import looping over rows) still collapses
+     into one trailing write at the end of the cooldown. */
+  if(!window._repWriting&&now-_repSaveLast>=REP_SAVE_COOLDOWN){
+    _repSaveLast=now;
+    clearTimeout(_repSaveT);_repSaveT=null;
+    sbSaveReport();
+    return;
+  }
+  if(_repSaveT)return;                       /* a trailing write is already queued */
+  const wait=Math.max(120,REP_SAVE_COOLDOWN-(now-_repSaveLast));
+  _repSaveT=setTimeout(()=>{_repSaveT=null;_repSaveLast=Date.now();sbSaveReport();},wait);}
 /* Destructive actions must not sit in a 700ms debounce — a background refresh landing
    in that window re-pulls the old copy from Supabase and the deletion undoes itself. */
 async function repSaveNow(){
@@ -10281,9 +10325,203 @@ async function sbSaveReport(){
         }
       }
     }
-    await fetch(SUPABASE_URL+'/rest/v1/settings',{method:'POST',headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({id:'monthly_report_v1',key:'monthly_report_v1',value:JSON.stringify(repData)})});
-  }catch(e){console.warn('report save',e);}
+    const _body=JSON.stringify({id:'monthly_report_v1',key:'monthly_report_v1',value:JSON.stringify(repData)});
+    /* keepalive lets a write survive the tab being closed, but the browser caps it at
+       64KB and a full year of products is well past that — so only ask for it when the
+       payload actually fits, and never let an oversized body be rejected outright. */
+    const _opts={method:'POST',headers:Object.assign({},hds,{'Prefer':'resolution=merge-duplicates,return=minimal'}),body:_body};
+    if(window._repUnloading&&_body.length<60000)_opts.keepalive=true;
+    const _res=await fetch(SUPABASE_URL+'/rest/v1/settings',_opts);
+    if(!_res.ok)throw new Error('HTTP '+_res.status);
+    window._repSaveFailed=false;
+    _liveSeen=+repData.updatedAt||0;   /* our own write must not read as someone else's */
+    try{setSyncStatus('synced');}catch(e){}
+  }catch(e){
+    console.warn('report save',e);
+    /* a silent failure means he believes it saved — say it, show it, retry once */
+    try{setSyncStatus('error');}catch(_){}
+    if(!window._repSaveFailed){
+      window._repSaveFailed=true;
+      try{toast('⚠ Save failed — your latest change is NOT in Supabase yet. Retrying…','warn');}catch(_){}
+      setTimeout(()=>{try{sbSaveReport();}catch(_){}},4000);
+    } else {
+      try{toast('⚠ Still cannot save to Supabase. Check your connection and edit any cell to trigger another save.','warn');}catch(_){}
+    }
+  }
 }
+/* The 700ms debounce is a data-loss window: edit → close the tab → the write never
+   happened, and nothing is stored locally. Flush the moment the tab goes hidden, and
+   hold the door on a real close while a write is pending or in flight. */
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'&&_repSaveT){
+    clearTimeout(_repSaveT);_repSaveT=null;
+    window._repUnloading=true;                 /* ask for keepalive if it fits */
+    try{sbSaveReport();}finally{setTimeout(()=>{window._repUnloading=false;},50);}
+  }
+});
+window.addEventListener('beforeunload',e=>{
+  if(_repSaveT||window._repWriting||window._repSaveFailed){
+    if(_repSaveT){clearTimeout(_repSaveT);_repSaveT=null;window._repUnloading=true;try{sbSaveReport();}catch(_){}}
+    e.preventDefault();
+    e.returnValue='Your latest change is still saving to Supabase.';
+  }
+});
+/* ══════════ v109 — SUPABASE IS THE ONLY SOURCE OF TRUTH ══════════
+   Jack: "I don't want local save, only Supabase — and it's not just the Monthly
+   Report, it's everything."
+
+   He was right, and there was a real bug behind it. Every small state map (names,
+   dropped ASINs, archive, parked, merges, hand-added products) loaded with the LOCAL
+   copy merged OVER — or unioned WITH — the remote one:
+       _asinNames   = Object.assign({}, remote, local)      ← local wins
+       _asinDropped = [...new Set(local.concat(remote))]    ← union, never shrinks
+       _archived    = remote.forEach(a => set.add(a))       ← union, never shrinks
+   So a DELETE never travelled. Un-archive a product on his laptop and it stayed
+   archived on hers forever. Undo a "not mine" and it came back. Rename a product and
+   her old name won and got re-uploaded.
+
+   Now every one of these is REMOTE-AUTHORITATIVE: what Supabase says replaces what
+   this browser holds, wholesale, exactly like the Monthly Report already did.
+   localStorage is written to afterwards purely as an offline render cache — it is
+   never merged back INTO the truth. */
+const BDL_STATE_ROWS=[
+  {id:'asin_names_v1',      ls:'bdl_asin_names',      apply:v=>{window._asinNames=v||{};}},
+  {id:'asin_dropped_v1',    ls:'bdl_asin_dropped',    apply:v=>{window._asinDropped=Array.isArray(v)?v:[];}},
+  {id:'hub_products_v1',    ls:'bdl_hub_products',    apply:v=>{window._hubProducts=v||{};}},
+  {id:'bdlhub_archived_asins',ls:'bdl_archived_asins',legacy:'archived_asins',
+     apply:v=>{_archived.clear();(Array.isArray(v)?v:[]).forEach(a=>_archived.add(String(a).toUpperCase()));}},
+  {id:'bdlhub_asin_parked_v1',ls:'bdl_asin_parked',   apply:v=>{window._asinParked=v||{};}},
+  {id:'bdlhub_price_history_v1',ls:null,              apply:v=>{priceHistory=v||{};}},
+  {id:'bdlhub_asin_merge_v1', ls:null,                apply:v=>{window._asinMerge=(v||{}).merge||{};window._dupKeep=(v||{}).keep||[];
+     try{localStorage.setItem('bdl_asin_merge',JSON.stringify(window._asinMerge));
+         localStorage.setItem('bdl_dup_keep',JSON.stringify(window._dupKeep));}catch(e){}}},
+];
+/* One round trip for all of it, applied authoritatively. */
+async function sbLoadAllState(){
+  if(typeof TEST_MODE!=='undefined'&&TEST_MODE)return false;
+  if(!SUPABASE_URL||!SUPABASE_KEY)return false;
+  try{
+    const ids=BDL_STATE_ROWS.map(r=>r.id).concat(BDL_STATE_ROWS.filter(r=>r.legacy).map(r=>r.legacy));
+    const hds=await sbHeaders();
+    const res=await fetch(SUPABASE_URL+'/rest/v1/settings?id=in.('+ids.join(',')+')&select=id,value',{headers:hds});
+    if(!res.ok)return false;
+    const rows=await res.json();
+    const byId={};rows.forEach(r=>{byId[r.id]=r.value;});
+    let sig='';
+    BDL_STATE_ROWS.forEach(r=>{
+      let raw=byId[r.id];
+      if(raw===undefined&&r.legacy)raw=byId[r.legacy];   /* pre-prefix row, first load only */
+      if(raw===undefined)return;                          /* no row yet — leave as-is */
+      sig+=r.id+':'+String(raw).length+'|';
+      let parsed=null;try{parsed=JSON.parse(raw);}catch(e){return;}
+      try{r.apply(parsed);}catch(e){console.warn('state apply '+r.id,e);}
+      if(r.ls){try{localStorage.setItem(r.ls,JSON.stringify(parsed));}catch(e){}}
+    });
+    const changed=sig!==window._bdlStateSig;
+    window._bdlStateSig=sig;
+    return changed;
+  }catch(e){return false;}
+}
+
+/* ══════════ v108 — LIVE SYNC ══════════
+   Saves reached Supabase within 700ms, but the OTHER laptop only pulled on tab-focus,
+   so someone sitting looking at the hub never saw a change until they clicked away and
+   back. Now it polls while the tab is visible: the Monthly Report every 12s (one small
+   row) and the Ads side every 60s (reuses the existing safe loader).
+
+   THE HAZARD live sync creates: the report is a single JSON blob, so two people editing
+   at once means last-write-wins and somebody's work disappears. Everything below is
+   built around never letting that happen silently. */
+let _liveT=null,_liveAdsAt=0,_liveBusy=false;
+function liveActive(){return !!(SUPABASE_URL&&SUPABASE_KEY&&!(typeof TEST_MODE!=='undefined'&&TEST_MODE));}
+function liveStart(){
+  if(_liveT||!liveActive())return;
+  _liveT=setInterval(livePoll,12000);
+}
+function liveStop(){if(_liveT){clearInterval(_liveT);_liveT=null;}}
+/* Do we have work in this tab that a pull would destroy? */
+function liveHasLocalWork(){
+  if(_repSaveT||window._repWriting||window._repSaveFailed)return true;   /* unsaved report edit */
+  try{if(popoutHasUnsavedInput())return true;}catch(e){}
+  /* a modal that holds typed-but-uncommitted state */
+  const held=['rep-fix-overlay','rep-row-overlay','month-import-overlay','ppc-add-overlay',
+              'prod-overlay','bdl-pm-overlay','rep-mg-overlay','price-overlay','quicklog-overlay'];
+  return held.some(id=>document.getElementById(id)?.classList.contains('open'));
+}
+async function livePoll(){
+  if(!liveActive()||document.visibilityState!=='visible'||_liveBusy)return;
+  _liveBusy=true;
+  try{
+    const hds=await sbHeaders();
+    const res=await fetch(SUPABASE_URL+'/rest/v1/settings?id=eq.monthly_report_v1&select=value',{headers:hds});
+    if(res.ok){
+      const rows=await res.json();
+      if(rows[0]&&rows[0].value){
+        const remote=JSON.parse(rows[0].value)||{};
+        const rAt=+remote.updatedAt||0, lAt=+((repData||{}).updatedAt)||0;
+        if(rAt>lAt){
+          if(liveHasLocalWork()){
+            /* Somebody else saved while this tab has uncommitted work. Refusing to pull
+               is the whole point — offer the choice instead of picking a loser. */
+            liveFlagNewer(rAt);
+          }else{
+            await sbLoadReport();
+            _liveSeen=rAt;
+            liveClearFlag();
+            toast('Updated — someone else’s changes just came in','ok');
+          }
+        }
+      }
+    }
+    /* names, archive, parked, merges, dropped ASINs — every 30s, one request */
+    if(Date.now()-(window._liveStateAt||0)>30000&&!liveHasLocalWork()){
+      window._liveStateAt=Date.now();
+      const moved=await sbLoadAllState();
+      if(moved){
+        try{renderReport();}catch(e){}
+        try{if(document.getElementById('page-products')?.classList.contains('active'))renderProducts();}catch(e){}
+        try{if(document.getElementById('page-home')?.classList.contains('active'))renderHome();}catch(e){}
+      }
+    }
+    /* the Ads side is heavier, so a slower beat */
+    if(Date.now()-_liveAdsAt>60000&&!window._loadInFlight&&!liveHasLocalWork()){
+      _liveAdsAt=Date.now();
+      try{await loadFromSupabase();}catch(e){}
+    }
+  }catch(e){/* offline — the sync chip already reports it */}
+  finally{_liveBusy=false;}
+}
+let _liveSeen=0;
+/* A visible, non-destructive "there is a newer version" bar. Never auto-applies. */
+function liveFlagNewer(rAt){
+  if(_liveSeen===rAt)return;
+  _liveSeen=rAt;
+  let el=document.getElementById('live-newer');
+  if(!el){
+    el=document.createElement('div');el.id='live-newer';el.className='live-newer';
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`<span class="ln-d"></span>
+    <div><b>Someone else has saved a newer version</b>
+    <span>Yours is not lost — finish or cancel what you are doing, then load theirs. Loading replaces what is on this screen.</span></div>
+    <button class="btn-sm" onclick="liveClearFlag()">Keep mine for now</button>
+    <button class="btn" onclick="liveTakeTheirs()">Load theirs</button>`;
+  el.classList.add('show');
+}
+function liveClearFlag(){const el=document.getElementById('live-newer');if(el)el.classList.remove('show');}
+async function liveTakeTheirs(){
+  liveClearFlag();
+  clearTimeout(_repSaveT);_repSaveT=null;      /* drop our pending write — he chose theirs */
+  window._repSaveFailed=false;
+  await sbLoadReport();
+  try{renderReport();}catch(e){}
+  toast('Loaded the newer version','ok');
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'){liveStart();livePoll();}
+});
+setTimeout(liveStart,3000);
+
 function repSelectMonth(id){repCur=id;renderReport();}
 function repSortBy(k){if(_repSort.k===k)_repSort.dir*=-1;else _repSort={k,dir:k==='name'?1:-1};renderReport();}
 
@@ -10346,6 +10584,8 @@ function renderReport(){
     if(Math.abs(d)<0.005)return`<div class="dl fl">— level vs ${_esc(prev.label)}</div>`;
     const good=goodUp?d>0:d<0;
     const v=money?gbp(Math.abs(d)):Number(Math.abs(d)).toLocaleString('en-GB',{maximumFractionDigits:dec??0});
+    /* if it FORMATS as zero, it is level — never an arrow pointing at 0 */
+    if(/^[£$€]?0(\.0+)?$/.test(v))return`<div class="dl fl">— level vs ${_esc(prev.label)}</div>`;
     return`<div class="dl ${good?'up':'dn'}">${d>0?'▲':'▼'} ${v} vs ${_esc(prev.label)}</div>`;
   };
   const margin=t.sales?t.real/t.sales*100:0, pmargin=pt&&pt.sales?pt.real/pt.sales*100:null;
@@ -10551,7 +10791,9 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
         return rk?'#'+intf(rk)+rd:'<span class="muted">—</span>';},
       f:()=>''},
     {k:'sales',h:'Sales',w:'c-money',lock:1,
-      c:r=>gbp(+r.sales||0)+(r.adSales!=null?`<div class="rsplit"><span class="rs-o">org ${gbp(Math.max(0,(+r.sales||0)-(+r.adSales||0)))}</span> <span class="rs-a">ads ${gbp(+r.adSales||0)}</span></div>`:''),
+      c:r=>{const sv=+r.sales||0,av=r.adSales!=null?Math.min(sv,+r.adSales||0):null;
+        const mini=(av!=null&&sv>0)?`<div class="rs-mini" title="${fmt(av/sv*100,0)}% of this product's revenue came through ads"><i class="o" style="width:${((sv-av)/sv*100).toFixed(1)}%"></i><i class="a" style="width:${(av/sv*100).toFixed(1)}%"></i></div>`:'';
+        return gbp(sv)+(r.adSales!=null?`<div class="rsplit"><span class="rs-o">org ${gbp(Math.max(0,sv-(+r.adSales||0)))}</span> <span class="rs-a">ads ${gbp(+r.adSales||0)}</span></div>`:'')+mini;},
       f:()=>gbp(t.sales)+(hasSplit?`<div class="rsplit"><span class="rs-o">org ${gbp(Math.max(0,t.sales-adTot2))}</span> <span class="rs-a">ads ${gbp(adTot2)}</span></div>`:'')},
     {k:'profit',h:'Profit',w:'c-money',t:'Profit before advertising',c:r=>gbp(+r.profit||0),f:()=>gbp(t.profit)},
     {k:'ads',h:'Ads',w:'c-money',c:r=>`<span style="color:${(+r.ads||0)>0?'var(--amber)':'var(--text4)'}">${gbp(+r.ads||0)}</span>`,
@@ -11040,7 +11282,7 @@ function renderHome(){
   const lt=lm?repTotals(lm):null;
   const rs=document.getElementById('hub-rep-stats');
   rs.innerHTML=lm
-    ?_hmTile(_esc(String(lm.label).split(' ').slice(-1)[0]||'Latest'),gbp(lt.sales))
+    ?_hmTile(_esc((String(lm.label).split(' ').find(w=>!/^20\d\d$/.test(w))||lm.label).slice(0,9)),gbp(lt.sales))
      +_hmTile('Real profit',gbp(lt.real),lt.real>=0?'var(--green)':'var(--red)')
      +_hmTile('Units',intf(lt.units))+_hmTile('Months',intf(ms.length))
     :_hmTile('Sales','—','var(--text4)')+_hmTile('Real profit','—','var(--text4)')
@@ -12955,7 +13197,10 @@ function repFullName(r){
 }
 function repName(r){
   if(!r)return '—';
-  const n=lavName(r.asin);if(n)return n;
+  /* one resolver everywhere — checks Prep Portal, hand-added products, campaigns,
+     the remembered map and every month, so a name saved anywhere shows up here */
+  const n=(typeof productName==='function')?productName(r.asin,r.name):null;
+  if(n)return n;
   const raw=String(r.name||'').trim();
   if(raw&&raw.toUpperCase()!==String(r.asin||'').toUpperCase())return raw;
   return r.asin||'Unnamed product';
@@ -13023,8 +13268,10 @@ function repAnalysis(m,prev){
     }
     if(Math.abs(dSales)>=1){
       const ps=_pc(t.sales,pt.sales);
+      const dU=t.units-pt.units;
+      const uClause=dU===0?'':` on ${intf(Math.abs(dU))} ${dU>0?'more':'fewer'} unit${Math.abs(dU)===1?'':'s'}`;
       add('head',dSales>0?'good':'bad',
-        `Sales ${dSales>0?'grew':'dropped'} ${dSales>0?_up(gbp(Math.abs(dSales))):_dn(gbp(Math.abs(dSales)))}${ps!=null&&isFinite(ps)?` (${dSales>0?'+':'−'}${fmt(Math.abs(ps),0)}%)`:''} on ${intf(Math.abs(t.units-pt.units))} ${t.units>=pt.units?'more':'fewer'} units.`,
+        `Sales ${dSales>0?'grew':'dropped'} ${dSales>0?_up(gbp(Math.abs(dSales))):_dn(gbp(Math.abs(dSales)))}${ps!=null&&isFinite(ps)?` (${dSales>0?'+':'−'}${fmt(Math.abs(ps),0)}%)`:''}${uClause}.`,
         `${gbp(pt.sales)} → ${gbp(t.sales)} · ${intf(pt.units)}u → ${intf(t.units)}u`);
     }
   }
@@ -13177,7 +13424,10 @@ function openRepAnalysis(){
           <path d="${P.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="${P[P.length-1][0].toFixed(1)}" cy="${P[P.length-1][1].toFixed(1)}" r="2.8" fill="${col}"/></svg>`;
       };
-      const dl=(cur,prv,f)=>prv==null?'':`<span class="an-dl ${cur>=prv?'up':'dn'}">${cur>=prv?'▲':'▼'} ${f(Math.abs(cur-prv))}</span>`;
+      const dl=(cur,prv,f)=>{if(prv==null)return'';
+        const txt=f(Math.abs(cur-prv));
+        if(/^[£$€]?0(\.0+)?(pt|%|×)?$/.test(txt))return'<span class="an-dl fl">level</span>';
+        return`<span class="an-dl ${cur>=prv?'up':'dn'}">${cur>=prv?'▲':'▼'} ${txt}</span>`;};
       const pt=prev?repTotals(prev):null;
       const marg=T.sales?T.real/T.sales*100:0, pmarg=pt&&pt.sales?pt.real/pt.sales*100:null;
       const TL=[
@@ -13927,8 +14177,8 @@ function openRepKpi(k){
   const tiles=(S.length>1?[
     ['This month',K.fmt(now.v),K.c,_esc(now.lab)],
     ['Vs last month',dv(d1),gd(d1),pNow?_esc(pNow.lab):'no earlier month'],
-    ['Best month',K.fmt(Math.max(...vals)),'var(--green)',_esc(S[vals.indexOf(Math.max(...vals))].lab)],
-    ['Weakest month',K.fmt(Math.min(...vals)),'var(--red)',_esc(S[vals.indexOf(Math.min(...vals))].lab)],
+    ['Best month',K.fmt(Math.max(...vals)),(K.good===1&&Math.max(...vals)<0)?'var(--red)':'var(--green)',_esc(S[vals.indexOf(Math.max(...vals))].lab)],
+    ['Weakest month',K.fmt(Math.min(...vals)),(K.good===1&&Math.min(...vals)>0)?'var(--green)':'var(--red)',_esc(S[vals.indexOf(Math.min(...vals))].lab)],
     ['Average',K.fmt(avg),'var(--text)',S.length+' months'],
     [isRate?'Spread':'All months total',isRate?K.fmt(Math.max(...vals)-Math.min(...vals)):K.fmt(vals.reduce((a,b)=>a+b,0)),'var(--text2)',isRate?'high minus low':'combined'],
   ]:[
@@ -13972,8 +14222,8 @@ function openRepKpi(k){
         <div class="pnl g"><div class="pnl-h">What this is</div><p>${K.means}</p></div>
         <div class="pnl o"><div class="pnl-h">How to read it</div><p>${K.watch}</p></div>
         <div class="pcard"><div class="pc-h">Biggest contributors <span>${_esc(now.lab)}</span></div>
-          <div class="kbars">${byVal.slice(0,8).map(x=>bar(x,x.v,mx,K.c)).join('')||'<div class="psub" style="padding:10px 14px">Nothing to show.</div>'}</div>
-          ${!isRate&&totNow?`<div class="psub" style="padding:0 14px 11px">Top 8 make ${fmt(byVal.slice(0,8).reduce((a,x)=>a+x.v,0)/totNow*100,0)}% of the ${K.fmt(totNow)} total.</div>`:''}</div>
+          <div class="kbars">${byVal.slice(0,8).map(x=>bar(x,x.v,mx,x.v<0?'var(--red)':K.c)).join('')||'<div class="psub" style="padding:10px 14px">Nothing to show.</div>'}</div>
+          ${(!isRate&&totNow>0)?`<div class="psub" style="padding:0 14px 11px">Top ${Math.min(8,byVal.length)} make ${fmt(Math.min(999,byVal.slice(0,8).reduce((a,x)=>a+x.v,0)/totNow*100),0)}% of the ${K.fmt(totNow)} total.</div>`:''}</div>
         ${moved.length?`<div class="pcard"><div class="pc-h">What moved it <span>vs ${_esc(pNow.lab)}</span></div>
           <div class="kbars">${moved.slice(0,8).map(x=>bar(x,x.d,mxD,(x.d>0?1:-1)===K.good?'var(--green)':'var(--red)')).join('')}</div></div>`:''}
       </div>
@@ -14786,7 +15036,17 @@ function repUndropAsin(A,row){
   }
   toast('Put '+A+' back');
 }
-setTimeout(()=>{try{sbLoadNames();}catch(e){}try{repPrefsLoad();}catch(e){}try{uiPrefsLoad();}catch(e){}try{sbLoadDropped();}catch(e){}try{sbLoadHubProducts();}catch(e){}try{sbLoadPrices();}catch(e){}try{sbLoadParked();}catch(e){}try{sbLoadMerge();}catch(e){}},1200);
+setTimeout(()=>{
+  try{repPrefsLoad();}catch(e){}
+  try{uiPrefsLoad();}catch(e){}
+  /* ONE authoritative fetch for every state map — replaces six separate loaders that
+     each merged the local copy back in and stopped deletes from ever travelling */
+  try{sbLoadAllState().then(()=>{
+    try{renderReport();}catch(e){}
+    try{if(document.getElementById('page-products')?.classList.contains('active'))renderProducts();}catch(e){}
+    try{if(document.getElementById('page-home')?.classList.contains('active'))renderHome();}catch(e){}
+  });}catch(e){}
+},1200);
 
 
 /* ── Monthly Report table: column choice, quick filters, density ── */
@@ -15190,9 +15450,12 @@ function hmHeadline(){
   /* good = the direction that is good news: +1 up is good, -1 down is good */
   const d=(cur,prv,f,good)=>{
     if(prv==null||!isFinite(prv))return'';
-    const x=cur-prv;if(Math.abs(x)<0.005)return'<i class="hm-d fl">level</i>';
+    const x=cur-prv;
+    /* if the formatted delta reads as zero, say "level" — never "▼ 0.0pt" */
+    const txt=f(Math.abs(x));
+    if(Math.abs(x)<0.005||/^[£$€]?0(\.0+)?(pt|%|×)?$/.test(txt))return'<i class="hm-d fl">level</i>';
     const ok=(x>0?1:-1)===good;
-    return`<i class="hm-d ${ok?'up':'dn'}">${x>0?'▲':'▼'} ${f(Math.abs(x))}</i>`;
+    return`<i class="hm-d ${ok?'up':'dn'}">${x>0?'▲':'▼'} ${txt}</i>`;
   };
   const reals=ms.map(x=>repTotals(x).real);
   const N=[
@@ -15984,6 +16247,8 @@ document.addEventListener('keydown',e=>{
 
 
 /* module init — runs during script evaluation, after all declarations above */
+/* the Settings footer copies the version off the logo badge, so it cannot go stale */
+try{const _v=document.querySelector('.logo-ver');const _t=document.getElementById('set-appver');if(_v&&_t)_t.textContent=_v.textContent;}catch(e){}
 repLoadLocal();
 /* the report lives in Supabase only, so fetch it straight away — AFTER the reset above,
    or the reset lands on top of the fetch result and blanks the page. */
