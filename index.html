@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v71</title>
+<title>BDL Hub — Ads &amp; Monthly Report v78</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -85,7 +85,8 @@ body{font-variant-numeric:tabular-nums}
 .acct .nm{font-size:12px;font-weight:600}
 
 /* MAIN */
-.main{padding:15px 20px 70px;max-width:1680px;margin:0 auto}
+.main{padding:15px 22px 70px;max-width:none;margin:0 auto;width:100%}
+@media(min-width:2100px){main{max-width:2000px}}   /* only rein it in on very wide screens */
 .page{display:none}.page.active{display:block;animation:fadeUp .4s cubic-bezier(.4,0,.2,1)}
 
 .ph{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:11px}
@@ -464,7 +465,10 @@ table.rt tbody td{padding:8px 12px;border-bottom:1px solid var(--border);font-fa
 table.rt tbody td:first-child{text-align:left;font-family:var(--font)}
 table.rt tbody tr{cursor:pointer;transition:.12s}
 table.rt tbody tr:hover{background:var(--bg2)}
-table.rt tbody tr.dead td{opacity:.5}
+table.rt tbody tr.dead td{opacity:.62}
+table.rt tbody tr.dead td:first-child{opacity:1}          /* never dim what you must click */
+table.rt tbody tr.dead .rn-top b,table.rt tbody tr.dead .rn-sub{opacity:.62}
+.fixtag{opacity:1!important}
 table.rt tbody tr:last-child td{border-bottom:none}
 table.rt tfoot td{padding:9px 12px;font-family:var(--mono);font-weight:700;font-size:12.5px;text-align:right;border-top:2px solid var(--border2);background:var(--bg3);position:sticky;bottom:0;white-space:nowrap}
 .rp-pos{color:var(--green);background:var(--green-bg);border-radius:6px;padding:3px 9px;font-weight:700}
@@ -476,11 +480,13 @@ table.rt tfoot td{padding:9px 12px;font-family:var(--mono);font-weight:700;font-
 table.rt tbody td:first-child{min-width:340px;max-width:560px}
 .rep-name b{font-size:12.5px;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
 .rep-name .sub{font-family:var(--mono);font-size:10px;color:var(--text4);margin-top:1px;display:block}
-.rsplit{font-family:var(--mono);font-size:10.5px;margin-top:2px;white-space:nowrap}
+.rsplit{font-family:var(--mono);font-size:10px;margin-top:2px;white-space:nowrap;
+  display:flex;justify-content:flex-end;gap:7px;overflow:visible}
 .rs-o{color:var(--green)}
 .rs-a{color:var(--blue);margin-left:7px}
 .rlinks{display:inline-flex;gap:4px;flex-shrink:0;margin-left:8px}
-.rlink{font-family:var(--font);font-size:9.5px;font-weight:800;letter-spacing:.3px;text-decoration:none;padding:3px 7px;border-radius:6px;border:1px solid var(--border2);background:var(--bg4);color:var(--text3);transition:.13s;line-height:1.3}
+.rlink{font-family:var(--font);font-size:9.5px;font-weight:800;letter-spacing:.3px;text-decoration:none;padding:0 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg4);color:var(--text3);transition:.13s;
+  min-height:24px;display:inline-flex;align-items:center;justify-content:center}
 .rlink:hover{transform:translateY(-1px)}
 .rl-az:hover{background:var(--amber);color:#1a1002;border-color:var(--amber)}
 .rl-sas:hover{background:var(--blue);color:#06121a;border-color:var(--blue)}
@@ -1355,12 +1361,59 @@ table.ptab tbody tr.mg-out td.l b{color:var(--text)}
 .mg-arrow{color:var(--green);font-weight:900;margin-right:2px}
 .mg-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
 
+.unk{color:var(--text4);font-family:var(--mono);cursor:help}
+.rep-chip.nods{border-color:rgba(255,181,71,.35);color:var(--amber);background:var(--amber-bg)}
+
+.an-nods{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:13px;padding:10px 14px;margin-bottom:13px;font-size:12.5px;color:var(--text3);font-weight:500;line-height:1.55}
+
+/* test mode: unmissable */
+#test-bar{position:fixed;top:0;left:0;right:0;z-index:500;background:#e01e37;color:#fff;
+  font-family:var(--font);font-size:14px;font-weight:700;padding:13px 18px;text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;
+  box-shadow:0 3px 22px rgba(224,30,55,.45);border-bottom:2px solid #ff6079}
+#test-bar b{font-weight:900;letter-spacing:1px;font-size:15px}
+#test-bar .tb-s{font-weight:600;font-size:12.5px;opacity:.92}
+#test-bar .tb-dot{width:11px;height:11px;border-radius:50%;background:#fff;flex-shrink:0;animation:tbpulse 1.4s ease-in-out infinite}
+@keyframes tbpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.8)}}
+#test-bar button{background:#fff;color:#b3122a;border:none;border-radius:8px;
+  font-family:var(--font);font-size:12px;font-weight:900;padding:6px 14px;cursor:pointer;white-space:nowrap}
+#test-bar button:hover{background:#ffe3e8}
+body.has-test-bar{padding-top:50px}
+body.has-test-bar .topbar{top:50px}
+.test-toggle.on{border-color:#e01e37}
+.test-toggle .tt-o.sel.warn{background:#e01e37;color:#fff;font-weight:800}
+.mi-bare{font-size:11px;color:var(--text3);font-weight:500;line-height:1.5;margin-top:5px;
+  background:var(--bg3);border-left:2px solid var(--blue);border-radius:0 7px 7px 0;padding:6px 10px}
+
+/* data mode: both states always visible, so the toggle explains itself */
+.test-toggle{display:inline-flex;align-items:center;gap:3px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:9px;padding:3px;cursor:pointer;font-family:var(--font);white-space:nowrap}
+.test-toggle:hover{border-color:var(--border2)}
+.test-toggle .tt-l{font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text4);padding:0 6px 0 5px}
+.test-toggle .tt-o{font-size:11px;font-weight:700;color:var(--text4);padding:4px 10px;border-radius:7px;transition:.13s}
+.test-toggle .tt-o.sel{background:var(--panel);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.test-toggle .tt-o.sel.warn{background:#e01e37;color:#fff;font-weight:800}
+.test-toggle.on{border-color:#e01e37;box-shadow:0 0 0 1px rgba(224,30,55,.35)}
+.tm-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.tm-row>div{flex:1;min-width:240px}
+.tm-state{font-size:13.5px;font-weight:600;color:var(--text2)}
+.tm-why{font-size:12px;color:var(--text3);line-height:1.6;margin-top:5px;font-weight:500}
+
+.mi-clear{background:var(--bg4);border:1px solid var(--border2);color:var(--text3);font-family:var(--font);
+  font-size:10px;font-weight:800;letter-spacing:.3px;padding:2px 8px;border-radius:6px;cursor:pointer;margin-left:7px;transition:.13s}
+.mi-clear:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+.cm-b{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text2);
+  font-family:var(--font);font-size:12.5px;font-weight:600;padding:8px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.cm-b:hover{background:var(--bg3);color:var(--text)}
+#rep-moremenu{min-width:250px}
+
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v71</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v78</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -1503,11 +1556,14 @@ table.ptab tbody tr.mg-out td.l b{color:var(--text)}
       <div class="colmenu" id="rep-colmenu"></div>
     </div>
     <button class="btn-sm" id="rep-utog" title="Show or hide the Organic and Ad units columns together" onclick="repToggleUnits()">Organic / ad units</button>
+    <select class="sel" id="rep-sortsel" onchange="repSortBy(this.value)" title="Sort the table" style="min-width:150px"></select>
+    <button class="btn-sm" onclick="repFlipSort()" id="rep-sortdir" title="Reverse the order">↓</button>
     <button class="btn-sm" onclick="openCompare()">Compare products</button>
     <button class="btn-sm" onclick="openRepLosers()">Losing money</button>
-    <button class="btn-sm" onclick="openRepRow(-1)">+ Add product</button>
-    <button class="btn-sm" onclick="repExportCsv()">⇩ Export CSV</button>
-    <button class="btn-sm" onclick="openRepMonthManage()">Month options</button>
+    <div class="cmwrap">
+      <button class="btn-sm" id="rep-morebtn" onclick="repMoreMenu()">More ▾</button>
+      <div class="colmenu" id="rep-moremenu"></div>
+    </div>
   </div>
   <div class="tablecard" id="rep-tablewrap"><div class="tscroll" style="max-height:66vh">
     <table class="rt" id="rep-table">
@@ -1747,6 +1803,18 @@ table.ptab tbody tr.mg-out td.l b{color:var(--text)}
 <!-- ════════ SETTINGS ════════ -->
 <div class="page" id="page-settings">
   <div class="ph"><div><h1>Settings</h1><div class="sub">Connection, scoring thresholds, bid defaults, data export</div></div></div>
+
+  <div style="margin-bottom:14px">
+    <div class="card pad">
+      <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">💾 How your data is kept</div></div>
+      <div class="tm-row">
+        <div><div class="tm-state"><b style="color:var(--green)">Everything saves automatically</b> — to Supabase, as you work</div>
+          <div class="tm-why">Imports, edits, matched names, column choices and thresholds save the moment you make them, and follow you to any machine you open the hub on.
+          If an import goes wrong, <b>Monthly Report → ⚙ → Version history</b> restores any of the last 30 saves, and <b>Download a backup</b> gives you a file to keep.</div></div>
+        <button class="btn ghost" onclick="goPage('report');setTimeout(openRepSettings,120)">Backup &amp; version history</button>
+      </div>
+    </div>
+  </div>
 
   <div style="margin-bottom:14px">
     <div class="card pad">
@@ -9016,6 +9084,12 @@ const repMonth=()=>repData.months.find(m=>m.id===repCur)||null;
 const repSortedMonths=()=>[...repData.months].sort((a,b)=>(a.ym||'').localeCompare(b.ym||''));
 function repPrevMonth(){const ms=repSortedMonths();const i=ms.findIndex(m=>m.id===repCur);return i>0?ms[i-1]:null;}
 function rows0AdSales(m){return (m?.rows||[]).reduce((a,r)=>a+(+r.adSales||0),0);}
+/* Older months predate the flag — infer it from whether any row carries ad data. */
+function repAdsKnown(m){
+  if(!m)return false;
+  if(typeof m.adsKnown==='boolean')return m.adsKnown;
+  return (m.rows||[]).some(r=>r.adSales!=null||(+r.ads||0)>0||(+r.adUnits||0)>0);
+}
 function repTotals(m){const t={sales:0,profit:0,ads:0,units:0,real:0,adUnits:0,organic:0};(m?.rows||[]).forEach(r=>{t.sales+=+r.sales||0;t.profit+=+r.profit||0;t.ads+=+r.ads||0;t.units+=+r.units||0;t.adUnits+=+r.adUnits||0;t.organic+=Math.max(0,(+r.units||0)-(+r.adUnits||0));t.real+=repRowReal(r);});return t;}
 function repLoadLocal(){try{const d=repMigrate(JSON.parse(localStorage.getItem(REP_LS)));if(d)repData=d;}catch(e){}
   const ms=repSortedMonths();if(ms.length)repCur=ms[ms.length-1].id;}
@@ -9139,7 +9213,7 @@ function renderReport(){
   /* revenue split bar — organic vs advertised */
   const sbEl=document.getElementById('rep-split');
   if(sbEl){
-    if(t.sales>0){
+    if(t.sales>0&&repAdsKnown(m)){
       sbEl.style.display='';
       sbEl.innerHTML=`<div class="rs-h"><b>Where the revenue came from</b>
         <span class="rs-k"><i style="background:var(--green)"></i>Organic ${gbp(orgRev)} · ${fmt(100-adShare,0)}%</span>
@@ -9196,6 +9270,7 @@ function renderReport(){
       dead.length?`<span class="rep-chip"><b>${dead.length}</b> with zero sales this month</span>`:'',
       (()=>{const nf=rows.filter(r=>!r.name||String(r.name).trim().toUpperCase()===String(r.asin||'').toUpperCase()).length;
         return nf?`<span class="rep-chip fix" onclick="openFixNames()"><b>${nf}</b> unmatched — match ${nf===1?'it':'them'}</span>`:'';})(),
+      (!repAdsKnown(m)&&rows.length)?`<span class="rep-chip nods" onclick="explainNoAds()" style="cursor:pointer">no organic / ad split — why?</span>`:'',
       (()=>{const d=(typeof mgGroups==='function')?mgGroups(m):[];
         return d.length?`<span class="rep-chip fix" onclick="openMergePreview()"><b>${d.length}</b> name${d.length===1?'':'s'} used twice — fix ${d.length===1?'it':'them'}</span>`:'';})(),
       `<span class="rep-chip">${rows.length} products</span>`,
@@ -9268,6 +9343,7 @@ function renderReport(){
   if(ut){ut.textContent=showU?'Hide organic / ad units':'Show organic / ad units';ut.classList.toggle('on',showU);}
   const adTot2=rows.reduce((a,r)=>a+(r.adSales!=null?(+r.adSales||0):0),0);
   const hasSplit=rows.some(r=>r.adSales!=null);
+  const adsKnown=repAdsKnown(m);
   /* ── columns are configurable; the product and Real Profit columns are fixed ── */
   const histBy={};
   repSortedMonths().forEach(mm=>(mm.rows||[]).forEach(rr=>{
@@ -9305,14 +9381,16 @@ function renderReport(){
       c:r=>{const v=roasOf(r);return (+r.ads||0)?`<span class="rag ${ragOf(v,+r.adSales||0,+r.ads||0)==='leak'?'flag':ragOf(v,+r.adSales||0,+r.ads||0)}" style="font-size:10.5px">${fmt(v,2)}</span>`:'<span class="muted">—</span>';},
       f:()=>t.ads?fmt(adTot2/t.ads,2)+'×':'—'},
     {k:'organic',h:'Organic',w:'c-small',t:'Units that sold with no ad attached',grp:'u',
-      c:r=>`<span class="u-org">${intf(Math.max(0,(+r.units||0)-Math.min(+r.adUnits||0,+r.units||0)))}</span>`,
-      f:()=>`<span class="u-org">${intf(t.organic)}</span>`},
+      c:r=>adsKnown?`<span class="u-org">${intf(Math.max(0,(+r.units||0)-Math.min(+r.adUnits||0,+r.units||0)))}</span>`
+        :'<span class="unk" title="No ads report was imported for this month, so the organic / advertised split is not known">—</span>',
+      f:()=>adsKnown?`<span class="u-org">${intf(t.organic)}</span>`:'<span class="unk">—</span>'},
     {k:'adUnits',h:'<span class="eqop">+</span> Ad units',w:'c-small',t:'Units attributed to advertising',grp:'u',
-      c:r=>`<span class="u-ad">${intf(Math.min(+r.adUnits||0,+r.units||0))}</span>`,
-      f:()=>`<span class="u-ad">${intf(t.adUnits)}</span>`},
+      c:r=>adsKnown?`<span class="u-ad">${intf(Math.min(+r.adUnits||0,+r.units||0))}</span>`
+        :'<span class="unk" title="No ads report was imported for this month">—</span>',
+      f:()=>adsKnown?`<span class="u-ad">${intf(t.adUnits)}</span>`:'<span class="unk">—</span>'},
     {k:'units',h:'Units',w:'c-units',t:'Organic + advertised units',lock:1,
       c:r=>{const tot=+r.units||0,au=Math.min(+r.adUnits||0,tot),og=Math.max(0,tot-au),pa=tot?au/tot*100:0;
-        return `<span class="u-tot">${intf(tot)}</span>`+(!showU&&tot?`<span class="ub-bar" title="${intf(og)} organic · ${intf(au)} advertised"><i class="ub-org" style="width:${(100-pa).toFixed(1)}%"></i><i class="ub-ad" style="width:${pa.toFixed(1)}%"></i></span>`:'');},
+        return `<span class="u-tot">${intf(tot)}</span>`+(!showU&&tot&&adsKnown?`<span class="ub-bar" title="${intf(og)} organic · ${intf(au)} advertised"><i class="ub-org" style="width:${(100-pa).toFixed(1)}%"></i><i class="ub-ad" style="width:${pa.toFixed(1)}%"></i></span>`:'');},
       f:()=>`<span class="u-tot">${intf(t.units)}</span>`},
     {k:'margin',h:'Margin',w:'c-small',t:'Real Profit ÷ sales',off:1,
       c:r=>{const v=marginOf(r);return (+r.sales||0)?`<span style="color:${v>=15?'var(--green)':v>=8?'var(--amber)':'var(--red)'};font-weight:700">${fmt(v,1)}%</span>`:'<span class="muted">—</span>';},
@@ -9346,6 +9424,7 @@ function renderReport(){
     ${shown.map(c=>`<th onclick="repSortBy('${c.k}')" class="${_repSort.k===c.k?'sorted':''}"${c.t?` title="${_esc(c.t)}"`:''}>${c.k==='units'&&showU?'<span class="eqop">=</span> ':''}${c.h}${arrow(c.k)}</th>`).join('')}
     <th onclick="repSortBy('real')" class="${_repSort.k==='real'?'sorted':''}" title="Real Profit = Profit before ads − Ads">Real Profit${arrow('real')}</th>
   </tr>`;
+  repPaintSort(shown);
   const COLS=shown.length+2;
   const body=document.getElementById('rep-body');
   if(!rows.length){
@@ -10802,34 +10881,36 @@ function copyPrepDevBrief(el){copyText(document.getElementById('pd-text').value,
 /* ══════════════════ v50 — MONTH IMPORT (xlsx/csv/tsv + paste), TEST MODE ══════════════════ */
 
 /* ── TEST MODE: stubs every write, Supabase and local. Loud badge so it can't be forgotten. ── */
-let TEST_MODE=false;  /* trial over — everything saves. The toggle stays in Settings. */
+/* Test mode has been removed — the hub always saves. The constant stays so every
+   guard that references it remains valid; it can never become true again. The safety
+   net test mode used to give you now lives in Settings: Download a backup, and
+   Version history (the last 30 saves, straight out of Supabase). */
+const TEST_MODE=false;
 function isTest(){return TEST_MODE;}
-function setTestMode(on){
-  TEST_MODE=!!on;
-  try{localStorage.setItem('bdl_test_mode',TEST_MODE?'1':'0');}catch(e){}
-  paintTestBadge();
-  try{renderReport();}catch(e){}
-  try{renderProducts();}catch(e){}
-  toast(TEST_MODE?'TEST MODE ON — nothing will be saved':'TEST MODE OFF — changes now save','warn');
+/* kept so no lingering handler can throw */
+function setTestMode(){ if(typeof toast==='function')toast('Everything saves automatically — test mode has been removed'); }
+function paintTestSettings(){ return; }
+function _paintTestSettingsOld(){
+  const st=document.getElementById('tm-state');if(!st)return;
+  const why=document.getElementById('tm-why'),btn=document.getElementById('tm-btn');
+  const card=document.getElementById('cfg-testmode-card');
+  st.innerHTML=TEST_MODE?'<b style="color:#ff6079">Test mode is ON</b> — nothing is being saved'
+                        :'<b style="color:var(--green)">Saving normally</b> — everything is kept';
+  why.textContent=TEST_MODE
+    ? 'Imports, edits, names and preferences are all discarded. Nothing reaches Supabase and nothing is written to this browser, so a refresh wipes whatever you were trying. Use it to trial an import you are not sure about.'
+    : 'Every import, edit and preference saves to Supabase straight away and follows you to any machine you open the hub on.';
+  btn.textContent=TEST_MODE?'Turn saving on':'Switch to test mode';
+  btn.className=TEST_MODE?'btn':'btn ghost';
+  if(card)card.style.borderColor=TEST_MODE?'#e01e37':'';
 }
 function paintTestBadge(){
-  let b=document.getElementById('test-badge');
-  if(!b){
-    b=document.createElement('button');b.id='test-badge';
-    b.onclick=()=>setTestMode(!TEST_MODE);
-    const sp=document.querySelector('.topbar .sp');
-    if(sp&&sp.parentNode)sp.parentNode.insertBefore(b,sp.nextSibling);else document.querySelector('.topbar')?.appendChild(b);
-  }
-  b.className='test-badge'+(TEST_MODE?' on':'');
-  b.title=TEST_MODE?'Nothing is being saved. Click to turn saving back on.':'Changes are saving normally. Click for test mode.';
-  b.innerHTML=TEST_MODE?'⚠ TEST MODE — not saving':'● Saving';
+  /* nothing to paint any more — clear anything an earlier build left behind */
+  document.getElementById('test-badge')?.remove();
+  document.getElementById('test-bar')?.remove();
+  document.body.classList.remove('has-test-bar');
 }
-/* the trial left "1" in localStorage on machines that used it — clear it once so the
-   switch to live saving actually takes effect, then honour the toggle normally. */
-try{
-  if(localStorage.getItem('bdl_test_cleared')!=='1'){localStorage.removeItem('bdl_test_mode');localStorage.setItem('bdl_test_cleared','1');}
-  const t=localStorage.getItem('bdl_test_mode');if(t!=null)TEST_MODE=t==='1';
-}catch(e){}
+/* Test mode is gone. Clear the remembered flags so nothing can resurrect it. */
+try{['bdl_test_mode','bdl_test_seed_v75','bdl_test_cleared'].forEach(k=>localStorage.removeItem(k));}catch(e){}
 try{if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',paintTestBadge);else paintTestBadge();}catch(e){}
 
 /* ── minimal ZIP reader → xlsx rows. Uses DecompressionStream('deflate-raw'), no library. ── */
@@ -10975,10 +11056,35 @@ function miParseSales(rows){
 }
 
 /* ── ADS report (Sponsored Products — Advertised product) ── */
+/* A bare  ASIN <tab> spend  list, no header — the shape Jack pastes for backdated
+   months where the full Amazon export is long gone. Optional extra columns are read
+   positionally as spend, ad sales, ad units. */
+function miParseAdsBare(rows){
+  const by={};let n=0;
+  for(const r of rows){
+    if(!r||!r.length)continue;
+    const asin=_asinOf(r[0]);
+    if(!asin)continue;
+    const nums=r.slice(1).map(_num);
+    if(!nums.length)continue;
+    const e=by[asin]||(by[asin]={asin,spend:0,adUnits:0,adSales:0,n:0,camps:{}});
+    e.spend+=nums[0]||0;
+    if(nums.length>1)e.adSales+=nums[1]||0;
+    if(nums.length>2)e.adUnits+=Math.round(nums[2]||0);
+    e.n++;n++;
+  }
+  if(!n)return null;
+  return{map:by,rowN:n,campaigns:0,from:null,to:null,bare:true,
+    cols:Math.max(...rows.filter(r=>r&&_asinOf(r[0])).map(r=>r.length))};
+}
 function miParseAds(rows){
   if(!rows||!rows.length)return{err:'That file looked empty.'};
   const hi=hdrIndex(rows,['spend']);
-  if(hi<0)return{err:'No header row with a “Spend” column — is this the Amazon Ads report?'};
+  if(hi<0){
+    const bare=miParseAdsBare(rows);
+    if(bare)return bare;
+    return{err:'No “Spend” column, and no ASIN + number rows either. Paste either the full Amazon Ads export, or a simple two-column list of ASIN and spend.'};
+  }
   const H=rows[hi];
   const c={asin:_find(H,['advertised asin','asin']),spend:_find(H,['spend','total cost']),
     units:_find(H,['7 day total units','14 day total units','total units','units']),
@@ -11105,18 +11211,37 @@ function openMonthImport(){
   /* the drop zones and state lines are UI state too — leaving them looking "loaded"
      while the parsed data is cleared is exactly how you get "nothing loaded yet" on a
      screen showing two green ticks. Reset them together, always. */
-  ['sales','ads'].forEach(w=>{
-    const st=document.getElementById('mi-'+w+'-state');if(st){st.textContent='';st.style.color='';}
-    const dz=document.getElementById('mi-'+w+'-drop');
-    if(dz){dz.classList.remove('has','over');
-      const lbl=dz.querySelector('span:last-child');
-      if(lbl)lbl.innerHTML='<b>Choose file</b> or drag it here<span class="mi-drop-s">.xlsx · .csv · .txt</span>';}
-  });
+  ['sales','ads'].forEach(w=>miClear(w,true));
   document.getElementById('mi-month').value='';
   document.getElementById('mi-status').textContent='';
   const w=document.getElementById('mi-warn');if(w){w.innerHTML='';w.style.display='none';}
   miPreview();
   document.getElementById('month-import-overlay').classList.add('open');document.body.style.overflow='hidden';
+}
+/* Put one side of the import back to untouched — wrong file, wrong paste, start again. */
+function miClear(which,quiet){
+  if(which==='sales')_miSales=null;else _miAds=null;
+  const ta=document.getElementById('mi-'+which+'-text');if(ta)ta.value='';
+  const fi=document.getElementById('mi-'+which+'-file');if(fi)fi.value='';
+  const st=document.getElementById('mi-'+which+'-state');if(st){st.textContent='';st.style.color='';}
+  const dz=document.getElementById('mi-'+which+'-drop');
+  if(dz){dz.classList.remove('has','over','busy');
+    const lbl=dz.querySelector('span:last-child');
+    if(lbl)lbl.innerHTML='<b>Choose file</b> or drag it here<span class="mi-drop-s">.xlsx · .csv · .txt</span>';}
+  if(!quiet){
+    _miExclude=new Set();
+    miPreview();
+    toast((which==='sales'?'Sales':'Ads')+' report cleared');
+  }
+}
+function miStartOver(){
+  if(!_miSales&&!_miAds){toast('Nothing loaded');return;}
+  if(!confirm('Clear both reports and start this import again?'))return;
+  ['sales','ads'].forEach(w=>miClear(w,true));
+  _miExclude=new Set();
+  const m=document.getElementById('mi-month');if(m)m.value='';
+  const w=document.getElementById('mi-warn');if(w){w.innerHTML='';w.style.display='none';}
+  miPreview();toast('Import cleared');
 }
 function closeMonthImport(){document.getElementById('month-import-overlay').classList.remove('open');document.body.style.overflow='';}
 
@@ -11178,6 +11303,7 @@ function miSet(which,rows,src){
       st.style.color='';
       const m=document.getElementById('mi-month');
       if(!m.value&&r.label)m.value=r.label;
+      st.innerHTML+=' <button class="mi-clear" onclick="miClear(\'sales\')" title="Wrong file or wrong paste? Clear this one and start again">Clear</button>';
     }
   }else{
     const r=miParseAds(rows);
@@ -11186,7 +11312,10 @@ function miSet(which,rows,src){
       _miAds=r;
       const tot=Object.values(r.map).reduce((a,x)=>a+x.spend,0);
       st.innerHTML='<b style="color:var(--green)">✓ '+intf(Object.keys(r.map).length)+' ASINs</b> from '+intf(r.rowN)+' rows'
-        +(r.campaigns?' / '+intf(r.campaigns)+' campaigns':'')+' · '+gbp(tot)+' spend'+(src?' · '+_esc(src):'');
+        +(r.campaigns?' / '+intf(r.campaigns)+' campaigns':'')+' · '+gbp(tot)+' spend'+(src?' · '+_esc(src):'')
+        +' <button class="mi-clear" onclick="miClear(\'ads\')" title="Wrong file or wrong paste? Clear this one and start again">Clear</button>'
+        +(r.bare?`<div class="mi-bare">Read as a simple ASIN + spend list${r.cols>2?' with '+(r.cols-1)+' number columns':''}.
+           ${r.cols<3?'No ad sales or ad units in this paste, so ROAS and the organic split will be blank for this month — spend, profit and Real Profit are all still exact.':''}</div>`:'');
       st.style.color='';
     }
   }
@@ -11195,21 +11324,29 @@ function miSet(which,rows,src){
 function miMerge(){
   const sales=(_miSales&&_miSales.rows)||[];
   const ads=(_miAds&&_miAds.map)||{};
+  /* "Ads known" means we have the unit/sales detail, not merely a spend figure. */
+  const adsSupplied=!!(_miAds&&(!_miAds.bare||_miAds.cols>2));
   const by={};
   const keep=a=>!_miExclude.has(String(a||'').toUpperCase());
   sales.filter(s=>keep(s.asin)).forEach(s=>{by[s.asin]={id:_uid(),asin:s.asin,url:s.url,name:s.name,units:s.units,sales:s.sales,
-    profit:s.profit,stock:s.stock,ads:0,adUnits:0,adSales:0};});
+    profit:s.profit,stock:s.stock,ads:0,adUnits:0,adSales:null};});
   Object.values(ads).filter(a=>keep(a.asin)).forEach(a=>{
     const e=by[a.asin]||(by[a.asin]={id:_uid(),asin:a.asin,url:'https://www.amazon.co.uk/dp/'+a.asin,
-      name:(window._asinNames||{})[a.asin.toUpperCase()]||lavName(a.asin)||a.asin,units:0,sales:0,profit:0,stock:null,ads:0,adUnits:0,adSales:0});
-    e.ads=a.spend;e.adUnits=a.adUnits;e.adSales=a.adSales;
+      name:(window._asinNames||{})[a.asin.toUpperCase()]||lavName(a.asin)||a.asin,units:0,sales:0,profit:0,stock:null,ads:0,adUnits:0,adSales:null});
+    e.ads=a.spend;e.adUnits=a.adUnits;
+    /* A spend-only paste knows nothing about advertised sales. Leave it null so the
+       revenue split stays blank instead of claiming everything was organic. */
+    e.adSales=adsSupplied?a.adSales:null;
     e.camps=Object.entries(a.camps||{}).map(([name,v])=>({name,sp:+v.spend.toFixed(2),sa:+v.sales.toFixed(2),u:v.units,ck:v.clicks||0}))
       .sort((x,y)=>y.sp-x.sp);
   });
   /* Jack's rule: advertised + organic must ALWAYS equal total units sold. Ad units are
      therefore capped at the units the sales report actually recorded — the raw figure is
      kept on the row so nothing is lost and the preview can flag it. */
+  /* A bare spend-only paste tells us what was spent but nothing about units, so the
+     organic / advertised split stays unknown for that month. */
   const rows=Object.values(by).map(r=>{
+    r.adsKnown=adsSupplied;
     r.adUnitsRaw=r.adUnits||0;
     r.adUnits=Math.max(0,Math.min(r.adUnitsRaw,r.units||0));
     r.organic=Math.max(0,(r.units||0)-r.adUnits);
@@ -11273,6 +11410,10 @@ async function miImport(){
   const prevRows=m?(m.rows||[]).slice():null;
   if(m){ if(!confirm('“'+(m.label||label)+'” already exists. Replace its '+((m.rows||[]).length)+' products with these '+rows.length+'?'))return; m.rows=rows; m.label=label; }
   else { m={id:_uid(),ym,label,rows}; repData.months.push(m); }
+  /* Whether an ads report was actually supplied. Without one we know the sales but we
+     do NOT know the organic/advertised split — that is different from "all organic",
+     and the report must not pretend otherwise on backdated months. */
+  m.adsKnown=!!(_miAds&&(!_miAds.bare||_miAds.cols>2));
   repCur=m.id;
   /* snapshot for undo BEFORE we commit */
   const undo={id:m.id,prevRows:prevRows,wasNew:wasNew,label:label};
@@ -11516,13 +11657,17 @@ function repAnalysis(m,prev){
       `Every ${_hi('£1','var(--amber)')} of ad spend returned ${_hi(gbp(blended),blended>=cfgTargetRoas()?'var(--green)':blended>=2?'var(--blue)':'var(--red)')} of advertised sales.`,
       `${gbp(t.ads)} spend → ${gbp(adSales)} ad sales · your target is ${fmt(cfgTargetRoas(),1)}×`);
   }
-  if(adSales>0||orgRev>0){
+  if(!repAdsKnown(m)){
+    add('ads','warn','No ads report was imported for this month, so organic vs advertised cannot be worked out.',
+      'Sales, profit and Real Profit are all correct — only the split is missing. Import the ads report for this month and it fills in.');
+  }
+  if(repAdsKnown(m)&&(adSales>0||orgRev>0)){
     const dOrg=pOrgPct!=null?orgPct-pOrgPct:null;
     add('ads',dOrg==null?'info':dOrg>0?'good':'warn',
       `${_hi(fmt(orgPct,0)+'%',dOrg==null?'var(--blue)':dOrg>0?'var(--green)':'var(--amber)')} of revenue came in without an ad — ${gbp(orgRev)} organic against ${gbp(adSales)} advertised.`,
       dOrg==null?'No previous month to compare against':(Math.abs(dOrg)<0.5?`Level with ${_esc(prev.label)}`:`${dOrg>0?'Up':'Down'} ${fmt(Math.abs(dOrg),1)} points on ${_esc(prev.label)} — you are leaning ${dOrg>0?'less':'more'} on ads`));
   }
-  if(t.units>0)add('ads','info',
+  if(t.units>0&&repAdsKnown(m))add('ads','info',
     `${_hi(intf(t.organic),'var(--green)')} of ${intf(t.units)} units sold with no ad attached.`,
     `${intf(t.adUnits)} advertised units · ${fmt(t.units?t.adUnits/t.units*100:0,0)}% of volume`);
 
@@ -11662,14 +11807,14 @@ function openRepAnalysis(){
           <div class="an-tl">${a[0]}${a[4]}</div>
           <div class="an-tv" style="color:${a[2]}">${a[1]}</div>
           ${spk(a[3],a[2])}</div>`).join('')}</div>
-        <div class="an-splits">
+        ${!repAdsKnown(m)?`<div class="an-nods">Only the sales report was imported for ${_esc(m.label)} — the organic vs advertised split is not known for this month.</div>`:`<div class="an-splits">
           <div class="an-sp"><div class="an-spl">Revenue <b>${fmt(orgPct,0)}% organic</b></div>
             <div class="an-spb"><i style="width:${orgPct.toFixed(1)}%;background:var(--green)"></i><i style="width:${(100-orgPct).toFixed(1)}%;background:var(--blue)"></i></div>
             <div class="an-spk2"><span><i style="background:var(--green)"></i>${gbp(Math.max(0,T.sales-adS))}</span><span><i style="background:var(--blue)"></i>${gbp(adS)} advertised</span></div></div>
           <div class="an-sp"><div class="an-spl">Units <b>${fmt(uPct,0)}% organic</b></div>
             <div class="an-spb"><i style="width:${uPct.toFixed(1)}%;background:var(--green)"></i><i style="width:${(100-uPct).toFixed(1)}%;background:var(--blue)"></i></div>
             <div class="an-spk2"><span><i style="background:var(--green)"></i>${intf(T.organic)} organic</span><span><i style="background:var(--blue)"></i>${intf(T.adUnits)} advertised</span></div></div>
-        </div>`;})()
+        </div>`}`;})()
     +sec('The month',S.head)
     +sec('Advertising',S.ads)
     +sec('Products',S.prod)
@@ -12523,6 +12668,7 @@ function fxSave(btn){
     r.name=v;n++;
     if(!r.url&&r.asin)r.url='https://www.amazon.co.uk/dp/'+r.asin;
     /* remember it so the same ASIN is named on every future import */
+    if(TEST_MODE)return;
     try{const map=JSON.parse(localStorage.getItem('bdl_asin_names')||'{}');
       if(r.asin)map[r.asin.toUpperCase()]=v;
       localStorage.setItem('bdl_asin_names',JSON.stringify(map));
@@ -12546,6 +12692,7 @@ function repColOn(k){return !!_repCols[k];}
    settings/report_prefs_v1 so the report looks the same on every machine he opens it on. */
 let _prefsT=null;
 function repPrefsSave(){
+  if(TEST_MODE)return;                                   /* test mode writes nothing, anywhere */
   try{localStorage.setItem('bdl_rep_cols',JSON.stringify(_repCols));localStorage.setItem('bdl_rep_dense',_repDense?'1':'0');}catch(e){}
   clearTimeout(_prefsT);
   _prefsT=setTimeout(async()=>{
@@ -12598,6 +12745,34 @@ function repToggleDense(){_repDense=!_repDense;
   document.getElementById('rep-tablewrap')?.classList.toggle('dense',_repDense);
   repColMenu(true);}
 function repFilter(k){_repFilter=k;renderReport();}
+function repFlipSort(){_repSort.dir*=-1;renderReport();}
+function repMoreMenu(){
+  const el=document.getElementById('rep-moremenu');if(!el)return;
+  const open=!el.classList.contains('open');
+  el.classList.toggle('open',open);
+  if(!open)return;
+  const items=[['+ Add a product by hand','openRepRow(-1)'],
+    ['⇩ Export this view as CSV','repExportCsv()'],
+    ['Month options — rename, delete, merge','openRepMonthManage()'],
+    ['⚙ Monthly Report settings','openRepSettings()']];
+  el.innerHTML=`<div class="cm-h">More</div>`+items.map(([l,fn])=>
+    `<button class="cm-b" onclick="document.getElementById('rep-moremenu').classList.remove('open');${fn}">${l}</button>`).join('');
+}
+document.addEventListener('click',e=>{
+  const m=document.getElementById('rep-moremenu');
+  if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('#rep-morebtn'))m.classList.remove('open');
+});
+/* keep the sort dropdown in step with whatever header was last clicked */
+function repPaintSort(shown){
+  const sel=document.getElementById('rep-sortsel');if(!sel)return;
+  const opts=[['name','Product name'],['real','Real profit']]
+    .concat(shown.filter(c=>c.k!=='trend').map(c=>[c.k,String(c.h).replace(/<[^>]+>/g,'').trim()]));
+  const seen={};const uniq=opts.filter(([k])=>seen[k]?false:(seen[k]=1));
+  sel.innerHTML=uniq.map(([k,l])=>`<option value="${k}" ${_repSort.k===k?'selected':''}>Sort: ${_esc(l)}</option>`).join('');
+  const d=document.getElementById('rep-sortdir');
+  if(d){d.textContent=_repSort.dir<0?'↓':'↑';
+    d.title=_repSort.dir<0?'Highest first — click for lowest first':'Lowest first — click for highest first';}
+}
 /* the organic + ad units pair travels together — one click, not two trips to the menu */
 let _repSearchT=null;
 function repSearchDebounced(){clearTimeout(_repSearchT);_repSearchT=setTimeout(renderReport,140);}
@@ -12930,6 +13105,29 @@ function hmRecent(){
 
 /* ══════════════════════════ v65 — MONTHLY REPORT SETTINGS ══════════════════════════ */
 
+/* Plain-English answer to "why are Organic and Ad units blank on this month?" */
+function explainNoAds(){
+  const m=repMonth();if(!m)return;
+  const hasSpend=(m.rows||[]).some(r=>(+r.ads||0)>0);
+  document.getElementById('an-title').textContent='Why '+m.label+' has no organic / ad split';
+  document.getElementById('an-sub').textContent='Nothing is wrong with this month — one column of source data is simply missing.';
+  document.getElementById('an-body').innerHTML=`
+    <div class="pverdict warn"><div class="pv-h">The split needs advertised UNITS, and this month has none</div>
+      <div class="pv-b">Organic units are worked out by subtraction: <b>total units sold − units Amazon attributed to an ad</b>.
+      That second number only exists in the full Sponsored Products “Advertised product” export.
+      ${hasSpend?'You imported ad <b>spend</b> for this month, which is a different column — it tells us what you paid, not how many units the ads sold.':'No ads data was imported for this month at all.'}</div></div>
+    <div class="an-grid" style="margin-top:12px">
+      <div class="an-l good"><div class="an-t">Still exact for ${_esc(m.label)}</div>
+        <div class="an-s">Sales · Units · Profit before ads · Ad spend · <b>Real Profit</b> · Real margin · TACOS. Every figure that decides whether a product makes money is correct.</div></div>
+      <div class="an-l warn"><div class="an-t">Blank until the ads export is imported</div>
+        <div class="an-s">Organic units · Ad units · ROAS · the organic-vs-advertised revenue bar. They are shown as <b>—</b> rather than a guess, because "we do not know" is not the same as "zero".</div></div>
+      <div class="an-l info"><div class="an-t">How to fill it in later</div>
+        <div class="an-s">Amazon Ads → Reports → Sponsored Products → <b>Advertised product</b>, for this date range. Re-import the month with that file and the split appears — nothing else changes.</div></div>
+      <div class="an-l info"><div class="an-t">Why backdated months usually cannot be fixed</div>
+        <div class="an-s">Amazon only keeps those reports for a limited window, so for older months the split is simply gone. That is a limit of Amazon's data, not of this app.</div></div>
+    </div>`;
+  document.getElementById('rep-an-overlay').classList.add('open');document.body.style.overflow='hidden';
+}
 function openRepSettings(){
   const ms=repSortedMonths();
   const total=ms.reduce((a,m)=>a+(m.rows||[]).length,0);
@@ -12941,7 +13139,7 @@ function openRepSettings(){
   document.getElementById('rs-sub').innerHTML=
     `<span class="chip">${ms.length} month${ms.length===1?'':'s'}</span><span class="chip">${intf(total)} product rows</span>`
     +`<span class="chip">${bytes>1024?Math.round(bytes/1024)+' KB':bytes+' bytes'}</span>`
-    +`<span class="chip" style="color:${TEST_MODE?'var(--amber)':'var(--green)'}">${TEST_MODE?'Test mode — not saving':'Saving to Supabase'}</span>`;
+    +`<span class="chip" style="color:var(--green)">Saving to Supabase</span>`;
 
   document.getElementById('rs-body').innerHTML=`
     <div class="rs-grid">
@@ -13002,8 +13200,6 @@ function openRepSettings(){
       <div class="pcard danger" style="grid-column:1/-1">
         <div class="pc-h" style="color:var(--red)">Danger zone</div>
         <div class="rs-rows">
-          <div class="rs-r"><div><b>Test mode</b><span>${TEST_MODE?'ON — nothing is being saved. Turn it off to save for real.':'OFF — everything saves to Supabase as you work.'}</span></div>
-            <button class="btn-sm ${TEST_MODE?'on':''}" onclick="setTestMode(!TEST_MODE);openRepSettings()">${TEST_MODE?'Turn off':'Turn on'}</button></div>
           <div class="rs-r"><div><b>Wipe every month</b><span>Deletes all ${ms.length} month${ms.length===1?'':'s'} here and in Supabase. Download a backup first.</span></div>
             <button class="btn-sm danger" onclick="rsWipe()">Wipe the report</button></div>
         </div>
@@ -13230,7 +13426,7 @@ function mgRename(mid,rid){
   if(v==null)return;
   const t=String(v).trim();if(!t)return;
   r.name=t;
-  if(r.asin){try{const map=JSON.parse(localStorage.getItem('bdl_asin_names')||'{}');map[r.asin.toUpperCase()]=t;
+  if(r.asin&&!TEST_MODE){try{const map=JSON.parse(localStorage.getItem('bdl_asin_names')||'{}');map[r.asin.toUpperCase()]=t;
     localStorage.setItem('bdl_asin_names',JSON.stringify(map));window._asinNames=map;sbSaveNames();}catch(e){}}
   repSave();renderReport();openMergePreview();
   toast('Renamed');
@@ -13296,7 +13492,9 @@ async function uiPrefsLoad(){
 (function(){
   const orig=localStorage.setItem.bind(localStorage);
   try{
-    localStorage.setItem=function(k,v){orig(k,v);if(UI_MIRROR.indexOf(k)>=0)try{uiPrefsSave();}catch(e){}};
+    localStorage.setItem=function(k,v){
+      if(typeof TEST_MODE!=='undefined'&&TEST_MODE&&UI_MIRROR.indexOf(k)>=0)return;   /* test mode: don't touch local either */
+      orig(k,v);if(UI_MIRROR.indexOf(k)>=0)try{uiPrefsSave();}catch(e){}};
   }catch(e){}
 })();
 
@@ -13909,6 +14107,7 @@ repLoadLocal();
       <div id="mi-warn" style="display:none"></div>
       <div id="mi-preview" style="font-size:12.5px;line-height:1.6;min-height:18px;margin-top:10px"></div>
       <div style="display:flex;gap:8px;align-items:center;margin-top:11px">
+        <button class="btn ghost" onclick="miStartOver()" title="Clear both reports and begin again">Start over</button>
         <span id="mi-status" style="font-size:11.5px"></span>
         <span id="mi-steps" style="display:flex;align-items:center;flex:1;flex-wrap:wrap"></span>
         <button class="btn ghost" onclick="closeMonthImport()">Cancel</button>
