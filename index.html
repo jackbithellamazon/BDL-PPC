@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v102</title>
+<title>BDL Hub — Ads &amp; Monthly Report v103</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1483,6 +1483,7 @@ table.rt tbody .rsplit{overflow:hidden;text-overflow:ellipsis}
 .dp-n{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dp-m{font-size:10.5px;color:var(--text4);font-weight:600;white-space:nowrap}
 .dp-act{display:flex;gap:6px;padding:9px 13px;flex-wrap:wrap;background:var(--panel);border-top:1px solid var(--border)}
+.prod-n.noname{color:var(--text4);font-style:italic;font-weight:600}
 .pm-f{margin-top:2px}
 .pm-f .label{margin-bottom:6px}
 .pm-f .input{width:100%;font-size:14px;padding:10px 13px}
@@ -1785,7 +1786,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v102</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v103</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -6892,7 +6893,7 @@ function openProductPopup(asin,keepTab){
   const lastM=MS[MS.length-1]||null,prevM=MS[MS.length-2]||null;
   const short=(typeof lavName==='function'&&lavName(A))||'';
   const reg=hubProduct(A);
-  const full=p.product||reg&&reg.name||short||A;
+  const full=productName(A,p.product)||('Unnamed product — '+A);
   const tgt=cfgTargetRoas();
 
   document.getElementById('prod-popup-title').textContent=short||full;
@@ -7323,12 +7324,39 @@ function prodUnmerge(asin){
   toast('Un-merged — they are separate products again');
 }
 
-/* "B0F7GKGCZB" is not a name. Anywhere a row is unmatched its name IS its ASIN, so
-   every truthiness check on a product name has to discount that case. */
+/* "B0F7GKGCZB" is not a name — and neither is "B0". An unmatched row carries its own
+   ASIN as its name, and a half-typed entry can leave a two-character stub, both of
+   which are truthy strings that sail through any `if(name)` check. */
 function _isRealName(n,asin){
   const t=String(n||'').trim();
-  return !!t&&t.toUpperCase()!==String(asin||'').trim().toUpperCase();
+  if(!t||t.length<3)return false;
+  const A=String(asin||'').trim().toUpperCase(),T=t.toUpperCase();
+  if(!A)return true;
+  /* the ASIN itself, or any leading fragment of it */
+  if(T===A||A.startsWith(T))return false;
+  return true;
 }
+/* THE single place that answers "what is this product called". Checks every source
+   the hub has, newest and most specific first, and returns null when it genuinely
+   has no name — so callers can say so instead of printing a raw ASIN. */
+function productName(asin,fallback){
+  const A=String(asin||'').trim().toUpperCase();
+  const ok=n=>_isRealName(n,A)?String(n).trim():null;
+  const tries=[
+    ()=>ok((window._hubProducts||{})[A]&&(window._hubProducts||{})[A].name),
+    ()=>ok((window._lavNames||{})[A]),
+    ()=>{const c=(typeof campaigns!=='undefined'?campaigns:[]).find(x=>(x.asin||'').toUpperCase()===A&&_isRealName(x.product,A));return c?ok(c.product):null;},
+    ()=>ok((window._asinNames||{})[A]),
+    ()=>{try{const ms=repSortedMonths().slice().reverse();
+      for(const m of ms){const r=(m.rows||[]).find(x=>(x.asin||'').toUpperCase()===A);if(r&&ok(r.name))return ok(r.name);}
+    }catch(e){} return null;},
+    ()=>ok(fallback),
+  ];
+  for(const f of tries){const v=f();if(v)return v;}
+  return null;
+}
+/* For display: never print a bare ASIN where a product name belongs. */
+function productLabel(asin,fallback){return productName(asin,fallback)||'Unnamed product';}
 function prodModel(){
   const byAsin={};
   const setName=(k,n)=>{const b=byAsin[k];if(b&&!_isRealName(b.product,b.asin)&&_isRealName(n,b.asin))b.product=String(n).trim();};
@@ -7383,15 +7411,12 @@ function prodModel(){
       delete byAsin[k];
     });
   }catch(e){}
-  /* still nameless? fall back to the remembered ASIN→name map, then any earlier month.
-     A bare ASIN in the title column means we looked in fewer places than we could. */
-  try{
-    Object.keys(byAsin).forEach(k=>setName(k,(window._asinNames||{})[String(byAsin[k].asin||k).toUpperCase()]));
-    months.slice().reverse().forEach(mm=>(mm.rows||[]).forEach(r=>{
-      const k=(r.asin||'').toUpperCase();
-      if(byAsin[k])setName(k,r.name);
-    }));
-  }catch(e){}
+  /* One resolver decides the name, so the table, the search, the sort and the
+     duplicate finder can never disagree about what a product is called. */
+  try{Object.keys(byAsin).forEach(k=>{
+    const b=byAsin[k];
+    b.product=productName(b.asin||k,b.product)||'';
+  });}catch(e){}
   const list=Object.values(byAsin).map(p=>{
     p.spend =p.camps.reduce((a,c)=>a+(c.spend||0),0);
     p.adSales=p.camps.reduce((a,c)=>a+(c.sales||0),0);
@@ -7562,8 +7587,8 @@ function renderProducts(){
           <i style="width:${Math.min(100,Math.max(2,p.adShare)).toFixed(0)}%"></i></span>
         <span class="prod-split-l">${fmt(p.adShare,0)}%</span>`;
       return`<tr onclick="openProductPopup('${p.asin}')" style="cursor:pointer">
-        <td><div class="prod-name">${monoTile(p.product,24)}<div style="min-width:0">
-          <div class="prod-n" title="${_esc(p.product||'')}">${p.leak?'<span class="flagdot"></span>':''}${_esc(lavName(p.asin)||p.product||'—')}</div>
+        <td><div class="prod-name">${monoTile(productName(p.asin,p.product)||p.asin,24)}<div style="min-width:0">
+          <div class="prod-n ${productName(p.asin,p.product)?'':'noname'}" title="${_esc(productName(p.asin,p.product)||('No name yet — '+(p.asin||'')))}">${p.leak?'<span class="flagdot"></span>':''}${_esc(productName(p.asin,p.product)||'Unnamed product')}${productName(p.asin,p.product)?'':`<button class="fixtag" title="Give this ASIN a name" onclick="event.stopPropagation();openProductEdit('${_esc(p.asin||'')}')">name it</button>`}</div>
           <div class="prod-a">${_esc(p.asin||'')}${p.sku?' · '+_esc(p.sku):''}${(()=>{const sh=lavShip(p.asin);return sh?` · <span title="Lavarion: ${intf(sh.units)} units sent to FBA, last ${_esc(sh.last||'—')}" style="color:var(--blue)">⬆ ${intf(sh.units)}u</span>`:'';})()}${p.hasPL?'':' <span class="prod-nopl" title="No row for this ASIN in the latest Monthly Report month">no P&amp;L</span>'}</div>
         </div></div></td>
         <td style="text-align:center"><span class="rag ${p.rag==='leak'?'flag':p.rag}" style="font-size:11px">${p.rag==='leak'?'NO SALE':fmt(p.roas,2)}</span></td>
