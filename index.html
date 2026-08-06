@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v115</title>
+<title>BDL Hub — Ads &amp; Monthly Report v118</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -827,7 +827,7 @@ table.prep-t td{font-size:12px}
 .mi-warn b{color:var(--text);font-weight:800}
 
 .pest.guess{color:var(--amber)}
-/* ══════════ v115 — PREP IS A DECISION BOARD, NOT A DATA DUMP ══════════
+/* ══════════ v118 — PREP IS A DECISION BOARD, NOT A DATA DUMP ══════════
    The old page showed six KPIs, a banner, three alert cards, a chip soup of
    components and an eleven-column table, all at once, and answered none of the
    only question this page exists for: what do I send to FBA, and how much.
@@ -1651,6 +1651,125 @@ table.rt tfoot td{box-shadow:0 -10px 22px -12px rgba(0,0,0,.95)}
 /* the shared multi-series tooltip: one row per product, value right-aligned so the
    column reads as a ranked list rather than a paragraph */
 .bc-tipn{fill:var(--text2);font-size:10.5px;font-family:var(--font);font-weight:600}
+/* ══════════ v118 — THE MONTHLY REPORT HAD NO RHYTHM ══════════
+   Eight full-width blocks stacked down the page with gaps of 11, 8, 12, 9, 12,
+   10 and 10 — every gutter within 4px of every other, so nothing grouped and it
+   read as slab, black space, slab, black space. Three different corner radii
+   (16 / 11 / 12) on the three surfaces made it look unconsidered on top.
+
+   Fix is grouping, not spacing: the five "month at a glance" blocks become ONE
+   surface with hairline dividers, the toolbar joins the table by matching its
+   edges, and the only real gap left is the one BETWEEN those two groups. Same
+   move that fixed the popup tiles in v62 — fewer, larger surfaces. */
+.rep-summary{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.rep-summary > *{margin:0!important;border:0;border-top:1px solid var(--border);border-radius:0!important}
+/* No divider above the first band. #rep-months is hidden until there are two
+   months, and :first-child still matches it while it is display:none — hence the
+   second selector, which is deliberately narrow rather than a generic
+   "[style*=none] + *" (that would also kill real dividers further down). */
+.rep-summary > *:first-child,
+.rep-summary > #rep-months[style*="none"] + #rep-kpis{border-top:0}
+.rep-summary #rep-months{padding:11px 14px 12px}
+.rep-summary .rs{background:transparent;padding:11px 14px}
+.rep-summary .rep-chip-row{padding:11px 14px;gap:8px}
+.rep-summary #rep-movers{padding:11px 14px}
+/* the KPI grid keeps its own 1px hairline tiling — only its outer shell goes */
+.rep-summary .rep-kpis{overflow:visible}
+/* ── v118 legibility: the mono numerals were 400 weight. On a dark background a
+   400-weight mono at 12px halates — the light strokes bleed into the dark and the
+   figure reads as soft focus. Nothing is out of focus; the stroke is just too thin
+   for light-on-dark. 500 fixes it without changing size or layout. Product names
+   next to them are Inter 600 and always looked crisp, which is the tell. */
+table.ptab tbody td,table.rt tbody td,table.dt tbody td,
+.rsplit,.prod-a,.kb-v,.rk-s{font-weight:500}
+table.ptab tbody td b,table.rt tbody td b{font-weight:700}
+.pc-note{font-size:11.5px;color:var(--text4);line-height:1.6;padding:9px 13px 11px;border-top:1px solid var(--border)}
+/* one ROAS treatment everywhere — it was a coloured pill in the main table and
+   plain white text in every popup, which is two languages for one number */
+.roasp{display:inline-block;min-width:44px;padding:2px 8px;border-radius:6px;font-family:var(--mono);
+  font-size:11.5px;font-weight:700;color:#06121a;background:var(--rc);letter-spacing:-.2px}
+/* ── v118 — nine rows, not fourteen ──────────────────────────────────────────
+   v113 squeezed the row to 69px because Jack wanted an eighth row on screen.
+   Grouping the page into two surfaces then gave the table back ~100px of height,
+   and fourteen 69px rows arrived at once — a wall. He wants nine.
+
+   Nine rows of a 900-1000px table area means ~100px each, so COMFORTABLE (the
+   default) is now genuinely comfortable, and COMPACT keeps the old 69px for when
+   he wants the whole month in one screen. The toggle already existed and already
+   syncs; it just had nothing meaningful on either side of it. */
+/* #rep-tablewrap for specificity: v113's `table.rt tbody td{padding:6px 12px}` is
+   declared later in the sheet and ties on specificity, so it was winning. */
+#rep-tablewrap table.rt tbody td{padding:20px 12px}
+#rep-tablewrap table.rt thead th{padding:14px 12px 13px}
+#rep-tablewrap table.rt tbody .rn-top b{-webkit-line-clamp:2}
+#rep-tablewrap.dense table.rt tbody td{padding:6px 12px}
+#rep-tablewrap.dense table.rt thead th{padding:8px 12px}
+
+/* ── v118 — the KPI popup ──────────────────────────────────────────────────
+   It was six identically-weighted bordered tiles in a rigid grid: every number
+   shouting equally, nothing to click, and a chart that was a picture. Jack's
+   "Windows 97 trying to be futuristic" was fair. Now: the comparison is a
+   control at the top, one hero number owns the space, and the chart is an input
+   — click a point and everything recomputes against that month. */
+.kcmp{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+.kcmp-l{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--text4)}
+.kcmp-s{min-width:132px;font-size:12px;padding:5px 9px}
+.kcmp-h{font-size:11px;color:var(--text4)}
+.khero{display:flex;align-items:stretch;gap:0;background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;flex-wrap:wrap}
+.kh-main{padding:15px 20px;min-width:210px;display:flex;flex-direction:column;justify-content:center;gap:7px}
+.kh-l{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--text4)}
+.kh-v{font-family:var(--display);font-size:38px;font-weight:800;line-height:1;letter-spacing:-1.6px;font-synthesis:none}
+.kh-vs{padding:15px 20px;border-left:1px solid var(--border);min-width:190px;display:flex;
+  flex-direction:column;justify-content:center;gap:5px;background:var(--panel)}
+.kh-d{font-family:var(--display);font-size:26px;font-weight:800;line-height:1;letter-spacing:-1px;font-synthesis:none}
+.kh-s{font-size:11.5px;color:var(--text3);font-weight:500}
+.kh-rest{flex:1;display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid var(--border);min-width:300px}
+.kh-r{padding:12px 14px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:3px;justify-content:center}
+.kh-r:last-child{border-right:0}
+.kh-r span{font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text4)}
+.kh-r b{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text)}
+.kh-r i{font-size:10px;color:var(--text4);font-style:normal}
+.kb-p{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text4);min-width:34px;text-align:right}
+table.ptab tbody tr.kcmp-row{background:rgba(91,157,255,.07)}
+.pnow.cmp{background:var(--blue-bg);color:var(--blue)}
+.mini-c.pick{cursor:pointer;transition:background .15s}
+.mini-c.pick:hover{background:var(--bg3)}
+.mini-c.on{background:var(--bg3);box-shadow:inset 3px 0 0 var(--blue)}
+.mini-c.on .mini-h span{color:var(--text)}
+.mini-since{color:var(--text4);font-weight:500}
+.hist-pick{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+.hist-pick button{background:var(--bg3);border:1px solid var(--border);color:var(--text3);
+  font:inherit;font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:8px;cursor:pointer;transition:.13s}
+.hist-pick button:hover{color:var(--text);border-color:var(--border2)}
+.hist-pick button.on{background:var(--blue);border-color:var(--blue);color:#04101f}
+.cmp-mode{margin-bottom:10px}
+.mvm-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.mvm-bar .sel{min-width:132px}
+.mvm-b{display:block;height:6px;border-radius:3px;background:var(--bg4);overflow:hidden;min-width:70px}
+.mvm-b i{display:block;height:100%;border-radius:3px}
+table.ptab.mvm tbody tr{cursor:pointer}
+table.ptab.mvm tfoot td{border-top:1px solid var(--border2);background:var(--bg3);font-family:var(--mono)}
+/* campaign x month grid — bars instead of a colour wash */
+table.ptab.hm2 td.hmc{padding:6px 10px 7px;vertical-align:middle}
+.hmv{display:block;font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--text2);line-height:1.3}
+.hmb{display:block;height:3px;border-radius:2px;background:var(--bg4);margin-top:4px;overflow:hidden}
+.hmb i{display:block;height:100%;border-radius:2px;background:var(--amber)}
+.hmz{color:var(--text4);opacity:.55}
+table.ptab.hm2 th.cur,table.ptab.hm2 td.cur{background:rgba(91,157,255,.07)}
+table.ptab.hm2 th.cur{color:var(--blue)}
+table.ptab.hm2 tfoot td{border-top:1px solid var(--border2);background:var(--bg3)}
+@media(max-width:1100px){.kh-rest{grid-template-columns:repeat(2,1fr)}}
+[style*="var(--mono)"],.mono{font-weight:500}
+
+/* Toolbar and table are one card. Done by matching edges rather than wrapping
+   them, because a new ancestor around the table is exactly what broke the sticky
+   header three times in v111-v113. */
+#rep-toolrow{background:var(--panel);border:1px solid var(--border);border-bottom:0;
+  border-radius:14px 14px 0 0;padding:10px 13px;margin:0!important}
+#rep-tablewrap{border-radius:0 0 14px 14px;border-top:0}
+.ph{margin-bottom:12px}
 svg.ic{display:inline-block;vertical-align:-2px;flex:0 0 auto}
 button svg.ic,.btn svg.ic,.btn-sm svg.ic{margin-right:5px}
 .hm-ico svg.ic,.ck-ic svg.ic,.fxp-i svg.ic{margin:0;vertical-align:0}
@@ -2100,7 +2219,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v115</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v118</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -2239,11 +2358,13 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
       <button class="btn ghost" onclick="openRepSettings()" title="Months, columns, backup, version history and delete — affects the Monthly Report only">⚙ Report settings</button>
     </div>
   </div>
-  <div id="rep-months" style="display:none;margin-bottom:8px"></div>
-  <div class="rep-kpis" id="rep-kpis"></div>
-  <div id="rep-split" class="rs" style="display:none"></div>
-  <div class="rep-chip-row" id="rep-insights"></div>
-  <div id="rep-movers" style="display:none;margin-bottom:10px"></div>
+  <div class="rep-summary" id="rep-summary">
+    <div id="rep-months" style="display:none;margin-bottom:8px"></div>
+    <div class="rep-kpis" id="rep-kpis"></div>
+    <div id="rep-split" class="rs" style="display:none"></div>
+    <div class="rep-chip-row" id="rep-insights"></div>
+    <div id="rep-movers" style="display:none;margin-bottom:10px"></div>
+  </div>
   <div class="ctrls" id="rep-toolrow" style="margin:0 0 10px">
     <input class="input" id="rep-search" placeholder="Search product / ASIN…" oninput="repSearchDebounced()" style="width:220px">
     <div class="fchips" id="rep-fchips"></div>
@@ -3080,7 +3201,7 @@ function markActionDone(key){if(!window._actionedKeys)window._actionedKeys=new S
 function openReviewItem(cid,tab){try{openCamp(cid);if(tab&&curCamp)switchTab(tab);}catch(e){console.warn('openReviewItem',e);}}
 function resetActions(){window._actionedKeys=new Set();lsClearDone();sbSaveDismissed();renderDashActionList();}
 /* ── On-screen feedback toast ── */
-/* ══════════ v115 — ONE ICON LANGUAGE ══════════
+/* ══════════ v118 — ONE ICON LANGUAGE ══════════
    The app was speaking three at once: emoji in the home cards, the command palette,
    the wins list and four buttons; bare arrow glyphs elsewhere; and coloured RAG pills
    for status. Emoji also render differently on every machine and cannot be recoloured,
@@ -3780,7 +3901,7 @@ async function deleteCampaign(campId){
   if(dbConfigured){
     try{
       const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
+      await sbSend(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
       await fetch(SUPABASE_URL+'/rest/v1/changes?campaign_id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}}).catch(()=>{});
       const res=await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
       dbDeleted=res.ok;
@@ -5166,7 +5287,7 @@ async function numbersTabUploadCsv(type, campId, period, input){
         const _payload={targeting_json:JSON.stringify({targeting:s.targeting||[],adGroups:s.adGroups||[]}),ad_groups_json:(s.adGroups?.length)?JSON.stringify(s.adGroups):null};
         const _chk=await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(period)+'&select=id',{headers:_hds});
         const _rows=_chk.ok?await _chk.json():[];
-        if(_rows&&_rows[0]?.id)await fetch(SUPABASE_URL+'/rest/v1/snapshots?id=eq.'+_rows[0].id,{method:'PATCH',headers:{..._hds,'Prefer':'return=minimal'},body:JSON.stringify(_payload)});
+        if(_rows&&_rows[0]?.id)await sbSend(SUPABASE_URL+'/rest/v1/snapshots?id=eq.'+_rows[0].id,{method:'PATCH',headers:{..._hds,'Prefer':'return=minimal'},body:JSON.stringify(_payload)});
       }catch(e){console.error('Supabase CSV upload failed:',e);}
     }
     /* Re-render Numbers tab immediately */
@@ -5363,7 +5484,7 @@ async function markCampReviewed(cid){
   if(curCamp&&curCamp.id==c.id)curCamp.lastReviewedAt=todayIso;
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},body:JSON.stringify({last_reviewed_at:todayIso})});
+      await sbSend(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},body:JSON.stringify({last_reviewed_at:todayIso})});
     }catch(e){console.warn('markCampReviewed save',e);}
   }
   try{renderCampaigns();}catch(e){}
@@ -5380,11 +5501,16 @@ async function saveCampReviewFreq(){
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
     try{
       const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{
+      /* the tick has to mean the write landed, not that the request was sent */
+      const ok=await sbSend(SUPABASE_URL+'/rest/v1/campaigns?id=eq.'+c.id,{
         method:'PATCH',headers:{...hds,'Prefer':'return=minimal'},
         body:JSON.stringify({review_freq_days:val||null})
-      });
-      if(statusEl){statusEl.textContent='✓ Saved';setTimeout(()=>{if(statusEl)statusEl.textContent='';},2500);}
+      },'Review frequency');
+      if(statusEl){
+        statusEl.textContent=ok?'✓ Saved':'Not saved';
+        statusEl.style.color=ok?'':'var(--red)';
+        setTimeout(()=>{if(statusEl){statusEl.textContent='';statusEl.style.color='';}},2500);
+      }
     }catch(e){
       if(statusEl){statusEl.textContent='Saved locally';statusEl.style.color='var(--amber)';setTimeout(()=>{if(statusEl)statusEl.textContent='';},2500);}
     }
@@ -6764,7 +6890,7 @@ async function saveSnapshot(){
       const _chk=await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(period)+'&select=id',{headers:_hds});
       const _rows=_chk.ok?await _chk.json():[];
       if(_rows&&_rows[0]?.id){
-        await fetch(SUPABASE_URL+'/rest/v1/snapshots?id=eq.'+_rows[0].id,{method:'PATCH',headers:{..._hds,'Prefer':'return=minimal'},body:JSON.stringify(_payload)});
+        await sbSend(SUPABASE_URL+'/rest/v1/snapshots?id=eq.'+_rows[0].id,{method:'PATCH',headers:{..._hds,'Prefer':'return=minimal'},body:JSON.stringify(_payload)});
       } else {
         await fetch(SUPABASE_URL+'/rest/v1/snapshots',{method:'POST',headers:{..._hds,'Prefer':'return=minimal'},body:JSON.stringify(_payload)});
       }
@@ -8464,7 +8590,7 @@ async function deleteOneCampSnap(campId, date, pre){
   c.rag=ragOf(c.roas,c.sales,c.spend);c.noSaleSpend=c.spend>0&&c.sales===0;
   /* DELETE from Supabase */
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
-    try{const hds=await sbHeaders();await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(date),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});}
+    try{const hds=await sbHeaders();await sbSend(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(date),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});}
     catch(e){console.error('Supabase delete snap failed:',e);}
   }
   renderSnapshots();renderCampaigns();
@@ -8521,7 +8647,7 @@ async function deleteSnapshotPeriod(period){
   if(SUPABASE_URL&&SUPABASE_KEY){
     try{
       const hds=await sbHeaders();
-      await fetch(SUPABASE_URL+'/rest/v1/snapshots?period=eq.'+encodeURIComponent(period),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
+      await sbSend(SUPABASE_URL+'/rest/v1/snapshots?period=eq.'+encodeURIComponent(period),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
     }catch(e){console.error('Supabase delete period failed:',e);}
   }
   renderSnapshots();renderCampaigns();
@@ -8876,7 +9002,7 @@ async function snapModalSaveChanges(campId){
       const _chk=await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(period)+'&select=id',{headers:_hds});
       const _rows=_chk.ok?await _chk.json():[];
       if(_rows&&_rows[0]?.id){
-        await fetch(SUPABASE_URL+'/rest/v1/snapshots?id=eq.'+_rows[0].id,{method:'PATCH',headers:{..._hds,'Prefer':'return=minimal'},body:JSON.stringify(_payload)});
+        await sbSend(SUPABASE_URL+'/rest/v1/snapshots?id=eq.'+_rows[0].id,{method:'PATCH',headers:{..._hds,'Prefer':'return=minimal'},body:JSON.stringify(_payload)});
       }
     }catch(e){console.error('Supabase snapshot update failed:',e);}
   }
@@ -8944,7 +9070,7 @@ async function applyPeriodRename(period,newDate){
     c.snapshots=c.snapshots.filter(x=>x.date!==period);
     if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
       try{const hds=await sbHeaders();
-        await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(period),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
+        await sbSend(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(period),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});
       }catch(e){toast('Merge not synced for one campaign — reload and retry','warn');}
     }
   }
@@ -9027,7 +9153,7 @@ async function deleteOneCampSnapFromModal(campId, date){
   c.rag=ragOf(c.roas,c.sales,c.spend);c.noSaleSpend=c.spend>0&&c.sales===0;
   /* DELETE from Supabase */
   if(SUPABASE_URL&&SUPABASE_KEY&&c.id){
-    try{const hds=await sbHeaders();await fetch(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(date),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});}
+    try{const hds=await sbHeaders();await sbSend(SUPABASE_URL+'/rest/v1/snapshots?campaign_id=eq.'+c.id+'&period=eq.'+encodeURIComponent(date),{method:'DELETE',headers:{...hds,'Prefer':'return=minimal'}});}
     catch(e){console.error('Supabase delete snap (modal) failed:',e);}
   }
   closeSnap();renderSnapshots();renderCampaigns();
@@ -10851,7 +10977,7 @@ async function liveTakeTheirs(){
   toast('Loaded the newer version','ok');
 }
 
-/* ══════════ v115 — NOBODY'S AFTERNOON GETS OVERWRITTEN ══════════
+/* ══════════ v118 — NOBODY'S AFTERNOON GETS OVERWRITTEN ══════════
    window._repTab, not a const: this file is one giant script and a top-level const
    read during boot is the TDZ trap that has hung this app before. */
 const REP_REV_ID='bdlhub_report_rev';
@@ -13744,7 +13870,7 @@ async function sbGetSetting(newId,legacyId){
   if(v===undefined&&legacyId)v=await get(legacyId);
   return v===undefined?null:v;
 }
-/* ══════════ v115 — ONE WRITE PATH, AND IT TELLS YOU WHEN IT FAILS ══════════
+/* ══════════ v118 — ONE WRITE PATH, AND IT TELLS YOU WHEN IT FAILS ══════════
    Ten functions wrote to the settings table and NINE of them fired the POST and
    never looked at the response. A rename that hit a network blip, an expired
    token, an RLS refusal or a dead wifi connection returned exactly the same thing
@@ -13822,6 +13948,38 @@ window.addEventListener('offline',()=>{try{setSyncStatus('offline');}catch(e){}}
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&window._sbQ.size)sbFlushQueue();
 });
+/* ══════════ v118 — THE ADS SIDE WRITES SILENTLY TOO ══════════
+   v114 gave every settings row a checked write path with a retry queue. The ads
+   tables never got it: eleven PATCH/DELETE calls against snapshots and campaigns
+   fired and walked away, so a failed review, a failed CSV upload or a failed
+   snapshot delete looked exactly like a successful one. saveCampReviewFreq was the
+   worst — it printed "✓ Saved" without ever looking at the response.
+
+   Every one is a PATCH or DELETE against a filtered URL, which makes them
+   idempotent, so a single retry is safe (unlike a plain INSERT, which would
+   duplicate). Anything still failing after the retry says so out loud. */
+async function sbSend(url,opts,label){
+  try{
+    const res=await fetch(url,opts);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    if(window._adsWriteFailed){window._adsWriteFailed=false;try{setSyncStatus('synced');}catch(e){}}
+    return true;
+  }catch(e){
+    console.warn('ads write failed: '+(label||url),e);
+    try{
+      await new Promise(r=>setTimeout(r,1200));
+      const r2=await fetch(url,opts);          /* safe: PATCH/DELETE by filter */
+      if(r2.ok){
+        if(window._adsWriteFailed){window._adsWriteFailed=false;try{setSyncStatus('synced');}catch(_){}}
+        return true;
+      }
+    }catch(_){}
+    window._adsWriteFailed=true;
+    try{setSyncStatus('error');}catch(_){}
+    try{toast((label||'That change')+' did NOT save to Supabase — check your connection and try again','err');}catch(_){}
+    return false;
+  }
+}
 async function sbPutSetting(id,value,label){
   return sbWrite(id,value,label);
 }
@@ -14460,7 +14618,7 @@ function openRepProduct(asin,keep){
     {k:'organic',h:'Organic',c:v=>`<span style="color:var(--green)">${intf(v.organic)}</span>`},
     {k:'ads',h:'Ad spend',c:v=>`<span style="color:${v.ads>0?'var(--amber)':'var(--text3)'}">${gbp(v.ads)}</span>`},
     {k:'tacos',h:'TACOS',c:v=>v.sales?`<span style="color:${v.tacos>30?'var(--red)':v.tacos>18?'var(--amber)':'var(--text2)'}">${fmt(v.tacos,1)}%</span>`:'—'},
-    {k:'roas',h:'ROAS',c:v=>v.ads?fmt(v.roas,2)+'×':'—'},
+    {k:'roas',h:'ROAS',c:v=>v.ads?`<span class="roasp" style="--rc:${v.roas>=tgt?'var(--green)':v.roas>=tgt*0.7?'var(--amber)':'var(--red)'}">${fmt(v.roas,2)}</span>`:'<span class="muted">—</span>'},
     {k:'real',h:'Real profit',c:v=>`<span class="${v.real>0?'rp-pos':v.real<0?'rp-neg':'rp-zero'}">${gbp(v.real)}</span>`},
   ].filter(x=>x.k!==_rphMetric);
   const trends=`
@@ -14520,11 +14678,30 @@ function openRepProduct(asin,keep){
           <td>${intf(c.u)}</td><td>${intf(c.ck||0)}</td>
           <td style="color:${!prev?'var(--text3)':dd==null?'var(--text3)':dd>0?'var(--red)':'var(--green)'}">${!prev?'—':dd==null?'new':(dd>0?'+':'−')+gbp(Math.abs(dd))}</td></tr>`;}).join('')}
       </tbody></table></div>
-    ${names.length&&V.length>1?`<div class="pcard" style="margin-top:10px"><div class="pc-h">Campaign spend across every month</div>
-      <table class="ptab"><thead><tr><th class="l">Campaign</th>${V.map(v=>`<th>${_esc(v.lab.replace(/\s*20\d\d/,''))}</th>`).join('')}<th>Total</th></tr></thead>
-      <tbody>${names.map(n=>{const cells=V.map(v=>{const c=(v.r.camps||[]).find(x=>x.name===n);return c?c.sp:0;});
-        const mxv=Math.max(...cells,.01),tot=cells.reduce((a,b)=>a+b,0);
-        return`<tr><td class="l"><b>${_esc(n)}</b></td>${cells.map(c=>`<td style="background:rgba(255,181,71,${(c/mxv*0.34).toFixed(2)})">${c?gbp(c):'<span style="color:var(--text3)">—</span>'}</td>`).join('')}<td style="font-weight:800">${gbp(tot)}</td></tr>`;}).join('')}</tbody></table></div>`:''}
+    ${names.length&&V.length>1?(()=>{
+      /* Was a colour-wash heatmap: amber at up to 34% opacity over a dark panel,
+         which renders as mud. Worse, each row was scaled to its OWN maximum, so a
+         campaign spending £4 and one spending £105 painted the same brown — the
+         colour carried no comparable meaning at all.
+
+         Now a bar in each cell, scaled against ONE global maximum so every cell is
+         comparable to every other, with the figure kept legible on the panel
+         background. Rows are ordered by what they actually cost you. */
+      const rowsD=names.map(n=>{
+        const cells=V.map(v=>{const c=(v.r.camps||[]).find(x=>x.name===n);return c?c.sp:0;});
+        return {n, cells, tot:cells.reduce((a,b)=>a+b,0)};
+      }).sort((a,b)=>b.tot-a.tot);
+      const gmax=Math.max(...rowsD.flatMap(r=>r.cells),0.01);
+      const colTot=V.map((v,i)=>rowsD.reduce((a,r)=>a+r.cells[i],0));
+      const grand=colTot.reduce((a,b)=>a+b,0);
+      return `<div class="pcard" style="margin-top:10px"><div class="pc-h">Campaign spend across every month
+        <span>bars share one scale — biggest spend in any cell is ${gbp(gmax)}</span></div>
+      <table class="ptab hm2"><thead><tr><th class="l">Campaign</th>${V.map(v=>`<th${v.id===repCur?' class="cur"':''}>${_esc(v.lab.replace(/\s*20\d\d/,''))}</th>`).join('')}<th>Total</th></tr></thead>
+      <tbody>${rowsD.map(r=>`<tr><td class="l"><b>${_esc(r.n)}</b></td>${r.cells.map((c,i)=>
+          `<td class="hmc${V[i].id===repCur?' cur':''}">${c?`<span class="hmv">${gbp(c)}</span><span class="hmb"><i style="width:${Math.max(3,c/gmax*100).toFixed(1)}%"></i></span>`:'<span class="hmz">—</span>'}</td>`).join('')}
+        <td style="font-weight:800">${gbp(r.tot)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td class="l"><b>Total</b></td>${colTot.map((t,i)=>`<td class="hmc${V[i].id===repCur?' cur':''}" style="font-weight:800">${t?gbp(t):'—'}</td>`).join('')}<td style="font-weight:800">${gbp(grand)}</td></tr></tfoot>
+      </table></div>`;})():''}
     ${V.length>1?`<div class="pcard" style="margin-top:10px">
       <div class="pc-h">Spend against the sales it bought
         <span class="bc-key"><i style="background:var(--amber)"></i>Ad spend <i style="background:var(--green);margin-left:9px"></i>Ad sales</span></div>
@@ -14597,12 +14774,35 @@ function openRepProduct(asin,keep){
       <div class="pv-b">${intf(st)} units left against ${intf(Math.round(run3))} a month. At that rate stock runs out around <b>${new Date(Date.now()+cov*30.4*86400000).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</b>.
       ${cov<2?'Sea freight will not arrive in time — order now, or plan for air.':'No action needed yet.'}</div></div>`:
       `<div class="pempty" style="margin-top:10px"><b>No stock figure</b><p>The Prep Portal records 0 for every Lavarion ASIN, and this month's sales export carried no Current_Stock_QTY for it.</p></div>`}
-    <div class="pcard" style="margin-top:10px"><div class="pc-h">Units sold vs stock by month</div>
-      <table class="ptab"><thead><tr><th class="l">Month</th><th>Units sold</th><th>Stock recorded</th><th>Cover at that rate</th></tr></thead>
-      <tbody>${V.slice().reverse().map(v=>{const c=(v.r.stock!=null&&v.units>0)?v.r.stock/v.units:null;
-        return`<tr><td class="l"><b>${_esc(v.lab)}</b></td><td>${intf(v.units)}</td>
-        <td>${v.r.stock!=null?intf(v.r.stock):'—'}</td>
-        <td style="color:${c==null?'var(--text3)':c<1?'var(--red)':c<2?'var(--amber)':'var(--green)'};font-weight:700">${c!=null?fmt(c,1)+' mo':'—'}</td></tr>`;}).join('')}</tbody></table></div>`;
+    ${(()=>{
+      /* Current_Stock_QTY in the SellerToolKit export is a LIVE figure — what is in
+         Amazon right now, at the moment you ran the export. It is not what you held
+         in February. Every month therefore carries the same number (verified: 39 of
+         39 products identical across all months, none varied), and the old table
+         printed it under "Stock recorded" per month and computed "cover at that
+         rate" from it — which is how February came out at 81.3 months of cover.
+         Same bug class as unknown-vs-zero: a present-tense value dressed as history.
+
+         So the stock figure is stated ONCE, and the per-month table answers the
+         question it can actually answer: at each month's rate, how long would the
+         stock you hold today last. */
+      const stocks=V.map(v=>v.r.stock).filter(x=>x!=null);
+      const oneSnapshot=stocks.length>1&&new Set(stocks).size===1;
+      return `<div class="pcard" style="margin-top:10px">
+        <div class="pc-h">How long today's stock lasts at each month's rate
+          <span>${st!=null?intf(st)+' units on hand':'no stock figure'}</span></div>
+        ${st==null?'<div class="pempty" style="margin:0"><b>No stock figure to work from</b><p>This month’s sales export carried no Current_Stock_QTY for this product, and the Prep Portal records 0 for every Lavarion ASIN.</p></div>':`
+        <table class="ptab"><thead><tr><th class="l">Month</th><th>Units sold</th><th>Change</th><th>Cover at that rate</th></tr></thead>
+        <tbody>${V.slice().reverse().map((v,i)=>{
+          const older=V[V.length-2-i];
+          const ch=older?v.units-older.units:null;
+          const c=v.units>0?st/v.units:null;
+          return`<tr${v.id===repCur?' class="now"':''}><td class="l"><b>${_esc(v.lab)}</b>${v.id===repCur?' <span class="pnow">now</span>':''}</td>
+            <td style="font-weight:700">${intf(v.units)}</td>
+            <td style="color:${ch==null?'var(--text3)':ch>0?'var(--green)':ch<0?'var(--red)':'var(--text3)'};font-weight:700">${ch==null?'—':(ch>0?'+':ch<0?'−':'')+intf(Math.abs(ch))}</td>
+            <td style="color:${c==null?'var(--text3)':c<1?'var(--red)':c<2?'var(--amber)':'var(--green)'};font-weight:700">${c!=null?fmt(c,1)+' mo':'—'}</td></tr>`;}).join('')}</tbody></table>`}
+        ${oneSnapshot?`<div class="pc-note">Every month in your report carries the same stock figure, because the export reports stock as it is <b>today</b> rather than as it was that month. Only the newest row is a live reading — the rest answer “how long would ${intf(st)} units have lasted at that month’s pace”.</div>`:''}
+      </div>`;})()}`;
 
   const BODY={overview,trends,ads:adsTab,terms:termsTab,stock:stockTab};
   document.getElementById('rph-body').innerHTML=hero+`<div class="pbody">${BODY[_rphTab]||overview}</div>`;
@@ -14701,7 +14901,7 @@ function repSetView(v){
   document.getElementById('rv-month').classList.toggle('on',v!=='year');
   document.getElementById('rv-year').classList.toggle('on',v==='year');
   const yr=v==='year';
-  ['rep-kpis','rep-split','rep-insights','rep-movers','rep-tablewrap','rep-months','rep-toolrow'].forEach(id=>{
+  ['rep-kpis','rep-split','rep-insights','rep-movers','rep-tablewrap','rep-months','rep-toolrow','rep-summary'].forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
     if(yr)el.style.display='none';
     else if(id==='rep-months'||id==='rep-movers'||id==='rep-split')el.style.display='';   /* renderReport decides */
@@ -14862,20 +15062,32 @@ function openRepKpi(k){
     return;
   }
   const S=ms.map(m=>({m,lab:m.label,id:m.id,t:repTotals(m),v:K.get(repTotals(m))}));
-  const cur=S[S.length-1],prev=S[S.length-2]||null;
   const vals=S.map(x=>x.v);
-  const now=S.find(x=>x.id===repCur)||cur;
-  const iNow=S.indexOf(now),pNow=iNow>0?S[iNow-1]:null;
+  const now=S.find(x=>x.id===repCur)||S[S.length-1];
+  const iNow=S.indexOf(now);
+
+  /* ── THE COMPARISON IS THE POINT OF THIS POPUP ────────────────────────────
+     It used to be a fixed "vs the month before", which is why setting "vs May"
+     in the toolbar changed the page and not this. Now it is a control: the
+     toolbar's choice is the default, and any month can be picked here — from
+     the buttons, the dropdown, or by clicking a point on the chart. Everything
+     below recomputes against it. */
+  const _tb=(typeof repCmpMonth==='function')?repCmpMonth():null;
+  let pIdx=-1;
+  if(window._kpiCmpId){const q=S.findIndex(x=>x.id===window._kpiCmpId);if(q>=0&&q!==iNow)pIdx=q;}
+  if(pIdx<0&&_tb){const q=S.findIndex(x=>x.id===_tb.id);if(q>=0&&q!==iNow)pIdx=q;}
+  if(pIdx<0)pIdx=iNow>0?iNow-1:-1;
+  const pNow=pIdx>=0?S[pIdx]:null;
+
   const d1=pNow?now.v-pNow.v:null;
+  const pct=(pNow&&Math.abs(pNow.v)>0.0001)?(now.v-pNow.v)/Math.abs(pNow.v)*100:null;
   const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
-  const gd=v=>v==null?'var(--text3)':v===0?'var(--text3)':((v>0?1:-1)===K.good?'var(--green)':'var(--red)');
+  const gd=v=>v==null?'var(--text3)':Math.abs(v)<1e-9?'var(--text3)':((v>0?1:-1)===K.good?'var(--green)':'var(--red)');
   const dv=v=>v==null?'—':(v>0?'+':v<0?'−':'')+K.fmt(Math.abs(v));
 
-  /* streak */
   let run=0,dir=0;
   for(let i=vals.length-1;i>0;i--){const d=vals[i]-vals[i-1];if(Math.abs(d)<1e-9)break;const sg=d>0?1:-1;if(!dir)dir=sg;else if(sg!==dir)break;run++;}
 
-  /* who moved it — per product, this month vs the one before */
   const rows=(now.m.rows||[]);
   const pRows={};if(pNow)(pNow.m.rows||[]).forEach(r=>{if(r.asin)pRows[r.asin.toUpperCase()]=r;});
   const contrib=rows.map(r=>({r,v:K.per(r),d:pNow&&r.asin&&pRows[r.asin.toUpperCase()]?K.per(r)-K.per(pRows[r.asin.toUpperCase()]):null}))
@@ -14886,56 +15098,77 @@ function openRepKpi(k){
   const totNow=isRate?0:contrib.reduce((a,x)=>a+x.v,0);
 
   document.getElementById('kpi-title').textContent=K.l;
-  document.getElementById('kpi-sub').innerHTML=`<span class="chip">${_esc(now.lab)}</span><span class="chip">${K.fmt(now.v)}</span>${pNow?`<span class="chip" style="color:${gd(d1)}">${dv(d1)} vs ${_esc(pNow.lab)}</span>`:''}`;
+  document.getElementById('kpi-sub').innerHTML=
+    `<span class="chip">${_esc(now.lab)}</span><span class="chip">${K.fmt(now.v)}</span>`+
+    (pNow?`<span class="chip" style="color:${gd(d1)}">${dv(d1)} vs ${_esc(pNow.lab)}</span>`:'');
+
+  /* the comparison control */
+  const presets=[];
+  if(iNow>0)presets.push([S[iNow-1].id,'Last month']);
+  if(iNow>2)presets.push([S[iNow-3].id,'3 months ago']);
+  if(iNow>0&&S[0].id!==(S[iNow-1]||{}).id)presets.push([S[0].id,'First month']);
+  const cmpBar=S.length>1?`<div class="kcmp">
+    <span class="kcmp-l">Compare with</span>
+    <span class="pv-seg">${presets.map(([id,l])=>`<button class="${pNow&&pNow.id===id?'on':''}" onclick="kpiSetCmp('${id}')">${l}</button>`).join('')}</span>
+    <select class="sel kcmp-s" onchange="kpiSetCmp(this.value)">
+      ${S.filter(x=>x.id!==now.id).map(x=>`<option value="${x.id}"${pNow&&pNow.id===x.id?' selected':''}>${_esc(x.lab)}</option>`).join('')}
+    </select>
+    <span class="kcmp-h">or click any point on the chart</span>
+  </div>`:'';
+
+  /* hero: the number, the change, and what the change means — in that order */
+  const hero=`<div class="khero">
+    <div class="kh-main">
+      <div class="kh-l">${_esc(now.lab)}</div>
+      <div class="kh-v" style="color:${K.c}">${K.fmt(now.v)}</div>
+      ${run>=2?`<span class="pchip ${dir===K.good?'good':'bad'}">${dir>0?'↑':'↓'} ${run} months in a row</span>`:''}
+    </div>
+    ${pNow?`<div class="kh-vs">
+      <div class="kh-l">vs ${_esc(pNow.lab)}</div>
+      <div class="kh-d" style="color:${gd(d1)}">${dv(d1)}</div>
+      <div class="kh-s">${pct==null?'&nbsp;':(pct>0?'+':pct<0?'−':'')+fmt(Math.abs(pct),1)+'% · was '+K.fmt(pNow.v)}</div>
+    </div>`:''}
+    <div class="kh-rest">
+      ${[['Best',K.fmt(Math.max(...vals)),S[vals.indexOf(Math.max(...vals))].lab],
+         ['Weakest',K.fmt(Math.min(...vals)),S[vals.indexOf(Math.min(...vals))].lab],
+         ['Average',K.fmt(avg),S.length+' months'],
+         [isRate?'Spread':'All months',isRate?K.fmt(Math.max(...vals)-Math.min(...vals)):K.fmt(vals.reduce((a,b)=>a+b,0)),isRate?'high to low':'combined']]
+        .map(a=>`<div class="kh-r"><span>${a[0]}</span><b>${a[1]}</b><i>${_esc(a[2])}</i></div>`).join('')}
+    </div>
+  </div>`;
 
   const W=1180;
-  /* height follows the data: two months does not need 260px of plot */
-  const chart=S.length>1?bdlChart(S.map(x=>({lab:x.lab.replace(/\s*20\d\d/,''),v:x.v})),{col:K.c,fmt:K.fmt,w:W,h:S.length<=3?185:225,id:'kpi'+k}):'';
-  /* with a single month, month-on-month tiles all print the same figure — swap them
-     for a breakdown of the month itself, which is the only real information there is. */
-  const pv=contrib.map(x=>x.v).filter(v=>isFinite(v)).sort((a,b)=>a-b);
-  const med=pv.length?pv[Math.floor(pv.length/2)]:0;
-  const nz=contrib.filter(x=>Math.abs(x.v)>0.0001).length;
-  const tiles=(S.length>1?[
-    ['This month',K.fmt(now.v),K.c,_esc(now.lab)],
-    ['Vs last month',dv(d1),gd(d1),pNow?_esc(pNow.lab):'no earlier month'],
-    ['Best month',K.fmt(Math.max(...vals)),(K.good===1&&Math.max(...vals)<0)?'var(--red)':'var(--green)',_esc(S[vals.indexOf(Math.max(...vals))].lab)],
-    ['Weakest month',K.fmt(Math.min(...vals)),(K.good===1&&Math.min(...vals)>0)?'var(--green)':'var(--red)',_esc(S[vals.indexOf(Math.min(...vals))].lab)],
-    ['Average',K.fmt(avg),'var(--text)',S.length+' months'],
-    [isRate?'Spread':'All months total',isRate?K.fmt(Math.max(...vals)-Math.min(...vals)):K.fmt(vals.reduce((a,b)=>a+b,0)),'var(--text2)',isRate?'high minus low':'combined'],
-  ]:[
-    ['This month',K.fmt(now.v),K.c,_esc(now.lab)+' · your only month'],
-    ['Products contributing',intf(nz),'var(--text)','of '+intf(contrib.length)+' in the report'],
-    ['Top product',byVal[0]?K.fmt(byVal[0].v):'—','var(--green)',byVal[0]?_esc(repName(byVal[0].r)):''],
-    ['Top 3 share',(!isRate&&totNow)?fmt(byVal.slice(0,3).reduce((a,x)=>a+x.v,0)/totNow*100,0)+'%':'—','var(--purple)','of the month'],
-    ['Median product',K.fmt(med),'var(--text2)','half are above, half below'],
-    ['Weakest',byVal.length?K.fmt(byVal[byVal.length-1].v):'—','var(--red)',byVal.length?_esc(repName(byVal[byVal.length-1].r)):''],
-  ]).map(a=>`<div class="ptile"><div class="pt-l">${a[0]}</div><div class="pt-v" style="color:${a[2]}">${a[1]}</div><div class="pt-s">${a[3]}</div></div>`).join('');
+  const chart=S.length>1?bdlChart(S.map(x=>({lab:x.lab.replace(/\s*20\d\d/,''),v:x.v})),
+    {col:K.c,fmt:K.fmt,w:W,h:S.length<=3?200:250,id:'kpi'+k,
+     click:"kpiSetCmpByIndex({i})"}):'';
 
   const mx=Math.max(...byVal.slice(0,10).map(x=>Math.abs(x.v)),0.01);
   const mxD=Math.max(...moved.slice(0,10).map(x=>Math.abs(x.d)),0.01);
-  const bar=(x,val,mxv,col)=>`<div class="kbar" onclick="closeRepKpi();openRepProduct('${_esc(x.r.asin||'')}')" title="Open ${_esc(repFullName(x.r))}">
+  const share=(v)=>(!isRate&&Math.abs(totNow)>0.0001)?fmt(Math.abs(v/totNow*100),0)+'%':'';
+  const bar=(x,val,mxv,col,withShare)=>`<div class="kbar" onclick="closeRepKpi();openRepProduct('${_esc(x.r.asin||'')}')" title="${_esc(repFullName(x.r))} — click to open">
     <span class="kb-n">${_esc(repName(x.r))}</span>
     <span class="kb-t"><i style="width:${Math.max(2,Math.abs(val)/mxv*100).toFixed(1)}%;background:${col}"></i></span>
-    <span class="kb-v" style="color:${col}">${(val>0&&col==='var(--green)'?'+':val<0?'−':'')}${K.fmt(Math.abs(val))}</span></div>`;
+    <span class="kb-v" style="color:${col}">${(val>0&&col==='var(--green)'?'+':val<0?'−':'')}${K.fmt(Math.abs(val))}</span>
+    ${withShare?`<span class="kb-p">${share(val)}</span>`:''}</div>`;
 
   document.getElementById('kpi-body').innerHTML=`
-    <div class="pcols" style="margin-top:0">
+    ${cmpBar}${hero}
+    <div class="pcols" style="margin-top:10px">
       <div>
-        <div class="ptiles" style="grid-template-columns:repeat(3,1fr)">${tiles}</div>
-        ${run>=2?`<div class="pchips"><span class="pchip ${dir===K.good?'good':'bad'}">${dir>0?'↑':'↓'} ${run} months in a row</span></div>`:''}
-        ${chart?`<div class="pcard" style="margin-top:10px"><div class="pc-h">${_esc(K.l)} by month <span>${S.length} months imported</span></div>${chart}</div>`
-          :`<div class="pnote" style="margin-top:10px"><b>No trend yet.</b> ${_esc(now.lab)} is the only month imported.
+        ${chart?`<div class="pcard"><div class="pc-h">${_esc(K.l)} by month
+            <span>${S.length} months · hover for the figure, click to compare against it</span></div>${chart}</div>`
+          :`<div class="pnote"><b>No trend yet.</b> ${_esc(now.lab)} is the only month imported.
             <span class="lnk" onclick="closeRepKpi();openMonthImport()">Import another month</span> and this becomes a chart.</div>`}
-        <div class="pcard" style="margin-top:10px"><div class="pc-h">Every month</div>
+        <div class="pcard" style="margin-top:10px"><div class="pc-h">Every month <span>click a row to open that month</span></div>
           ${(()=>{const KC=[{k:'sales',h:'Sales',c:x=>gbp(x.t.sales)},{k:'ads',h:'Ad spend',c:x=>`<span style="color:var(--amber)">${gbp(x.t.ads)}</span>`},
             {k:'units',h:'Units',c:x=>intf(x.t.units)},{k:'organic',h:'Organic',c:x=>`<span style="color:var(--green)">${intf(x.t.organic)}</span>`},
             {k:'real',h:'Real profit',c:x=>`<span class="${x.t.real>0?'rp-pos':'rp-neg'}">${gbp(x.t.real)}</span>`},
             {k:'margin',h:'Margin',c:x=>x.t.sales?fmt(x.t.real/x.t.sales*100,1)+'%':'—'}].filter(c=>c.k!==k);
           return`<table class="ptab"><thead><tr><th class="l">Month</th><th>${_esc(K.l)}</th><th>Change</th>${KC.map(c=>`<th>${c.h}</th>`).join('')}</tr></thead>
           <tbody>${S.slice().reverse().map((x,i)=>{const o=S[S.length-2-i],ch=o?x.v-o.v:null;
-            return`<tr class="${x.id===repCur?'now':''}" onclick="closeRepKpi();repSelectMonth('${x.id}')">
-              <td class="l"><b>${_esc(x.lab)}</b>${x.id===repCur?' <span class="pnow">now</span>':''}</td>
+            const isNow=x.id===now.id, isCmp=pNow&&x.id===pNow.id;
+            return`<tr class="${isNow?'now':''}${isCmp?' kcmp-row':''}" onclick="closeRepKpi();repSelectMonth('${x.id}')">
+              <td class="l"><b>${_esc(x.lab)}</b>${isNow?' <span class="pnow">now</span>':''}${isCmp?' <span class="pnow cmp">compared</span>':''}</td>
               <td style="font-weight:800;color:${K.c}">${K.fmt(x.v)}</td>
               <td style="color:${gd(ch)}">${ch==null?'—':dv(ch)}</td>
               ${KC.map(c=>`<td>${c.c(x)}</td>`).join('')}</tr>`;}).join('')}</tbody></table>`;})()}</div>
@@ -14944,13 +15177,22 @@ function openRepKpi(k){
         <div class="pnl g"><div class="pnl-h">What this is</div><p>${K.means}</p></div>
         <div class="pnl o"><div class="pnl-h">How to read it</div><p>${K.watch}</p></div>
         <div class="pcard"><div class="pc-h">Biggest contributors <span>${_esc(now.lab)}</span></div>
-          <div class="kbars">${byVal.slice(0,8).map(x=>bar(x,x.v,mx,x.v<0?'var(--red)':K.c)).join('')||'<div class="psub" style="padding:10px 14px">Nothing to show.</div>'}</div>
+          <div class="kbars">${byVal.slice(0,8).map(x=>bar(x,x.v,mx,x.v<0?'var(--red)':K.c,true)).join('')||'<div class="psub" style="padding:10px 14px">Nothing to show.</div>'}</div>
           ${(!isRate&&totNow>0)?`<div class="psub" style="padding:0 14px 11px">Top ${Math.min(8,byVal.length)} make ${fmt(Math.min(999,byVal.slice(0,8).reduce((a,x)=>a+x.v,0)/totNow*100),0)}% of the ${K.fmt(totNow)} total.</div>`:''}</div>
         ${moved.length?`<div class="pcard"><div class="pc-h">What moved it <span>vs ${_esc(pNow.lab)}</span></div>
-          <div class="kbars">${moved.slice(0,8).map(x=>bar(x,x.d,mxD,(x.d>0?1:-1)===K.good?'var(--green)':'var(--red)')).join('')}</div></div>`:''}
+          <div class="kbars">${moved.slice(0,8).map(x=>bar(x,x.d,mxD,(x.d>0?1:-1)===K.good?'var(--green)':'var(--red)',false)).join('')}</div></div>`
+          :(pNow?`<div class="pnote">Nothing moved much between ${_esc(pNow.lab)} and ${_esc(now.lab)} at the product level.</div>`:'')}
       </div>
     </div>`;
   document.getElementById('rep-kpi-overlay').classList.add('open');document.body.style.overflow='hidden';
+}
+/* Pick the month this popup compares against. Kept on window (not a top-level let)
+   for the same TDZ reason as everything else in this file. */
+window._kpiCmpId=null;
+function kpiSetCmp(id){window._kpiCmpId=id;openRepKpi(_kpiKey);}
+function kpiSetCmpByIndex(i){
+  const ms=repSortedMonths();
+  if(ms[i])kpiSetCmp(ms[i].id);
 }
 function closeRepKpi(){document.getElementById('rep-kpi-overlay').classList.remove('open');document.body.style.overflow='';}
 
@@ -15886,39 +16128,52 @@ function bdlMini(pts,opt){
   const P=pts.map((p,i)=>[2+(i/(pts.length-1))*(W-4),H-PAD-((p.v-mn)/rg)*(H-PAD*2)]);
   const d=_bdlSmooth(P,0.16);
   const last=P[P.length-1];
-  return`<svg class="bmini" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+  /* preserveAspectRatio="none" stretched the viewBox to the tile and DISTORTED the
+     curve — a gentle rise rendered as a cliff at one width and a shrug at another,
+     which is most of why these read as decoration rather than data. Uniform scaling
+     plus a calmer fill: on a 56px tile a strong gradient is noise, not information. */
+  const base=H-PAD;
+  return`<svg class="bmini" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
     <defs><linearGradient id="${o.id}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="${o.col}" stop-opacity=".32"/>
+      <stop offset="0" stop-color="${o.col}" stop-opacity=".16"/>
       <stop offset="1" stop-color="${o.col}" stop-opacity="0"/></linearGradient></defs>
-    <path d="${d} L${last[0].toFixed(1)} ${H} L2 ${H} Z" fill="url(#${o.id})"/>
-    <path d="${d}" fill="none" stroke="${o.col}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.8" fill="${o.col}" stroke="var(--bg2)" stroke-width="1.6"/></svg>`;
+    <line x1="2" y1="${base}" x2="${W-2}" y2="${base}" stroke="var(--border)" stroke-width="1"/>
+    <path d="${d} L${last[0].toFixed(1)} ${base} L2 ${base} Z" fill="url(#${o.id})"/>
+    <path d="${d}" fill="none" stroke="${o.col}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="${o.col}" stroke="var(--bg2)" stroke-width="1.6"/></svg>`;
 }
 /* Every metric at once — sales, ads, ROAS, units, organic, ad units, real profit. */
 function rphAllCharts(V){
   if(!V||V.length<2)return '';
   const labs=V.map(v=>v.lab.replace(/\s*20\d\d/,''));
+  /* Each tile now SWITCHES the big chart above to that metric. It was nine pictures
+     you could only look at; the metric buttons that do the same job were a separate
+     row you had to find. The grid was already the best index of the data — it just
+     was not wired to anything. */
   const M=[
-    ['Sales',       'var(--blue)',  v=>v.sales,   gbp],
-    ['Real profit', 'var(--green)', v=>v.real,    gbp],
-    ['Ad spend',    'var(--amber)', v=>v.ads,     gbp],
-    ['Units',       'var(--purple)',v=>v.units,   intf],
-    ['Organic units','var(--green)',v=>v.organic, intf],
-    ['Ad units',    'var(--blue)',  v=>v.adUnits, intf],
-    ['ROAS',        'var(--teal)',  v=>v.roas,    x=>fmt(x,2)+'×'],
-    ['TACOS',       'var(--coral)', v=>v.tacos,   x=>fmt(x,1)+'%'],
-    ['Margin',      'var(--teal)',  v=>v.margin,  x=>fmt(x,1)+'%'],
+    ['real',    'Real profit',  'var(--green)', v=>v.real,    gbp,            1],
+    ['sales',   'Sales',        'var(--blue)',  v=>v.sales,   gbp,            1],
+    ['units',   'Units',        'var(--purple)',v=>v.units,   intf,           1],
+    ['ads',     'Ad spend',     'var(--amber)', v=>v.ads,     gbp,           -1],
+    ['organic', 'Organic units','var(--green)', v=>v.organic, intf,           1],
+    ['adUnits', 'Ad units',     'var(--blue)',  v=>v.adUnits, intf,           1],
+    ['roas',    'ROAS',         'var(--teal)',  v=>v.roas,    x=>fmt(x,2)+'×',1],
+    ['tacos',   'TACOS',        'var(--coral)', v=>v.tacos,   x=>fmt(x,1)+'%',-1],
+    ['margin',  'Real margin',  'var(--teal)',  v=>v.margin,  x=>fmt(x,1)+'%',1],
   ];
-  return`<div class="pcard" style="margin-top:10px"><div class="pc-h">Every metric across ${V.length} months <span>same shape, same scale — hover the big chart above for exact figures</span></div>
-    <div class="mini-grid">${M.map(([l,c,get,f])=>{
+  return`<div class="pcard" style="margin-top:10px"><div class="pc-h">Every metric across ${V.length} months <span>click one to chart it above</span></div>
+    <div class="mini-grid">${M.map(([key,l,c,get,f,good])=>{
       const vals=V.map(get).map(x=>isFinite(x)?x:0);
       const first=vals[0],last=vals[vals.length-1];
       const d=last-first;
       const pc=first?(d/Math.abs(first)*100):null;
-      return`<div class="mini-c">
+      const on=(typeof RPH_METRICS!=='undefined'&&RPH_METRICS[key])?(_rphMetric===key):false;
+      const dirCol=Math.abs(d)<1e-9?'var(--text4)':((d>0?1:-1)===good?'var(--green)':'var(--red)');
+      const sel=(typeof RPH_METRICS!=='undefined'&&RPH_METRICS[key]);
+      return`<div class="mini-c${on?' on':''}${sel?' pick':''}"${sel?` onclick="rphSetMetric('${key}')" title="Chart ${_esc(l)} above"`:''}>
         <div class="mini-h"><span>${l}</span><b style="color:${c}">${f(last)}</b></div>
         ${bdlMini(V.map((v,i)=>({lab:labs[i],v:vals[i]})),{col:c,fmt:f})}
-        <div class="mini-f">${d===0?'level':(d>0?'▲ ':'▼ ')+f(Math.abs(d))}${pc!=null&&isFinite(pc)&&Math.abs(pc)>=1?` <i>${d>0?'+':'−'}${fmt(Math.abs(pc),0)}%</i>`:''} since ${_esc(labs[0])}</div>
+        <div class="mini-f" style="color:${dirCol}">${Math.abs(d)<1e-9?'level':(d>0?'▲ ':'▼ ')+f(Math.abs(d))}${pc!=null&&isFinite(pc)&&Math.abs(pc)>=1?` <i>${d>0?'+':'−'}${fmt(Math.abs(pc),0)}%</i>`:''}<span class="mini-since"> since ${_esc(labs[0])}</span></div>
       </div>`;}).join('')}</div></div>`;
 }
 function bdlChart(pts,opt){
@@ -15947,7 +16202,10 @@ function bdlChart(pts,opt){
   const hot=pts.map((p,i)=>{
     const bw=pw/Math.max(1,pts.length-1);
     const cx=X(i);
-    return`<g class="bc-hot">
+    /* opt.click makes the chart an input rather than a picture: the band under each
+       point carries a handler and the cursor says so. */
+    const clk=o.click?` onclick="${o.click.replace(/\{i\}/g,String(i))}" style="cursor:pointer"`:'';
+    return`<g class="bc-hot"${clk}>
       <rect x="${(cx-bw/2).toFixed(1)}" y="${TP}" width="${bw.toFixed(1)}" height="${ph}" fill="transparent"/>
       <line class="bc-cross" x1="${cx.toFixed(1)}" y1="${TP}" x2="${cx.toFixed(1)}" y2="${(TP+ph).toFixed(1)}"/>
       <circle class="bc-halo" cx="${cx.toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="9" fill="${o.col}"/>
@@ -16062,7 +16320,7 @@ function rphPick(asin){if(asin)openRepProduct(asin,'tab');}
 
 /* multi-series line chart on shared axes */
 function bdlChartN(labels,series,opt){
-  /* v115 — the multi-series chart never got the v112 treatment: straight polylines,
+  /* v118 — the multi-series chart never got the v112 treatment: straight polylines,
      a 2.6px stroke and native <title> tooltips that show one product at a time and
      take a second to appear. On a COMPARISON chart the tooltip is the whole point,
      and it has to show every product at that month at once — otherwise you are
@@ -16208,11 +16466,13 @@ function openCompare(keep){
         <td>${gbp(L.sales)}</td><td>${intf(L.units)}</td><td style="color:var(--green)">${intf(L.organic)}</td>
         <td style="color:var(--amber)">${gbp(L.ads)}</td>
         <td style="color:${L.tacos>30?'var(--red)':L.tacos>18?'var(--amber)':'var(--text2)'}">${L.sales?fmt(L.tacos,1)+'%':'—'}</td>
-        <td>${L.ads?fmt(L.roas,2)+'×':'—'}</td>
+        <td>${L.ads?`<span class="roasp" style="--rc:${L.roas>=cfgTargetRoas()?'var(--green)':L.roas>=cfgTargetRoas()*0.7?'var(--amber)':'var(--red)'}">${fmt(L.roas,2)}</span>`:'<span class="muted">—</span>'}</td>
         <td style="color:${L.margin>=15?'var(--green)':L.margin>=8?'var(--amber)':'var(--red)'}">${L.sales?fmt(L.margin,1)+'%':'—'}</td>
         <td><span class="${L.real>0?'rp-pos':L.real<0?'rp-neg':'rp-zero'}">${gbp(L.real)}</span></td></tr>`;}).join('')}</tbody></table></div>`:'';
 
+  if(window._cmpMode==='mvm'){cmpMonthVsMonth();return;}
   document.getElementById('rep-cmp-body').innerHTML=`
+    ${cmpModeBar()}
     <div class="cmp-bar">
       <div class="pmet" style="margin:0">${Object.keys(CMP_M).map(k=>`<button class="${k===_cmpMetric?'on':''}" style="--a:var(--blue)" onclick="cmpMetric('${k}')">${CMP_M[k].l}</button>`).join('')}</div>
     </div>
@@ -16242,6 +16502,99 @@ function openCompare(keep){
       ${bdlChartN(labels,series,{fmt:M.fmt,w:1220,h:300,id:'cmp'+_cmpMetric})}</div>`:''}
     ${grid}${summary}
     ${!picked.length?`<div class="pempty"><b>Pick some products</b><p>Choose up to 8 above, or use one of the presets, and they will be charted against each other across every month you have imported.</p></div>`:''}`;
+  document.getElementById('rep-cmp-overlay').classList.add('open');document.body.style.overflow='hidden';
+}
+/* ══════════ v118 — MONTH VS MONTH ══════════
+   Jack asked for this three times: "I want to compare it month on month — maybe
+   last 12 months or just this month vs last". The existing Compare popup charts up
+   to eight products ACROSS months, which is a different question. This one takes
+   two months and lays every product side by side: what it did then, what it does
+   now, and what changed — sorted by who moved the most. */
+window._cmpMode=window._cmpMode||'series';
+window._mvmA=null; window._mvmB=null;
+function cmpSetMode(m){window._cmpMode=m;openCompare(true);}
+function cmpModeBar(){
+  return `<div class="cmp-mode"><span class="pv-seg">
+    <button class="${window._cmpMode!=='mvm'?'on':''}" onclick="cmpSetMode('series')">Products over time</button>
+    <button class="${window._cmpMode==='mvm'?'on':''}" onclick="cmpSetMode('mvm')">Month vs month</button>
+  </span></div>`;
+}
+function mvmSet(which,id){if(which==='a')window._mvmA=id;else window._mvmB=id;openCompare(true);}
+function cmpMonthVsMonth(){
+  const ms=repSortedMonths();
+  const M=CMP_M[_cmpMetric];
+  /* Defaults follow the report: the open month against whatever the toolbar is
+     comparing with, so this view never disagrees with the page behind it. */
+  const nowM=repMonth()||ms[ms.length-1];
+  const tb=(typeof repCmpMonth==='function')?repCmpMonth():null;
+  let B=ms.find(m=>m.id===window._mvmB)||nowM;
+  let A=ms.find(m=>m.id===window._mvmA)||(tb&&tb.id!==B.id?tb:null)||ms[Math.max(0,ms.indexOf(B)-1)];
+  if(A&&B&&A.id===B.id){const i=ms.indexOf(B);A=i>0?ms[i-1]:null;}
+
+  document.getElementById('cmp-sub').innerHTML=
+    `<span class="chip">${_esc(A?A.label:'—')} → ${_esc(B.label)}</span><span class="chip">${_esc(M.l)}</span>`;
+
+  const rowsOf=m=>{const o={};(m&&m.rows||[]).forEach(r=>{if(r.asin)o[r.asin.toUpperCase()]=r;});return o;};
+  const RA=rowsOf(A),RB=rowsOf(B);
+  const keys=[...new Set([...Object.keys(RA),...Object.keys(RB)])];
+  const mv=r=>{
+    if(!r)return null;
+    const sales=+r.sales||0,ads=+r.ads||0,units=+r.units||0,adU=+r.adUnits||0;
+    const real=(+r.profit||0)-ads, adS=+r.adSales||0;
+    const o={real,sales,units,ads,organic:Math.max(0,units-adU),adUnits:adU,
+      tacos:sales?ads/sales*100:0, roas:ads?adS/ads:0, margin:sales?real/sales*100:0};
+    return M.get(o);
+  };
+  const items=keys.map(k=>{
+    const a=RA[k]?mv(RA[k]):null, b=RB[k]?mv(RB[k]):null;
+    const d=(a==null||b==null)?null:b-a;
+    const pc=(a!=null&&b!=null&&Math.abs(a)>0.0001)?(b-a)/Math.abs(a)*100:null;
+    return {k,r:RB[k]||RA[k],a,b,d,pc,isNew:!RA[k],gone:!RB[k]};
+  }).filter(x=>x.a!=null||x.b!=null);
+
+  const withD=items.filter(x=>x.d!=null);
+  withD.sort((x,y)=>Math.abs(y.d)-Math.abs(x.d));
+  const news=items.filter(x=>x.isNew), gone=items.filter(x=>x.gone);
+  const mxD=Math.max(...withD.slice(0,40).map(x=>Math.abs(x.d)),0.01);
+  const isRate=_cmpMetric==='tacos'||_cmpMetric==='roas'||_cmpMetric==='margin';
+  const tA=isRate?null:items.reduce((s,x)=>s+(x.a||0),0);
+  const tB=isRate?null:items.reduce((s,x)=>s+(x.b||0),0);
+  const up=withD.filter(x=>(x.d>0?1:-1)===M.good).length;
+  const dn=withD.length-up;
+
+  const cell=(v)=>v==null?'<span class="muted">—</span>':M.fmt(v);
+  const dcol=d=>d==null?'var(--text3)':Math.abs(d)<1e-9?'var(--text3)':((d>0?1:-1)===M.good?'var(--green)':'var(--red)');
+
+  document.getElementById('rep-cmp-body').innerHTML=`
+    ${cmpModeBar()}
+    <div class="mvm-bar">
+      <span class="kcmp-l">From</span>
+      <select class="sel" onchange="mvmSet('a',this.value)">${ms.map(m=>`<option value="${m.id}"${A&&m.id===A.id?' selected':''}>${_esc(m.label)}</option>`).join('')}</select>
+      <span class="kcmp-l">To</span>
+      <select class="sel" onchange="mvmSet('b',this.value)">${ms.map(m=>`<option value="${m.id}"${m.id===B.id?' selected':''}>${_esc(m.label)}</option>`).join('')}</select>
+      <div class="pmet" style="margin:0;flex:0 1 auto">${Object.keys(CMP_M).map(k=>`<button class="${k===_cmpMetric?'on':''}" style="--a:var(--blue)" onclick="cmpMetric('${k}')">${CMP_M[k].l}</button>`).join('')}</div>
+    </div>
+    ${!A?`<div class="pempty"><b>Only one month imported</b><p>Import another month and this becomes a comparison.</p></div>`:`
+    <div class="pverdict ${tB!=null&&tA!=null?(((tB-tA)>0?1:-1)===M.good?'good':'bad'):'ok'}">
+      <div class="pv-h">${isRate?`${_esc(M.l)} across ${withD.length} products`:`${_esc(M.l)} went ${M.fmt(tA)} → ${M.fmt(tB)}`}</div>
+      <div class="pv-b">${_esc(A.label)} to ${_esc(B.label)} · <b style="color:var(--green)">${up} improved</b>, <b style="color:var(--red)">${dn} worse</b>${news.length?` · ${news.length} new`:''}${gone.length?` · ${gone.length} dropped out`:''}.
+      ${withD.length?`Biggest mover: <b>${_esc(repName(withD[0].r))}</b> ${withD[0].d>0?'up':'down'} ${M.fmt(Math.abs(withD[0].d))}.`:''}</div>
+    </div>
+    <div class="pcard" style="margin-top:10px"><div class="pc-h">Every product <span>ordered by how much it moved · click a row to open it</span></div>
+      <table class="ptab mvm"><thead><tr>
+        <th class="l">Product</th><th>${_esc(A.label.replace(/\s*20\d\d/,''))}</th><th>${_esc(B.label.replace(/\s*20\d\d/,''))}</th>
+        <th>Change</th><th>%</th><th class="l">Move</th></tr></thead>
+      <tbody>${withD.concat(items.filter(x=>x.d==null)).map(x=>`<tr onclick="closeCompare();openRepProduct('${_esc(x.k)}')">
+        <td class="l"><b>${_esc(repName(x.r))}</b>${x.isNew?' <span class="pnow">new</span>':''}${x.gone?' <span class="pnow cmp">gone</span>':''}</td>
+        <td>${cell(x.a)}</td><td style="font-weight:700">${cell(x.b)}</td>
+        <td style="color:${dcol(x.d)};font-weight:700">${x.d==null?'—':(x.d>0?'+':'−')+M.fmt(Math.abs(x.d))}</td>
+        <td style="color:${dcol(x.d)}">${x.pc==null||!isFinite(x.pc)?'—':(x.pc>0?'+':'−')+fmt(Math.abs(x.pc),0)+'%'}</td>
+        <td class="l"><span class="mvm-b"><i style="width:${x.d==null?0:Math.max(2,Math.abs(x.d)/mxD*100).toFixed(1)}%;background:${dcol(x.d)}"></i></span></td>
+      </tr>`).join('')}</tbody>
+      ${tA!=null?`<tfoot><tr><td class="l"><b>Total</b></td><td>${M.fmt(tA)}</td><td style="font-weight:800">${M.fmt(tB)}</td>
+        <td style="color:${dcol(tB-tA)};font-weight:800">${(tB-tA)>0?'+':'−'}${M.fmt(Math.abs(tB-tA))}</td>
+        <td colspan="2"></td></tr></tfoot>`:''}
+      </table></div>`}`;
   document.getElementById('rep-cmp-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
 /* One searchable picker instead of a wall of every product in the report. Uses the
@@ -16615,19 +16968,40 @@ async function rsForceCloud(){
       renderReport();openRepSettings();
       toast(`Loaded ${cloudN} product rows from Supabase`);}});
 }
+/* ══════════ v118 — THE UNDO COVERS EVERYTHING NOW ══════════
+   The migration widened bdl_hub_history to every settings row the app writes, but
+   this screen still only ever asked for monthly_report_v1 — so the history existed
+   for product names, the archive, merges and hand-added products and nothing could
+   reach it. One picker, and restore reuses the same apply() functions the loader
+   uses, so a restored row lands in memory exactly as a fresh load would. */
+const HIST_ROWS=[
+  {id:'monthly_report_v1',      l:'Monthly Report',      big:true},
+  {id:'asin_names_v1',          l:'Product names',       sum:v=>Object.keys(v||{}).length+' names'},
+  {id:'hub_products_v1',        l:'Products you added',  sum:v=>Object.keys(v||{}).length+' products'},
+  {id:'asin_dropped_v1',        l:'Dropped products',    sum:v=>(Array.isArray(v)?v.length:0)+' dropped'},
+  {id:'bdlhub_archived_asins',  l:'Archived products',   sum:v=>(Array.isArray(v)?v.length:0)+' archived'},
+  {id:'bdlhub_asin_parked_v1',  l:'Parked products',     sum:v=>Object.keys(v||{}).length+' parked'},
+  {id:'bdlhub_asin_merge_v1',   l:'Merged duplicates',   sum:v=>Object.keys((v&&v.merge)||{}).length+' merges'},
+  {id:'bdlhub_price_history_v1',l:'Price history',       sum:v=>Object.keys(v||{}).length+' products'},
+  {id:'report_prefs_v1',        l:'Report columns',      sum:v=>Object.values((v&&v.cols)||{}).filter(Boolean).length+' columns on'},
+  {id:'ui_prefs_v1',            l:'App preferences',     sum:v=>Object.keys((v&&v.keys)||{}).length+' settings'},
+];
+window._histId=window._histId||'monthly_report_v1';
+function rsHistoryPick(id){window._histId=id;rsHistory();}
+
 async function rsHistory(){
   if(TEST_MODE){toast('Turn test mode off to reach the version history','warn');return;}
   if(!SUPABASE_URL||!SUPABASE_KEY){toast('Not connected to Supabase','warn');return;}
   const body=document.getElementById('rs-body');
-  const prev=body.innerHTML;
+  const R=HIST_ROWS.find(x=>x.id===window._histId)||HIST_ROWS[0];
   body.innerHTML=`<div class="pempty"><b>Loading version history…</b></div>`;
   let rows=[];
   try{
     const hds=await sbHeaders();
-    const res=await fetch(SUPABASE_URL+'/rest/v1/bdl_hub_history?setting_id=eq.monthly_report_v1&select=id,value,replaced_at&order=replaced_at.desc&limit=30',{headers:hds});
+    const res=await fetch(SUPABASE_URL+'/rest/v1/bdl_hub_history?setting_id=eq.'+encodeURIComponent(R.id)+'&select=id,value,replaced_at&order=replaced_at.desc&limit=30',{headers:hds});
     if(res.status===404||res.status===401||res.status===403){
       body.innerHTML=`<div class="pempty"><b>Version history is not set up yet</b>
-        <p>This needs the <b>bdl_hub_history</b> table from the Supabase setup script — section 2. Run that once and every save from then on is recoverable here.</p>
+        <p>This needs the <b>bdl_hub_history</b> table from the Supabase setup script. Run it once and every save from then on is recoverable here.</p>
         <button class="btn" onclick="openRepSettings()">Back</button></div>`;
       return;
     }
@@ -16636,16 +17010,19 @@ async function rsHistory(){
     body.innerHTML=`<div class="pempty"><b>Could not reach the version history</b><p>${_esc(e.message||'')}</p>
       <button class="btn" onclick="openRepSettings()">Back</button></div>`;return;
   }
-  const parsed=rows.map(r=>{let d=null;try{d=JSON.parse(r.value||'{}');}catch(e){}
-    const ms=(d&&d.months)||[];
-    return{id:r.id,at:r.replaced_at,months:ms.length,
-      products:ms.reduce((a,m)=>a+((m.rows||[]).length),0),
-      labels:ms.map(m=>m.label).join(', ').slice(0,70),
-      real:ms.length?ms.reduce((a,m)=>a+((m.rows||[]).reduce((x,r2)=>x+((+r2.profit||0)-(+r2.ads||0)),0)),0):0};});
-  body.innerHTML=`
-    <div class="pnl b" style="margin-bottom:12px"><div class="pnl-h">Version history</div>
-      <p>Every time the report is saved, the version before it is kept. The newest is at the top. Restoring replaces what is in the report now — take a backup first if you are unsure which one you want.</p></div>
-    ${parsed.length?`<div class="pcard"><table class="ptab">
+
+  const picker=`<div class="hist-pick">${HIST_ROWS.map(x=>
+    `<button class="${x.id===R.id?'on':''}" onclick="rsHistoryPick('${x.id}')">${_esc(x.l)}</button>`).join('')}</div>`;
+
+  let table;
+  if(R.big){
+    const parsed=rows.map(r=>{let d=null;try{d=JSON.parse(r.value||'{}');}catch(e){}
+      const ms=(d&&d.months)||[];
+      return{id:r.id,at:r.replaced_at,months:ms.length,
+        products:ms.reduce((a,m)=>a+((m.rows||[]).length),0),
+        labels:ms.map(m=>m.label).join(', ').slice(0,70),
+        real:ms.length?ms.reduce((a,m)=>a+((m.rows||[]).reduce((x,r2)=>x+((+r2.profit||0)-(+r2.ads||0)),0)),0):0};});
+    table=parsed.length?`<div class="pcard"><table class="ptab">
       <thead><tr><th class="l">Saved</th><th>Months</th><th>Products</th><th>Real profit</th><th class="l">Contents</th><th></th></tr></thead>
       <tbody>${parsed.map(x=>`<tr>
         <td class="l"><b>${new Date(x.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</b></td>
@@ -16653,8 +17030,57 @@ async function rsHistory(){
         <td><span class="${x.real>0?'rp-pos':x.real<0?'rp-neg':'rp-zero'}">${gbp(x.real)}</span></td>
         <td class="l" style="font-size:11.5px;color:var(--text3)">${_esc(x.labels||'empty')}</td>
         <td class="l"><button class="btn-sm" onclick="rsRollback(${x.id})">Restore this</button></td></tr>`).join('')}</tbody></table></div>`
-      :`<div class="pempty"><b>No earlier versions yet</b><p>The history fills up as you save. The next change you make will leave a version here.</p></div>`}
+      :'';
+  }else{
+    const parsed=rows.map(r=>{let v=null;try{v=JSON.parse(r.value||'null');}catch(e){}
+      let sum='unreadable';try{sum=R.sum(v);}catch(e){}
+      return{id:r.id,at:r.replaced_at,sum,bytes:(r.value||'').length};});
+    table=parsed.length?`<div class="pcard"><table class="ptab">
+      <thead><tr><th class="l">Saved</th><th class="l">Contents</th><th>Size</th><th></th></tr></thead>
+      <tbody>${parsed.map((x,i)=>`<tr>
+        <td class="l"><b>${new Date(x.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</b>${i===0?' <span class="pnow">newest</span>':''}</td>
+        <td class="l">${_esc(x.sum)}</td>
+        <td>${intf(Math.max(1,Math.round(x.bytes/1024)))} KB</td>
+        <td class="l"><button class="btn-sm" onclick="rsRollbackRow(${x.id},'${R.id}')">Restore this</button></td></tr>`).join('')}</tbody></table></div>`
+      :'';
+  }
+
+  body.innerHTML=`
+    <div class="pnl b" style="margin-bottom:12px"><div class="pnl-h">Version history</div>
+      <p>Every save keeps the version before it — the last 20, plus one a day for 60 days. Restoring replaces what is live now, and the version you replace is itself kept, so you can always come back.</p></div>
+    ${picker}
+    ${table||`<div class="pempty"><b>No earlier versions of ${_esc(R.l)} yet</b>
+      <p>History records a version when the value <i>changes</i>. The next edit you make to this will leave one here.</p></div>`}
     <div class="mg-foot" style="margin-top:12px"><button class="btn ghost" onclick="openRepSettings()">Back to settings</button></div>`;
+}
+
+/* Restore for the small rows. The apply() functions in BDL_STATE_ROWS are the same
+   ones the loader uses, so a restored value lands in memory exactly as a fresh
+   load would — no second code path to drift out of sync. */
+async function rsRollbackRow(hid,settingId){
+  const R=HIST_ROWS.find(x=>x.id===settingId);if(!R)return;
+  const go=async()=>{
+    try{
+      const hds=await sbHeaders();
+      const res=await fetch(SUPABASE_URL+'/rest/v1/bdl_hub_history?id=eq.'+encodeURIComponent(hid)+'&select=value',{headers:hds});
+      const rows=await res.json();
+      const raw=(rows[0]||{}).value;
+      if(raw==null){toast('That version could not be read','warn');return;}
+      const ok=await sbWrite(settingId,raw,R.l);
+      let v=null;try{v=JSON.parse(raw);}catch(e){}
+      const st=(typeof BDL_STATE_ROWS!=='undefined')?BDL_STATE_ROWS.find(x=>x.id===settingId):null;
+      if(st&&typeof st.apply==='function'){try{st.apply(v);}catch(e){console.warn('apply',e);}}
+      try{renderReport();}catch(e){}
+      try{if(document.getElementById('page-products')?.classList.contains('active'))renderProducts();}catch(e){}
+      try{if(document.getElementById('page-home')?.classList.contains('active'))renderHome();}catch(e){}
+      rsHistory();
+      toast(ok?('Restored '+R.l.toLowerCase()):('Restored here, but the write to Supabase failed'),ok?'ok':'warn');
+    }catch(e){toast('Restore failed — '+(e.message||''),'warn');}
+  };
+  bdlConfirm({title:'Restore this version?',tone:'warn',confirmLabel:'Restore it',
+    headline:_esc(R.l)+' is replaced with this version',
+    detail:'The version you are replacing is written to the history first, so this is reversible — come straight back and restore what you have now.',
+    saves:'Written here <b>and to Supabase</b>.',onConfirm:go});
 }
 async function rsRollback(hid){
   const go=async()=>{
