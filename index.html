@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v118</title>
+<title>BDL Hub — Ads &amp; Monthly Report v1.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -827,7 +827,7 @@ table.prep-t td{font-size:12px}
 .mi-warn b{color:var(--text);font-weight:800}
 
 .pest.guess{color:var(--amber)}
-/* ══════════ v118 — PREP IS A DECISION BOARD, NOT A DATA DUMP ══════════
+/* ══════════ v1.0 — PREP IS A DECISION BOARD, NOT A DATA DUMP ══════════
    The old page showed six KPIs, a banner, three alert cards, a chip soup of
    components and an eleven-column table, all at once, and answered none of the
    only question this page exists for: what do I send to FBA, and how much.
@@ -1651,7 +1651,7 @@ table.rt tfoot td{box-shadow:0 -10px 22px -12px rgba(0,0,0,.95)}
 /* the shared multi-series tooltip: one row per product, value right-aligned so the
    column reads as a ranked list rather than a paragraph */
 .bc-tipn{fill:var(--text2);font-size:10.5px;font-family:var(--font);font-weight:600}
-/* ══════════ v118 — THE MONTHLY REPORT HAD NO RHYTHM ══════════
+/* ══════════ v1.0 — THE MONTHLY REPORT HAD NO RHYTHM ══════════
    Eight full-width blocks stacked down the page with gaps of 11, 8, 12, 9, 12,
    10 and 10 — every gutter within 4px of every other, so nothing grouped and it
    read as slab, black space, slab, black space. Three different corner radii
@@ -1676,7 +1676,7 @@ table.rt tfoot td{box-shadow:0 -10px 22px -12px rgba(0,0,0,.95)}
 .rep-summary #rep-movers{padding:11px 14px}
 /* the KPI grid keeps its own 1px hairline tiling — only its outer shell goes */
 .rep-summary .rep-kpis{overflow:visible}
-/* ── v118 legibility: the mono numerals were 400 weight. On a dark background a
+/* ── v1.0 legibility: the mono numerals were 400 weight. On a dark background a
    400-weight mono at 12px halates — the light strokes bleed into the dark and the
    figure reads as soft focus. Nothing is out of focus; the stroke is just too thin
    for light-on-dark. 500 fixes it without changing size or layout. Product names
@@ -1689,7 +1689,7 @@ table.ptab tbody td b,table.rt tbody td b{font-weight:700}
    plain white text in every popup, which is two languages for one number */
 .roasp{display:inline-block;min-width:44px;padding:2px 8px;border-radius:6px;font-family:var(--mono);
   font-size:11.5px;font-weight:700;color:#06121a;background:var(--rc);letter-spacing:-.2px}
-/* ── v118 — nine rows, not fourteen ──────────────────────────────────────────
+/* ── v1.0 — nine rows, not fourteen ──────────────────────────────────────────
    v113 squeezed the row to 69px because Jack wanted an eighth row on screen.
    Grouping the page into two surfaces then gave the table back ~100px of height,
    and fourteen 69px rows arrived at once — a wall. He wants nine.
@@ -1706,7 +1706,7 @@ table.ptab tbody td b,table.rt tbody td b{font-weight:700}
 #rep-tablewrap.dense table.rt tbody td{padding:6px 12px}
 #rep-tablewrap.dense table.rt thead th{padding:8px 12px}
 
-/* ── v118 — the KPI popup ──────────────────────────────────────────────────
+/* ── v1.0 — the KPI popup ──────────────────────────────────────────────────
    It was six identically-weighted bordered tiles in a rigid grid: every number
    shouting equally, nothing to click, and a chart that was a picture. Jack's
    "Windows 97 trying to be futuristic" was fair. Now: the comparison is a
@@ -1749,6 +1749,19 @@ table.ptab tbody tr.kcmp-row{background:rgba(91,157,255,.07)}
 .mvm-bar .sel{min-width:132px}
 .mvm-b{display:block;height:6px;border-radius:3px;background:var(--bg4);overflow:hidden;min-width:70px}
 .mvm-b i{display:block;height:100%;border-radius:3px}
+/* ══════════ v1.0 — WHY DARK MODE READ AS BLURRY ══════════
+   Two measured causes, not taste:
+
+   1. `-webkit-font-smoothing:antialiased` was set globally. On macOS that renders
+      text THINNER than the default. Dark-on-light survives it; light-on-dark was
+      already losing apparent weight and this took more off.
+   2. Body text was #f2f4f9 on #0e1219 — a contrast ratio of 17:1. That sounds like
+      a virtue and is not: at that separation light strokes HALATE on a dark field,
+      bleeding into the background. Dark-mode body text wants roughly 11-14:1.
+
+   Light mode keeps antialiased because dark-on-light does not halate. */
+body:not(.light){-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}
+body:not(.light){--text:#e2e8f4;--text2:#d5dded;--text3:#b9c6dc;--text4:#94a3ba}
 table.ptab.mvm tbody tr{cursor:pointer}
 table.ptab.mvm tfoot td{border-top:1px solid var(--border2);background:var(--bg3);font-family:var(--mono)}
 /* campaign x month grid — bars instead of a colour wash */
@@ -2219,7 +2232,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 <body>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v118</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v1.0</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -3201,7 +3214,7 @@ function markActionDone(key){if(!window._actionedKeys)window._actionedKeys=new S
 function openReviewItem(cid,tab){try{openCamp(cid);if(tab&&curCamp)switchTab(tab);}catch(e){console.warn('openReviewItem',e);}}
 function resetActions(){window._actionedKeys=new Set();lsClearDone();sbSaveDismissed();renderDashActionList();}
 /* ── On-screen feedback toast ── */
-/* ══════════ v118 — ONE ICON LANGUAGE ══════════
+/* ══════════ v1.0 — ONE ICON LANGUAGE ══════════
    The app was speaking three at once: emoji in the home cards, the command palette,
    the wins list and four buttons; bare arrow glyphs elsewhere; and coloured RAG pills
    for status. Emoji also render differently on every machine and cannot be recoloured,
@@ -9792,6 +9805,20 @@ function renderDashActionList(){
   aHtml+=chgToday.map(row).join('');
   if(schedToday.length>=2)aHtml+=schedCard(schedToday,'today');
   else if(schedToday.length===1)aHtml+=schedAsRow(schedToday[0]);
+  /* The search-term gap is the team's standing miss and it blocks half the ads
+     analysis, so it sits above every per-campaign alert rather than only on Home. */
+  try{
+    const _st=stStats();
+    if(_st&&_st.missing&&_st.missing.length){
+      aHtml+=row({type:'warn',tag:'SEARCH TERMS',
+        label:_st.missing.length+' campaign'+(_st.missing.length!==1?'s':'')+' have no search-term report',
+        camp:'Whole account',
+        sub:_st.newest?('latest anywhere: '+_st.newest):'none imported yet',
+        cid:null,action:'Export the Search Term report from Amazon Ads and import it',
+        key:'acct|searchterms',
+        onclick:"openStaffBrief()"});
+    }
+  }catch(e){}
   aHtml+=fp(pLeak).map(row).join('');
   aHtml+=fp(pKwLeak).map(row).join('');   /* zero-sale spend beats everything below */
   aHtml+=fp(pNoImpr).map(row).join('');
@@ -10977,7 +11004,7 @@ async function liveTakeTheirs(){
   toast('Loaded the newer version','ok');
 }
 
-/* ══════════ v118 — NOBODY'S AFTERNOON GETS OVERWRITTEN ══════════
+/* ══════════ v1.0 — NOBODY'S AFTERNOON GETS OVERWRITTEN ══════════
    window._repTab, not a const: this file is one giant script and a top-level const
    read during boot is the TDZ trap that has hung this app before. */
 const REP_REV_ID='bdlhub_report_rev';
@@ -13870,7 +13897,7 @@ async function sbGetSetting(newId,legacyId){
   if(v===undefined&&legacyId)v=await get(legacyId);
   return v===undefined?null:v;
 }
-/* ══════════ v118 — ONE WRITE PATH, AND IT TELLS YOU WHEN IT FAILS ══════════
+/* ══════════ v1.0 — ONE WRITE PATH, AND IT TELLS YOU WHEN IT FAILS ══════════
    Ten functions wrote to the settings table and NINE of them fired the POST and
    never looked at the response. A rename that hit a network blip, an expired
    token, an RLS refusal or a dead wifi connection returned exactly the same thing
@@ -13948,7 +13975,7 @@ window.addEventListener('offline',()=>{try{setSyncStatus('offline');}catch(e){}}
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&window._sbQ.size)sbFlushQueue();
 });
-/* ══════════ v118 — THE ADS SIDE WRITES SILENTLY TOO ══════════
+/* ══════════ v1.0 — THE ADS SIDE WRITES SILENTLY TOO ══════════
    v114 gave every settings row a checked write path with a retry queue. The ads
    tables never got it: eleven PATCH/DELETE calls against snapshots and campaigns
    fired and walked away, so a failed review, a failed CSV upload or a failed
@@ -16320,7 +16347,7 @@ function rphPick(asin){if(asin)openRepProduct(asin,'tab');}
 
 /* multi-series line chart on shared axes */
 function bdlChartN(labels,series,opt){
-  /* v118 — the multi-series chart never got the v112 treatment: straight polylines,
+  /* v1.0 — the multi-series chart never got the v112 treatment: straight polylines,
      a 2.6px stroke and native <title> tooltips that show one product at a time and
      take a second to appear. On a COMPARISON chart the tooltip is the whole point,
      and it has to show every product at that month at once — otherwise you are
@@ -16504,7 +16531,7 @@ function openCompare(keep){
     ${!picked.length?`<div class="pempty"><b>Pick some products</b><p>Choose up to 8 above, or use one of the presets, and they will be charted against each other across every month you have imported.</p></div>`:''}`;
   document.getElementById('rep-cmp-overlay').classList.add('open');document.body.style.overflow='hidden';
 }
-/* ══════════ v118 — MONTH VS MONTH ══════════
+/* ══════════ v1.0 — MONTH VS MONTH ══════════
    Jack asked for this three times: "I want to compare it month on month — maybe
    last 12 months or just this month vs last". The existing Compare popup charts up
    to eight products ACROSS months, which is a different question. This one takes
@@ -16968,7 +16995,7 @@ async function rsForceCloud(){
       renderReport();openRepSettings();
       toast(`Loaded ${cloudN} product rows from Supabase`);}});
 }
-/* ══════════ v118 — THE UNDO COVERS EVERYTHING NOW ══════════
+/* ══════════ v1.0 — THE UNDO COVERS EVERYTHING NOW ══════════
    The migration widened bdl_hub_history to every settings row the app writes, but
    this screen still only ever asked for monthly_report_v1 — so the history existed
    for product names, the archive, merges and hand-added products and nothing could
