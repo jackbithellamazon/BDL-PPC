@@ -3,16 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v3.5</title>
+<title>BDL Hub — Ads &amp; Monthly Report v4.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#090b11;--bg2:var(--panel);--bg3:#151a24;--bg4:#1c2230;--bg5:#252d3c;
-  --panel:#0e1219;--panel2:#131820;
-  --border:rgba(148,163,184,0.12);--border2:rgba(148,163,184,0.22);--border3:rgba(148,163,184,0.32);
+  /* ── v3.8 — SUBTLE DEPTH PASS ─────────────────────────────────────────
+     Measured, not guessed: a card sat at 1.05:1 against the page behind it,
+     which is no separation at all — every card in the app was being held up
+     by a 12%-alpha hairline and nothing else. That flatness is the thing you
+     notice before you notice any of the colours.
+
+     Three small moves, same palette, same identity:
+       • --panel lifted ~4 points so a card is a surface, not an outline
+       • --bg2 (inputs, ghost buttons) DE-coupled from --panel and set very
+         slightly below it, so a field reads as a well cut into the card
+         rather than a rectangle drawn on it. It used to be var(--panel) —
+         literally the same colour as its own container.
+       • --border 0.12 → 0.17, still a hairline, now actually visible
+     Nothing here changes a hue. Light mode sets its own --bg2, so it is
+     unaffected by the decoupling. */
+  --bg:#080a10;--bg2:#0c1017;--bg3:#161c26;--bg4:#1c2230;--bg5:#252d3c;
+  --panel:#12171f;--panel2:#161c26;
+  --border:rgba(148,163,184,0.17);--border2:rgba(148,163,184,0.26);--border3:rgba(148,163,184,0.36);
   --text:#f2f4f9;--text2:#e8edf7;--text3:#c8d4e8;--text4:#aab8cc;
   --green:#2ee59d;--green-bg:rgba(46,229,157,0.12);--green-dim:rgba(46,229,157,0.4);
   --amber:#ffb547;--amber-bg:rgba(255,181,71,0.12);
@@ -40,8 +55,12 @@
 body.light{
   --bg:#f4f6fb;--bg2:#ffffff;--bg3:#eef1f7;--bg4:#e4e9f2;--bg5:#d7deec;
   --panel:#ffffff;--panel2:#f7f9fc;
-  --border:rgba(15,23,42,0.12);--border2:rgba(15,23,42,0.20);--border3:rgba(15,23,42,0.30);
-  --text:#0f172a;--text2:#1e293b;--text3:#475569;--text4:#64748b;
+  /* v3.8 — --text4 measured 4.76:1 on white, which clears the 4.5 floor by
+     almost nothing and is the app's weakest text at 11px. #5b6b80 takes it to
+     5.4:1 and is imperceptibly different in isolation. Border 0.12 → 0.15 for
+     the same card-definition reason as dark mode. */
+  --border:rgba(15,23,42,0.15);--border2:rgba(15,23,42,0.22);--border3:rgba(15,23,42,0.32);
+  --text:#0f172a;--text2:#1e293b;--text3:#475569;--text4:#5b6b80;
   --green:#0b8f60;--amber:#b45309;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
   --teal:#0d9488;--coral:#e11d48;
   --shadow-sm:0 1px 3px rgba(15,23,42,0.10);--shadow:0 8px 30px rgba(15,23,42,0.12);--shadow-lg:0 24px 60px rgba(15,23,42,0.18);
@@ -254,11 +273,11 @@ body{font-variant-numeric:tabular-nums}
 .tog.green.on{background:var(--green);color:#04120b;border-color:var(--green);font-weight:700} .tog.green.on .d{background:rgba(0,0,0,.4)!important}
 .tog.amber.on{background:var(--amber);color:#1a1002;border-color:var(--amber);font-weight:700} .tog.amber.on .d{background:rgba(0,0,0,.4)!important}
 .tog.red.on{background:var(--red);color:#fff;border-color:var(--red);font-weight:700} .tog.red.on .d{background:rgba(255,255,255,.7)!important}
-.btn{font-family:var(--font);font-weight:700;font-size:12px;color:#06121a;background:var(--blue);border:none;padding:9px 14px;border-radius:9px;cursor:pointer;transition:.15s}
+.btn{line-height:14px;font-family:var(--font);font-weight:700;font-size:12px;color:#06121a;background:var(--blue);border:none;padding:9px 14px;border-radius:9px;cursor:pointer;transition:.15s}
 .btn:hover{filter:brightness(1.1)}
 .btn.ghost{color:var(--text);background:var(--bg2);border:1px solid var(--border)}
 .btn.ghost:hover{border-color:var(--border3);background:var(--bg3)}
-.btn-sm{font-family:var(--font);font-weight:600;font-size:11px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:5px 10px;border-radius:7px;cursor:pointer;transition:.15s}
+.btn-sm{line-height:14px;font-family:var(--font);font-weight:600;font-size:11px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);padding:5px 10px;border-radius:7px;cursor:pointer;transition:.15s}
 .btn-sm:hover{color:var(--text);border-color:var(--border2);background:var(--bg4)}
 .btn:active,.btn-sm:active,.tog:active,.nav-btn:active,.hub-link:active,.po-tab:active,.acct:active,.cmdk-btn:active{transform:scale(.965)}
 .input:focus,.sel:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(91,157,255,.16)}
@@ -301,7 +320,7 @@ table.dt tbody tr:last-child td{border-bottom:none}
 table.dt tbody tr.flagrow{background:rgba(255,181,71,.04)}
 table.dt tbody tr.flagrow:hover{background:rgba(255,181,71,.08)}
 .cn{display:flex;align-items:flex-start;gap:11px}
-.cn .ic{width:32px;height:32px;border-radius:8px;background:#fff;display:grid;place-items:center;font-size:15px;flex-shrink:0;border:1px solid var(--border)}
+.cn>.ic{width:32px;height:32px;border-radius:8px;background:#fff;display:grid;place-items:center;font-size:15px;flex-shrink:0;border:1px solid var(--border)}
 .cn .meta b{font-family:var(--font);font-weight:600;font-size:13px;display:block;letter-spacing:0;display:flex;align-items:center;gap:6px}
 .cn .meta span{font-family:var(--mono);font-size:10px;color:var(--text2);display:block;margin-top:2px}
 .bar{position:relative;height:6px;border-radius:4px;background:var(--bg4);overflow:hidden;min-width:50px;display:inline-block;vertical-align:middle}
@@ -625,7 +644,7 @@ table.rt tbody tr.dead td:first-child{opacity:1}          /* never dim what you 
 table.rt tbody tr.dead .rn-top b,table.rt tbody tr.dead .rn-sub{opacity:.62}
 .fixtag{opacity:1!important}
 table.rt tbody tr:last-child td{border-bottom:none}
-table.rt tfoot td{padding:9px 12px;font-family:var(--mono);font-weight:700;font-size:13px;text-align:right;border-top:2px solid var(--border2);background:var(--bg3);position:sticky;bottom:0;white-space:nowrap}
+table.rt tfoot td{padding:9px 12px;font-family:var(--font);font-weight:700;font-size:13px;text-align:right;border-top:2px solid var(--border2);background:var(--bg3);position:sticky;bottom:0;white-space:nowrap}
 .rp-pos{color:var(--green);background:var(--green-bg);border-radius:6px;padding:3px 9px;font-weight:700}
 .rp-neg{color:var(--red);background:var(--red-bg);border-radius:6px;padding:3px 9px;font-weight:700}
 .rp-zero{color:var(--text4);padding:3px 9px}
@@ -1390,7 +1409,10 @@ table.dt tbody tr.flagrow td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
 .ph-nl{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .ph-nv{font-size:23px;letter-spacing:-1px;margin:3px 0 3px}
 .ph-nums{margin:12px 0 10px;gap:8px}
-.ph{padding:14px 20px 0}
+/* v4.0 — this was written for the deep-dive popout hero and was leaking onto every
+   page header, insetting <h1> 20px right of the rail every card below it uses */
+#rep-prod-overlay .ph{padding:14px 20px 0}
+.page>.ph{padding-left:0;padding-right:0;padding-bottom:6px}
 .ph-nm h3{font-size:17px;line-height:1.3;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pbody{padding:14px 20px 20px}
 .pnote{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.6;color:var(--text3);font-weight:500}
@@ -1446,7 +1468,9 @@ table.rt tbody .rsplit span{white-space:nowrap}
    the fold. Now every strip earns its height, the band is the same size empty or full,
    and every figure is centred so the eye lands on the number, not the label. */
 .hm-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-.hm-bar-l{display:flex;align-items:baseline;gap:11px;min-width:0;flex-wrap:wrap}
+/* v4.0 — .btn is 32px tall; centring a 27px block inside it gave a 2.5px
+   offset, so the title, the date and both money figures sat on a half pixel */
+.hm-bar-l{display:flex;align-items:baseline;gap:11px;min-width:0;flex-wrap:wrap;min-height:28px}
 .hm-title{font-family:var(--display);font-size:25px;font-weight:800;letter-spacing:-1px;line-height:1;margin:0}
 .hm-kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);white-space:nowrap}
 .hm-bar-r{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto}
@@ -1515,7 +1539,7 @@ table.rt tbody .rsplit span{white-space:nowrap}
 .hm-h{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:9px 13px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--border);background:var(--panel)}
 .hm-h small{font-size:10px;font-weight:800;letter-spacing:0;text-transform:none;color:#04121e;background:var(--amber);border-radius:20px;padding:1px 7px}
 .hm-h small.ok{background:var(--green)}
-.hm-h .sp{margin-left:auto;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:0;text-transform:none;cursor:pointer}
+.hm-h .sp{flex:0 0 auto;margin-left:auto;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:0;text-transform:none;cursor:pointer}
 .hm-attn,.hm-recent{flex:1;min-height:150px;max-height:270px;overflow-y:auto}
 .hattn{display:flex;align-items:center;gap:9px;background:transparent;border:none;border-bottom:1px solid var(--border);border-left:3px solid var(--amber);border-radius:0;padding:9px 12px;cursor:pointer;transition:background .13s;font-size:12px}
 .hattn:hover{background:var(--bg3)}
@@ -1926,7 +1950,7 @@ body.fs-bold{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}
 body.fs-bold table.rt tbody td,body.fs-bold table.dt tbody td,body.fs-bold table.ptab tbody td,
 body.fs-bold .rsplit,body.fs-bold .prod-a,body.fs-bold .sub,body.fs-bold .psub,
 body.fs-bold .rk-s,body.fs-bold .mini-f,body.fs-bold .pj-txt{font-weight:600}
-body.fs-bold{--text:#eef2fa;--text2:#e4eaf6;--text3:#c9d5e8;--text4:#a3b1c6}
+body.fs-bold:not(.light){--text:#eef2fa;--text2:#e4eaf6;--text3:#c9d5e8;--text4:#a3b1c6}
 body:not(.light){--text:#e2e8f4;--text2:#d5dded;--text3:#b9c6dc;--text4:#94a3ba}
 table.ptab.mvm tbody tr{cursor:pointer}
 table.ptab.mvm tfoot td{border-top:1px solid var(--border2);background:var(--bg3);font-family:var(--mono)}
@@ -2290,7 +2314,7 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
   grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .rep-kpis .rk{background:var(--bg2);border:none!important;border-radius:0!important;box-shadow:none!important;
   padding:14px 16px 15px;text-align:left;position:relative;cursor:pointer;transition:background .15s;overflow:hidden}
-.rep-kpis .rk:before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--rk);opacity:.9}
+.rep-kpis .rk:before{content:'';position:absolute;inset:0 0 auto 0;width:auto;height:3px;background:var(--rk);opacity:.9}
 .rep-kpis .rk:hover{background:var(--bg3)}
 .rep-kpis .rk-l{display:flex;align-items:center;gap:5px;justify-content:flex-start;
   font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text3)}
@@ -2319,7 +2343,8 @@ table.rt tfoot td{position:sticky;bottom:0;background:var(--bg3);
 .hm-stats{border-radius:12px;gap:1px}
 .hm-stats>div,.hm-stats .hub-tile{padding:10px 12px}
 .hm-stats .tn{font-size:9px;letter-spacing:1px;color:var(--text3)}
-.hm-stats .tv{font-size:18px;letter-spacing:-1px}
+/* v4.0 — 18px made £10,758.24 need 97px in an 89px tile, so it rendered '£10,758…' */
+.hm-stats .tv{letter-spacing:-1px}
 .hm-headline{border-radius:16px;padding:17px 20px}
 .hm-hl-t{font-size:22px}
 
@@ -2492,12 +2517,228 @@ body.light .dirb.fl.on{background:var(--text3);color:#fff}
    one quietly reading fainter than the other. */
 body.light .dirb.up.on{background:#0a8259}
 .mv-strip .dirbar{margin-right:2px}
+
+/* ══════════ v3.6 — WHOLE-PIXEL LINE BOXES, EVERYWHERE ELSE ══════════
+   He sent a screenshot of the HOME page: "why does the font and text and colours
+   look off and blurry here". Fonts were fine — Inter, Sora and Roboto Mono all
+   loaded, correct weights, antialiased. The cause is the one already fixed once
+   for the Monthly Report table in v2.6 and never applied anywhere else: a UNITLESS
+   line-height multiplied by an odd font size lands between device pixels, and the
+   text is then composited onto a half-pixel and softened.
+
+   Measured, not guessed. Every pair below was read off the live pages:
+       .hm-bnv    19px x 1.05  = 19.95px   <- the big home KPI numbers
+       .tv        18px x 1.10  = 19.80px   x12
+       .kpi .v    18px x 1.12  = 20.16px   x10 (home + insights)
+       .hm-c-t    15px x 1.15  = 17.25px
+       .hm-c-s    11px x 1.35  = 14.85px
+       .hm-tag     9px x 1.15  = 10.35px
+       .ins-k-v   14px x 1.05  = 14.70px   x7
+       .rk-s      11px x 1.40  = 15.40px
+       .rlink     11px x 1.50  = 16.50px   x22
+       .tm-why    13px x 1.60  = 20.80px
+
+   78 rules in this file still use a unitless line-height. Only the ones that
+   actually landed fractional on a real page are pinned here — pinning the rest
+   would be churn with nothing to show for it. The rule to carry forward: on a
+   heading or a figure, give line-height a px value, not a multiplier. */
+.hm-bnv{line-height:20px!important}
+.tv{line-height:20px!important}
+.card.kpi .v,.kpi .v{line-height:20px!important}
+.hm-c-t{line-height:17px!important}
+.hm-c-s{line-height:15px!important}
+.hm-tag{line-height:10px!important}
+.ins-k-v{line-height:15px!important}
+.rk-s{line-height:15px!important}
+.rlink{line-height:17px!important}
+.tm-why{line-height:21px!important}
+/* The last six are unclassed inline elements carrying a parent's multiplier —
+   change-log entry text (13 x 1.25) and two Settings labels (12 x 1.6). Pinned by
+   size rather than by class, because they have no class to hang a rule on. Scoped
+   to those two pages so this cannot reach the report tables, which already had
+   their line boxes fixed in v2.6 and must not be touched again. */
+#page-changelog span[style*="font-size:13px"],
+#page-changelog .cl-what,#page-changelog .cl-why{line-height:16px!important}
+#page-settings div[style*="font-size:12px"],
+#page-settings .card.pad b{line-height:19px!important}
+
+/* ══════════ v3.8 — THE LOGIN GATE ══════════
+   Sits above the boot spinner (99999) so the app never flashes behind it.
+   Every line-height here is an integer px for the same reason as the block
+   above: unitless multipliers on odd font sizes land the line box between
+   device pixels and the text renders soft. */
+.gate{display:none;position:fixed;inset:0;z-index:100000;background:var(--bg);
+  align-items:center;justify-content:center;padding:20px}
+.gate.open{display:flex}
+/* One very soft pool of light behind the card. The gate is the only screen in
+   the app with nothing else on it, and a flat field of near-black reads as a
+   loading failure rather than a design. Sits behind everything and is barely
+   perceptible — the point is that you do not notice it. */
+.gate::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(680px 420px at 50% 32%,rgba(91,157,255,.075),transparent 70%)}
+body.light .gate::before{background:radial-gradient(680px 420px at 50% 32%,rgba(37,99,235,.055),transparent 70%)}
+.gate-box{position:relative;width:100%;max-width:366px;background:var(--panel);
+  border:1px solid var(--border2);border-radius:var(--r);padding:30px 28px 22px;
+  box-shadow:var(--shadow-lg);text-align:center}
+.gate-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--teal),var(--blue));
+  display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:17px;
+  line-height:38px;color:#06121a;margin:0 auto 13px}
+.gate-t{font-family:var(--display);font-size:19px;font-weight:800;letter-spacing:-.01em;line-height:24px}
+.gate-s{font-size:12px;color:var(--text3);line-height:18px;margin:5px 0 20px}
+.gate-f{display:block;width:100%;margin-bottom:11px;padding:10px 12px;font-size:13px;line-height:18px;text-align:left}
+.gate-f.mono{font-family:var(--mono);font-size:11px;line-height:17px}
+/* Label row: caption on the left, an optional action (Show/Hide) on the right */
+.gate-lab{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text4);line-height:14px;margin:0 0 5px}
+.gate-lab .lk{font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--blue);
+  cursor:pointer;text-transform:none}
+.gate-lab .lk:hover{text-decoration:underline}
+.gate-go{width:100%;margin-top:7px;padding:11px 14px;font-size:13px;line-height:18px}
+.gate-go[disabled]{opacity:.5;cursor:default}
+.gate-msg{margin-top:12px;font-size:12px;line-height:18px;text-align:left;
+  padding:9px 11px;border-radius:var(--r-xs);border:1px solid transparent}
+.gate-msg:empty{margin-top:0;padding:0;border:0}
+.gate-msg.err{color:var(--red);background:var(--red-bg);border-color:rgba(255,93,108,.28)}
+.gate-msg.ok{color:var(--green);background:var(--green-bg);border-color:rgba(46,229,157,.28)}
+.gate-msg.warn{color:var(--amber);background:var(--amber-bg);border-color:rgba(255,181,71,.28)}
+.gate-foot{margin-top:17px;padding-top:14px;border-top:1px solid var(--border);
+  font-size:11px;line-height:18px;color:var(--text4);text-align:left}
+.gate-foot b{color:var(--text3);font-weight:700}
+.gate-alt{margin-top:11px;font-size:11px;line-height:17px;color:var(--text4)}
+.gate-alt span{color:var(--blue);cursor:pointer;font-weight:600}
+.gate-alt span:hover{text-decoration:underline}
+#who-btn{white-space:nowrap}
+/* Light mode fields were pure white inside pure-white cards — 1.00:1, so the
+   only thing saying "you can type here" was the hairline. Scoped to inputs and
+   selects alone, so no chip, button or card surface shifts. */
+body.light .input,body.light .sel,body.light textarea.input{background-color:#fafbfd}
+body.light .input:focus,body.light .sel:focus,body.light textarea.input:focus{background-color:#fff}
+/* v4.0 — native dropdown popups were opening dark over a white page */
+body.light .sel{color-scheme:light}
+
+/* ── v3.8 — the last of the v2.7 solid-pill inversions ────────────────────
+   v2.7 fixed this by listing CLASSES, which missed every pill whose accent
+   background is written as an INLINE style by the rendering JS. Measured on
+   the Ads page in light mode: the UPCOMING badge and the "Review →" button
+   are #06121a text on light mode's dark purple — 2.56:1, well under the 4.5
+   floor, and the same near-black-on-dark mistake v2.7 was written to kill.
+
+   The trailing semicolon in each selector is load-bearing: without it,
+   [style*="background:var(--blue)"] ALSO matches background:var(--blue-bg),
+   a pale tint where white text would disappear completely. */
+body.light [style*="background:var(--blue);"],
+body.light [style*="background:var(--purple);"],
+body.light [style*="background:var(--green);"],
+body.light [style*="background:var(--red);"],
+body.light [style*="background:var(--amber);"],
+body.light [style*="background:var(--teal);"]{color:#fff!important}
+
+/* The same inversion for the pills that declare their accent in a CSS CLASS
+   rather than inline. `.hm-h small` is the Needs-Attention count on Home:
+   #04121e on light mode's amber (#8a4708) measured 2.69:1 — a dark number on
+   a dark badge, unreadable at 10px.
+   NOT included: the .mtag-* match pills. They paint --match-* colours, which
+   light mode deliberately leaves bright, so their near-black text is correct
+   and forcing white would break them. Verified --match-phrase is still
+   #5b9dff under body.light before writing this. */
+body.light :is(.hm-h small,.fxq-h span,.rph-now,.pnow,tr:hover .rl-go,.ph-tag.lk:hover){color:#fff!important}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.0 — BLUR PASS 2
+   A unitless line-height on an odd px font-size puts the line box on a half
+   pixel, and the glyphs render soft. The v3.6 block fixed ten of these; a
+   full sweep of the stylesheet found nineteen more that it missed. Each one
+   below is pinned to the nearest whole pixel — the arithmetic that made it
+   fractional is in the comment. Text sharpens; nothing moves more than 0.5px.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rph-note{line-height:19px!important}   /* 12 x 1.55 = 18.6  */
+.mi-warn{line-height:19px!important}    /* 12 x 1.55 = 18.6  */
+.dsec-n{line-height:19px!important}     /* 12 x 1.55 = 18.6  */
+.bmk-t{line-height:19px!important}      /* 12 x 1.55 = 18.6  */
+.mi-state{line-height:19px!important}   /* 12 x 1.6  = 19.2  */
+.prep-al span{line-height:16px!important} /* 11 x 1.45 = 15.95 */
+.rs-r span{line-height:17px!important}  /* 11 x 1.5  = 16.5  */
+.mi-bare{line-height:17px!important}    /* 11 x 1.5  = 16.5  */
+.dk-v{line-height:22px!important}       /* 19 x 1.15 = 21.85 */
+.dp p{line-height:21px!important}       /* 13 x 1.6  = 20.8  */
+.pnote{line-height:21px!important}      /* 13 x 1.6  = 20.8  */
+.cf-safe{line-height:21px!important}    /* 13 x 1.6  = 20.8  */
+.pempty p{line-height:21px!important}   /* 13 x 1.65 = 21.45 */
+.cf-share{line-height:20px!important}   /* 13 x 1.55 = 20.15 */
+.fxp-i{line-height:16px!important}      /* 13 x 1.2  = 15.6  */
+.an-t{line-height:22px!important}       /* 14 x 1.55 = 21.7  */
+.ph-nm h3{line-height:22px!important}   /* 17 x 1.3  = 22.1  */
+
+/* ── v4.0 — TABULAR FIGURES ────────────────────────────────────────────────
+   Without tabular-nums a 1 is narrower than an 8, so a value jitters sideways
+   as it changes and a column of them will not line up on the decimal point.
+   These classes all render money or percentages and were missing it. */
+.hm-d,.ins-c-val,.ins-leak-v,.ins-mt-r,.ins-mt-sp,.ins-card-s,.rp-pos,.lastmv,.delta{
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+/* ── v4.0 — SOLID RED PILLS IN DARK MODE ───────────────────────────────────
+   #fff on --red (#ff5d6c) measures 2.99:1 — under the 4.5 floor at 9-12px.
+   Light mode already forces #fff onto its darker red; dark mode needs the
+   opposite, and the app already picked this near-black for .rag.r. */
+body:not(.light) [style*="background:var(--red);"]{color:#20060a!important}
+.ins-act-tag[style*="background:var(--red)"]{color:#20060a}
+
 </style>
 </head>
 <body>
 
+<!-- ════════ v3.8 — THE LOGIN GATE ════════
+     Two states, one door. A machine that has never been connected needs the
+     project URL and key; a connected machine needs an email and password.
+     Both used to live on the Settings page, which you cannot reach when the
+     app is gated — so they moved here. -->
+<div class="gate" id="auth-gate">
+  <div class="gate-box" id="gate-box">
+    <div class="gate-mark">B</div>
+    <div class="gate-t">BDL&nbsp;Hub</div>
+    <div class="gate-s" id="gate-sub">Sign in to continue</div>
+
+    <!-- ── STATE B: connected, needs a login ── -->
+    <div id="gate-signin">
+      <div class="gate-lab"><span>Email</span></div>
+      <input class="input gate-f" id="gate-email" type="email" placeholder="you@example.com"
+             autocomplete="username" spellcheck="false" onkeydown="gateKey(event)">
+      <div class="gate-lab"><span>Password</span><span class="lk" id="gate-pw-tog" onclick="gatePwToggle()">Show</span></div>
+      <input class="input gate-f" id="gate-pw" type="password" placeholder="••••••••"
+             autocomplete="current-password" onkeydown="gateKey(event)">
+      <button class="btn gate-go" id="gate-btn" onclick="gateSignIn()">Sign in</button>
+      <div class="gate-msg" id="gate-msg"></div>
+      <div class="gate-foot">
+        Passwords live in Supabase, not in this app — nobody here can see one or set one.
+        Locked out? The account owner can reset it from the Supabase dashboard.
+      </div>
+      <div class="gate-alt">Wrong database? <span onclick="gateMode('connect')">Change the connection</span></div>
+    </div>
+
+    <!-- ── STATE A: this browser has never been connected ── -->
+    <div id="gate-connect" style="display:none">
+      <div class="gate-lab"><span>Project URL</span></div>
+      <input class="input gate-f mono" id="gate-url" placeholder="https://xxxx.supabase.co"
+             spellcheck="false" onkeydown="gateKey(event)">
+      <div class="gate-lab"><span>Anon / public key</span><span class="lk" id="gate-key-tog" onclick="gateKeyToggle()">Show</span></div>
+      <input class="input gate-f mono" id="gate-key" type="password" placeholder="eyJh…"
+             spellcheck="false" onkeydown="gateKey(event)">
+      <button class="btn gate-go" id="gate-conn-btn" onclick="gateConnect()">Connect this browser</button>
+      <div class="gate-msg" id="gate-conn-msg"></div>
+      <div class="gate-foot">
+        Find both in Supabase under <b>Settings → API</b>. You do this once per machine —
+        after that it is only ever email and password. Kept in this browser, never in the file.
+      </div>
+      <div class="gate-alt" id="gate-back" style="display:none">
+        <span onclick="gateMode('signin')">← Back to sign in</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v3.5</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v4.0</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -2511,6 +2752,7 @@ body.light .dirb.up.on{background:#0a8259}
     Search <span class="kbd">⌘K</span>
   </button>
   <div class="sync hide-sm" id="sync-indicator"><span class="dot" id="sync-dot"></span> <span id="sync-label">CONNECTING…</span></div>
+  <button class="acct hide-sm" id="who-btn" onclick="authLogout()" style="display:none;width:auto;padding:0 11px;font-size:11px;font-weight:700;gap:6px"></button>
   <button class="acct" id="theme-toggle" title="Switch theme" onclick="toggleTheme()" style="width:auto;padding:0 12px;font-size:11px;font-weight:700;gap:5px">Light Mode</button>
 </div>
 
@@ -2706,7 +2948,7 @@ body.light .dirb.up.on{background:#0a8259}
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <select class="sel" id="dash-period-sel" onchange="renderDashPeriod()" style="min-width:190px"><option value="latest">Latest snapshot</option></select>
       <select class="sel" id="dash-compare-sel" onchange="renderDashPeriod()" style="min-width:160px"><option value="none">No comparison</option></select>
-      <button class="btn ghost" onclick="openDigest()" title="Monthly account check — leaks first, copyable for the team">${ico('board')}Ads check</button>
+      <button class="btn ghost" onclick="openDigest()" title="Monthly account check — leaks first, copyable for the team"><svg class="ic" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="2.4" width="9.6" height="11.2" rx="1.6"/><path d="M5.8 5.6h4.4"/><path d="M5.8 8.2h4.4"/><path d="M5.8 10.8h2.6"/></svg>Ads check</button>
       <span id="dash-period-coverage" style="font-size:11px;color:var(--text3)"></span>
     </div>
   </div>
@@ -2974,6 +3216,11 @@ body.light .dirb.up.on{background:#0a8259}
     <div class="card pad">
       <div class="sh" style="margin:0 0 12px"><div class="tt" style="font-size:13px">☁ Supabase connection</div></div>
       <div style="display:grid;gap:9px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:12px;line-height:18px;color:var(--text3)" id="cfg-who">Not signed in</div>
+          <div class="sp"></div>
+          <button class="btn ghost" onclick="authLogout()" style="font-size:11px;padding:6px 11px">Sign out</button>
+        </div>
         <div><div class="label" style="margin-bottom:4px">Project URL</div>
           <input class="input" id="cfg-url" style="width:100%;font-family:var(--mono);font-size:11px" placeholder="https://xxxx.supabase.co" oninput="settingsDirty()"></div>
         <div><div class="label" style="margin-bottom:4px">Anon / public key</div>
@@ -2988,6 +3235,7 @@ body.light .dirb.up.on{background:#0a8259}
           Enter them once per machine. "Reset local data" does not clear them.</div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <button class="btn" onclick="saveSupabaseConfig()">Save &amp; reconnect</button>
+          <button class="btn ghost" onclick="connMakeLink()" title="One link that connects another laptop — no typing the key out">⚭ Setup link for another laptop</button>
           <button class="btn ghost" onclick="testSupabaseConnection()">Test connection</button>
           <button class="btn ghost" onclick="checkAndMigrateSchema()" title="Check if targeting_json / ad_groups_json columns exist and show SQL to add them if not">🔧 Check schema</button>
           <span id="cfg-status" style="font-size:11px;color:var(--text2)"></span>
@@ -3489,8 +3737,383 @@ function connWrite(patch){
     return true;
   }catch(e){console.warn('connection not saved',e);return false;}
 }
+/* ── v3.7 — SETUP LINKS ─────────────────────────────────────────────
+   Typing a 208-character key on every laptop is the kind of chore that gets done
+   wrong once and then avoided. Instead the connection can travel as a link:
+
+       …/index.html#connect=<base64 of {u,k,pu,pk}>
+
+   Open it once on a machine and that machine is connected for good. The hash is
+   read, stored, and IMMEDIATELY stripped from the address bar, so it does not sit
+   in the URL to be screenshotted, shoulder-read or pasted on somewhere.
+
+   Be clear-eyed about what this is: the link CONTAINS the key. It is a private
+   thing to send to a person, not something to put in a repo, a doc or a ticket.
+   The gain over typing it by hand is that the key never has to be handled loose
+   at all — and a hash fragment is never sent to any web server, so it does not
+   land in server logs the way a query string would. */
+function connFromHash(){
+  const h=String(location.hash||'');
+  const m=/[#&]connect=([A-Za-z0-9+/=_\-]+)/.exec(h);
+  if(!m)return null;
+  let o=null;
+  try{o=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));}
+  catch(e){try{o=JSON.parse(atob(m[1]));}catch(e2){o=null;}}
+  /* Refuse anything that is not plainly a Supabase URL + JWT rather than storing
+     junk that then fails confusingly on every later load. */
+  const okUrl=v=>/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(String(v||'').trim());
+  const okKey=v=>/^eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+$/.test(String(v||'').trim());
+  if(!o||!okUrl(o.u)||!okKey(o.k))return null;
+  const out={url:String(o.u).trim().replace(/\/$/,''),key:String(o.k).trim()};
+  if(okUrl(o.pu)&&okKey(o.pk)){out.prepUrl=String(o.pu).trim().replace(/\/$/,'');out.prepKey=String(o.pk).trim();}
+  return out;
+}
+(function ingestSetupLink(){
+  const c=connFromHash();
+  if(!c)return;
+  connWrite(c);
+  window._connCameFromLink=true;
+  /* strip it from the address bar before anything can render it */
+  try{history.replaceState(null,'',location.pathname+location.search);}
+  catch(e){location.hash='';}
+})();
 let SUPABASE_URL=(connRead().url||'').trim();
 let SUPABASE_KEY=(connRead().key||'').trim();
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v3.8 — LOGIN
+
+   Supabase Auth, spoken over plain REST. No SDK, no CDN script tag: this file
+   has to keep working as one self-contained document that opens from disk.
+
+   Three endpoints do everything:
+     POST /auth/v1/token?grant_type=password        email + password -> tokens
+     POST /auth/v1/token?grant_type=refresh_token   stale token      -> fresh one
+     POST /auth/v1/logout                           end the session server-side
+
+   Every one of them still needs the `apikey` header. That is the whole reason
+   this is worth doing: a Supabase request needs the anon key AND a user token,
+   so once row-level security is switched on, the anon key alone opens nothing
+   and can go back into the file. The login does not just add a door — it makes
+   the key in the repo a non-event.
+
+   WHERE WE ARE RIGHT NOW: RLS is still OFF. Until it is on, this gate is a
+   *user interface* boundary, not a security one — anyone holding the anon key
+   could still talk to the database directly with curl. That is deliberate and
+   it is step 1 of 4: get both people signing in on every laptop first, prove
+   it works, and only then turn RLS on. Doing it the other way round is how you
+   lock yourself out of your own data.
+
+   The session lives in localStorage. That is the same deliberate exception as
+   the connection above: the "Supabase only, never localStorage" rule exists so
+   app DATA has one home. A session token is not data — it is the thing that
+   lets you reach the data — and the alternative is signing in on every reload.
+   ══════════════════════════════════════════════════════════════════════════ */
+const BDL_SESS_KEY='bdlhub_session';
+let AUTH={access:'',refresh:'',exp:0,email:'',uid:''};
+/* Closed until authBoot says otherwise. Without this it starts `undefined`,
+   and the visibilitychange auto-refresh — which only skips when _gateOpen is
+   truthy — would happily pull the whole dataset in behind the login if you
+   switched tabs during boot. */
+window._gateOpen=true;
+
+function authLoad(){
+  try{
+    const s=JSON.parse(localStorage.getItem(BDL_SESS_KEY)||'{}')||{};
+    AUTH={access:s.access||'',refresh:s.refresh||'',exp:+s.exp||0,email:s.email||'',uid:s.uid||''};
+  }catch(e){AUTH={access:'',refresh:'',exp:0,email:'',uid:''};}
+  return AUTH;
+}
+function authStore(){
+  try{localStorage.setItem(BDL_SESS_KEY,JSON.stringify(AUTH));}
+  catch(e){console.warn('session not saved — private window?',e);}
+}
+function authForget(){
+  AUTH={access:'',refresh:'',exp:0,email:'',uid:''};
+  try{localStorage.removeItem(BDL_SESS_KEY);}catch(e){}
+  try{authPaintWho();}catch(e){}
+}
+/* Signed in at all (may still need a refresh) */
+function authIn(){return !!(AUTH.access&&AUTH.refresh);}
+/* Token good for at least another 90s — refresh before it bites, not after */
+function authFresh(){return !!AUTH.access&&AUTH.exp>(Date.now()/1000)+90;}
+
+function _authTake(j){
+  AUTH.access=j.access_token||'';
+  AUTH.refresh=j.refresh_token||AUTH.refresh;
+  AUTH.exp=+j.expires_at||(Math.floor(Date.now()/1000)+(+j.expires_in||3600));
+  if(j.user){AUTH.email=j.user.email||AUTH.email;AUTH.uid=j.user.id||AUTH.uid;}
+  authStore();
+  try{authPaintWho();}catch(e){}
+}
+
+/* Single-flight. Supabase ROTATES the refresh token on every use, so two
+   concurrent refreshes race: the second presents a token the first already
+   spent, gets a 400, and throws you out mid-session for no reason.
+   loadFromSupabase fires several requests at once, so this is not theoretical. */
+let _authRefreshing=null;
+function authRefresh(){
+  if(_authRefreshing)return _authRefreshing;
+  _authRefreshing=(async()=>{
+    if(!AUTH.refresh||!SUPABASE_URL||!SUPABASE_KEY)return false;
+    const res=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:AUTH.refresh})});
+    if(!res.ok){
+      /* 400/401 = the token is spent or revoked; the session is genuinely over.
+         Anything else (500, a flaky connection) is NOT the user's fault — keep
+         the tokens and let the next call try again rather than signing them
+         out because the wifi dropped for a second. */
+      if(res.status===400||res.status===401){authForget();return false;}
+      console.warn('token refresh failed, keeping session',res.status);
+      return false;
+    }
+    const j=await res.json().catch(()=>null);
+    if(!j||!j.access_token){authForget();return false;}
+    _authTake(j);
+    return true;
+  })().catch(e=>{console.warn('token refresh',e);return false;})
+     .finally(()=>{_authRefreshing=null;});
+  return _authRefreshing;
+}
+
+/* The bearer token for a REST call, refreshed if needed.
+   Returns '' when there is no usable session. */
+async function authToken(){
+  if(!authIn())return '';
+  if(authFresh())return AUTH.access;
+  const had=AUTH.refresh;
+  await authRefresh();
+  if(!authIn()&&had){
+    /* The session ended under us. Say so rather than letting every request
+       quietly fail with a 401 the user never sees. */
+    try{gateShow('signin','Your session ended. Sign in again to carry on — nothing was lost.');}catch(e){}
+    return '';
+  }
+  return AUTH.access||'';
+}
+
+/* ⚠ THE ONE LINE THAT CHANGES AT STEP 3.
+   While RLS is off, falling back to the anon key keeps every existing request
+   working exactly as it did in v3.7 — that is what makes this version safe to
+   ship on its own. The moment RLS goes on, delete the `||SUPABASE_KEY` and an
+   unauthenticated request fails loudly instead of pretending to work. */
+async function authBearer(){
+  const t=await authToken();
+  return t||SUPABASE_KEY;
+}
+
+async function authLogin(email,pw){
+  if(!SUPABASE_URL||!SUPABASE_KEY)throw new Error('This browser is not connected to the database yet.');
+  const res=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=password',{
+    method:'POST',
+    headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({email:String(email||'').trim(),password:String(pw||'')})});
+  const j=await res.json().catch(()=>null);
+  if(!res.ok||!j||!j.access_token){
+    const raw=(j&&(j.error_description||j.msg||j.message||j.error))||'';
+    /* Supabase's own wording is terse and occasionally cryptic. Translate the
+       two that actually happen, and pass anything else through untouched
+       rather than swallowing a real error behind a friendly guess. */
+    let msg=raw||('Sign-in failed (HTTP '+res.status+')');
+    if(/invalid login credentials/i.test(raw))msg='That email and password do not match an account.';
+    else if(/email not confirmed/i.test(raw))msg='That account has not been confirmed yet. Confirm it in Supabase → Authentication → Users.';
+    else if(res.status===404||/not found/i.test(raw))msg='This project has no auth service reachable at that URL — check the Project URL.';
+    throw new Error(msg);
+  }
+  _authTake(j);
+  return true;
+}
+
+async function authLogout(){
+  const ok=await bdlConfirmAsync({
+    title:'Sign out?',tone:'warn',confirmLabel:'Sign out',
+    headline:'You will need your password to get back in',
+    detail:'Nothing is deleted and nothing stops syncing — the data stays in Supabase exactly as it is. '
+          +'This browser stays connected to the project, so signing back in is just email and password.',
+    saves:'Nothing is saved or changed.',recover:false});
+  if(!ok)return;
+  try{
+    if(SUPABASE_URL&&AUTH.access)await fetch(SUPABASE_URL+'/auth/v1/logout',{
+      method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+AUTH.access}});
+  }catch(e){/* ending the session locally matters more than telling the server */}
+  authForget();
+  location.reload();
+}
+
+/* Who is signed in — topbar chip and the Settings row */
+function authPaintWho(){
+  const b=document.getElementById('who-btn');
+  if(b){
+    if(AUTH.email){
+      /* Trimmed in JS rather than with an ellipsis in CSS: .acct is a centring
+         grid, and text-overflow does not apply to an anonymous grid item. The
+         full address is on the tooltip either way. */
+      let who=AUTH.email.split('@')[0];
+      if(who.length>15)who=who.slice(0,14)+'…';
+      b.style.display='';
+      b.textContent=who;
+      b.title='Signed in as '+AUTH.email+' — click to sign out';
+    }else b.style.display='none';
+  }
+  const s=document.getElementById('cfg-who');
+  if(s){
+    /* Built with textContent, not innerHTML + _esc. This runs during boot, and
+       _esc is a `const` declared thousands of lines further down — reaching for
+       it here throws a ReferenceError before the app has drawn anything. */
+    s.textContent='';
+    if(AUTH.email){
+      s.appendChild(document.createTextNode('Signed in as '));
+      const b=document.createElement('b');
+      b.style.color='var(--green)';
+      b.textContent=AUTH.email;
+      s.appendChild(b);
+    }else{
+      const w=document.createElement('span');
+      w.style.color='var(--amber)';
+      w.textContent='Not signed in';
+      s.appendChild(w);
+    }
+  }
+}
+
+/* Keep the token from ever going stale while the tab sits open all day.
+   Cheap: one request an hour, and only when there is a session to keep. */
+setInterval(()=>{try{if(authIn()&&!authFresh())authRefresh();}catch(e){}},10*60*1000);
+
+/* ── THE GATE ── */
+function gateMode(mode){
+  const si=document.getElementById('gate-signin');
+  const cn=document.getElementById('gate-connect');
+  const sub=document.getElementById('gate-sub');
+  const back=document.getElementById('gate-back');
+  const connected=!!(SUPABASE_URL&&SUPABASE_KEY);
+  /* Never leave a revealed password or key on screen when the panel changes */
+  ['gate-pw','gate-key'].forEach(id=>{const el=document.getElementById(id);if(el)el.type='password';});
+  ['gate-pw-tog','gate-key-tog'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='Show';});
+  if(mode==='connect'){
+    si.style.display='none';cn.style.display='';
+    sub.textContent=connected?'Point this browser at a different project':'Connect this browser to your database';
+    if(back)back.style.display=connected?'':'none';
+    document.getElementById('gate-url').value=SUPABASE_URL||'';
+    document.getElementById('gate-key').value=SUPABASE_KEY||'';
+    setTimeout(()=>{try{document.getElementById('gate-url').focus();}catch(e){}},60);
+  }else{
+    si.style.display='';cn.style.display='none';
+    sub.textContent='Sign in to continue';
+    setTimeout(()=>{try{
+      const em=document.getElementById('gate-email');
+      (em.value?document.getElementById('gate-pw'):em).focus();
+    }catch(e){}},60);
+  }
+}
+function gateShow(mode,msg,tone){
+  const g=document.getElementById('auth-gate');
+  if(!g)return;
+  window._gateOpen=true;
+  g.classList.add('open');
+  gateMode(mode||'signin');
+  if(msg){
+    const el=document.getElementById(mode==='connect'?'gate-conn-msg':'gate-msg');
+    if(el){el.textContent=msg;el.className='gate-msg '+(tone||'warn');}
+  }
+  try{removeBootSpinner();}catch(e){}
+}
+function gateHide(){
+  window._gateOpen=false;
+  const g=document.getElementById('auth-gate');
+  if(g)g.classList.remove('open');
+}
+function gateKey(e){
+  if(e.key!=='Enter')return;
+  e.preventDefault();
+  if(document.getElementById('gate-connect').style.display==='none')gateSignIn();
+  else gateConnect();
+}
+/* Reveal toggles. Worth having: a password typed blind from a manager, and a
+   208-character key pasted into a masked box you cannot eyeball, are the two
+   places people get stuck and cannot see why. */
+function _gateReveal(inputId,togId){
+  const i=document.getElementById(inputId),t=document.getElementById(togId);
+  if(!i||!t)return;
+  const show=i.type==='password';
+  i.type=show?'text':'password';
+  t.textContent=show?'Hide':'Show';
+  try{i.focus();}catch(e){}
+}
+function gatePwToggle(){_gateReveal('gate-pw','gate-pw-tog');}
+function gateKeyToggle(){_gateReveal('gate-key','gate-key-tog');}
+async function gateSignIn(){
+  const btn=document.getElementById('gate-btn');
+  const msg=document.getElementById('gate-msg');
+  const email=document.getElementById('gate-email').value;
+  const pw=document.getElementById('gate-pw').value;
+  if(!email||!pw){msg.textContent='Email and password, please.';msg.className='gate-msg err';return;}
+  btn.disabled=true;btn.textContent='Signing in…';
+  msg.textContent='';msg.className='gate-msg';
+  try{
+    await authLogin(email,pw);
+    document.getElementById('gate-pw').value='';
+    msg.textContent='';
+    gateHide();
+    showBootSpinner();
+    await startApp();
+  }catch(e){
+    msg.textContent=e.message||'Sign-in failed.';
+    msg.className='gate-msg err';
+    btn.disabled=false;btn.textContent='Sign in';
+    try{document.getElementById('gate-pw').select();}catch(_){}
+  }
+}
+async function gateConnect(){
+  const btn=document.getElementById('gate-conn-btn');
+  const msg=document.getElementById('gate-conn-msg');
+  const url=document.getElementById('gate-url').value.trim().replace(/\/$/,'');
+  const key=document.getElementById('gate-key').value.trim();
+  if(!url||!key){msg.textContent='Both the URL and the key, please.';msg.className='gate-msg err';return;}
+  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)){
+    msg.textContent='That does not look like a project URL. It should read https://something.supabase.co';
+    msg.className='gate-msg err';return;
+  }
+  if(!/^eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+$/.test(key)){
+    msg.textContent='That does not look like an anon key — they start with eyJ and have two dots in them.';
+    msg.className='gate-msg err';return;
+  }
+  btn.disabled=true;btn.textContent='Checking…';
+  msg.textContent='';msg.className='gate-msg';
+  try{
+    /* Prove the pair works before storing it, so a typo fails here and now
+       rather than looking connected and failing on every later request. */
+    const r=await fetch(url+'/auth/v1/settings',{headers:{'apikey':key}});
+    if(!r.ok)throw new Error('The project rejected that key (HTTP '+r.status+').');
+    SUPABASE_URL=url;SUPABASE_KEY=key;
+    connWrite({url,key});
+    const u=document.getElementById('cfg-url'),k=document.getElementById('cfg-key');
+    if(u)u.value=url; if(k)k.value=key;
+    msg.textContent='Connected. Now sign in.';msg.className='gate-msg ok';
+    btn.disabled=false;btn.textContent='Connect this browser';
+    setTimeout(()=>gateMode('signin'),450);
+  }catch(e){
+    msg.textContent=e.message||'Could not reach that project.';
+    msg.className='gate-msg err';
+    btn.disabled=false;btn.textContent='Connect this browser';
+  }
+}
+
+/* Decide what the first screen is. Returns true only when the app may load. */
+async function authBoot(){
+  authLoad();
+  if(!SUPABASE_URL||!SUPABASE_KEY){gateShow('connect');return false;}
+  if(!authIn()){gateShow('signin');return false;}
+  if(!authFresh()){
+    await authRefresh();
+    if(!authIn()){gateShow('signin','Your session expired. Sign in again — nothing was lost.');return false;}
+  }
+  gateHide();
+  authPaintWho();
+  return true;
+}
 
 /* ════════ LOCAL PERSISTENCE OVERLAY — keeps edits, deletes & dismissals after a refresh ════════ */
 let _dashDirty=true, _dashRenderedOnce=false;
@@ -3727,7 +4350,7 @@ function installGlobalUX(){
     }
   });
   document.addEventListener('visibilitychange',function(){
-    if(document.visibilityState==='visible'&&SUPABASE_URL&&SUPABASE_KEY&&!window._loadInFlight&&Date.now()-_lastSync>20000){
+    if(document.visibilityState==='visible'&&SUPABASE_URL&&SUPABASE_KEY&&!window._gateOpen&&!window._loadInFlight&&Date.now()-_lastSync>20000){
       /* Never auto-refresh while the user is part-way through entering a snapshot or
          change — re-pointing the data underneath them risks wiping unsaved work. */
       if(popoutHasUnsavedInput()){return;}
@@ -3772,7 +4395,7 @@ async function loadFromSupabase(){
   window._loadInFlight=true;
   setSyncStatus('syncing');
   try{
-    const headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
+    const headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(await authBearer()),'Content-Type':'application/json'};
     /* Force fresh reads. Without this, an immediate reload right after saving a
        snapshot can be served a cached snapshot list that does not yet include the
        row we just wrote — which is exactly why the Campaigns page used to need a
@@ -3785,6 +4408,16 @@ async function loadFromSupabase(){
        is left empty. */
     const _cb='';
     const campRes=await fetch(SUPABASE_URL+'/rest/v1/campaigns?select=*&order=id'+_cb,{headers,..._noCache});
+    /* v3.8 — 401/403 while signed in has exactly one likely cause and it is worth
+       naming: the `authenticated` role has no grant on the table, so logging in
+       made things WORSE than being anonymous. Without this, the app draws an empty
+       campaigns list and looks like the data has gone. It has not. */
+    if(campRes.status===401||campRes.status===403){
+      window._authDenied=true;
+      throw new Error(authIn()
+        ? 'Signed in, but the database refused the read (HTTP '+campRes.status+'). Nothing is lost — the logged-in role is missing permission on the campaigns table. See "grants" in the setup SQL.'
+        : 'The database refused the read (HTTP '+campRes.status+'). Check the anon key in Settings.');
+    }
     if(!campRes.ok)throw new Error('campaigns fetch failed ('+campRes.status+')');
     const campData=await campRes.json();
     const snapRes=await fetch(SUPABASE_URL+'/rest/v1/snapshots?select=*&order=campaign_id,period'+_cb,{headers,..._noCache});
@@ -3898,6 +4531,10 @@ async function loadFromSupabase(){
     }
     _lastSync=Date.now();
     setSyncStatus('synced');
+    if(window._connCameFromLink){
+      window._connCameFromLink=false;
+      try{toast('Connected — this laptop will remember, no need for the link again','ok');}catch(e){}
+    }
   }catch(e){
     console.error('Supabase error:',e);
     removeBootSpinner();
@@ -3926,9 +4563,18 @@ function showNoSupabaseState(){
 
 function showSupabaseError(msg){
   const banner=document.createElement('div');
-  banner.style.cssText='position:fixed;bottom:20px;right:20px;background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:10px;font-size:12px;z-index:999;max-width:440px';
+  banner.style.cssText='position:fixed;bottom:20px;right:20px;background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:10px;font-size:12px;line-height:18px;z-index:999;max-width:440px';
   banner.innerHTML='<b>Supabase error</b><br>'+msg+'<br><span style="font-size:11px;opacity:.7">Check Settings → Supabase connection</span>';
-  document.body.appendChild(banner);setTimeout(()=>banner.remove(),8000);
+  document.body.appendChild(banner);
+  /* A permissions refusal must NOT time out. Everything else is transient and a
+     brief banner is right; this one needs to still be on screen when he comes
+     back to the laptop, because the page behind it looks like an empty database. */
+  if(window._authDenied){
+    banner.innerHTML='<b>Signed in, but not allowed to read</b><br>'+msg
+      +'<br><span style="font-size:11px;opacity:.7">Nothing has been deleted. Click to dismiss.</span>';
+    banner.style.cursor='pointer';
+    banner.onclick=()=>banner.remove();
+  }else setTimeout(()=>banner.remove(),8000);
   showNoSupabaseState();
 }
 
@@ -4630,8 +5276,11 @@ async function deleteCampaign(campId){
 function closePop(){document.getElementById('camp-overlay').classList.remove('open');document.body.style.overflow='';}
 
 /* ════════ SUPABASE WRITE HELPERS ════════ */
+/* v3.8 — every write in the app funnels through here, which is why this was
+   already async: the token can need refreshing before the request goes out. */
 async function sbHeaders(){
-  return{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  const tok=await authBearer();
+  return{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+tok,'Content-Type':'application/json','Prefer':'return=representation'};
 }
 async function sbInsert(table,row){
   _dashDirty=true;
@@ -9878,6 +10527,34 @@ function getPriceHistory(asin){return priceHistory[asin]||[];}
 
 function settingsDirty(){document.getElementById('cfg-status').textContent='Unsaved changes';}
 
+/* Build the link that sets another machine up. Deliberately NOT auto-copied on a
+   single click without saying what it is — this puts a live database key on the
+   clipboard, and he should know that before it lands in whatever he pastes next. */
+async function connMakeLink(){
+  if(!SUPABASE_URL||!SUPABASE_KEY){toast('Connect this laptop first, then you can pass it on','warn');return;}
+  const payload={u:SUPABASE_URL,k:SUPABASE_KEY};
+  if(PREP_SB.url&&PREP_SB.key){payload.pu=PREP_SB.url;payload.pk=PREP_SB.key;}
+  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+    .replace(/\+/g,'-').replace(/\//g,'_');
+  const base=location.origin&&location.origin!=='null'
+    ? location.origin+location.pathname
+    : 'PUT-THE-APP-URL-HERE';
+  const link=base+'#connect='+b64;
+  const ok=await bdlConfirmAsync({
+    title:'Copy a setup link?',tone:'warn',confirmLabel:'Copy it',
+    headline:'This link contains your database key',
+    detail:`It connects a machine to the project — it does <b>not</b> sign anyone in. Whoever opens it
+      still needs their own email and password to get past the login.<br><br>
+      Even so, treat the key as private: <b>send it directly to a person</b> — a message to your employee,
+      or to yourself for another laptop. Do not put it in the repo, a shared doc, a ticket or a screenshot.<br><br>
+      They open it once, that machine remembers, and the link is wiped from the address bar automatically.
+      ${base==='PUT-THE-APP-URL-HERE'?'<br><br><b style="color:var(--amber)">You are on a local file, so the link has a placeholder where the address should be — replace PUT-THE-APP-URL-HERE with the app\'s real URL before sending.</b>':''}`,
+    saves:'Nothing is saved or sent — this only copies to your clipboard.',recover:false});
+  if(!ok)return;
+  try{await navigator.clipboard.writeText(link);toast('Setup link copied — send it privately','ok');}
+  catch(e){bdlAlert({title:'Copy it by hand',headline:'Your browser blocked the clipboard',
+    detail:'<textarea readonly style="width:100%;min-height:90px;font-family:var(--mono);font-size:10px">'+_esc(link)+'</textarea>'});}
+}
 function saveSupabaseConfig(){
   const url=document.getElementById('cfg-url').value.trim();
   const key=document.getElementById('cfg-key').value.trim();
@@ -9910,7 +10587,10 @@ async function checkAndMigrateSchema(){
   infoEl.style.display='block';
   infoEl.innerHTML='<span style="color:var(--text3)">Checking schema…</span>';
   try{
-    const hds={'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json'};
+    /* v3.8 — send the signed-in user's token when this is the project we are
+       actually connected to. Testing a DIFFERENT key still goes out as anon,
+       because our session means nothing to another project. */
+    const hds={'apikey':key,'Authorization':'Bearer '+(key===SUPABASE_KEY?await authBearer():key),'Content-Type':'application/json'};
     /* Fetch one snapshot row to inspect columns */
     const res=await fetch(url+'/rest/v1/snapshots?select=*&limit=1',{headers:hds});
     if(!res.ok){infoEl.innerHTML='<span style="color:var(--red)">Could not read snapshots table ('+res.status+'). Is Supabase connected?</span>';return;}
@@ -9951,12 +10631,13 @@ async function checkAndMigrateSchema(){
   }
 }
 
-function testSupabaseConnection(){
+async function testSupabaseConnection(){
   const url=document.getElementById('cfg-url').value.trim()||SUPABASE_URL;
   const key=document.getElementById('cfg-key').value.trim()||SUPABASE_KEY;
   if(!url||!key){document.getElementById('cfg-status').textContent='Enter URL and key first';return;}
   document.getElementById('cfg-status').textContent='Testing…';
-  fetch(url+'/rest/v1/campaigns?select=id&limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}})
+  const tok=(key===SUPABASE_KEY)?await authBearer():key;
+  fetch(url+'/rest/v1/campaigns?select=id&limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+tok}})
     .then(r=>{document.getElementById('cfg-status').textContent=r.ok?'Connected ✓ ('+r.status+')':'Error '+r.status;})
     .catch(e=>{document.getElementById('cfg-status').textContent='Failed: '+e.message;});
 }
@@ -10674,7 +11355,7 @@ function renderDashWastingMoney(){
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:700;color:var(--red);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
         <div style="font-size:11px;color:var(--text2);margin-top:1px">${gbp(c.spend)} burned · 0 sales · ${intf(c.impressions||0)} impressions</div>
-        <div style="font-size:11px;color:#8892a8;font-style:italic;margin-top:1px">Pause immediately or add negative keywords</div>
+        <div style="font-size:11px;color:var(--text4);font-style:italic;margin-top:1px">Pause immediately or add negative keywords</div>
       </div>
       <span style="font-size:13px;font-weight:800;color:var(--red);flex-shrink:0">${gbp(c.spend)}</span>
     </div>`).join('')}`:''}
@@ -10696,7 +11377,7 @@ function renderDashWastingMoney(){
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.alias||c.name}</div>
         <div style="font-size:11px;color:var(--text2)">${gbp(c.spend)} spend · ${gbp(c.sales)} sales · ${intf(c.purchases||0)} orders</div>
-        <div style="font-size:11px;color:#8892a8;font-style:italic">Reduce bids or tighten match types</div>
+        <div style="font-size:11px;color:var(--text4);font-style:italic">Reduce bids or tighten match types</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div style="font-size:13px;font-weight:800;color:var(--amber)">${fmt(c.acos,1)}%</div>
@@ -11201,13 +11882,26 @@ async function saveGlobalChange(){
   }
 }
 
-/* boot */
+/* boot
+   v3.8 — the load now sits behind the gate. Everything below this line is the
+   same code that used to run straight away; the only change is that it waits
+   until there is somebody signed in to run it for. */
 showBootSpinner();
 installGlobalUX();
 _loadTheme();
 _loadAppSettings();
 loadMatchColours();
-loadFromSupabase().then(()=>{
+authBoot().then(ok=>{ if(ok)return startApp(); }).catch(e=>{
+  /* A gate that fails to render is a black screen with no way out. Fall back
+     to asking for a sign-in rather than leaving nothing on screen at all. */
+  console.error('boot',e);
+  try{gateShow('signin','Something went wrong starting up: '+(e.message||e));}catch(_){removeBootSpinner();}
+});
+
+function startApp(){
+  if(window._appStarted)return Promise.resolve();
+  window._appStarted=true;
+  return loadFromSupabase().then(()=>{
   /* after data loads, render whichever page is active (Home is the landing page) */
   if(document.getElementById('page-home')?.classList.contains('active'))renderHome();
   sbLoadReport();
@@ -11232,7 +11926,8 @@ loadFromSupabase().then(()=>{
     document.body.appendChild(b);
     setTimeout(()=>b?.remove(),12000);
   }
-});
+  });
+}
 
 
 function showSnapParsed(){
