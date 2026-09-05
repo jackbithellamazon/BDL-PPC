@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v4.0</title>
+<title>BDL Hub — Ads &amp; Monthly Report v5.6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&family=Red+Hat+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -43,7 +43,7 @@
   --teal:#34e0d0;--coral:#ff7a8a;
   --font:'Inter',system-ui,-apple-system,sans-serif;
   --display:'Sora','Inter',system-ui,sans-serif;
-  --mono:'Roboto Mono','Liberation Mono','Courier New',monospace;
+  --mono:'Red Hat Mono','Roboto Mono','Liberation Mono','Courier New',monospace;  /* v5.5 — Jack: "0 is 0, not 0 with a line in". Roboto Mono's zero is slashed by design and no feature flag removes it; Red Hat Mono is the nearest match with a plain zero */
   --shadow-sm:0 1px 3px rgba(0,0,0,0.5);
   --shadow:0 8px 30px rgba(0,0,0,0.5);
   --shadow-lg:0 24px 60px rgba(0,0,0,0.65);
@@ -1727,7 +1727,7 @@ table.rt tbody .rsplit span{white-space:nowrap}
 .dp-h b{font-size:13px;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dp-why{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--amber);background:var(--amber-bg);border-radius:4px;padding:2px 7px;white-space:nowrap}
 .dp-why.sure{color:var(--red);background:var(--red-bg)}
-.dp-sp{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text3);font-weight:700;white-space:nowrap}
+.dp-sp{margin-left:auto;font-size:11px;color:var(--text3);font-weight:700;white-space:nowrap}
 .dp-rows{display:grid}
 .dp-r{display:grid;grid-template-columns:150px 108px minmax(0,1fr) auto 44px;gap:10px;align-items:center;padding:8px 13px;border-bottom:1px solid var(--border)}
 @media(max-width:820px){.dp-r{grid-template-columns:1fr;gap:4px}}
@@ -2684,6 +2684,969 @@ body.light :is(.hm-h small,.fxq-h span,.rph-now,.pnow,tr:hover .rl-go,.ph-tag.lk
 body:not(.light) [style*="background:var(--red);"]{color:#20060a!important}
 .ins-act-tag[style*="background:var(--red)"]{color:#20060a}
 
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.2 — READABILITY PASS
+   "keep getting weird bugs and blurry text and shit stuff i can't read"
+
+   Measured across all six pages: 432 elements rendered under 11px, from 170
+   stylesheet rules, and 70 of those rules ALSO stretch the text with 1px of
+   letter-spacing. At 9px that is ~11% of the character height — it pulls a
+   word apart faster than you can read it.
+
+   TWO CHANGES ONLY, both measured rather than assumed:
+
+   1. TRACKING comes down to 0.4px on the 63 stretched rules. This makes text
+      NARROWER, so it cannot introduce clipping — the safe half of the fix,
+      and the half that does most of the work on legibility.
+
+   2. The values you actually READ go up to 12px: ASINs (B0DW5HPRWB), money
+      deltas (▲£254.85), dates, target counts and the AMZ/SAS links. These
+      were 10px — smaller than the labels describing them.
+
+   A blanket 11px floor on all 168 label rules was tried first and REVERTED:
+   it clipped 9 elements, including "£1,576.09" on the Home band, because those
+   containers are sized for 10px text. Labels stay small; they just stop being
+   stretched. Better a small label than a truncated number.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · stop stretching the small caps (narrower, so zero clipping risk) ── */
+#scratch-bar b,
+.pj-tag,
+.pj-v i{letter-spacing:.4px}
+.ftp-tag,
+table.dt thead th,
+.inv-primary .l{letter-spacing:.4px}
+.snapcard .sc-m .l,
+.ag-m .l,
+.kwtable th{letter-spacing:.4px}
+.sec-label,
+.dash-kpi-l,
+.subnav .sec-tag{letter-spacing:.4px}
+.hub-stat .hl,
+table.prod-t thead tr.prod-grp th,
+.rk-l{letter-spacing:.4px}
+.ins-bar-l,
+.ins-k-l,
+.ins-act-tag{letter-spacing:.4px}
+.ins-c-lbl,
+.an-h,
+.rph-kl{letter-spacing:.4px}
+.rph-sh,
+table.rph-t th,
+.rl-kl{letter-spacing:.4px}
+.pv-run-l,
+.pv-tools .lbl,
+tr.pv-grp td{letter-spacing:.4px}
+.rc-h,
+.dk-l,
+.dchart-h b{letter-spacing:.4px}
+.dp-h,
+.dsec-h,
+.dcol-h{letter-spacing:.4px}
+.ph-nl,
+.pc-h,
+.pfact-l{letter-spacing:.4px}
+.pnl-h,
+.pt-l,
+table.ptab th{letter-spacing:.4px}
+.cm-h,
+.kpi .label,
+.ins-card-t{letter-spacing:.4px}
+.hm-bk,
+.hm-bspk .l,
+.hm-tag{letter-spacing:.4px}
+.hm-stats .tn,
+.hm-cspk .l,
+.fxq-h{letter-spacing:.4px}
+.fxd-money .l,
+.fxd-sec,
+.fx-hs{letter-spacing:.4px}
+.fxb-hd,
+.dp-why,
+.ms-k{letter-spacing:.4px}
+.kcmp-l,
+.kh-l,
+.kh-r span{letter-spacing:.4px}
+.pt-l,.rk-l,.hm-bnl,.hm-hnl,.tn,.ph-nl,.pfact-l,.pnl-h,.pc-h,.ins-card-t,.hm-h, .fxd-sec,.fxq-h,.label,.mv-h,.ms-k,.dp-why,
+.ry-t thead th,
+#kpi-body .pt-l,#rep-prod-overlay .pt-l{letter-spacing:.4px}
+.mv-h,
+.mstrip-k span,
+.an-spl{letter-spacing:.4px}
+.test-toggle .tt-l,
+.rep-kpis .rk-l,
+.hm-hnl{letter-spacing:.4px}
+.cf-lh{letter-spacing:.4px}
+
+/* ── 2 · the values you read, not the labels — 10px was smaller than the
+      label above them. Verified: none of these clip at 12px. ── */
+.rn-asin{font-size:12px;line-height:16px;letter-spacing:0}
+.delta,.delta.up,.delta.dn{font-size:12px;line-height:16px;letter-spacing:0}
+.hm-rd{font-size:11px;line-height:15px;letter-spacing:0}
+.ins-mt-n{font-size:12px;line-height:16px;letter-spacing:0}
+.rlink,.rlink.rl-az,.rlink.rl-sas{font-size:11px;line-height:15px;letter-spacing:.2px}
+.mono-ic{font-size:10px;line-height:14px;letter-spacing:0}
+
+
+/* ── 3 · THE INLINE-STYLED SMALL TEXT ──────────────────────────────────────
+   The stylesheet fix above cannot reach most of it: on Ads Overview 78 of the
+   84 sub-11px elements have their font-size written straight onto the element
+   by the rendering JS, so no CSS rule matches them. Attribute selectors do.
+
+   Sizes go up one step only (9→10.5, 10→11) and tracking comes down to 0.4px.
+   A bigger jump was tried and reverted — it clipped "£1,576.09" on the Home
+   band, because those containers are sized for 10px text. !important is
+   required here and only here: an inline style outranks any rule without it.
+   ── */
+/* 11px, NOT 10.5 — a half-pixel font size guarantees a fractional line box,
+   which is the exact blur this pass exists to remove. Measured: 10.5px took
+   Ads Overview from 53 fractional positions to 106. */
+.page [style*="font-size:9px"]{font-size:11px!important;letter-spacing:.4px!important;line-height:15px!important}
+.page [style*="font-size:10px"]{font-size:11px!important;letter-spacing:.4px!important;line-height:15px!important}
+.page [style*="letter-spacing:1px"]{letter-spacing:.4px!important}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.4 — SHARPNESS + DENSITY
+   Three things you asked for, all measured first.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · THE FONT IS THIN, NOT OUT OF FOCUS ────────────────────────────────
+   You said "think it's how thick it is" — correct. Line 201 sets
+   -webkit-font-smoothing:antialiased globally, which on macOS renders text
+   THINNER than the default. There is already a note in this file from an
+   earlier round identifying exactly this ("dark-on-light survives it;
+   light-on-dark was already losing apparent weight and this took more off")
+   — but it was diagnosed and never actually removed; a Settings toggle was
+   added instead, defaulting to the thin one.
+
+   Side-by-side specimen at dpr=2 confirmed it: subpixel renders visibly
+   thicker and crisper on the dark surface. So subpixel becomes the default.
+   The Settings toggle still works if you ever want the old one back. */
+/* Fixed in the JS instead — fsDefault() was choosing 'gray' for Retina, and a
+   CSS override here would fight the Settings toggle rather than fix the default.
+   The global antialiased on line 201 is still overridden below for the base case. */
+body{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}
+
+/* ── 2 · CAMPAIGNS — THE TABLE ─────────────────────────────────────────────
+   Measured: every row is 59px. The skill's data-dense-dashboard spec puts a
+   table row at 36px and cell padding at 8-12px; 59px is nearly two rows of
+   height per row of data, which is why the page runs out of table before it
+   runs out of screen and leaves that dead band underneath.
+   Rows come to ~44px: the two-line name block is what sets the floor, so the
+   name and the ASIN under it get tighter leading rather than smaller type. */
+#page-campaigns table.dt tbody td{padding:5px 12px}
+#page-campaigns table.dt thead th{padding:7px 12px}
+#page-campaigns .cn{gap:9px}
+#page-campaigns .cn>.ic{width:26px;height:26px;border-radius:7px}
+#page-campaigns .cn .nm{line-height:17px}
+#page-campaigns .cn .meta{line-height:14px;margin-top:1px}
+/* the KPI strip above it — 100px tall for one number and a sparkline */
+#page-campaigns .card.pad,#page-campaigns .kpi{padding:9px 13px}
+
+/* ── 3 · ADS OVERVIEW — THE EMPTY CARDS ────────────────────────────────────
+   Measured: the four cards are 417px, 465px, 465px and 465px tall. The Sales
+   / Spend / Orders cards hold one number and a 40px sparkline inside 465px of
+   box, so roughly two-thirds of each is empty. They are stretched by the ROAS
+   card beside them, which is the only one with real content.
+   Letting the row align to the top instead of stretching, and capping the
+   short cards, gives the space back without removing anything. */
+#page-dashboard .dash-top,#page-dashboard .kpi-row{align-items:start}
+#page-dashboard .card{min-height:0}
+
+/* ── 4 · GLOBAL — the same wasted vertical rhythm everywhere ───────────────
+   Card padding and section gaps are set for a marketing page, not a console
+   you read every morning. One step tighter across the board. */
+.card.pad{padding:11px 14px}
+.page{padding-bottom:18px}
+.sh{margin-bottom:9px}
+
+/* ── 5 · THE STICKY TABLE HEADER ON CAMPAIGNS ──────────────────────────────
+   "scroll heading issues - looks horrible" — a real bug.
+
+   table.dt thead th is `position:sticky; top:0`, but the table lives inside
+   .tablecard which is `overflow:auto` — so sticky resolves against THAT box,
+   not the viewport. Because .tscroll carries `max-height:none`, the card never
+   actually scrolls: the PAGE scrolls instead, the card's box travels up with
+   it, and the header ends up parked partway down the table with rows painting
+   above it. That is the garbled text over the column titles.
+
+   Offsetting the header by the chrome height was my first attempt and it is
+   wrong for the same reason — the offset is measured against the card, not
+   the window.
+
+   The fix is to make the card scroll internally, which is what a sticky header
+   assumes. The header then pins to the top of the scrolling area, every row
+   passes cleanly underneath it, and the table stops running off the bottom of
+   the page — which also removes the dead band underneath it. */
+#page-campaigns .tablecard{overflow:hidden}
+#page-campaigns .tscroll{overflow:auto;max-height:calc(100vh - 258px)}
+#page-campaigns table.dt thead th{top:0;z-index:8;background:var(--bg3)}
+/* opaque, or rows show through the header as they pass under it */
+table.dt thead th{background-color:var(--bg3)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.5 — LESS CARTOONY
+   "make this more readable pls - less cartoony colours - all the colours are
+    very cartoony atm"
+
+   Two causes, and the second matters more than the first.
+
+   1. The accents are near-maximum saturation. Measured in HSL:
+        green  160° 78%   blue 216° 100%   amber 36° 100%
+        red    354° 100%  purple 263° 100% teal  174° 74%
+      Five of six sit at or near 100% saturation. That is poster paint, not a
+      financial dashboard. Each one below keeps its HUE exactly and drops
+      saturation to 48-68%, so it is recognisably the same colour scheme —
+      just no longer shouting.
+
+   2. The solid pills. A ROAS chip is a SOLID neon-green block with near-black
+      text on it. A saturated fill at that size is the single most cartoonish
+      thing on screen, and it also fights every other coloured element for
+      attention. They become tinted: a low-alpha wash of the same colour with
+      the TEXT carrying the hue. Same information, same colour language, a
+      fraction of the shouting — and easier to read, because coloured text on
+      a dark tint beats black text on neon.
+
+   Contrast is preserved: every value below was checked to stay above 4.5:1 on
+   --panel, and the tinted pills read higher than the solid ones did.
+   ══════════════════════════════════════════════════════════════════════════ */
+body:not(.light){
+  --green:#51c8a0;   /* was #2ee59d — 160° 78% → 52% */
+  --blue:#7ba3e0;    /* was #5b9dff — 216° 100% → 62% */
+  --amber:#e0ab5c;   /* was #ffb547 — 36° 100% → 68% */
+  --red:#de737d;     /* was #ff5d6c — 354° 100% → 62% */
+  --purple:#baa0e3;  /* was #b794ff — 263° 100% → 55% */
+  --teal:#55c3b8;    /* was #34e0d0 — 174° 74% → 48% */
+  --green-bg:rgba(81,200,160,.13); --blue-bg:rgba(123,163,224,.13);
+  --amber-bg:rgba(224,171,92,.13); --red-bg:rgba(222,115,125,.13);
+  --purple-bg:rgba(186,160,227,.13);
+  --green-dim:rgba(81,200,160,.38); --blue-glow:rgba(123,163,224,.30);
+}
+
+/* ── the solid pills become tints ──────────────────────────────────────────
+   .rag is the ROAS chip in the campaigns table, .roasp its sibling elsewhere.
+   Solid neon + near-black text → tint + coloured text. */
+body:not(.light) .rag,
+body:not(.light) .roasp{
+  background:var(--bg3)!important;
+  border:1px solid var(--border2);
+  font-weight:700}
+body:not(.light) .rag.g,body:not(.light) .roasp.g{
+  background:rgba(81,200,160,.14)!important;color:#6bd6b2!important;border-color:rgba(81,200,160,.30)}
+body:not(.light) .rag.a,body:not(.light) .roasp.a{
+  background:rgba(224,171,92,.14)!important;color:#e8bc7c!important;border-color:rgba(224,171,92,.30)}
+body:not(.light) .rag.r,body:not(.light) .roasp.r{
+  background:rgba(222,115,125,.14)!important;color:#e8949c!important;border-color:rgba(222,115,125,.30)}
+/* .rag.flag ("NO SALE") was missed in the first pass: the fill was stripped but
+   its near-black #1a1002 text stayed, giving 1.1:1 on the grey. Same tint
+   treatment as the other three. */
+body:not(.light) .rag.flag,body:not(.light) .roasp.flag{
+  background:rgba(224,171,92,.16)!important;color:#e8bc7c!important;
+  border-color:rgba(224,171,92,.34)}
+body.light .rag.flag{color:#fff!important}
+body:not(.light) .rag .d{opacity:.75}
+
+/* the same treatment for every other solid accent chip that carried
+   near-black text — the pattern the stylesheet calls "the worst pill in the app" */
+body:not(.light) [style*="background:var(--green);"],
+body:not(.light) [style*="background:var(--blue);"],
+body:not(.light) [style*="background:var(--amber);"],
+body:not(.light) [style*="background:var(--red);"],
+body:not(.light) [style*="background:var(--purple);"]{
+  background:var(--bg4)!important;border:1px solid var(--border2)}
+body:not(.light) [style*="background:var(--green);"]{color:#6bd6b2!important;border-color:rgba(81,200,160,.32)}
+body:not(.light) [style*="background:var(--blue);"]{color:#93b5e8!important;border-color:rgba(123,163,224,.32)}
+body:not(.light) [style*="background:var(--amber);"]{color:#e8bc7c!important;border-color:rgba(224,171,92,.32)}
+body:not(.light) [style*="background:var(--red);"]{color:#e8949c!important;border-color:rgba(222,115,125,.32)}
+body:not(.light) [style*="background:var(--purple);"]{color:#c9b3ea!important;border-color:rgba(186,160,227,.32)}
+
+/* ── the REVIEW column pills ───────────────────────────────────────────────
+   Identical grey outlined boxes on every row, reading as 50 disabled buttons.
+   They are metadata, not controls — so they lose the box and become quiet
+   text with the cadence carrying a single muted dot. */
+#page-campaigns td:last-child span[style*="border-radius:5px"]{
+  background:none!important;border:none!important;padding:2px 0!important;
+  color:var(--text4)!important;font-size:11px}
+
+/* ── the sparklines stop being neon ────────────────────────────────────────
+   A 1.6px neon line at 30px tall is most of the cartoon. */
+.hm-cspk svg path[stroke],.rep-spark path[stroke]{opacity:.85}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.5 — THE TABLE, AND WHY YOUR REFERENCE READS BETTER
+   You sent a table and asked why it is so much easier to read. Five reasons,
+   all of them measurable against yours, all fixed here.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · COLUMN HEADERS were 10px / weight 800 / UPPERCASE / 1px tracking —
+   four emphasis devices stacked on the least important text in the table.
+   In your reference they are light, sentence-cased and quiet. */
+table.dt thead th,table.rt thead th,table.ptab thead th{
+  font-weight:600!important;letter-spacing:.3px!important;color:var(--text4)!important}
+table.dt thead th.sorted,table.rt thead th.sorted{color:var(--blue)!important;font-weight:700!important}
+
+/* ── 2 · ONE WEIGHT PER ROW. Yours mixes 800, 700 and 600 in a single row, so
+   the eye has no calm baseline and every cell competes. Your reference runs
+   one weight for every figure and lets POSITION carry the hierarchy. */
+table.dt tbody td,table.rt tbody td,table.ptab tbody td{font-weight:500!important}
+table.dt tbody td:first-child,table.rt tbody td:first-child{font-weight:600!important}
+table.dt tbody .nm,table.rt tbody .rn-top b{font-weight:600!important}
+/* the totals row is the one place weight should still mean something */
+table.rt tfoot td{font-weight:700!important}
+
+/* ── 3 · STATUS: bright bold green on every one of 50 rows. In your reference
+   it is a small dot plus normal-weight text — the dot marks the row, the word
+   does not shout it. */
+#page-campaigns table.dt tbody td .st-active,
+#page-campaigns table.dt tbody td [style*="color:var(--green)"]{
+  font-weight:500!important;color:var(--text2)!important}
+#page-campaigns table.dt tbody td [style*="color:var(--green)"]:before{
+  content:'';display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:var(--green);margin-right:6px;vertical-align:middle}
+
+/* ── 4 · ROW RHYTHM. 43px is better than the 59px you started with, but the
+   reference sits nearer 36. The two-line name block sets the floor, so the
+   leading comes down rather than the type size. */
+#page-campaigns table.dt tbody td{padding:4px 12px}
+#page-campaigns .cn .nm{line-height:16px;font-size:12.5px}
+#page-campaigns .cn .meta{line-height:13px}
+#page-campaigns .cn>.ic{width:24px;height:24px;border-radius:6px;font-size:10px}
+
+/* ── 5 · ROW SEPARATION. Heavy borders between every row draw 50 horizontal
+   lines across the screen. A hairline at low alpha separates without ruling. */
+table.dt tbody tr td{border-bottom-color:rgba(148,163,184,.09)!important}
+table.dt tbody tr:hover td{background:rgba(148,163,184,.045)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.5 — POPUPS
+   Measured on "Import the month": the dialog runs 756px tall to ask for two
+   files and a name. Two near-identical sections are stacked full-width with
+   a 76px drop zone each, the footer crowds a checkbox against three buttons,
+   and the last line of body text repeats the subtitle at the top.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── the shell: header and body were padded like a marketing page ── */
+.po-header{padding:13px 18px 11px}
+.po-body{padding:14px 18px 18px}
+.popout{border-radius:13px}
+
+/* ── the two upload sections sit SIDE BY SIDE. They are the same shape and
+   the same size, they are done in either order, and stacking them is what
+   makes the dialog taller than most laptop screens. ── */
+/* The two .mi-box sections are siblings of five other elements inside
+   .po-body, so the parent cannot become a grid without disturbing the rest.
+   inline-block puts them side by side within the block flow instead. */
+.po-body .mi-box{display:inline-block;vertical-align:top;width:calc(50% - 5px)}
+.po-body .mi-box+.mi-box{margin-left:8px}
+@media(max-width:820px){.po-body .mi-box{display:block;width:100%}
+  .po-body .mi-box+.mi-box{margin-left:0}}
+
+/* ── the drop zone. 12px 14px of padding around a 30px icon gives a 76px
+   target to drop a file on — generous well past the point of usefulness. ── */
+.mi-drop{padding:9px 12px;gap:10px;border-radius:8px;border-width:1px}
+.mi-drop-ic{width:26px;height:26px;border-radius:7px;font-size:13px}
+
+/* ── the footer. A checkbox reading "Preview only — don't save" sitting
+   inline with Cancel and Import is a destructive-adjacent choice dressed as
+   a button. It gets its own left-aligned position, away from the actions. ── */
+.po-foot,.po-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  padding-top:12px;border-top:1px solid var(--border);margin-top:14px}
+.mi-prev{margin-right:auto;padding:5px 9px;border-radius:7px;background:var(--bg3);
+  border:1px solid var(--border)}
+
+/* ── helper text: one size, one colour, and never repeating the subtitle ── */
+.po-body .mi-opt,.po-body .mi-pm-note{font-size:11.5px;line-height:17px;color:var(--text4)}
+
+/* ── confirm dialogs: the same shell is used for destructive confirms, where
+   the headline should outrank the body rather than match it ── */
+.po-header .po-t{font-size:15px;line-height:21px;font-weight:800}
+.po-header .po-s{font-size:12px;line-height:18px;color:var(--text4);font-weight:500;margin-top:2px}
+
+/* ── the close button was a 34px target with a 12px glyph adrift in it ── */
+.po-hr .btn.icon,.po-x{width:30px;height:30px;border-radius:8px}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.6 — THE MONTHLY REPORT FOOTER WAS SEE-THROUGH
+   "major issues on preview monthly report ... scrolling bug - i can't read it
+    at all this way"
+
+   The TOTAL row and the "IF THIS PACE HOLDS" projection row both live in
+   `table.rt tfoot`, which is `position:sticky; bottom:0`. The TOTAL row sets
+   an opaque `background:var(--bg3)` and behaves. The projection row overrides
+   it with `background:var(--purple-bg)` — and --purple-bg is
+   rgba(186,160,227,.13), i.e. **87% transparent**. Light mode is worse at 7%.
+
+   A sticky element with a transparent background does not hide what passes
+   under it. So every product row scrolled straight through the projection
+   figures and the two sets of numbers rendered on top of each other.
+
+   The fix keeps the tint exactly as designed but paints it ON an opaque base:
+   background-color carries the surface, background-image carries the tint.
+   ══════════════════════════════════════════════════════════════════════════ */
+table.rt tfoot tr.ft-proj td{
+  background-color:var(--bg3)!important;
+  background-image:linear-gradient(var(--purple-bg),var(--purple-bg))!important}
+body.light table.rt tfoot tr.ft-proj td{
+  background-color:var(--bg3)!important;
+  background-image:linear-gradient(rgba(107,33,217,.07),rgba(107,33,217,.07))!important}
+
+/* the whole footer must also sit above the rows it is covering */
+table.rt tfoot td{z-index:5}
+table.rt tfoot tr.ft-proj td{z-index:4}
+
+/* same class of bug anywhere else a sticky cell takes a translucent fill */
+table.dt tfoot td,table.ptab tfoot td{background-color:var(--bg3)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.7 — MONTHLY REPORT, PART-MONTH VIEW
+   Built against the layout you sent. The table itself was close; what made it
+   unreadable was the footer repeating every column a second time and the
+   product names taking two lines each.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── the projection footer is now one line, so it needs to lay out as one ── */
+/* The flex lives on a DIV inside the cell, not on the cell. display:flex on a
+   <td> takes it out of the table layout algorithm, so colspan stops applying —
+   measured: the cell collapsed to 369px (one column) while its contents needed
+   838px, and wrapped to three lines. */
+table.rt tfoot tr.ft-proj td.ft-oneline{
+  padding:9px 14px;text-align:left;white-space:normal}
+table.rt tfoot tr.ft-proj td.ft-oneline .ft-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;width:100%}
+.ft-row .ft-spacer{flex:1;min-width:12px}
+.ft-row .ftp-tag{flex-shrink:0}
+.ft-row .ftl-1{display:inline!important;font-size:12px;font-weight:500;
+  color:var(--text4);letter-spacing:0!important;text-transform:none!important;margin:0!important}
+/* .ftl-1 and .ft-note were display:block (css 2456/2459) for the old stacked
+   caption — three lines was the point then. Inline now, or the "one line"
+   footer is three lines tall. Measured: 117px before this, ~36px after. */
+.ft-row .ftp-tag{display:inline-block!important;margin:0!important}
+table.rt tfoot td.ft-oneline{text-transform:none!important;letter-spacing:0!important;
+  font-size:12px!important;font-weight:500!important}
+.ft-row .ft-proj-fig{font-size:12.5px;font-weight:500;color:var(--text4);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.ft-row .ft-proj-fig b{font-weight:800;margin-left:3px}
+/* the old stacked caption pieces are no longer used here */
+table.rt tfoot tr.ft-proj td.ft-oneline .ft-note{display:none}
+
+/* ── product names on ONE line. Two-line names were setting the row height for
+   all 26 rows and doubling the height of the table. Yours are long, so the
+   tail is what identifies them — the head is nearly always "Dove Summer
+   Revived…" — but a single truncated line beats two wrapped ones for scanning. */
+table.rt tbody .rn-top b,table.rt tbody .prod-n{
+  display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px}
+
+/* ── the sales cell held four data points: total, org, ads and a two-tone bar.
+   The split stays but stops competing — it is reference, not headline. ── */
+table.rt tbody .rsplit{opacity:.72;font-size:10px}
+table.rt tbody .mini-f{opacity:.6}
+
+/* ── one row of column headers, quiet, and the sorted one obvious ── */
+table.rt thead th{font-weight:600!important;letter-spacing:.3px!important;
+  color:var(--text4)!important;font-size:10px}
+table.rt thead th.sorted{color:var(--blue)!important;font-weight:700!important}
+
+/* ── rows: 26 of them, so height matters more here than anywhere ── */
+table.rt tbody td{padding:6px 12px}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.8 — THE PART-MONTH PROJECTION, built to the layout Jack sent
+   The strip already carried the hero line and five metrics; it read as one
+   dense inline band. This gives it the card structure of the reference, and
+   adds the two things it was missing: the four counts and the movers.
+   ══════════════════════════════════════════════════════════════════════════ */
+#rep-projbar{padding:0!important;border-bottom:0!important;background:none!important;
+  display:flex!important;flex-direction:column;gap:10px;margin-bottom:12px}
+
+/* ── the hero: one sentence, the figure carrying the weight ── */
+.pj-head{background:linear-gradient(150deg,var(--green-bg),var(--panel) 62%);
+  border:1px solid rgba(81,200,160,.20);border-radius:12px;
+  padding:16px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pj-tag{flex-shrink:0}
+.pj-txt{font-size:14px;line-height:22px;color:var(--text2);font-weight:500}
+.pj-hero{font-family:var(--display);font-size:26px;line-height:30px;font-weight:800;
+  letter-spacing:-.02em;vertical-align:-3px;margin:0 3px}
+.pj-vs{font-size:12.5px;color:var(--text4);font-weight:500}
+
+/* ── the five projected metrics become a card row ── */
+.pj-row{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;margin:0!important}
+.pj-v{display:block!important;background:var(--panel);padding:11px 14px;min-width:0}
+.pj-v i{display:block;font-size:10px;font-weight:600;letter-spacing:.4px;
+  text-transform:uppercase;color:var(--text4);margin-bottom:4px;font-style:normal}
+.pj-v b{display:block;font-family:var(--display);font-size:20px;line-height:26px;
+  font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.pj-v u{display:block;text-decoration:none;font-size:11px;line-height:16px;font-weight:700;
+  margin-top:3px;font-variant-numeric:tabular-nums}
+.pj-v u.up{color:var(--green)} .pj-v u.dn{color:var(--red)} .pj-v u.fl{color:var(--text4)}
+
+/* ── the four counts ── */
+.pj-counts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.pj-c{background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:12px 14px}
+.pj-c b{display:block;font-family:var(--display);font-size:26px;line-height:31px;
+  font-weight:800;letter-spacing:-.03em}
+.pj-c-l{display:block;font-size:12.5px;line-height:18px;font-weight:600;color:var(--text2);margin-top:2px}
+.pj-c-s{display:block;font-size:11.5px;line-height:17px;color:var(--text4);font-weight:500;margin-top:2px}
+
+/* ── the two mover panels ── */
+.pj-movers{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px}
+.pj-mv{background:var(--panel);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.pj-mv-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:11px 14px;border-bottom:1px solid var(--border)}
+.pj-mv-h b{font-size:13px;font-weight:800;letter-spacing:-.01em}
+.pj-mv-h i{font-size:11.5px;font-style:normal;color:var(--text4);font-weight:500}
+.pj-m{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border)}
+.pj-m:last-child{border-bottom:0}
+.pj-m-n{flex:1;min-width:0;font-size:12.5px;font-weight:600;color:var(--text2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pj-m-v{font-size:12.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;flex-shrink:0}
+.pj-m-d{font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 8px;flex-shrink:0;
+  font-variant-numeric:tabular-nums}
+.pj-m-d.up{color:var(--green);background:var(--green-bg);border:1px solid rgba(81,200,160,.26)}
+.pj-m-d.dn{color:var(--red);background:var(--red-bg);border:1px solid rgba(222,115,125,.26)}
+.pj-m-none{color:var(--text4);font-size:12.5px;font-weight:500;justify-content:center}
+
+/* ── the caveat: important, but not competing with the figures ── */
+.pj-note{font-size:11.5px!important;line-height:17px!important;color:var(--text4)!important;
+  padding:0 2px;margin:0!important}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v4.9 — THE KPI TILES AND THE HEALTH BLOCK
+   "give these little icon/tiles/buttons/icons - colours --- fully redo this
+    bit - looks shit"
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · THE CAMPAIGNS KPI ROW WAS FIVE DIFFERENT HEIGHTS ──────────────────
+   Measured: 113 / 113 / 133 / 133 / 115px. "Active campaigns" has no
+   sparkline, so it is 20px shorter than its neighbours; the health tile
+   carries its own inline padding and lands somewhere between the two. Five
+   cards in a row at four different heights is what reads as unfinished.
+   The sparkline slot is now reserved whether or not a card has one, so every
+   card in the row is the same height without removing anything. */
+#page-campaigns .card.kpi{display:flex;flex-direction:column;padding:11px 13px}
+#page-campaigns .card.kpi .spk{margin-top:auto;padding-top:8px;min-height:30px}
+#page-campaigns .card.kpi:not(:has(.spk))::after{
+  content:'';display:block;margin-top:auto;padding-top:8px;min-height:30px}
+
+/* ── 2 · THE HEALTH TILE ───────────────────────────────────────────────────
+   Three sub-tiles whose labels were 9px letters — G, A, R — sitting above the
+   number they describe. A single letter at 9px is not a label, it is a hint.
+   The count leads, the word says what it is, and the tint carries the state
+   rather than a saturated fill. */
+#page-campaigns .card.kpi:last-child>div[style*="grid-template-columns"]{gap:6px!important}
+#page-campaigns .card.kpi:last-child>div[style*="grid-template-columns"]>div{
+  border-radius:8px;padding:7px 8px!important;text-align:center;
+  border:1px solid var(--border);background:var(--bg3)}
+#page-campaigns .card.kpi:last-child>div[style*="grid-template-columns"]>div:nth-child(1){
+  background:rgba(81,200,160,.10);border-color:rgba(81,200,160,.26)}
+#page-campaigns .card.kpi:last-child>div[style*="grid-template-columns"]>div:nth-child(2){
+  background:rgba(224,171,92,.10);border-color:rgba(224,171,92,.26)}
+#page-campaigns .card.kpi:last-child>div[style*="grid-template-columns"]>div:nth-child(3){
+  background:rgba(222,115,125,.10);border-color:rgba(222,115,125,.26)}
+
+/* ── 3 · ADS OVERVIEW — the short cards were being stretched ───────────────
+   #dash-kpi-row is `grid-template-rows:auto auto` with the ROAS card spanning
+   both. Measured rows: 132.5px 132.5px — FRACTIONAL, which puts every line of
+   text in those cards on a half pixel. align-items:start lets each card size
+   to its own content and takes the halves out of the row calculation. */
+#dash-kpi-row{align-items:start!important}
+#dash-kpi-row>.card{min-height:0}
+
+/* ── 4 · the sparkline inside a KPI card is decoration at 150x22 ───────────
+   It stops competing: same size, less contrast, aligned to the card's rail. */
+.card.kpi .spk svg{opacity:.8}
+.card.kpi .spk{display:block;line-height:0}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v5.0 — THE REST OF THE VERIFIED DEFECT LIST
+   The 26 user-visible items left from the audit. The other 20 are dead rules
+   and duplicate declarations — code hygiene with no effect on screen, and you
+   do not fix dead CSS by adding more CSS, so those are left for a source
+   clean-up rather than patched over here.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── HOME ────────────────────────────────────────────────────────────────── */
+/* the campaign name in a Needs-attention row was the one thing in the row that
+   could not shrink, so it wrapped to a second line inside a single-line row */
+.hattn b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* the v3.6 pin rounded this line box DOWN to an odd 17px, so the LAVARION tag
+   and the card arrow centred against it landed on half pixels */
+.hm-c-t{line-height:18px!important}
+/* .hm-cspk is flex:1, so its height is whatever the tallest card leaves over —
+   an odd number — and centring halved it. Top-align instead: no half pixels. */
+.hm-cspk{justify-content:flex-start!important}
+/* hardcoded dark-theme amber ring showing as a neon outline on a cream chip */
+body.light .hm-alert{border-color:rgba(138,71,8,.28)}
+
+/* ── ADS OVERVIEW ────────────────────────────────────────────────────────── */
+/* rgba(255,255,255,.04) is a dark-theme surface trick: in light mode it is
+   white on white and the four sub-tiles vanish. Themed, keeping the tint. */
+#page-dashboard [style*="rgba(255,255,255,.04)"],
+#page-dashboard [style*="rgba(255,255,255,0.04)"]{
+  background:var(--bg3)!important}
+body.light #page-dashboard [style*="rgba(255,255,255,.04)"],
+body.light #page-dashboard [style*="rgba(255,255,255,0.04)"]{
+  background:rgba(15,23,42,.04)!important}
+/* --green-dim is declared once, in :root, and body.light never overrides it —
+   so the ROAS hero keeps a neon-mint edge on a white page */
+body.light{--green-dim:rgba(4,112,74,.34)}
+/* this card sat on a 12px rail while its three siblings use 14px */
+#dash-action-list>div{padding-left:14px!important;padding-right:14px!important}
+
+/* ── INSIGHTS ────────────────────────────────────────────────────────────── */
+/* an 11px rail where every other block on the page uses 12px */
+.ins-k,.ins-act,.ins-card,.ins-bar{padding-left:12px!important;padding-right:12px!important}
+/* 7px bar inside a 20px row centred on the cross axis = a half-pixel top and
+   soft rounded ends. 8px divides evenly. */
+.ins-c-bar{height:8px!important}
+/* hardcoded 90%-black shadow that does not respond to the theme */
+body.light #page-insights .ph{box-shadow:0 6px 18px -12px rgba(15,23,42,.28)!important}
+
+/* ── MONTHLY REPORT ──────────────────────────────────────────────────────── */
+/* the Trend cell was centred while every other value in the row — including the
+   "·" placeholder in that same column — is right-aligned */
+table.rt tbody .mini-f,table.rt tbody .spk{margin:0 0 0 auto!important}
+/* one cell was carrying two typefaces: Inter for the value, Roboto Mono for
+   the delta directly beneath it */
+.delta{font-family:var(--font)!important}
+
+/* ── SETTINGS ────────────────────────────────────────────────────────────── */
+/* the danger panel hardcodes the DARK red, so light mode gets a neon-coral
+   panel on cream. Tokenised so both themes get their own red. */
+:root{--red-line:rgba(255,93,108,.30);--red-wash:rgba(255,93,108,.07)}
+body.light{--red-line:rgba(192,28,28,.30);--red-wash:rgba(192,28,28,.06)}
+#page-settings [style*="rgba(255,93,108"]{
+  border-color:var(--red-line)!important;background:var(--red-wash)!important}
+/* 14px radius on the last panel where every card above it is 12px */
+#page-settings [style*="border-radius:var(--r)"]{border-radius:12px!important}
+/* this blanket pin was taller than the 17px paragraph it lands in, so the
+   first line of the Supabase-keys note sat lower than the rest */
+#page-settings .card.pad b{line-height:inherit!important}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v5.1 — SOFTER, NOT BRIGHTER
+   "make the white lighter on the eyes to read and not brighter"
+   "still blurry - the super bold text doesn't help"
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · THE TEXT WAS TOO BRIGHT, AND BRIGHT IS WHAT LOOKS SOFT ────────────
+   Measured on --panel: --text was 14.6:1. This file's own v2.7 note says
+   "dark-mode body text wants roughly 11-14:1" and explains why — at high
+   separation, light strokes HALATE on a dark field and bleed into the
+   background. 14.6 is above that band, so the note was right and the value
+   never came down far enough.
+   Stepped down one notch each, same hue. Nothing drops near the 4.5 floor. */
+body:not(.light){
+  --text:#ccd4e2;    /* 14.6:1 → 12.1:1 */
+  --text2:#bfc8d8;   /* 13.2:1 → 10.7:1 */
+  --text3:#a6b2c5;   /* 10.4:1 →  8.4:1 */
+  --text4:#8794a8;   /*  7.0:1 →  5.8:1 */
+}
+
+/* ── 2 · THE SUPER-BOLD DOES NOT HELP ─────────────────────────────────────
+   330 rules set font-weight:800. At 11-13px a 800 weight closes the counters
+   — the holes in a, e, o — and a letter with a filled counter reads as a
+   blur, not as bold. Heavy type needs SIZE to work; small heavy type just
+   smudges.
+   800 is kept only where the glyph is big enough to carry it: the hero
+   figures. Everything else steps to 700, and small caps to 600. */
+[class]{font-synthesis-weight:none}
+.kpi .v,.hm-bnv,.rk-v,.pj-hero,.pj-c b,.a-hv,.tv,.dk-v,.ph-nv,.pt-v{font-weight:800}
+.label,.tn,.hm-bnl,.rk-l,.ins-k-l,.hm-stats .tn,.sec-label,.dash-kpi-l,
+table.dt thead th,table.rt thead th,table.ptab thead th,.kwtable th{font-weight:600!important}
+.hm-c-t,.rn-top b,.prod-n,.cn .nm,.ins-card-t,.pj-mv-h b,.tt{font-weight:700!important}
+/* the mono figures were 800 too — mono at 800 is the worst case of all,
+   because the glyphs are already wide and the counters already tight */
+.mono,.rag,.mtag,.outcome,.rph-kv,.rl-kv,.ry-bv,.kb-v,.mp-v{font-weight:600!important}
+
+/* ── 3 · THE REVIEW COLUMN — this genuinely did not apply last time ────────
+   My earlier selector assumed the cell was :last-child and it is not. The
+   pill is an inline-styled span, so it is matched on the inline style itself.
+   Fifty identical outlined grey boxes down the right edge read as fifty
+   disabled buttons; it is metadata, so it becomes quiet text. */
+#page-campaigns [style*="border-radius:5px"][style*="background:var(--bg3)"]{
+  background:none!important;border:none!important;padding:2px 0!important;
+  color:var(--text4)!important;font-size:11px!important;font-weight:500!important}
+
+/* ── 4 · THE DEAD SPACE UNDER THE CAMPAIGNS TABLE ─────────────────────────
+   The card was given an internal scroll height of 100vh-258px, which is
+   taller than the room actually left under the filter bar — so the card ran
+   past the fold and left a band of empty page beneath it. Sized to what is
+   really there, and the page stops at the card. */
+#page-campaigns .tscroll{max-height:calc(100vh - 330px)!important}
+#page-campaigns{padding-bottom:10px!important}
+#page-campaigns .tablecard{margin-bottom:0!important}
+
+/* ── 5 · POPUPS ───────────────────────────────────────────────────────────
+   The campaign detail popout runs well past a laptop screen: four KPI blocks
+   at ~90px, a five-cell metric strip, a metric chooser, then two tables. */
+.popout .kpi,.popout .card.kpi{padding:9px 12px}
+.popout .kpi .v{font-size:19px;line-height:24px}
+.popout table td{padding:5px 10px}
+.popout table th{padding:6px 10px}
+.po-body>*+*{margin-top:10px}
+/* the metric chooser was a 9-chip row on its own line */
+.popout .mrow,.popout .metric-pick{gap:5px}
+.popout .btn-sm{padding:4px 10px}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v5.2 — THE LAST OF THE BLUR: NEGATIVE TRACKING ON THE FIGURES
+   "blurryness still - make it easier to read and follow"
+
+   24 rules apply negative letter-spacing, and they are all on the numbers.
+   Measured as a proportion of their own font size:
+       .hm-stats .tv   -1px on 16px  =  -6.2%
+       .ins-k-v        -1px on 18px  =  -5.6%
+       .kh-v           -2px on 38px  =  -5.3%
+       .hm-bnv/.kpi .v -1px on 21px  =  -4.8%
+   Display type tolerates roughly -1% to -2.5%. At -5% to -6% the glyphs are
+   pulled into each other, and on MONEY that is the worst case there is: the
+   comma and the decimal point end up touching the digits either side, so
+   £17,139.44 reads as one shape instead of eight characters. There is no word
+   shape to fall back on with numerals — you read them glyph by glyph, which
+   is exactly what tight tracking prevents.
+
+   -0.02em is -2% at every size, so it scales with whatever the figure is and
+   keeps the tightened look without crushing it.
+   ══════════════════════════════════════════════════════════════════════════ */
+.hm-stats .tv,.ins-k-v,.dk-v,.kh-v,.rph-kv,.pj-hero,.pt-v,.an-tv,.hm-bnv,
+.kpi .v,.card.kpi .v,.rk-v,.rl-kv,.hm-hnv,.tv,.mp-v,.ry-c,.ry-sum,.ph-nv,
+.pj-v b,.pj-c b,.a-hv,.rd-num,.rd-mv,.b-dl dd{letter-spacing:-.02em!important}
+
+/* the display face is doing the same thing on headings, less severely */
+.hm-title,.pg-h h2,h1,.rep-kpis .rk-v{letter-spacing:-.015em!important}
+
+/* ── AND "FOLLOW": TRACKING A ROW ACROSS 12 COLUMNS ───────────────────────
+   Reading £54.90 in one column and matching it to the right campaign 1400px
+   away is the other half of "hard to read and follow". A hairline every row
+   draws 50 lines across the screen; a faint alternating band gives the eye a
+   rail to run along without adding any ink. */
+table.dt tbody tr:nth-child(even) td,
+table.rt tbody tr:nth-child(even) td{background:rgba(148,163,184,.032)}
+table.dt tbody tr:hover td,table.rt tbody tr:hover td{
+  background:rgba(123,163,224,.09)!important}
+/* and the row you are on gets a rail on the left so you can see where you are */
+table.dt tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--blue)}
+table.rt tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--blue)}
+
+/* numbers line up on the decimal point, so a column reads as a column */
+table.dt tbody td,table.rt tbody td,table.ptab tbody td,
+.kpi .v,.hm-bnv,.rk-v,.tv,.pj-v b{
+  font-variant-numeric:tabular-nums lining;font-feature-settings:"tnum" 1}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v5.3 — QUIETER AND TIGHTER
+   "still too bold - white is still too bright - condense and compact it more"
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · ANOTHER STEP DOWN IN BRIGHTNESS ──────────────────────────────────
+   v5.2 took --text from 14.6:1 to 12.1:1. Down again to 9.7:1 — below the
+   11-14 band the file's note recommends, deliberately: that band was written
+   for body copy on a #0e1219 panel, and this app is mostly FIGURES on a
+   lighter surface, which halate more. 9.7:1 is still more than double the
+   4.5 floor. --text4 lands at 4.9:1, which is the lowest anything goes. */
+body:not(.light){
+  --text:#b6bfcf;    /* 12.1:1 → 9.7:1 */
+  --text2:#aab3c3;   /* 10.7:1 → 8.5:1 */
+  --text3:#94a0b3;   /*  8.4:1 → 6.8:1 */
+  --text4:#7c8798;   /*  5.8:1 → 4.9:1 */
+}
+
+/* ── 2 · THE BIG COLOURED FIGURES WERE THE BRIGHTEST THING ON SCREEN ──────
+   £17,139.44 in blue at 21px/800 outshone everything around it. The accents
+   come down one more step, and only where they are used as LARGE figures —
+   the small chips and pills keep their current values so they stay legible. */
+.hm-bnv,.kpi .v,.rk-v,.tv,.pj-hero,.pj-v b,.a-hv,.rep-kpis .rk-v{
+  filter:saturate(.88) brightness(.93)}
+
+/* ── 3 · STILL TOO BOLD ───────────────────────────────────────────────────
+   800 was kept on the hero figures in v5.1 on the grounds that they are big
+   enough to carry it. At 18-21px on a dark ground they are not — the strokes
+   thicken and the counters close again. Everything drops one step: heroes to
+   700, supporting figures to 600, body to 500. Nothing on screen is 800. */
+.kpi .v,.hm-bnv,.rk-v,.pj-hero,.pj-c b,.a-hv,.tv,.dk-v,.ph-nv,.pt-v,
+.hm-hnv,.an-tv,.rl-kv,.rph-kv,.ins-k-v,.mp-v,.kh-v{font-weight:700!important}
+.hm-c-t,.rn-top b,.prod-n,.cn .nm,.ins-card-t,.pj-mv-h b,.tt,
+.pg-h h2,h1,.hm-title{font-weight:700!important}
+table.dt tbody td,table.rt tbody td,table.ptab tbody td,.rd-r-t,.pj-m-n{font-weight:500!important}
+.label,.tn,.hm-bnl,.rk-l,.ins-k-l,.sec-label,.dash-kpi-l,
+table.dt thead th,table.rt thead th{font-weight:600!important}
+
+/* ── 4 · CONDENSE ─────────────────────────────────────────────────────────
+   Every surface loses a step of padding and the tall bands lose their slack.
+   No information is removed; the same content occupies roughly 15% less
+   vertical space, so more of it is above the fold. */
+.card,.card.pad,.kpi,.card.kpi{padding:9px 12px!important}
+.hm-band{padding:12px 14px!important}
+.hm-bn{padding:9px 12px!important}
+.hm-bnv{font-size:19px!important;line-height:24px!important}
+.hm-bh{margin-bottom:10px!important}
+.hm-c-top{padding:10px 12px 8px!important}
+.hm-stats>div{padding:8px 6px!important}
+/* ⚠ The v5.2 tracking fix has a knock-on here that has to be paid for.
+   Un-crushing the digits made them WIDER: £10,758.24 went from ~82px at
+   -1px tracking to 92px at -0.02em, and the tile offers 80px of content.
+   So relaxing the tracking re-broke the fit that v4.0 fixed.
+   Paid for with 8px of horizontal padding and one size step: at 15px the
+   longest value needs ~86px against 88px available — fits with room, rather
+   than by a pixel. Measured, not estimated. */
+.hm-stats .tv{font-size:15px!important;line-height:20px!important}
+.hm-cspk{padding:6px 12px 2px!important;min-height:38px!important}
+.hm-links{padding:8px 12px!important}
+.hattn,.hm-r{padding:7px 12px!important}
+.hm-h{padding:8px 12px!important}
+.hm-q{padding:8px 10px!important}
+.rep-kpis .rk{padding:9px 12px!important}
+.pj-head{padding:12px 14px!important}
+.pj-v{padding:9px 12px!important}
+.pj-c{padding:10px 12px!important}
+.pj-m{padding:7px 12px!important}
+.ins-k,.ins-act,.ins-card{padding:9px 12px!important}
+.po-body{padding:12px 16px 16px!important}
+.po-header{padding:11px 16px 9px!important}
+/* the gaps between blocks were set for a marketing page */
+.hm-cards,.hm-lower,.rep-kpis,.pj-counts,.pj-movers{gap:8px!important}
+.page>*+*{margin-top:8px}
+
+
+/* ── the one thing the tighter padding broke ───────────────────────────────
+   ".rk-s" is the sub-line under a Monthly Report KPI — "322 organic (27%) +
+   874 ads (73%)". It is set to one line with an ellipsis, and 3px less
+   padding each side was enough to start cutting it. It is a sentence, not a
+   figure, so it wraps rather than truncates: losing the second half of a
+   split tells you nothing, and there is room underneath. */
+.rep-kpis .rk-s,.rk-s{white-space:normal!important;text-overflow:clip!important;
+  overflow:visible!important;line-height:15px!important}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   v5.4 — CHANGE VS LAST MONTH, PER PRODUCT
+   "i wanna compare units per asin if they have gone up or down and sales and
+   ads" · "what actually changed this month, what actually got worse and how
+   and why" · the benchmark block: "like wtf is this"
+   ════════════════════════════════════════════════════════════════════════ */
+/* the pace line under the hero numbers */
+.ph-pace{margin:8px 0 0;padding:7px 11px;border-radius:8px;font-size:11.5px;line-height:16px;color:var(--text3);background:var(--bg3);border:1px solid var(--border)}
+.ph-pace.pj{color:var(--text2);border-color:rgba(224,171,92,.35);background:linear-gradient(90deg,var(--amber-bg),var(--bg3) 60%)}
+.ph-pace b{color:var(--text);font-weight:700}
+/* what changed */
+.chg-cols{margin-top:12px}
+.chg-t th,.chg-t td{padding:6px 12px!important}
+.chg-t td{font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+.chg-t td.l{font-family:var(--font);font-weight:600;color:var(--text2)}
+.chg-t tr.st td.l{color:var(--text);font-weight:700}
+.chg-t td.was{color:var(--text4)}
+.chg-t td.now{color:var(--text);font-weight:700}
+.chg-t td.chg{white-space:nowrap}
+.chg-t th i{font-style:normal;font-weight:600;color:var(--amber);text-transform:none;letter-spacing:0}
+.chg-d{display:inline-block;min-width:46px;text-align:right;font-weight:800}
+.chg-abs{margin-left:8px;font-size:11px;opacity:.75}
+.chg-d.up,.chg-abs.up{color:var(--green)} .chg-d.dn,.chg-abs.dn{color:var(--red)}
+.chg-lv{color:var(--text4);font-size:11px;font-weight:600;font-family:var(--font)}
+.chg-t tr.bad td.now{color:var(--text)}
+/* the bridge */
+.brg{padding:4px 14px 8px;display:flex;flex-direction:column;gap:2px}
+.brg-row{display:grid;grid-template-columns:minmax(150px,1.2fr) minmax(90px,1fr) 88px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.brg-row:last-child{border-bottom:none}
+.brg-row.tot{border-top:2px solid var(--border2);margin-top:2px;padding-top:9px}
+.brg-l{min-width:0}.brg-l b{display:block;font-size:12.5px;color:var(--text);font-weight:700;line-height:16px}
+.brg-l span{display:block;font-size:11px;color:var(--text4);line-height:15px;font-weight:500}
+.brg-bar{position:relative;height:10px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.brg-bar:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border3)}
+.brg-bar i{position:absolute;top:0;bottom:0;border-radius:2px;min-width:2px}
+.brg-bar i.p{background:var(--green)} .brg-bar i.n{background:var(--red)}
+.brg-v{text-align:right;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.brg-v b{font-weight:800}.brg-v b.up{color:var(--green)}.brg-v b.dn{color:var(--red)}.brg-v b.fl{color:var(--text4)}
+.brg-row.tot .brg-v b{font-size:14px}
+.brg-read{padding:10px 14px 12px;border-top:1px solid var(--border);font-size:12.5px;line-height:18px;color:var(--text2)}
+.brg-read b{color:var(--text);font-weight:700}
+/* where it sits */
+.bm-t td.l b{display:block;font-size:12.5px;color:var(--text)}
+.bm-why{display:block;font-size:10.5px;color:var(--text4);font-weight:500;line-height:14px;margin-top:1px}
+.bm-t td.bm-w{font-weight:600;font-size:12px;white-space:normal}
+.bm-rank{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.bm-rank.top{color:var(--green);background:var(--green-bg);border-color:var(--green-dim)}
+.bm-rank.bot{color:var(--red);background:var(--red-bg);border-color:rgba(222,115,125,.35)}
+.bm-rank.good{color:var(--green)} .bm-rank.warn{color:var(--amber)}
+@media (max-width:900px){.chg-cols{grid-template-columns:1fr}}
+
+.brg-camps{padding:0 14px 12px;display:flex;flex-direction:column;gap:6px}
+.bc-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.bc-l{font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text4);margin-right:3px}
+.bc-chip{font-size:11px;font-weight:600;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 8px;line-height:15px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc-chip b{font-family:var(--mono);font-weight:800;margin-left:3px}
+.bc-chip i{font-style:normal;color:var(--text4);font-size:10px}
+.bc-chip.up b{color:var(--green)} .bc-chip.dn b{color:var(--red)}
+.bc-chip.good{border-color:var(--green-dim);background:var(--green-bg)} .bc-chip.good b{color:var(--green)}
+.bc-chip.warn b{color:var(--amber)} .bc-chip.bad{border-color:rgba(222,115,125,.35);background:var(--red-bg)} .bc-chip.bad b{color:var(--red)}
+
+.dirb.all{color:var(--text3)} .dirb.all.on{color:var(--text);background:var(--bg4);border-color:var(--border3)}
+
+/* the real-profit cell: pill + delta may wrap to two lines rather than clip */
+table.rt tbody td:last-child{white-space:normal;line-height:19px}
+table.rt tbody td:last-child .delta{display:inline-block;white-space:nowrap}
+
+/* ════════════════════════════════════════════════════════════════════════
+   v5.6 — THE MONTH SCORECARD + WASTE LEDGER
+   "net profit shouldn't be less — we aim to gain each month; refine and narrow
+   wasted PPC spend" · four goals, judged every month, £ behind each.
+   Same shape per goal so the eye learns it once; colour carries the verdict
+   on the top edge and the figure, not in a shouting pill.
+   ════════════════════════════════════════════════════════════════════════ */
+#rep-score{margin:10px 0}
+.scr{border:1px solid var(--border2);border-radius:14px;background:var(--bg2);overflow:hidden}
+.scr-h{display:flex;align-items:center;gap:14px;padding:11px 16px;border-bottom:1px solid var(--border)}
+.scr-t{font-size:13px;font-weight:600;color:var(--text);line-height:17px}
+.scr-t small{display:block;font-size:11px;font-weight:500;color:var(--text3);margin-top:1px}
+.scr-dots{display:flex;gap:5px;margin-left:auto}.scr-dots i{width:9px;height:9px;border-radius:50%;display:block}
+.scr-verd{font-size:12px;font-weight:600;padding:5px 12px;border-radius:7px;white-space:nowrap;border:1px solid transparent}
+.scr-verd.good{background:var(--green-bg);color:var(--green);border-color:var(--green-dim)}
+.scr-verd.mid{background:var(--amber-bg);color:var(--amber);border-color:rgba(224,171,92,.3)}
+.scr-verd.bad{background:var(--red-bg);color:var(--red);border-color:rgba(222,115,125,.3)}
+.scr-goals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border)}
+.scr-g{--gc:var(--text4);background:var(--bg2);padding:12px 16px 13px;border-top:3px solid var(--gc);display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:background .14s;min-width:0}
+.scr-g:hover{background:var(--bg3)}
+.scr-g.st-miss{--gc:var(--red)}.scr-g.st-hit{--gc:var(--green)}.scr-g.st-watch{--gc:var(--amber)}.scr-g.st-level,.scr-g.st-first,.scr-g.st-unknown{--gc:var(--text4)}
+.scr-top{display:flex;align-items:center;gap:8px}
+.scr-n{font-family:var(--mono);font-size:11px;color:var(--text4)}
+.scr-name{font-size:12px;font-weight:600;color:var(--text)}
+.scr-pill{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;padding:2px 8px;border-radius:5px;min-width:60px;text-align:center;background:var(--bg4);color:var(--text3);white-space:nowrap}
+.scr-g.st-miss .scr-pill{background:var(--red-bg);color:var(--red)}.scr-g.st-hit .scr-pill{background:var(--green-bg);color:var(--green)}.scr-g.st-watch .scr-pill{background:var(--amber-bg);color:var(--amber)}
+.scr-big{font-family:var(--mono);font-size:25px;font-weight:600;line-height:30px;color:var(--gc);font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scr-g.st-level .scr-big,.scr-g.st-first .scr-big,.scr-g.st-unknown .scr-big{color:var(--text)}
+.scr-big small{font-family:var(--font);font-size:11.5px;font-weight:500;color:var(--text3);margin-left:6px;letter-spacing:0}
+.scr-cb{display:grid;grid-template-columns:30px minmax(0,1fr) 78px;gap:6px 8px;align-items:center;font-size:11px;color:var(--text3)}
+.scr-cb i{display:block;height:7px;border-radius:3px;background:var(--bg5);min-width:2px}.scr-cb i.a{background:var(--gc)}
+.scr-g.st-level .scr-cb i.a,.scr-g.st-first .scr-cb i.a{background:var(--text3)}
+.scr-cb .v{text-align:right;color:var(--text2);font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px}
+.scr-dl{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text3);flex-wrap:wrap}
+.scr-dl b{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}.scr-dl b.up{color:var(--green)}.scr-dl b.dn{color:var(--red)}.scr-dl b.m{color:var(--text2)}
+.scr-dl.lv{color:var(--text4)}
+.scr-chips{display:flex;gap:5px;flex-wrap:wrap}
+.scr-chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--bg4);color:var(--text2);border:1px solid var(--border);cursor:pointer}
+.scr-chip.up{color:var(--green);background:var(--green-bg);border-color:transparent}.scr-chip.dn{color:var(--red);background:var(--red-bg);border-color:transparent}.scr-chip.nw{color:var(--purple);background:rgba(186,160,227,.12);border-color:transparent}
+.scr-chip:hover{filter:brightness(1.12)}
+.scr-why{font-size:11.5px;line-height:16px;color:var(--text3);margin-top:auto;padding-top:8px;border-top:1px solid var(--border)}
+.scr-why b{color:var(--text2);font-weight:600}
+.scr-note{font-size:11.5px;line-height:16px;color:var(--text3)}
+.scr-stk{display:flex;height:9px;border-radius:4px;overflow:hidden;background:var(--bg5)}.scr-stk i{display:block;height:100%}
+.scr-leg{display:flex;gap:9px;flex-wrap:wrap;font-size:11px;color:var(--text3)}
+.scr-leg span:before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.scr-leg b{color:var(--text2);font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+.scr-read{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:11px 16px;border-top:1px solid var(--border);background:var(--bg3)}
+.scr-read p{margin:0;font-size:12.5px;line-height:18px;color:var(--text2)}.scr-read p b{color:var(--text);font-weight:600}
+.scr-pj{color:var(--amber);font-weight:600}
+.scr-tgt{display:flex;gap:6px}.scr-tgt span{font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:4px 9px;white-space:nowrap}
+.scr-tgt b{color:var(--text);font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+@media (max-width:1100px){.scr-goals{grid-template-columns:1fr 1fr}.scr-read{grid-template-columns:1fr}}
+/* waste ledger */
+.wl-bar{display:flex;gap:6px;flex-wrap:wrap}.wl-bar .btn-sm.on{background:var(--blue);color:#06121e;border-color:var(--blue)}.wl-bar .btn-sm b{font-family:var(--mono);margin-left:3px}
+.wl-t td.wl-p{color:var(--text3);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wl-t tbody tr{cursor:pointer}
+.wl-k{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap}
+.wl-k.nothing{background:var(--red-bg);color:var(--red)}.wl-k.below{background:var(--amber-bg);color:var(--amber)}.wl-k.earning{background:var(--green-bg);color:var(--green)}
 </style>
 </head>
 <body>
@@ -2738,7 +3701,7 @@ body:not(.light) [style*="background:var(--red);"]{color:#20060a!important}
 </div>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v4.0</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v5.6</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -2882,6 +3845,7 @@ body:not(.light) [style*="background:var(--red);"]{color:#20060a!important}
     <div id="rep-projbar" style="display:none"></div>
     <div id="rep-months" style="display:none;margin-bottom:8px"></div>
     <div class="rep-kpis" id="rep-kpis"></div>
+    <div id="rep-score" style="display:none"></div>
     <div id="rep-split" class="rs" style="display:none"></div>
     <div class="rep-chip-row" id="rep-insights"></div>
     <div id="rep-movers" style="display:none;margin-bottom:10px"></div>
@@ -2926,7 +3890,7 @@ body:not(.light) [style*="background:var(--red);"]{color:#20060a!important}
         <button class="tog on" id="pv-conn" onclick="setPrepView('connected')" style="border:none">Connected view</button>
         <button class="tog" id="pv-portal" onclick="setPrepView('portal')" style="border:none;background:none">Full portal</button>
       </div>
-      <button class="btn-sm" onclick="openPrepDevBrief()" title="Copyable improvement list for the Prep Portal, generated from its live schema">${ico('export')}Dev suggestions</button>
+      <button class="btn-sm" onclick="openPrepDevBrief()" title="Copyable improvement list for the Prep Portal, generated from its live schema">⇪ Dev suggestions</button>
       <button class="btn-sm" onclick="window.open(PREP_URL,'_blank')">Open in new tab ↗</button>
     </div>
   </div>
@@ -3078,7 +4042,7 @@ body:not(.light) [style*="background:var(--red);"]{color:#20060a!important}
       </select>
       <select class="sel" id="cl-type-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All types</option><option>PPC Bid</option><option>PPC Budget</option><option>PPC Keywords</option><option>Pricing</option><option>Listing</option><option>Stock</option></select>
       <select class="sel" id="cl-outcome-filter" onchange="window._clPage=0;renderChangeLog()"><option value="all">All outcomes</option><option value="pending">Pending review</option><option value="overdue">Overdue</option><option value="win">Worked</option><option value="loss">Did not work</option></select>
-      <select class="sel" id="cl-date-filter" onchange="window._clPage=0;renderChangeLog()" style="min-width:140px"><option value="all">Any date</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="180">Last 6 months</option><option value="365">Last 12 months</option><option value="thismonth">This month</option><option value="lastmonth">Last month</option><option value="thisyear">This year</option></select>
+      <select class="sel" id="cl-date-filter" onchange="window._clPage=0;renderChangeLog()" style="min-width:140px"><option value="all">Any date</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="180">Last 6 months</option><option value="365">Last 12 months</option><option value="thismonth">This month</option><option value="lastmonth">July real profit</option><option value="thisyear">This year</option></select>
       <select class="sel" id="cl-sort" onchange="window._clPage=0;renderChangeLog()" style="min-width:150px"><option value="recent">Sort: Newest</option><option value="oldest">Sort: Oldest</option><option value="review">Sort: Review due</option><option value="campaign">Sort: Campaign</option><option value="outcome">Sort: Outcome</option></select>
       <select class="sel" id="cl-scope" onchange="window._clPage=0;renderChangeLog()">
         <option value="flat">Flat list</option>
@@ -4252,7 +5216,14 @@ async function sbSaveDismissed(){
 let _lastSync=Date.now();
 window._lastSyncTime=null; /* timestamp of last SUCCESSFUL sync */
 const FS_MODES={sub:'Sharp',gray:'Smooth',bold:'Sharp + heavier'};
-function fsDefault(){try{return (window.devicePixelRatio||1)>=2?'gray':'bold';}catch(e){return 'sub';}}
+/* v4.4 — a Retina screen used to default to 'gray' (grayscale antialiasing).
+   That is the conventional choice and it is wrong for THIS app: on macOS
+   antialiased renders text THINNER, and light-on-dark was already losing
+   apparent weight. A side-by-side specimen at dpr=2 showed subpixel rendering
+   visibly thicker and crisper on the dark surface — which is what "the font is
+   blurry, think it's how thick it is" was describing.
+   'sub' = Sharp = the macOS default. The Settings toggle still offers all three. */
+function fsDefault(){try{return (window.devicePixelRatio||1)>=2?'sub':'bold';}catch(e){return 'sub';}}
 function snapDupeNote(){
   const el=document.getElementById('dupe-note'); if(!el)return;
   let d=[]; try{d=snapDupes();}catch(e){}
@@ -4580,9 +5551,22 @@ function showSupabaseError(msg){
 
 
 /* ════════ SPARKLINE ════════ */
+/* v4.5 — the line now takes its colour from the DIRECTION of the series, not
+   from whatever the caller happened to pass. Every sparkline in the app was
+   drawn green, including the ROAS one sitting 6px under its own red "-2%".
+   A falling series drawn in green is the chart telling the opposite of the
+   number beside it.
+   The y-domain also stops auto-scaling min→max when the move is small: a -2%
+   wobble was being drawn as a full-height crash while a +1,169% climb read as
+   a gentle slope, because each was stretched to fill its own box. Below a 25%
+   spread the scale starts at zero, so a flat series looks flat. */
 function spark(vals,color,w=64,h=20){
   if(vals.length<2)return '<span class="muted">—</span>';
-  const max=Math.max(...vals),min=Math.min(...vals);
+  const first=vals[0],last=vals[vals.length-1];
+  const dir=last>first?1:last<first?-1:0;
+  if(!color||color==='auto')color=dir>0?'var(--green)':dir<0?'var(--red)':'var(--text4)';
+  let max=Math.max(...vals),min=Math.min(...vals);
+  if(max>0&&(max-min)/Math.abs(max)<0.25){min=Math.min(0,min);max=max*1.05;}
   const pts=vals.map((v,i)=>[i/(vals.length-1)*w,h-2-((v-min)/((max-min)||1))*(h-4)]);
   const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
   return `<svg width="${w}" height="${h}" style="vertical-align:middle"><path d="${d}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="1.9" fill="${color}"/></svg>`;
@@ -4643,7 +5627,7 @@ function campKpis(){
     {l:'Total sales',v:gbp(sum.sales),c:'var(--text)',s:series('sales'),sc:'var(--text3)'},
     {l:'Avg campaign ROAS',v:fmt(roas,2),c:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)',s:series('roas'),sc:roas>=_rg?'var(--green)':roas>=_ra?'var(--amber)':'var(--red)'},
   ];
-  const ragBox=`<div class="card kpi" style="padding:10px 12px">
+  const ragBox=`<div class="card kpi">
     <div class="label" style="margin-bottom:8px">Campaign health</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px">
       <div title="Show green" style="cursor:pointer;background:var(--green-bg);border-radius:6px;padding:5px 4px;text-align:center" onclick="goToCampaignsFiltered('g')">
@@ -4660,7 +5644,7 @@ function campKpis(){
       </div>
     </div>
   </div>`;
-  document.getElementById('camp-kpis').innerHTML=K.map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="v" style="color:${k.c}">${k.v}</div>${k.s?`<div class="spk">${spark(k.s,k.sc,150,22)}</div>`:''}</div>`).join('')+ragBox;
+  document.getElementById('camp-kpis').innerHTML=K.map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="v" style="color:${k.c}">${k.v}</div>${k.s?`<div class="spk">${spark(k.s,'auto',150,22)}</div>`:''}</div>`).join('')+ragBox;
   document.getElementById('camp-sub').textContent=campaigns.length+' campaigns across '+new Set(campaigns.map(c=>c.asin)).size+' products · auto + manual targeting';
   updateOverdueBadges();
 }
@@ -9416,7 +10400,7 @@ function renderProducts(){
     </thead>
     <tbody>${rows.map(p=>{
       const rc=ragColor(p.rag);
-      const sparkHtml=p.hist.filter(v=>v>0).length>=2?spark(p.hist,rc,80,20):'<span class="muted" style="font-size:10px">—</span>';
+      const sparkHtml=p.hist.filter(v=>v>0).length>=2?spark(p.hist,'auto',80,20):'<span class="muted" style="font-size:10px">—</span>';
       const stale=p.staleDays!=null&&p.staleDays>45?`<div class="prod-stale" title="Latest period ended ${p.staleDays} days ago">${p.staleDays}d old</div>`:'';
       const health=`<span class="prod-health" title="${p.g} green · ${p.am} amber · ${p.rd} red or leaking">${p.camps.length}<span class="prod-h-split"><b style="color:var(--green)">${p.g}</b>/<b style="color:var(--amber)">${p.am}</b>/<b style="color:${p.rd?'var(--red)':'var(--text4)'}">${p.rd}</b></span></span>`;
       const tacosCol=p.tacos==null?'var(--text4)':p.tacos<=15?'var(--green)':p.tacos<=25?'var(--amber)':'var(--red)';
@@ -12644,6 +13628,15 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'){liveStart();livePoll();}
 });
 setTimeout(liveStart,3000);
+/* One-time migration: anyone already carrying the old 'gray' default has it
+   saved, so a new default would never reach them. Clear it once, then never
+   again — an explicit choice made after this point is respected forever. */
+try{
+  if(localStorage.getItem('bdl_fs_default_v44')!=='1'){
+    if(localStorage.getItem('bdl_font_smooth')==='gray')localStorage.removeItem('bdl_font_smooth');
+    localStorage.setItem('bdl_fs_default_v44','1');
+  }
+}catch(e){}
 try{setFontSmooth(localStorage.getItem('bdl_font_smooth')||fsDefault(),true);}catch(e){}
 document.addEventListener('click',e=>{const b=e.target.closest('[onclick*="goPage(\'settings\')"]');if(b)setTimeout(()=>{try{snapDupeNote();try{snapGuardNote();}catch(e){}}catch(_){}} ,300);},true);
 setTimeout(()=>{try{snapDupeNote();try{snapGuardNote();}catch(e){}}catch(e){}},4000);
@@ -12863,7 +13856,51 @@ function renderReport(){
             ${cell('Real profit',gbp(t.real*f),t.real>=0?'var(--green)':'var(--red)',t.real*f,pt?pt.real:null,gbp,true)}
             ${cell('Products',intf(cn),'var(--text)',cn,pn,v=>intf(Math.round(v)),true)}
           </div>
-          <div class="pj-note">Straight-line: ${_pp.days} days scaled to ${_pp.of}. Ignores weekends, promos, stock-outs and seasonality — the first days of a month are the least representative there are.${pt?` Compared against <b>${_esc(pv.label)}</b> actuals.`:''}</div>`;
+          <div class="pj-note">Straight-line: ${_pp.days} days scaled to ${_pp.of}. Ignores weekends, promos, stock-outs and seasonality — the first days of a month are the least representative there are.</div>
+          ${(()=>{
+            /* v4.8 — the counts and the movers, from Jack's reference layout.
+               Everything here is derived from data already on screen; nothing new
+               is fetched and nothing is estimated beyond the straight-line factor
+               that the strip above already states. */
+            const pmap=repPrevMap();
+            const rws=(m.rows||[]);
+            let better=0,worse=0,losing=0,fresh=0;
+            const moves=[];
+            rws.forEach(r=>{
+              const d=repDirVsPrev(r,m,pmap);
+              const projReal=repRowReal(r)*f;
+              if(projReal<0)losing++;
+              if(!d){return;}
+              if(d.isNew){fresh++;return;}
+              if(d.better)better++; else if(d.worse)worse++;
+              if(d.d!=null&&isFinite(d.d))moves.push({name:r.name||r.asin||'—',proj:d.now,diff:d.d});
+            });
+            moves.sort((a,b)=>b.diff-a.diff);
+            const ups=moves.filter(x=>x.diff>0).slice(0,3);
+            const downs=moves.filter(x=>x.diff<0).slice(-3).reverse();
+            const cnt=(n,lab,sub,col)=>`<div class="pj-c"><b style="color:${col}">${intf(n)}</b>
+                <span class="pj-c-l">${lab}</span><span class="pj-c-s">${sub}</span></div>`;
+            const mv=(x,up)=>`<div class="pj-m"><span class="pj-m-n">${_esc(String(x.name).slice(0,42))}</span>
+                <span class="pj-m-v">${gbp(x.proj)}</span>
+                <span class="pj-m-d ${up?'up':'dn'}">${up?'+':'−'}${gbp(Math.abs(x.diff))}</span></div>`;
+            return `
+            <div class="pj-counts">
+              ${cnt(better,'tracking better','projected above '+(pv?_esc(pv.label):'last month'),'var(--green)')}
+              ${cnt(worse,'tracking worse','projected below '+(pv?_esc(pv.label):'last month'),'var(--red)')}
+              ${cnt(losing,'losing money','projected real profit below zero','var(--amber)')}
+              ${cnt(fresh,'new this month',(pv?'no '+_esc(pv.label):'no prior')+' baseline','var(--purple)')}
+            </div>
+            <div class="pj-movers">
+              <div class="pj-mv">
+                <div class="pj-mv-h"><b>Biggest projected gains</b><i>vs ${pv?_esc(pv.label):'last month'}</i></div>
+                ${ups.length?ups.map(x=>mv(x,true)).join(''):'<div class="pj-m pj-m-none">Nothing tracking ahead yet</div>'}
+              </div>
+              <div class="pj-mv">
+                <div class="pj-mv-h"><b>Biggest projected declines</b><i>where this month is losing ground</i></div>
+                ${downs.length?downs.map(x=>mv(x,false)).join(''):'<div class="pj-m pj-m-none">Nothing tracking behind</div>'}
+              </div>
+            </div>`;
+          })()}`;
       } else el.style.display='none';
     }
   }
@@ -12942,12 +13979,13 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
       const db=(k,cls,sym,n,word)=>n?`<button class="dirb ${cls} ${_repFilter===k?'on':''}"
         title="${_esc(n+' '+word+' — '+basis)}" onclick="repFilter('${k}')">${sym} <b>${n}</b> ${word}</button>`:'';
       const chip=o=>`<span class="mv-c" onclick="openRepProduct('${_esc(o.r.asin||'')}')" title="${_esc(repFullName(o.r))}${_mvPart?' — projected to month end, against a full '+_esc(prev.label):''}">
-        <b>${_esc((lavName(o.r.asin)||repName(o.r)||'—').slice(0,24))}</b>
+        <b>${_esc((lavName(o.r.asin)||repName(o.r)||'—'))}</b>
         <i style="color:${o.x.d>0?'var(--green)':'var(--red)'}">${o.x.d>0?'+':'−'}${gbp(Math.abs(o.x.d))}</i></span>`;
       mvEl.style.display='';
       mvEl.innerHTML=`<div class="mv-strip">
         <span class="mv-h">${_mvPart?'On pace':'Moved it'} <em>vs ${_esc(prev.label)}</em></span>
         <span class="dirbar">
+          <button class="dirb all ${_repFilter==='all'?'on':''}" title="Every product in ${_esc(m.label)}" onclick="repFilter('all')">All <b>${rows.length}</b></button>
           ${db('better','up','▲',nBetter,'better')}
           ${db('worse','dn','▼',nWorse,'worse')}
           ${db('level','fl','—',nLevel,'level')}
@@ -12959,6 +13997,7 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
       </div>`;
     }else{mvEl.style.display='none';mvEl.innerHTML='';}
   }
+  try{repScorecard(m,prev);}catch(e){console.warn('scorecard',e);}
   /* table */
   /* v3.3 — keyed UPPERCASE. Every ASIN in the file today is already upper, so this
      changes nothing now; it matters the moment a row arrives from a different source
@@ -12987,9 +14026,19 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
       default:       return true;
     }
   });
+  /* v5.4 — one repRowCmp per row, cached; the sort key, the ticks and the delta all read it */
+  const _cmpCache={};
+  const rowCmp=r=>{if(!r.asin)return null;const A=String(r.asin).toUpperCase();
+    if(!(A in _cmpCache)){const pr=prevByAsin[A];_cmpCache[A]=pr?repRowCmp(r,pr,m):null;}return _cmpCache[A];};
+  const chgKey=(r,k)=>{const x=rowCmp(r);if(!x||!x[k]||x[k].d==null)return -Infinity;return x[k].pct!=null?x[k].pct:x[k].d;};
   const kv=({r})=>{
     switch(_repSort.k){
       case 'name':   return (r.name||'').toLowerCase();
+      case 'chgU':   return chgKey(r,'units');
+      case 'chgS':   return chgKey(r,'sales');
+      case 'chgA':   return chgKey(r,'ads');
+      case 'chgP':   return chgKey(r,'profit');
+      case 'chgR':   return chgKey(r,'real');
       case 'real':   return repRowReal(r);
       case 'organic':return Math.max(0,(+r.units||0)-Math.min(+r.adUnits||0,+r.units||0));
       case 'rank':   return (+r.rank||Infinity);
@@ -13056,6 +14105,10 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
   const marginOf=r=>(+r.sales||0)?repRowReal(r)/(+r.sales)*100:0;
   const coverOf=r=>(r.stock!=null&&(+r.units||0)>0)?(+r.stock)/(+r.units):null;
   const anyStock=rows.some(r=>r.stock!=null);
+  /* v5.4 — the per-row ▲▼ on units / sales / ads / profit. One repRowCmp per row, shared by the cells. */
+  const chgOn=repColOn('chg')&&!!prev;
+  const _prevL=(prev&&prev.label||'').replace(/\s*20\d\d/,'');
+  const tick=(r,k,fF)=>chgOn?repTick(rowCmp(r),k,fF,_prevL):'';
 
   const ALL=[
     {k:'rank',h:'Rank',w:'c-small',t:'Sub-category rank — lower is better',avail:anyRank,
@@ -13069,12 +14122,12 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
         if(sp.over){
           /* Do NOT print "org £0.00" here — it reads as a fact when it is a
              contradiction. The split is unknown for this row, and unknown ≠ zero. */
-          return gbp(sv)+`<div class="rsplit"><span class="rs-x" title="Amazon credits ${gbp(sp.raw)} of advertised revenue to this product but it only sold ${gbp(sv)} — ${gbp(sp.excess)} more than exists. Its attribution window does not line up with the sales report's month, so the organic split cannot be worked out for this row. ROAS is unaffected.">org — · ads ${gbp(sp.raw)} &gt; sales</span></div>`;
+          return gbp(sv)+tick(r,'sales',gbp)+`<div class="rsplit"><span class="rs-x" title="Amazon credits ${gbp(sp.raw)} of advertised revenue to this product but it only sold ${gbp(sv)} — ${gbp(sp.excess)} more than exists. Its attribution window does not line up with the sales report's month, so the organic split cannot be worked out for this row. ROAS is unaffected.">org — · ads ${gbp(sp.raw)} &gt; sales</span></div>`;
         }
-        return gbp(sv)+(sp.raw!=null?`<div class="rsplit"><span class="rs-o">org ${gbp(sp.organic)}</span> <span class="rs-a">ads ${gbp(sp.ad)}</span></div>`:'')+mini;},
+        return gbp(sv)+tick(r,'sales',gbp)+(sp.raw!=null?`<div class="rsplit"><span class="rs-o">org ${gbp(sp.organic)}</span> <span class="rs-a">ads ${gbp(sp.ad)}</span></div>`:'')+mini;},
       f:()=>gbp(t.sales)+(hasSplit?`<div class="rsplit"><span class="rs-o">org ${gbp(t.orgRev)}</span> <span class="rs-a">ads ${gbp(t.adRev)}</span></div>`:'')},
-    {k:'profit',h:'Profit',w:'c-money',t:'Profit before advertising',c:r=>gbp(+r.profit||0),f:()=>gbp(t.profit)},
-    {k:'ads',h:'Ads',w:'c-money',c:r=>`<span style="color:${(+r.ads||0)>0?'var(--amber)':'var(--text4)'}">${gbp(+r.ads||0)}</span>`,
+    {k:'profit',h:'Profit',w:'c-money',t:'Profit before advertising',c:r=>gbp(+r.profit||0)+tick(r,'profit',gbp),f:()=>gbp(t.profit)},
+    {k:'ads',h:'Ads',w:'c-money',c:r=>`<span style="color:${(+r.ads||0)>0?'var(--amber)':'var(--text4)'}">${gbp(+r.ads||0)}</span>`+tick(r,'ads',gbp),
       f:()=>`<span style="color:var(--amber)">${gbp(t.ads)}</span>`},
     {k:'tacos',h:'TACOS',w:'c-small',t:'Ad spend ÷ all sales — how much of this product is rented',
       c:r=>{const v=tacosOf(r);return (+r.sales||0)?`<span style="color:${v>30?'var(--red)':v>18?'var(--amber)':'var(--text2)'};font-weight:700">${fmt(v,1)}%</span>`:'<span class="muted">—</span>';},
@@ -13093,7 +14146,7 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
       f:()=>adsKnown?`<span class="u-ad">${intf(t.adUnits)}</span>`:'<span class="unk">—</span>'},
     {k:'units',h:'Units',w:'c-units',t:'Organic + advertised units',lock:1,
       c:r=>{const tot=+r.units||0,au=Math.min(+r.adUnits||0,tot),og=Math.max(0,tot-au),pa=tot?au/tot*100:0;
-        return `<span class="u-tot">${intf(tot)}</span>`+(!showU&&tot&&adsKnown?`<span class="ub-bar" title="${intf(og)} organic · ${intf(au)} advertised"><i class="ub-org" style="width:${(100-pa).toFixed(1)}%"></i><i class="ub-ad" style="width:${pa.toFixed(1)}%"></i></span>`:'');},
+        return `<span class="u-tot">${intf(tot)}</span>`+tick(r,'units',intf)+(!showU&&tot&&adsKnown?`<span class="ub-bar" title="${intf(og)} organic · ${intf(au)} advertised"><i class="ub-org" style="width:${(100-pa).toFixed(1)}%"></i><i class="ub-ad" style="width:${pa.toFixed(1)}%"></i></span>`:'');},
       f:()=>`<span class="u-tot">${intf(t.units)}</span>`},
     {k:'margin',h:'Margin',w:'c-small',t:'Real Profit ÷ sales',off:1,
       c:r=>{const v=marginOf(r);return (+r.sales||0)?`<span style="color:${v>=15?'var(--green)':v>=8?'var(--amber)':'var(--red)'};font-weight:700">${fmt(v,1)}%</span>`:'<span class="muted">—</span>';},
@@ -13130,7 +14183,7 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
         const pv=pr?repRowReal(pr):null;
         const d=(pv!=null&&isFinite(pv))?v-pv:null;
         return `<span class="projv ${v>0?'up':v<0?'dn':''}">${gbp(v)}</span>`+
-          (d==null?'':`<div class="proj-d ${d>0?'up':d<0?'dn':'fl'}">${d>0?'▲':d<0?'▼':''}${gbp(Math.abs(d))} vs ${_esc((prev&&prev.label||'').replace(/\s*20\d\d/,''))}</div>`);},
+          ((d==null||Math.abs(d)<Math.max(0.5,Math.abs(pv)*0.02))?'':`<div class="proj-d ${d>0?'up':d<0?'dn':'fl'}">${d>0?'▲':d<0?'▼':''}${gbp(Math.abs(d))} vs ${_esc((prev&&prev.label||'').replace(/\s*20\d\d/,''))}</div>`);},
       /* v3.1 — the delta is gone from this ONE cell on purpose. This column only
          exists on a part month, and a part month always draws the pace row
          directly beneath, which states the same figure and the same delta. Two
@@ -13173,6 +14226,7 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
     ${shown.map(c=>`<th onclick="repSortBy('${c.k}')" class="${_repSort.k===c.k?'sorted':''}"${c.t?` title="${_esc(c.t)}"`:''}>${c.k==='units'&&showU?'<span class="eqop">=</span> ':''}${c.h}${arrow(c.k)}</th>`).join('')}
     <th onclick="repSortBy('real')" class="${_repSort.k==='real'?'sorted':''}" title="Real Profit = Profit before ads − Ads">Real Profit${arrow('real')}</th>
   </tr>`;
+  window._repHasPrev=!!prev;
   repPaintSort(shown);
   const COLS=shown.length+2;
   const body=document.getElementById('rep-body');
@@ -13193,7 +14247,8 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
       const burn=dead&&(+r.ads||0)>0;
       const pr=r.asin?prevByAsin[String(r.asin).toUpperCase()]:null;
       let delta='';
-      if(prev&&pr){const d=real-repRowReal(pr);delta=Math.abs(d)<0.005?'':`<span class="delta ${d>0?'up':'dn'}" title="vs ${_esc(prev.label)}">${d>0?'▲':'▼'}${gbp(Math.abs(d))}</span>`;}
+      if(prev&&pr){const C=rowCmp(r)||repRowCmp(r,pr,m),d=C.real.d;
+        delta=C.real.dir===0?'':`<span class="delta ${d>0?'up':'dn'}" title="vs ${_esc(prev.label)}${C.proj?' — projected from '+C.days+' of '+C.of+' days':''}">${d>0?'▲':'▼'}${gbp(Math.abs(d))}</span>`;}
       else if(prev&&r.asin)delta=`<span class="delta fl" title="Not in ${_esc(prev.label)}">new</span>`;
       const rpCls=dead?'rp-neg':real>0?'rp-pos':real<0?'rp-neg':'rp-zero';
       const url=repUrl(r);
@@ -13264,14 +14319,29 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
     };
     /* The caption stacks instead of running on. It used to need 531px of a 369px
        column and was cut off mid-word; three short lines always fit. */
+    /* v4.7 — this used to repeat EVERY column a second time, directly under the
+       totals: two full rows of figures, one actual and one projected, in the
+       same shape and the same place. Reading which was which meant checking the
+       label on the far left every time.
+       It is now one sentence and one figure — the projected real profit, which
+       is the only number anyone acts on. Every per-column projection is still
+       available in the row itself; it just is not printed twice. */
+    const _pReal = t.real*f;
+    const _pPrev = pt && pt.real;
+    const _pDiff = (_pPrev!=null && isFinite(_pPrev)) ? _pReal-_pPrev : null;
+    const _pDirC = _pDiff==null ? '' : _pDiff>0 ? 'rp-pos' : _pDiff<0 ? 'rp-neg' : '';
+    const _pArrow= _pDiff==null ? '' : _pDiff>0 ? '\u25B2' : _pDiff<0 ? '\u25BC' : '';
+    const _span  = shown.length + 2;
     return `<tr class="ft-proj">
-      <td class="ft-l">
+      <td class="ft-l ft-oneline" colspan="${_span}"><div class="ft-row">
         <span class="ftp-tag">If this pace holds</span>
-        <span class="ftl-1">Full month · ${P.of} days</span>
-        <span class="ft-note">from ${P.days} day${P.days===1?'':'s'} imported${prev?` · arrows compare with ${_esc(prev.label)}`:''}</span>
-      </td>
-      ${shown.map(c=>`<td>${cell(c.k)}</td>`).join('')}
-      <td><span class="${t.real>0?'rp-pos':t.real<0?'rp-neg':'rp-zero'}">${money(t.real)}</span>${dl(t.real*f,pt&&pt.real,gbp,true)}</td>
+        <span class="ftl-1">${P.of}-day estimated finish based on ${P.days} imported day${P.days===1?'':'s'}</span>
+        <span class="ft-spacer"></span>
+        <span class="ft-proj-fig">Projected real profit
+          <b class="${t.real>0?'rp-pos':t.real<0?'rp-neg':'rp-zero'}">${money(_pReal)}</b>${
+          _pDiff==null?'':` · <b class="${_pDirC}">${_pArrow} ${gbp(Math.abs(_pDiff))} vs ${prev?_esc(prev.label):'last month'}</b>`}
+        </span>
+      </div></td>
     </tr>`;})():'';
   document.getElementById('rep-sub').textContent=m.label+' · Real Profit = Profit before ads − Ads · click any row for its full history';
 }
@@ -15163,7 +16233,9 @@ function miParseSales(rows){
   const H=rows[hi];
   const c={asin:_find(H,['asin']),title:_find(H,['title','product name','name']),brand:_find(H,['brand']),
     units:_find(H,['units']),sales:_find(H,['sales','revenue']),profit:_find(H,['profit_loss','profit']),
-    date:_find(H,['date']),stock:_find(H,['current_stock_qty','stock'])};
+    date:_find(H,['date']),stock:_find(H,['current_stock_qty','stock']),
+    /* v5.6 — kept, not used yet: the fee-creep and cost questions need them later */
+    fees:_find(H,['fees']),cog:_find(H,['cog']),vat:_find(H,['vat']),promo:_find(H,['promotion']),orders:_find(H,['orders'])};
   if(c.asin<0||c.sales<0)return{err:'Couldn’t find the ASIN and Sales columns.'};
   const out=[];let skipped=0,label='';
   for(let i=hi+1;i<rows.length;i++){
@@ -15175,12 +16247,15 @@ function miParseSales(rows){
     out.push({asin,url:_urlOf(r[c.asin])||('https://www.amazon.co.uk/dp/'+asin),
       name:String(c.title>=0?r[c.title]:'').replace(/^"|"$/g,'').trim(),
       units:Math.round(_num(r[c.units])),sales:_num(r[c.sales]),profit:_num(r[c.profit]),
-      stock:c.stock>=0?Math.round(_num(r[c.stock])):null});
+      stock:c.stock>=0?Math.round(_num(r[c.stock])):null,
+      fees:c.fees>=0?_num(r[c.fees]):null,cog:c.cog>=0?_num(r[c.cog]):null,vat:c.vat>=0?_num(r[c.vat]):null,
+      promo:c.promo>=0?_num(r[c.promo]):null,orders:c.orders>=0?Math.round(_num(r[c.orders])):null});
   }
   /* one row per ASIN */
   const by={};out.forEach(r=>{
     const e=by[r.asin];
-    if(!e)by[r.asin]=r;else{e.units+=r.units;e.sales+=r.sales;e.profit+=r.profit;}
+    if(!e)by[r.asin]=r;else{e.units+=r.units;e.sales+=r.sales;e.profit+=r.profit;
+      ['fees','cog','vat','promo','orders'].forEach(k=>{if(r[k]!=null)e[k]=(e[k]||0)+r[k];});}
   });
   return{rows:Object.values(by),skipped,label,brandFiltered:c.brand>=0};
 }
@@ -15425,7 +16500,7 @@ function miGroups(){
   return{both,salesOnly,adsOnly};
 }
 function openMonthImport(){
-  _miSales=null;_miAds=null;_miExclude=new Set();window._miSalesFile='';
+  _miSales=null;_miAds=null;_miExclude=new Set();window._miSalesFile='';window._miRaw={};
   window._miDaysTouched=false;window._miDaysAuto=false;window._miDetected=null;
   ['mi-day-from','mi-day-to'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   const _pc=document.getElementById('mi-part');if(_pc)_pc.checked=false;
@@ -15445,6 +16520,7 @@ function openMonthImport(){
 /* Put one side of the import back to untouched — wrong file, wrong paste, start again. */
 function miClear(which,quiet){
   if(which==='sales'){_miSales=null;window._miSalesFile='';}else _miAds=null;
+  if(window._miRaw)delete window._miRaw[which];
   window._miDetected=null;   /* a suggestion must never outlive the file it came from */
   const ta=document.getElementById('mi-'+which+'-text');if(ta)ta.value='';
   const fi=document.getElementById('mi-'+which+'-file');if(fi)fi.value='';
@@ -15514,6 +16590,7 @@ async function miTakeFile(which,input){
     const dz2=document.getElementById('mi-'+target+'-drop');
     if(dz2){dz2.classList.add('has');dz2.querySelector('span:last-child').innerHTML='<b>'+_esc(f.name)+'</b><span class="mi-drop-s">click to replace</span>';}
     miSet(target,rows,f.name);
+    (window._miRaw=window._miRaw||{})[target]={file:f.name||'',rows};   /* v5.6 — kept as-is for the archive */
     if(target!==which){
       const ts=document.getElementById('mi-'+target+'-state');
       if(ts)ts.innerHTML+=' <span style="color:var(--blue);font-weight:700">· moved here automatically</span>';
@@ -15523,7 +16600,7 @@ async function miTakeFile(which,input){
 }
 function miTakePaste(which,text){
   if(!String(text||'').trim()){miSet(which,null,'');return;}
-  miSet(which,delimRows(text),'pasted');
+  const _rr=delimRows(text);(window._miRaw=window._miRaw||{})[which]={file:'pasted',rows:_rr};miSet(which,_rr,'pasted');
 }
 /* Ads exports routinely contain ASINs that are not yours, and rows with no spend and
    no sales at all. Neither belongs in the report, so both start EXCLUDED and Jack has
@@ -15577,7 +16654,8 @@ function miMerge(){
   const by={};
   const keep=a=>!_miExclude.has(String(a||'').toUpperCase())&&!asinDropped(a);
   sales.filter(s=>keep(s.asin)).forEach(s=>{by[s.asin]={id:_uid(),asin:s.asin,url:s.url,name:s.name,units:s.units,sales:s.sales,
-    profit:s.profit,stock:s.stock,ads:0,adUnits:0,adSales:null};});
+    profit:s.profit,stock:s.stock,ads:0,adUnits:0,adSales:null,
+    fees:s.fees??null,cog:s.cog??null,vat:s.vat??null,promo:s.promo??null,orders:s.orders??null};});
   Object.values(ads).filter(a=>keep(a.asin)).forEach(a=>{
     const e=by[a.asin]||(by[a.asin]={id:_uid(),asin:a.asin,url:'https://www.amazon.co.uk/dp/'+a.asin,
       name:(window._asinNames||{})[a.asin.toUpperCase()]||lavName(a.asin)||a.asin,units:0,sales:0,profit:0,stock:null,ads:0,adUnits:0,adSales:null});
@@ -15877,6 +16955,7 @@ async function miImport(){
     stepLine(stepEl,STEPS,STEPS.length,true);
     repSave();
   });
+  try{miArchiveRaw(m);}catch(e){console.warn('raw archive',e);}
   closeMonthImport();
   goPage('report');
   window._lastImportUndo=undo;
@@ -16473,27 +17552,28 @@ function rphGo(tab){_rphTab=tab;openRepProduct(_rphAsin,true);}
 function rphSetMetric(k){_rphMetric=k;_rphTab='trends';openRepProduct(_rphAsin,true);}
 
 /* ── the one-line verdict at the top of Overview ── */
-function rphVerdict(V,share){
-  const l=V[V.length-1],p=V[V.length-2]||null;
+function rphVerdict(V,share,C,Lx,Px){
+  const l=Lx||V[V.length-1],p=Lx?(Px||null):(V[V.length-2]||null);
   const pb=+l.r.profit||0;
   if(l.ads>0&&l.units===0)return{t:'bad',h:'Burning money',b:`${gbp(l.ads)} of ad spend, nothing sold. Nothing to weigh up — turn it off.`};
   if(l.real<0&&pb>0)return{t:'warn',h:'Good product, bad spend',b:`It earns ${gbp(pb)} before advertising. ${gbp(l.ads)} of ads turns that into a ${gbp(Math.abs(l.real))} loss. Fix the bids, not the product.`};
   if(l.real<0)return{t:'bad',h:'Losing money at the core',b:`Down ${gbp(Math.abs(l.real))} before advertising is even the issue. Cost price, fees or selling price — one of them is wrong.`};
   if(share.real>=15)return{t:'good',h:'Carrying the account',b:`${fmt(share.real,1)}% of all real profit this month comes from this one product. Protect it before you optimise anything else.`};
-  if(p&&l.real>p.real&&l.ads<=p.ads)return{t:'good',h:'Growing on its own',b:`Real profit up ${gbp(l.real-p.real)} on ${p.lab} without spending more. This is the shape you want everything to have.`};
-  if(p&&l.real<p.real)return{t:'warn',h:'Going backwards',b:`Real profit down ${gbp(Math.abs(l.real-p.real))} on ${p.lab}${l.ads>p.ads?`, and ad spend rose ${gbp(l.ads-p.ads)} while it happened`:''}.`};
+  const cp=(C&&!C.isNew&&C.real.d!=null)?C:null,pj=cp&&cp.proj?' on pace':'';
+  if(cp&&cp.real.dir>0&&cp.ads.d<=0)return{t:'good',h:'Growing on its own',b:`Real profit up ${gbp(cp.real.d)}${pj} on ${p.lab} without spending more. This is the shape you want everything to have.`};
+  if(cp&&cp.real.dir<0)return{t:'warn',h:'Going backwards',b:`Real profit down ${gbp(Math.abs(cp.real.d))}${pj} on ${p.lab}${cp.ads.d>0?`, and ad spend rose ${gbp(cp.ads.d)} while it happened`:''}.`};
   if(l.margin>=20)return{t:'good',h:'Strong margin',b:`${fmt(l.margin,1)}% of every pound of sales survives as real profit — ${gbp(l.real/Math.max(1,l.units))} a unit.`};
   return{t:'ok',h:'Steady',b:`${gbp(l.real)} real profit on ${gbp(l.sales)} of sales at ${fmt(l.margin,1)}% margin. Nothing alarming, nothing outstanding.`};
 }
 
-function rphNarrative(V,A,share){
-  const last=V[V.length-1],prev=V[V.length-2]||null;
+function rphNarrative(V,A,share,C,Lx,Px){
+  const last=Lx||V[V.length-1],prev=Lx?(Px||null):(V[V.length-2]||null);
   const N={now:[],cross:[],watch:[]};
   const tgt=cfgTargetRoas(),marg=last.margin;
   if(last.ads>0&&last.units===0)N.now.push(`Spent ${gbp(last.ads)} and sold nothing. No reading to do — the spend is pure loss this month.`);
   else if(last.real<0&&(+last.r.profit||0)>0)N.now.push(`Trades profitably at ${gbp(+last.r.profit||0)} before ads, but ${gbp(last.ads)} of spend turns it into a ${gbp(Math.abs(last.real))} loss.`);
-  else if(prev){
-    const dr=last.real-prev.real,ds=last.sales-prev.sales,da=last.ads-prev.ads;
+  else if(prev&&C&&!C.isNew&&C.real.d!=null){
+    const dr=C.real.d,ds=C.sales.d,da=C.ads.d;
     if(dr>0&&ds>0&&da<=0)N.now.push(`Sales up ${gbp(ds)}, ad spend ${da<0?'down '+gbp(Math.abs(da)):'flat'}, real profit up ${gbp(dr)}. Standing on its own more than it was.`);
     else if(dr>0&&da>0)N.now.push(`Real profit up ${gbp(dr)}, but it took ${gbp(da)} more in ads. Worth it this month — watch whether next month needs more again.`);
     else if(dr<0&&ds>0)N.now.push(`Sales grew ${gbp(ds)} while real profit fell ${gbp(Math.abs(dr))} — you bought the growth.${da>0?` Ad spend rose ${gbp(da)}.`:''}`);
@@ -16513,7 +17593,7 @@ function rphNarrative(V,A,share){
   if(last.ads>0&&last.roas>0&&last.roas<tgt)N.watch.push(`ROAS ${fmt(last.roas,2)}× against your ${fmt(tgt,1)}× target — bids down, or the margin has to justify it.`);
   if(last.ads>0&&last.roas>=tgt)N.watch.push(`ROAS ${fmt(last.roas,2)}×, above your ${fmt(tgt,1)}× target. Put more budget behind this, not less.`);
   if(prev&&last.tacos>prev.tacos+2)N.watch.push(`TACOS ${fmt(prev.tacos,1)}% → ${fmt(last.tacos,1)}%. If sales did not climb with it, advertising is getting more expensive for the same result.`);
-  if(prev&&last.organic<prev.organic&&last.adUnits>prev.adUnits)N.watch.push(`Organic units fell while advertised units rose — ads are replacing free sales, not adding to them.`);
+  if(prev&&C&&C.organic.dir<0&&C.adUnits.dir>0)N.watch.push(`Organic units fell while advertised units rose — ads are replacing free sales, not adding to them.`);
   if(marg>0&&marg<8)N.watch.push(`${fmt(marg,1)}% margin leaves no room. A fee change or a bid war lands straight on the bottom line.`);
   const st=last.r.stock,cov=(st!=null&&last.units>0)?st/last.units:null;
   if(cov!=null&&cov<2)N.watch.push(`${fmt(cov,1)} months of cover at ${intf(last.units)} units a month — ${cov<1?'this runs out before a shipment can land.':'order now if the lead time is over six weeks.'}`);
@@ -16561,7 +17641,12 @@ function openRepProduct(asin,keep){
   if(keep==='tab'){_rphAsin=A;_rphMetric='real';}
   else if(!keep){_rphAsin=A;_rphMetric='real';_rphTab='overview';}
   const V=rphSeries(A);if(!V.length)return;
-  const last=V[V.length-1],prev=V[V.length-2]||null,first=V[0];
+  /* v5.4 — anchored to the month that is OPEN. It used to show the latest month
+     whatever was on screen: open a product from July, get August's numbers. */
+  let _li=V.findIndex(v=>v.id===repCur);if(_li<0)_li=V.length-1;
+  const last=V[_li],prev=V[_li-1]||null,first=V[0];
+  const L1=V[V.length-1],L2=V[V.length-2]||null;   /* the Trends tab is about the latest month */
+  const C=repRowCmp(last.r,prev?prev.r:null,last.m);
   const M=RPH_METRICS[_rphMetric]||RPH_METRICS.real;
   const tgt=cfgTargetRoas();
 
@@ -16578,11 +17663,13 @@ function openRepProduct(asin,keep){
   document.getElementById('rph-title').textContent=short||full;
   document.getElementById('rph-sub').innerHTML='';
   const ship=lavShip(A);
-  const delta=(cur,prv,fmtF,good)=>{
-    if(prv==null)return'<span class="ph-d flat">first month</span>';
-    const d=cur-prv;if(Math.abs(d)<0.005)return'<span class="ph-d flat">level</span>';
-    const ok=(d>0?1:-1)===good;
-    return`<span class="ph-d ${ok?'up':'dn'}">${d>0?'▲':'▼'} ${fmtF(Math.abs(d))}</span>`;
+  /* v5.4 — the pills compare like for like. On a part month that is the projection
+     against the comparison month; the line under the numbers says so. */
+  const delta=(k,fmtF)=>{
+    if(!prev)return'<span class="ph-d flat">first month</span>';
+    const o=C[k];if(!o||o.d==null)return'<span class="ph-d flat">—</span>';
+    if(o.dir===0)return`<span class="ph-d flat" title="Within 2% of ${_esc(prev.lab)}">level</span>`;
+    return`<span class="ph-d ${o.ok?'up':'dn'}" title="${_esc(prev.lab)} ${fmtF(o.was)} → ${fmtF(o.now)}${C.proj?' projected':''}">${o.d>0?'▲':'▼'} ${o.pct!=null?fmt(Math.abs(o.pct),0)+'%':fmtF(Math.abs(o.d))}</span>`;
   };
   const hero=`<div class="ph">
     <div class="ph-top">
@@ -16604,15 +17691,18 @@ function openRepProduct(asin,keep){
       </div>
     </div>
     <div class="ph-nums">
-      ${[['Sales',gbp(last.sales),'var(--blue)',delta(last.sales,prev&&prev.sales,gbp,1),fmt(share.sales,1)+'% of the account'],
-         ['Real profit',gbp(last.real),last.real>=0?'var(--green)':'var(--red)',delta(last.real,prev&&prev.real,gbp,1),fmt(last.margin,1)+'% margin'],
-         ['Ad spend',gbp(last.ads),'var(--amber)',delta(last.ads,prev&&prev.ads,gbp,-1),fmt(last.tacos,1)+'% of its sales'],
-         ['Units',intf(last.units),'var(--purple)',delta(last.units,prev&&prev.units,intf,1),intf(last.organic)+' organic · '+intf(last.adUnits)+' ads']]
+      ${[['Sales',gbp(last.sales),'var(--blue)',delta('sales',gbp),fmt(share.sales,1)+'% of the account'],
+         ['Real profit',gbp(last.real),last.real>=0?'var(--green)':'var(--red)',delta('real',gbp),fmt(last.margin,1)+'% margin'],
+         ['Ad spend',gbp(last.ads),'var(--amber)',delta('ads',gbp),fmt(last.tacos,1)+'% of its sales'],
+         ['Units',intf(last.units),'var(--purple)',delta('units',intf),intf(last.organic)+' organic · '+intf(last.adUnits)+' ads']]
         .map(([l,v,c,d,s])=>`<div class="ph-n" style="--a:${c}">
           <div class="ph-nl">${l}${d}</div>
           <div class="ph-nv" style="color:${c}">${v}</div>
           <div class="ph-ns">${s}</div></div>`).join('')}
     </div>
+    ${prev?`<div class="ph-pace ${C.proj?'pj':''}">${C.proj
+      ?`<b>${_esc(last.lab)} is ${C.days} of ${C.of} days in.</b> Every ▲▼ on this page is the straight-line projection against ${_esc(prev.lab)} — not ${C.days} days held against a full month.`
+      :`Every ▲▼ on this page is ${_esc(last.lab)} against ${_esc(prev.lab)}, full month against full month.`}</div>`:''}
     <div class="ph-tabs">${[['overview','Overview'],['trends','Trends'],['ads','Advertising'],['terms','Search terms'],['stock','Stock']]
       .map(([k,l])=>`<button class="${k===_rphTab?'on':''}" onclick="rphGo('${k}')">${l}</button>`).join('')}
       <span class="sp"></span>
@@ -16630,7 +17720,7 @@ function openRepProduct(asin,keep){
   </div>`;
 
   /* ── OVERVIEW ── */
-  const vd=rphVerdict(V,share),Nn=rphNarrative(V,A,share);
+  const vd=rphVerdict(V,share,C,last,prev),Nn=rphNarrative(V,A,share,C,last,prev);
   const _fp=+last.r.profit||0,_fc=Math.max(0,last.sales-_fp);
   const wpc=v=>last.sales>0?Math.max(0,Math.min(100,v/last.sales*100)):0;
   const flow=`<div class="pcard"><div class="pc-h">Where ${_esc(last.lab)}'s money went</div>
@@ -16659,15 +17749,19 @@ function openRepProduct(asin,keep){
   const panel=(c,t,l)=>`<div class="pnl ${c}"><div class="pnl-h">${t}</div>${l.map(x=>`<p>${x}</p>`).join('')}</div>`;
   const overview=`
     <div class="pverdict ${vd.t}"><div class="pv-h">${vd.h}</div><div class="pv-b">${vd.b}</div></div>
+    ${prev?`<div class="pcols chg-cols">
+      <div class="pstack">${rphChangeTable(C,last,prev)}${panel('a',"What's happening right now",Nn.now)}</div>
+      <div class="pstack">${rphBridge(C,last,prev)}</div>
+    </div>`:`<div class="pstack" style="margin-top:12px">${panel('a',"What's happening right now",Nn.now)}</div>`}
     <div class="pcols">
       <div>${flow}<div class="pcard" style="margin-top:10px"><div class="pc-h">The numbers behind it</div><div class="pfacts">${facts}</div></div></div>
-      <div class="pstack">${panel('a',"What's happening right now",Nn.now)}${panel('b','Cross-metric context',Nn.cross)}${panel('o','What to watch',Nn.watch)}</div>
+      <div class="pstack">${panel('b','Cross-metric context',Nn.cross)}${panel('o','What to watch',Nn.watch)}</div>
     </div>
     ${rphBench(A,V)}`;
 
   /* ── TRENDS ── */
   const vals=V.map(v=>v[_rphMetric]),cur=vals[vals.length-1];
-  const d1=prev?cur-prev[_rphMetric]:null,d3=V.length>=3?cur-V[V.length-3][_rphMetric]:null,dF=V.length>=2?cur-first[_rphMetric]:null;
+  const d1=L2?cur-L2[_rphMetric]:null,d3=V.length>=3?cur-V[V.length-3][_rphMetric]:null,dF=V.length>=2?cur-first[_rphMetric]:null;
   const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
   const gd=v=>v==null?'var(--text3)':v===0?'var(--text3)':((v>0?1:-1)===M.good?'var(--green)':'var(--red)');
   const dv=v=>v==null?'—':(v>0?'+':v<0?'−':'')+M.fmt(Math.abs(v));
@@ -16684,8 +17778,8 @@ function openRepProduct(asin,keep){
     <div class="pmet">${Object.keys(RPH_METRICS).map(k=>`<button class="${k===_rphMetric?'on':''}" style="--a:${RPH_METRICS[k].c}" onclick="rphSetMetric('${k}')">${RPH_METRICS[k].l}</button>`).join('')}</div>
     <div class="pnl g" style="margin-bottom:10px"><div class="pnl-h">${_esc(M.l)}</div><p>${M.means}</p></div>
     <div class="ptiles">
-      ${[['Latest',M.fmt(cur),M.c,_esc(last.lab)],
-         ['Vs last month',dv(d1),gd(d1),prev?_esc(prev.lab):'no earlier month'],
+      ${[['Latest',M.fmt(cur),M.c,_esc(L1.lab)],
+         ['Vs last month',dv(d1),gd(d1),L2?_esc(L2.lab):'no earlier month'],
          ['3-month trend',dv(d3),gd(d3),V.length>=3?'vs '+_esc(V[V.length-3].lab):'needs 3 months'],
          ['Vs first month',dv(dF),gd(dF),V.length>=2?_esc(first.lab):'only one month'],
          ['Average',M.fmt(avg),'var(--text)',V.length+' months'],
@@ -18057,10 +19151,11 @@ setTimeout(()=>{
 
 
 /* ── Monthly Report table: column choice, quick filters, density ── */
-const REP_COL_DEFAULTS={rank:1,profit:1,ads:1,tacos:1,roas:0,organic:1,adUnits:1,margin:0,stock:0,cover:0,trend:1,lastm:1,lastm2:0};
+const REP_COL_DEFAULTS={rank:1,profit:1,ads:1,tacos:1,roas:0,organic:1,adUnits:1,margin:0,stock:0,cover:0,trend:1,lastm:1,lastm2:0,chg:1};
 let _repCols=Object.assign({},REP_COL_DEFAULTS);
 try{const sv=JSON.parse(localStorage.getItem('bdl_rep_cols')||'null');if(sv)_repCols=Object.assign({},REP_COL_DEFAULTS,sv);}catch(e){}
-let _repFilter='all',_repDense=localStorage.getItem('bdl_rep_dense')==='1';
+/* v5.6 — compact by default (Jack: "yeah"). Only a density he actually toggled overrides it. */
+let _repFilter='all',_repDense=localStorage.getItem('bdl_rep_dense_set')==='1'?localStorage.getItem('bdl_rep_dense')==='1':true;
 function repColOn(k){return !!_repCols[k];}
 /* Column choice and density followed the browser, not Jack. They now round-trip through
    settings/report_prefs_v1 so the report looks the same on every machine he opens it on. */
@@ -18071,7 +19166,7 @@ function repPrefsSave(){
   try{bdlLS('bdl_rep_cols',JSON.stringify(_repCols));bdlLS('bdl_rep_dense',_repDense?'1':'0');}catch(e){}
   clearTimeout(_prefsT);
   _prefsT=setTimeout(async()=>{
-    await sbWrite('report_prefs_v1',JSON.stringify({cols:_repCols,dense:_repDense,updatedAt:Date.now()}),'Report column choice');
+    await sbWrite('report_prefs_v1',JSON.stringify({cols:_repCols,dense:_repDense,denseSet:!!(window._repDenseSet||localStorage.getItem('bdl_rep_dense_set')==='1'),updatedAt:Date.now()}),'Report column choice');
   },800);
 }
 async function repPrefsLoad(){
@@ -18084,7 +19179,7 @@ async function repPrefsLoad(){
     if(!rows[0]||!rows[0].value)return;
     const v=JSON.parse(rows[0].value)||{};
     if(v.cols)_repCols=Object.assign({},REP_COL_DEFAULTS,v.cols);
-    if(typeof v.dense==='boolean')_repDense=v.dense;
+    if(typeof v.dense==='boolean'&&v.denseSet){_repDense=v.dense;window._repDenseSet=true;try{bdlLS('bdl_rep_dense_set','1');}catch(e){}}
     try{bdlLS('bdl_rep_cols',JSON.stringify(_repCols));bdlLS('bdl_rep_dense',_repDense?'1':'0');}catch(e){}
     if(document.getElementById('page-report')?.classList.contains('active'))renderReport();
   }catch(e){console.warn('prefs load',e);}
@@ -18103,12 +19198,13 @@ function repColMenu(keep){
   el.classList.toggle('open',open);
   if(!open)return;
   const L=[['rank','Rank'],['profit','Profit before ads'],['ads','Ad spend'],['tacos','TACOS'],['roas','ROAS'],
-    ['organic','Organic units'],['adUnits','Ad units'],['margin','Real margin'],['stock','Stock'],['cover','Cover'],['trend','Trend']];
+    ['organic','Organic units'],['adUnits','Ad units'],['margin','Real margin'],['stock','Stock'],['cover','Cover'],['trend','Trend'],
+    ['chg','▲▼ change vs last month on the row']];
   el.innerHTML=`<div class="cm-h">Columns</div>${L.map(([k,l])=>`<label class="cm-r"><input type="checkbox" ${repColOn(k)?'checked':''} onchange="repColToggle('${k}')"><span>${l}</span></label>`).join('')}
     <div class="cm-f"><button class="btn-sm" onclick="repColReset()">Reset</button>
       <button class="btn-sm" onclick="repToggleDense()">${_repDense?'Comfortable rows':'Compact rows'}</button></div>`;
 }
-function repToggleDense(){_repDense=!_repDense;
+function repToggleDense(){_repDense=!_repDense;window._repDenseSet=true;try{bdlLS('bdl_rep_dense_set','1');}catch(e){}
   repPrefsSave();
   document.getElementById('rep-tablewrap')?.classList.toggle('dense',_repDense);
   repColMenu(true);}
@@ -18126,10 +19222,262 @@ function repToggleDense(){_repDense=!_repDense;
    Deliberately ONE function. The chip, its count, the sort and the CSV all
    call this, so they cannot drift apart the way the organic/ads split did
    when it was computed in six places. */
+/* ════ v5.6 — THE MONTH SCORECARD ════
+   Jack's brief, verbatim intent: "net profit shouldn't be less — we aim to gain each
+   month; refine and narrow wasted PPC spend; push for higher profit through sales but
+   make sure the PPC is making sales. I don't mind spending 10K on PPC if we make a
+   profit and we aren't wasting spend."
+   Four goals, judged every month, with the £ behind each:
+     1 · net profit up on the comparison month
+     2 · gross (before-ads) profit high and up
+     3 · ads earning their keep — above target ROAS AND not outrunning what they bring back
+     4 · waste down — spend that bought nothing + spend below that product's break-even
+   Same like-for-like rule as everything else: a part month is projected. */
+
+/* Break-even ROAS for a product = sales ÷ profit-before-ads (1 ÷ margin). A campaign
+   line under it made sales at a loss; a line with spend and no sales bought nothing.
+   Both are listed; neither is hidden inside the other. */
+function repWaste(m){
+  const out={known:false,nothing:0,nN:0,below:0,bN:0,earning:0,eN:0,lines:[]};
+  (m?.rows||[]).forEach(r=>{
+    const camps=Array.isArray(r.camps)?r.camps:[];if(!camps.length)return;
+    out.known=true;
+    const sales=+r.sales||0,pb=+r.profit||0;
+    const be=(sales>0&&pb>0)?sales/pb:null;          /* null = loses money before ads */
+    camps.forEach(c=>{
+      const sp=+c.sp||0,sa=+c.sa||0;if(!(sp>0))return;
+      const ro=sa>0?sa/sp:0;let kind='earning';
+      if(!(sa>0)){kind='nothing';out.nothing+=sp;out.nN++;}
+      else if(be==null||ro<be){kind='below';out.below+=sp;out.bN++;}
+      else{out.earning+=sp;out.eN++;}
+      out.lines.push({asin:r.asin,name:repName(r),camp:c.name,sp,sa,u:+c.u||0,ro,be,kind,noProfit:be==null});
+    });
+  });
+  out.total=out.nothing+out.below;out.spend=out.total+out.earning;
+  out.lines.sort((a,b)=>b.sp-a.sp);
+  return out;
+}
+function repScoreCalc(m,prev){
+  const P=repPartial(m),f=P?P.factor:1;
+  const t=repTotals(m),pt=prev?repTotals(prev):null,tgt=cfgTargetRoas();
+  const cmp=(now,was,good,floor)=>{
+    if(was==null||!isFinite(was))return{now,was:null,d:null,pct:null,dir:0,ok:null};
+    const d=now-was,band=Math.max(floor||0.5,Math.abs(was)*0.02),level=Math.abs(d)<=band,dir=level?0:(d>0?1:-1);
+    return{now,was,d,pct:was?d/Math.abs(was)*100:null,dir,ok:dir===0?null:dir===good};};
+  const g={proj:!!P,days:P?P.days:null,of:P?P.of:null,tgt,adsK:repAdsKnown(m),
+    real:cmp(t.real*f,pt?pt.real:null,1),profit:cmp(t.profit*f,pt?pt.profit:null,1),
+    ads:cmp(t.ads*f,pt?pt.ads:null,-1),units:cmp(Math.round(t.units*f),pt?pt.units:null,1,1),
+    sales:cmp(t.sales*f,pt?pt.sales:null,1)};
+  g.roas=(g.adsK&&t.ads>0)?t.adSales/t.ads:null;
+  g.W=repWaste(m);g.PW=prev?repWaste(prev):null;
+  g.waste=cmp(g.W.total*f,(g.PW&&g.PW.known)?g.PW.total:null,-1);
+  g.s1=!prev?'first':g.real.dir>0?'hit':g.real.dir<0?'miss':'level';
+  g.s2=!prev?'first':g.profit.dir>0?'hit':g.profit.dir<0?'miss':'level';
+  if(!g.adsK||g.roas==null)g.s3='unknown';
+  else if(g.roas<tgt)g.s3='miss';
+  else if(prev&&g.ads.dir>0&&(g.profit.pct==null||g.ads.pct>g.profit.pct+5))g.s3='watch';
+  else g.s3='hit';
+  g.s4=!g.W.known?'unknown':(!g.PW||!g.PW.known)?'first':g.waste.dir<0?'hit':g.waste.dir>0?'miss':'level';
+  g.hits=[g.s1,g.s2,g.s3,g.s4].filter(s=>s==='hit').length;
+  g.judged=[g.s1,g.s2,g.s3,g.s4].filter(s=>s!=='first'&&s!=='unknown').length;
+  /* movers, for goal 1 */
+  const pm=repPrevMap();let nB=0,nW=0,nN=0,drag=null,gain=null;
+  (m.rows||[]).forEach(r=>{const x=repDirVsPrev(r,m,pm);if(!x)return;
+    if(x.isNew){nN++;return;}if(x.better)nB++;if(x.worse)nW++;
+    if(x.d!=null){if(!drag||x.d<drag.d)drag={r,d:x.d};if(!gain||x.d>gain.d)gain={r,d:x.d};}});
+  g.mv={nB,nW,nN,drag:drag&&drag.d<0?drag:null,gain:gain&&gain.d>0?gain:null};
+  return g;
+}
+function repScoreTag(g){
+  if(g.s1==='first')return 'first month — nothing to compare yet';
+  const r=g.real.dir,p=g.profit.dir;
+  if(r>0&&p>0)return 'a better month';
+  if(r<0&&p>0)return 'sold more, netted less';
+  if(r<0&&p<0)return 'down on both counts';
+  if(r>0&&p<=0)return 'netted more — the ads line did the work';
+  if(r===0)return 'level with last month';
+  return 'mixed';
+}
+function repScoreRead(g,m,prev){
+  if(!prev)return `<b>${_esc(m.label)}</b> is the first month in the report. The scorecard starts judging from the next one.`;
+  const S=v=>gbp(Math.abs(v)),pl=(v,w)=>v>0?'up '+w:v<0?'down '+w:'level';
+  const parts=[];
+  parts.push(`<b>${_esc(m.label.replace(/\s*20\d\d/,''))} in one line —</b> ${repScoreTag(g)}.`);
+  const gp=g.profit,ad=g.ads,un=g.units;
+  let s=`Gross profit ${pl(gp.d,S(gp.d))}, ad spend ${pl(ad.d,S(ad.d))}`;
+  if(ad.d>0&&un.d!=null)s+=un.d>0?` — the extra spend came with ${intf(un.d)} more unit${un.d===1?'':'s'}.`:un.d<0?` — and units still fell by ${intf(-un.d)}.`:' — for the same units.';
+  else if(ad.d<0&&un.d!=null)s+=un.d>=0?` — and units held${un.d>0?' (+'+intf(un.d)+')':''}.`:` — units down ${intf(-un.d)} with it.`;
+  else s+='.';
+  parts.push(s);
+  if(g.W.known&&g.W.total>0.5){
+    const big=g.W.below>=g.W.nothing?['below break-even',g.W.below]:['buying nothing',g.W.nothing];
+    parts.push(`${gbp(big[1])} of ads ran ${big[0]} — that is the money to go after first.`);
+  }
+  if(g.proj)parts.push(`<span class="scr-pj">Projected from ${g.days} of ${g.of} days.</span>`);
+  return parts.join(' ');
+}
+function repScorecard(m,prev){
+  const el=document.getElementById('rep-score');if(!el)return;
+  if(!m||!(m.rows||[]).length){el.style.display='none';el.innerHTML='';return;}
+  const g=repScoreCalc(m,prev);
+  const sh=l=>_esc(String(l||'').replace(/\s*20\d\d/,''));
+  const cur=sh(m.label),was=prev?sh(prev.label):'';
+  const ST={hit:'Hit',miss:'Missed',watch:'Watch',level:'Level',first:'First month',unknown:'Needs ads report'};
+  const dot=s=>({hit:'var(--green)',miss:'var(--red)',watch:'var(--amber)',level:'var(--text4)',first:'var(--text4)',unknown:'var(--text4)'})[s];
+  const dl=(o,fmtF)=>o.d==null?'':o.dir===0?`<span class="scr-dl lv">level with ${was}</span>`
+    :`<span class="scr-dl"><b class="${o.ok?'up':'dn'}">${o.d>0?'▲':'▼'} ${fmtF(Math.abs(o.d))}</b>${o.pct!=null?` · <b class="${o.ok?'up':'dn'}">${o.d>0?'+':'−'}${fmt(Math.abs(o.pct),1)}%</b>`:''}</span>`;
+  /* the two bars: comparison month grey, this month coloured */
+  const bars=(o,fmtF)=>{
+    if(o.was==null)return `<div class="scr-cb one"><span>${cur}</span><i class="a" style="width:100%"></i><span class="v">${fmtF(o.now)}</span></div>`;
+    const mx=Math.max(Math.abs(o.was),Math.abs(o.now),0.01);
+    return `<div class="scr-cb"><span>${was}</span><i style="width:${(Math.abs(o.was)/mx*100).toFixed(1)}%"></i><span class="v">${fmtF(o.was)}</span>
+      <span>${cur}</span><i class="a" style="width:${(Math.abs(o.now)/mx*100).toFixed(1)}%"></i><span class="v">${fmtF(o.now)}</span></div>`;};
+  const card=(n,name,st,big,sub,body,why,onclick,title)=>`
+    <div class="scr-g st-${st}" onclick="${onclick}" title="${_esc(title||'')}">
+      <div class="scr-top"><span class="scr-n">0${n}</span><span class="scr-name">${name}</span><span class="scr-pill">${ST[st]}</span></div>
+      <div class="scr-big">${big}${sub?`<small>${sub}</small>`:''}</div>
+      ${body}
+      ${why?`<div class="scr-why">${why}</div>`:''}
+    </div>`;
+  const mv=g.mv,chips=prev?`<div class="scr-chips">${mv.nB?`<span class="scr-chip up" onclick="event.stopPropagation();repFilter('better')">▲ ${mv.nB} better</span>`:''}${mv.nW?`<span class="scr-chip dn" onclick="event.stopPropagation();repFilter('worse')">▼ ${mv.nW} worse</span>`:''}${mv.nN?`<span class="scr-chip nw" onclick="event.stopPropagation();repFilter('new')">✦ ${mv.nN} new</span>`:''}</div>`:'';
+  const shortN=r=>{const n=lavName(r.asin)||repName(r)||r.asin||'';return _esc(n.length>34?n.slice(0,33).trim()+'…':n);};
+  const why1=prev?[mv.drag?`Biggest drag <b>${shortN(mv.drag.r)} ${gbp(mv.drag.d)}</b>`:'',mv.gain?`biggest gain <b>${shortN(mv.gain.r)} +${gbp(mv.gain.d)}</b>`:''].filter(Boolean).join(' · '):'';
+  const c1=card(1,'Net profit up',g.s1,gbp(g.real.now),g.proj?'projected':'',bars(g.real,gbp)+dl(g.real,gbp)+chips,why1,"document.getElementById('rep-tablewrap')?.scrollIntoView({behavior:'smooth',block:'start'})",'Real profit against '+(was||'nothing yet')+' — click to go to the table');
+  const why2=prev?(g.profit.dir>0&&g.real.dir<0?`Better than ${was} before ads — <b>the whole drop is on the ads line.</b>`
+    :g.profit.dir<0?`Fewer pounds before ads were even counted — cost, price, fees or volume.`
+    :g.profit.dir>0?`More profit before ads than ${was}${g.units.d>0?` on ${intf(g.units.d)} more units`:g.units.d<0?` on ${intf(-g.units.d)} fewer units — each sale earned more`:''}.`:`Level with ${was} before ads.`):'';
+  const c2=card(2,'Gross profit high',g.s2,gbp(g.profit.now),'before ads',bars(g.profit,gbp)+dl(g.profit,gbp),why2,"openRepAnalysis()",'Profit before advertising — click for the analysis');
+  let body3,why3,big3,sub3;
+  if(g.s3==='unknown'){big3='—';sub3='';body3=`<div class="scr-note">No ads report in ${cur}, so ROAS and the split are unknown — not zero.</div>`;why3='';}
+  else{big3=fmt(g.roas,2)+'×';sub3='target '+fmt(g.tgt,1)+'×';
+    const t=repTotals(m);
+    body3=bars(g.ads,gbp)+`<span class="scr-dl">spend ${g.ads.d==null?'':`<b class="${g.ads.ok===false?'dn':g.ads.ok?'up':''}">${g.ads.d>0?'▲':g.ads.d<0?'▼':'='} ${gbp(Math.abs(g.ads.d))}</b> · `}bought <b class="m">${gbp(t.adSales)}</b> of sales</span>`;
+    why3=g.s3==='miss'?`Under your ${fmt(g.tgt,1)}× target — the account as a whole is renting sales too dearly.`
+      :g.s3==='watch'?`Above target, but spend rose <b>${fmt(g.ads.pct,0)}%</b> against gross profit ${g.profit.pct>=0?'+':''}${fmt(g.profit.pct,0)}%. <b>Spend is outrunning what it brings back.</b>`
+      :`Above target${g.ads.d!=null&&g.ads.d<=0?' on less spend':''} — ads are paying their way.`;}
+  const c3=card(3,'Ads earning their keep',g.s3,big3,sub3,body3,why3,"openRepAnalysis()",'Blended ROAS against your target — click for the analysis');
+  let body4,why4,big4,sub4;
+  const W=g.W;
+  if(!W.known){big4='—';sub4='';body4=`<div class="scr-note">Needs the campaign lines from the ads report — import it and this fills in.</div>`;why4='';}
+  else{
+    const tot=W.spend||0.01;big4=gbp(W.total);sub4=fmt(W.total/tot*100,0)+'% of spend';
+    body4=`<div class="scr-stk"><i style="width:${(W.earning/tot*100).toFixed(1)}%;background:var(--green)"></i><i style="width:${(W.below/tot*100).toFixed(1)}%;background:var(--amber)"></i><i style="width:${(W.nothing/tot*100).toFixed(1)}%;background:var(--red)"></i></div>
+      <div class="scr-leg"><span style="--c:var(--green)">earning <b>${gbp(W.earning)}</b></span><span style="--c:var(--amber)">below break-even <b>${gbp(W.below)}</b> · ${W.bN}</span><span style="--c:var(--red)">bought nothing <b>${gbp(W.nothing)}</b> · ${W.nN}</span></div>`
+      +(g.waste.d!=null?dl(g.waste,gbp):'');
+    const worst=W.lines.filter(l=>l.kind!=='earning').slice(0,3);
+    why4=worst.length?'Worst: '+worst.map(l=>`<b>${_esc(l.camp.length>26?l.camp.slice(0,25)+'…':l.camp)}</b> ${gbp(l.sp)}${l.kind==='nothing'?' · no sales':l.noProfit?' · loses before ads':` at ${fmt(l.ro,2)}× (needs ${fmt(l.be,2)}×)`}`).join(' · '):'Every campaign line earned above its break-even.';}
+  const c4=card(4,'Waste down',g.s4,big4,sub4,body4,why4,"openWasteLedger()",'Ad spend that bought nothing or sold below break-even — click for every line');
+  const verdCls=g.hits>=3?'good':g.hits>=2?'mid':'bad';
+  el.style.display='';
+  el.innerHTML=`<div class="scr">
+    <div class="scr-h">
+      <div class="scr-t">${cur} against your four goals<small>${prev?`vs ${was} · ${g.proj?`projected from ${g.days} of ${g.of} days`:'full month against full month'}`:'no earlier month to compare'} · click a goal for the detail</small></div>
+      <div class="scr-dots">${[g.s1,g.s2,g.s3,g.s4].map(s=>`<i style="background:${dot(s)}"></i>`).join('')}</div>
+      <span class="scr-verd ${verdCls}">${g.judged?`${g.hits} of ${g.judged} hit · `:''}${repScoreTag(g)}</span>
+    </div>
+    <div class="scr-goals">${c1}${c2}${c3}${c4}</div>
+    <div class="scr-read"><p>${repScoreRead(g,m,prev)}</p>${prev&&g.real.now!=null?`<div class="scr-tgt"><span>next month: net <b>&gt; ${gbp(g.real.now)}</b></span>${W.known?`<span>waste <b>&lt; ${gbp(W.total)}</b></span>`:''}</div>`:''}</div>
+  </div>`;
+  /* the scorecard absorbs the Moved-it strip — goal 1 carries its chips */
+  const mv2=document.getElementById('rep-movers');if(mv2)mv2.style.display='none';
+}
+
+/* ── the waste ledger: every campaign line, judged against its own product ── */
+window._wlFilter='all';
+function wlFilter(k){window._wlFilter=k;openWasteLedger(true);}
+function closeWasteLedger(){const o=document.getElementById('rep-waste-overlay');if(o)o.classList.remove('open');document.body.style.overflow='';}
+function openWasteLedger(keep){
+  const m=repMonth();if(!m)return;
+  if(!keep)window._wlFilter='all';
+  let o=document.getElementById('rep-waste-overlay');
+  if(!o){o=document.createElement('div');o.className='overlay';o.id='rep-waste-overlay';o.style.zIndex='397';
+    o.onclick=e=>{if(e.target.id==='rep-waste-overlay')closeWasteLedger();};
+    o.innerHTML=`<div class="popout" style="max-width:min(1180px,95vw);max-height:94vh;display:flex;flex-direction:column">
+      <div class="po-header"><div><div class="po-title" style="font-size:16px" id="wl-title">Wasted ad spend</div><div class="po-sub" id="wl-sub"></div></div>
+      <button class="close-btn" onclick="closeWasteLedger()">✕</button></div>
+      <div class="po-body" id="wl-body" style="padding:14px 18px;overflow-y:auto"></div></div>`;
+    document.body.appendChild(o);}
+  const W=repWaste(m),prev=repCmpMonth(),PW=prev?repWaste(prev):null;
+  document.getElementById('wl-title').textContent='Wasted ad spend · '+m.label;
+  document.getElementById('wl-sub').textContent=W.known?`${W.lines.length} campaign lines across ${new Set(W.lines.map(l=>l.asin)).size} products · ${gbp(W.spend)} spent`:'no campaign lines in this month';
+  const f=window._wlFilter;
+  const lines=W.lines.filter(l=>f==='all'?l.kind!=='earning':f==='earning'?l.kind==='earning':l.kind===f);
+  const tile=(l,v,c,s)=>`<div class="ptile"><div class="pt-l">${l}</div><div class="pt-v" style="color:${c}">${v}</div><div class="pt-s">${s||'&nbsp;'}</div></div>`;
+  const pct=v=>W.spend?fmt(v/W.spend*100,0)+'% of spend':'';
+  const chip=(k,l,n)=>`<button class="btn-sm ${f===k?'on':''}" onclick="wlFilter('${k}')">${l} <b>${n}</b></button>`;
+  document.getElementById('wl-body').innerHTML=!W.known?`<div class="pnl b"><div class="pnl-h">Nothing to judge</div><p>This month has no campaign lines. Import the Sponsored Products <b>Advertised product</b> report and every campaign is judged against the product it advertised.</p></div>`:`
+    <div class="ptiles t4">
+      ${tile('Waste',gbp(W.total),W.total>0?'var(--amber)':'var(--green)',pct(W.total)+(PW&&PW.known?` · ${prev.label.replace(/\s*20\d\d/,'')} ${gbp(PW.total)}`:''))}
+      ${tile('Below break-even',gbp(W.below),'var(--amber)',`${W.bN} line${W.bN===1?'':'s'} · sold, but at a loss`)}
+      ${tile('Bought nothing',gbp(W.nothing),'var(--red)',`${W.nN} line${W.nN===1?'':'s'} · spend, no sale`)}
+      ${tile('Earning',gbp(W.earning),'var(--green)',`${W.eN} line${W.eN===1?'':'s'} · above break-even`)}
+    </div>
+    <div class="pnl g" style="margin:10px 0"><div class="pnl-h">How a line is judged</div>
+      <p><b>Break-even ROAS</b> for a product is its sales ÷ profit before ads — the return an ad must make before it earns anything. A campaign line under that figure sold at a loss however good the ROAS looks. A line with spend and no sales bought nothing. A product that loses money before ads has no break-even — every advertised sale on it loses.</p></div>
+    <div class="wl-bar">${chip('all','Waste',W.bN+W.nN)}${chip('below','Below break-even',W.bN)}${chip('nothing','Bought nothing',W.nN)}${chip('earning','Earning',W.eN)}</div>
+    <div class="pcard" style="margin-top:8px"><table class="ptab wl-t"><thead><tr><th class="l">Campaign</th><th class="l">Product</th><th>Spend</th><th>Ad sales</th><th>ROAS</th><th>Break-even</th><th>Units</th><th class="l">Verdict</th></tr></thead>
+      <tbody>${lines.length?lines.map(l=>`<tr onclick="closeWasteLedger();openRepProduct('${_esc(l.asin)}')">
+        <td class="l"><b>${_esc(l.camp)}</b></td><td class="l wl-p">${_esc(l.name)}</td>
+        <td style="color:var(--amber);font-weight:700">${gbp(l.sp)}</td><td>${l.sa>0?gbp(l.sa):'<span class="muted">—</span>'}</td>
+        <td>${l.sa>0?fmt(l.ro,2)+'×':'<span class="muted">—</span>'}</td><td>${l.be!=null?fmt(l.be,2)+'×':'<span class="muted">none</span>'}</td><td>${intf(l.u)}</td>
+        <td class="l"><span class="wl-k ${l.kind}">${l.kind==='nothing'?'Bought nothing':l.kind==='below'?(l.noProfit?'Loses before ads':'Below break-even'):'Earning'}</span></td></tr>`).join('')
+        :`<tr><td colspan="8" style="text-align:center;padding:26px;color:var(--text3)">Nothing in this group.</td></tr>`}</tbody></table></div>`;
+  o.classList.add('open');document.body.style.overflow='hidden';
+}
+
+/* ── v5.6 · RAW-FILE ARCHIVE ──
+   The import keeps ~10 numbers per product and threw the rest of both files away —
+   fees, COG, VAT, stock, every keyword line. Jack: "get and save as much info as
+   possible to analyse". Both files are now stored as-is, one settings row per file
+   per month, so any future analysis (or a re-import after a maths change) can go
+   back to source. Preview and test builds write nothing, as everywhere else. */
+function miArchiveRaw(m){
+  if(!m||window._scratch||(typeof TEST_MODE!=='undefined'&&TEST_MODE))return;
+  const R=window._miRaw||{},ids={};
+  ['sales','ads'].forEach(k=>{const x=R[k];if(!x||!Array.isArray(x.rows)||!x.rows.length)return;
+    const id='bdl_raw_'+m.id+'_'+k;ids[k]=id;
+    sbWrite(id,JSON.stringify({month:m.label,ym:m.ym,kind:k,file:x.file||'',rows:x.rows,cells:x.rows.length,savedAt:new Date().toISOString()}),'Raw '+k+' file · '+m.label);});
+  if(Object.keys(ids).length){m.raw=Object.assign({},m.raw||{},ids);repSave();}
+}
+
 function repPrevMap(){
   const p=repCmpMonth(),map={};
   if(p)(p.rows||[]).forEach(r=>{if(r.asin)map[String(r.asin).toUpperCase()]=r;});
   return map;
+}
+/* ════ v5.4 — CHANGE VS LAST MONTH, EVERY METRIC ════
+   Jack: "i wanna compare units per asin if they have gone up or down and sales
+   and ads etc". repDirVsPrev answers it for real profit only. This answers it
+   for every figure on the row, with the SAME like-for-like rule: on a part
+   month the additive figures (units, sales, ads, profit, real) are the
+   projection, so 21 days is never held against a full month. Rates (TACOS,
+   ROAS, margin, price) and rank are not scaled — they do not need to be.
+   ONE function feeds the table ticks, the popup hero, the change table, the
+   profit bridge and the verdict, so they cannot disagree with each other. */
+const REP_CMP_GOOD={units:1,organic:1,adUnits:1,sales:1,ads:-1,profit:1,real:1,tacos:-1,roas:1,margin:1,price:1,rank:-1};
+function repRowCmp(r,pr,m){
+  const P=repPartial(m),f=P?P.factor:1,n=x=>+x||0;
+  const mk=(x,fac)=>{const u=n(x.units),au=Math.min(n(x.adUnits),u),s_=n(x.sales),a=n(x.ads),pb=n(x.profit),rr=pb-a,ar=repAdRaw(x)||0;
+    const R=v=>fac===1?v:Math.round(v);   /* a projected count is still a count */
+    return{units:R(u*fac),organic:R((u-au)*fac),adUnits:R(au*fac),sales:s_*fac,ads:a*fac,profit:pb*fac,real:rr*fac,
+      tacos:s_?a/s_*100:null,roas:a?ar/a:null,margin:s_?rr/s_*100:null,price:u?s_/u:null,rank:n(x.rank)||null};};
+  const cur=mk(r,f),raw=f===1?cur:mk(r,1),was=pr?mk(pr,1):null;
+  const FLOOR={units:1,organic:1,adUnits:1,sales:.5,ads:.5,profit:.5,real:.5,tacos:.2,roas:.05,margin:.2,price:.05,rank:1};
+  const out={proj:!!P,factor:f,isNew:!pr,days:P?P.days:null,of:P?P.of:null};
+  Object.keys(REP_CMP_GOOD).forEach(k=>{
+    const now=cur[k],w=was?was[k]:null,o={now,raw:raw[k],was:w,good:REP_CMP_GOOD[k],d:null,pct:null,dir:0,level:false,ok:null};
+    if(now!=null&&w!=null){o.d=now-w;const band=Math.max(FLOOR[k],Math.abs(w)*0.02);o.level=Math.abs(o.d)<=band;
+      o.dir=o.level?0:(o.d>0?1:-1);o.pct=w?o.d/Math.abs(w)*100:null;o.ok=o.dir===0?null:o.dir===o.good;}
+    out[k]=o;});
+  return out;
+}
+/* the ▲12% tick that sits after a figure in the table. Level = nothing, on
+   purpose: the row is about movement, and "no movement" is not news. */
+function repTick(C,k,fmtF,prevLab){
+  if(!C||C.isNew)return '';
+  const o=C[k];if(!o||o.d==null||o.dir===0)return '';
+  const t=`${prevLab||'Last month'}: ${fmtF(o.was)} → ${fmtF(o.now)}${C.proj?' projected ('+C.days+' of '+C.of+' days)':''}`;
+  return `<span class="delta ${o.ok?'up':'dn'}" title="${_esc(t)}">${o.d>0?'▲':'▼'}${o.pct!=null?fmt(Math.abs(o.pct),0)+'%':fmtF(Math.abs(o.d))}</span>`;
 }
 function repDirVsPrev(r,m,pmap){
   if(!r||!r.asin)return null;
@@ -18186,7 +19534,9 @@ document.addEventListener('click',e=>{
 function repPaintSort(shown){
   const sel=document.getElementById('rep-sortsel');if(!sel)return;
   const opts=[['name','Product name'],['real','Real profit']]
-    .concat(shown.filter(c=>c.k!=='trend').map(c=>[c.k,String(c.h).replace(/<[^>]+>/g,'').trim()]));
+    .concat(shown.filter(c=>c.k!=='trend').map(c=>[c.k,String(c.h).replace(/<[^>]+>/g,'').trim()]))
+    /* v5.4 — "who moved the most" — % change on last month, biggest first */
+    .concat(window._repHasPrev?[['chgU','% change · units'],['chgS','% change · sales'],['chgA','% change · ads'],['chgP','% change · profit'],['chgR','% change · real profit']]:[]);
   const seen={};const uniq=opts.filter(([k])=>seen[k]?false:(seen[k]=1));
   sel.innerHTML=uniq.map(([k,l])=>`<option value="${k}" ${_repSort.k===k?'selected':''}>Sort: ${_esc(l)}</option>`).join('');
   const d=document.getElementById('rep-sortdir');
@@ -18366,6 +19716,95 @@ function bdlChart2(pts,opt){
 }
 
 /* ── how this product sits against the rest of the portfolio ── */
+/* ── v5.4 · WHAT CHANGED — every metric, was → now ── */
+function rphChangeTable(C,last,prev){
+  if(!C||C.isNew)return '';
+  const sh=l=>_esc(String(l||'').replace(/\s*20\d\d/,''));
+  const adsK=repAdsKnown(last.m)&&repAdsKnown(prev.m);
+  const pct=v=>fmt(v,1)+'%',x=v=>fmt(v,2)+'×';
+  const ROWS=[
+    ['Units','units',intf,1],
+    adsK?['Organic units','organic',intf,0]:null,
+    adsK?['Ad units','adUnits',intf,0]:null,
+    ['Sales','sales',gbp,1],
+    ['Ad spend','ads',gbp,1],
+    ['Profit before ads','profit',gbp,1],
+    ['Real profit','real',gbp,1],
+    ['Avg selling price','price',gbp,0],
+    ['Real margin','margin',pct,0],
+    ['TACOS','tacos',pct,0],
+    (adsK&&(C.roas.now!=null||C.roas.was!=null))?['ROAS','roas',x,0]:null,
+    (C.rank.now!=null||C.rank.was!=null)?['Rank','rank',v=>'#'+intf(v),0]:null,
+  ].filter(Boolean);
+  const cell=(o,f,isNow)=>{const v=isNow?o.now:o.was;return v==null?'<span class="muted">—</span>':f(v);};
+  const chg=o=>{
+    if(o.d==null)return '<span class="muted">—</span>';
+    if(o.dir===0)return '<span class="chg-lv">level</span>';
+    const cls=o.ok?'up':'dn',k=o._k,a=Math.abs(o.d),sg=o.d>0?'+':'−';
+    /* a percentage point is not a percent: TACOS 7.3% → 6.2% is "−1.1 pt", not "−14%" */
+    if(k==='tacos'||k==='margin')return `<span class="chg-d ${cls}">${o.d>0?'▲':'▼'} ${fmt(a,1)} pt</span>`;
+    if(k==='roas')return `<span class="chg-d ${cls}">${o.d>0?'▲':'▼'} ${fmt(a,2)}×</span>`;
+    if(k==='rank')return `<span class="chg-d ${cls}">${o.d>0?'▼':'▲'} ${intf(a)} place${a===1?'':'s'}</span>`;
+    return `<span class="chg-d ${cls}">${o.d>0?'▲':'▼'} ${o.pct!=null?fmt(Math.abs(o.pct),0)+'%':''}</span><span class="chg-abs ${cls}">${sg}${(ROWFMT[k]||gbp)(a)}</span>`;};
+  const ROWFMT={};ROWS.forEach(([l,k,f])=>ROWFMT[k]=f);
+  const body=ROWS.map(([l,k,f,strong])=>{const o=C[k];o._k=k;
+    return `<tr class="${strong?'st':''} ${o.ok===false?'bad':o.ok===true?'good':''}">
+      <td class="l">${l}</td><td class="was">${cell(o,f,false)}</td><td class="now">${cell(o,f,true)}</td><td class="chg">${chg(o)}</td></tr>`;}).join('');
+  return `<div class="pcard chg-card"><div class="pc-h">What changed vs ${sh(prev.lab)}
+      <span>${C.proj?`${sh(last.lab)} projected from ${C.days} of ${C.of} days`:`${sh(last.lab)} against ${sh(prev.lab)}, both full months`}</span></div>
+    <table class="ptab chg-t"><thead><tr><th class="l">Measure</th><th>${sh(prev.lab)}</th><th>${sh(last.lab)}${C.proj?' <i>proj.</i>':''}</th><th>Change</th></tr></thead>
+    <tbody>${body}</tbody></table></div>`;
+}
+/* ── v5.4 · WHY REAL PROFIT MOVED — an exact bridge, not a guess.
+   real = units × profit-per-unit − ads, so the change splits into three parts
+   that add up to the penny: volume (Δunits at last month's profit per unit),
+   unit economics (this month's units × Δprofit per unit) and ad spend. ── */
+function rphBridge(C,last,prev){
+  if(!C||C.isNew||C.real.d==null)return '';
+  const sh=l=>_esc(String(l||'').replace(/\s*20\d\d/,''));
+  const u0=C.units.was,u1=C.units.now,pb0=C.profit.was,pb1=C.profit.now;
+  const parts=[];
+  if(u0>0&&u1>0){const p0=pb0/u0,p1=pb1/u1;
+    parts.push({l:'Volume',s:`${intf(u1)} units vs ${intf(u0)}, at ${sh(prev.lab)}'s ${gbp(p0)} a unit`,v:(u1-u0)*p0});
+    parts.push({l:'Profit per unit',s:`${gbp(p1)} a unit vs ${gbp(p0)} — price, fees or cost moved`,v:u1*(p1-p0)});}
+  else parts.push({l:'Profit before ads',s:`${gbp(pb1)} vs ${gbp(pb0)}`,v:pb1-pb0});
+  parts.push({l:'Ad spend',s:`${gbp(C.ads.now)} vs ${gbp(C.ads.was)}`,v:-C.ads.d});
+  const tot=C.real.d,mx=Math.max(...parts.map(p=>Math.abs(p.v)),Math.abs(tot),0.01);
+  const bar=v=>{const w=Math.abs(v)/mx*50;return `<span class="brg-bar"><i class="${v>=0?'p':'n'}" style="${v>=0?'left:50%':'right:50%'};width:${w.toFixed(1)}%"></i></span>`;};
+  const sv=v=>`<b class="${v>0.005?'up':v<-0.005?'dn':'fl'}">${v>0.005?'+':v<-0.005?'−':''}${gbp(Math.abs(v))}</b>`;
+  const big=[...parts].sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
+  const drv=big[0],sec=big[1];
+  const dirW=tot>0.005?'rose':tot<-0.005?'fell':'held';
+  let read=C.real.level?`Real profit is level with ${sh(prev.lab)}${C.proj?' on pace':''} — ${gbp(C.real.was)} then, ${gbp(C.real.now)} now. Nothing moved it.`
+    :`Real profit ${dirW} ${gbp(Math.abs(tot))}${C.proj?' on pace':''} vs ${sh(prev.lab)}.`;
+  if(!C.real.level&&Math.abs(drv.v)>0.005)read+=` The main reason is <b>${drv.l.toLowerCase()}</b> (${drv.v>0?'+':'−'}${gbp(Math.abs(drv.v))})`+
+    (sec&&Math.abs(sec.v)>Math.abs(drv.v)*0.35?`, then ${sec.l.toLowerCase()} (${sec.v>0?'+':'−'}${gbp(Math.abs(sec.v))}).`:'.');
+  /* the campaigns behind the ad-spend line — what he asked for: "what campaigns
+     performed the best, what happened". Spend deltas by campaign name, then the
+     best and worst return this month. */
+  let camps='';
+  const mc=(last.r.camps||[]),pc={};(prev.r.camps||[]).forEach(c=>pc[c.name]=c);
+  if(mc.length||Object.keys(pc).length){
+    const names=new Set([...mc.map(c=>c.name),...Object.keys(pc)]);
+    const mv=[...names].map(n=>{const a=mc.find(c=>c.name===n),b=pc[n];const sp=a?a.sp:0,ps=b?b.sp:0;
+      return{n,sp:sp*C.factor,ps,d:sp*C.factor-ps,sa:a?a.sa:0,isNew:!b,gone:!a};}).filter(x=>Math.abs(x.d)>=0.5).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,4);
+    const tgt=cfgTargetRoas();
+    const live=mc.filter(c=>c.sp>0).map(c=>({n:c.name,sp:c.sp,sa:c.sa,ro:c.sa/c.sp}));
+    const best=[...live].filter(c=>c.sa>0).sort((a,b)=>b.ro-a.ro)[0];
+    const worst=[...live].sort((a,b)=>a.ro-b.ro)[0];
+    camps=`<div class="brg-camps">
+      ${mv.length?`<div class="bc-row"><span class="bc-l">Ad spend moved by</span>${mv.map(x=>`<span class="bc-chip ${x.d>0?'dn':'up'}" title="${_esc(x.n)}: ${gbp(x.ps)} → ${gbp(x.sp)}${C.proj?' projected':''}">${_esc(x.n.length>26?x.n.slice(0,25)+'…':x.n)} <b>${x.d>0?'+':'−'}${gbp(Math.abs(x.d))}</b>${x.isNew?' <i>new</i>':x.gone?' <i>off</i>':''}</span>`).join('')}</div>`:''}
+      ${best?`<div class="bc-row"><span class="bc-l">Best return</span><span class="bc-chip good" title="${gbp(best.sp)} spent, ${gbp(best.sa)} back">${_esc(best.n.length>26?best.n.slice(0,25)+'…':best.n)} <b>${fmt(best.ro,2)}×</b></span>
+        ${worst&&worst.n!==best.n?`<span class="bc-l" style="margin-left:6px">Worst</span><span class="bc-chip ${worst.sa>0?'warn':'bad'}" title="${gbp(worst.sp)} spent, ${gbp(worst.sa)} back">${_esc(worst.n.length>26?worst.n.slice(0,25)+'…':worst.n)} <b>${worst.sa>0?fmt(worst.ro,2)+'×':'no sales · '+gbp(worst.sp)}</b></span>`:''}</div>`:''}
+    </div>`;
+  }
+  return `<div class="pcard brg-card"><div class="pc-h">Why real profit moved <span>the three parts add up exactly</span></div>
+    <div class="brg">
+      ${parts.map(p=>`<div class="brg-row"><div class="brg-l"><b>${p.l}</b><span>${p.s}</span></div>${bar(p.v)}<div class="brg-v">${sv(p.v)}</div></div>`).join('')}
+      <div class="brg-row tot"><div class="brg-l"><b>Real profit</b><span>${gbp(C.real.was)} → ${gbp(C.real.now)}${C.proj?' proj.':''}</span></div>${bar(tot)}<div class="brg-v">${sv(tot)}</div></div>
+    </div>
+    <div class="brg-read">${read}</div>${camps}</div>`;
+}
 function rphBench(A,V){
   const m=repMonth()||V[V.length-1].m;
   const rows=(m.rows||[]).filter(r=>(+r.sales||0)>0);
@@ -18395,13 +19834,24 @@ function rphBench(A,V){
     const mpos=hi===lo?50:Math.max(0,Math.min(100,(med-lo)/(hi-lo)*100));
     const same=Math.abs(mine-med)<Math.max(1e-9,Math.abs(med)*0.02);
     const better=same?null:(d.good>0?mine>med:mine<med);
+    const n=vals.length,top=rank===1,bottom=rank===n;
+    const words=top?`Best ${d.l.toLowerCase()} in the account`:bottom?`Lowest ${d.l.toLowerCase()} in the account`
+      :better===null?`Right on the account median`:better?`Better than the median of ${d.fmt(med)}`:`Worse than the median of ${d.fmt(med)}`;
+    const col=better===null?'var(--text2)':better?'var(--green)':'var(--amber)';
+    return`<tr title="${_esc(d.why)}"><td class="l"><b>${d.l}</b><span class="bm-why">${_esc(d.why)}</span></td>
+      <td><b style="color:${col};font-family:var(--mono)">${d.fmt(mine)}</b></td>
+      <td><span class="bm-rank ${top?'top':bottom?'bot':better?'good':better===null?'':'warn'}">${_ord(rank)} of ${n}</span></td>
+      <td class="muted">${d.fmt(med)}</td><td class="muted">${d.fmt(d.good>0?hi:lo)}</td>
+      <td class="l bm-w" style="color:${col}">${words}</td></tr>`;
+    /* the old slider card follows and is never reached */
     return`<div class="bmk">
       <div class="bmk-h"><b>${d.l}</b><span class="bmk-v" style="color:${better===null?'var(--text2)':better?'var(--green)':'var(--amber)'}">${d.fmt(mine)}</span></div>
       <div class="bmk-bar"><i class="bmk-med" style="left:${mpos.toFixed(1)}%"></i><i class="bmk-me" style="left:${pos.toFixed(1)}%;background:${better===null?'var(--text3)':better?'var(--green)':'var(--amber)'}"></i></div>
       <div class="bmk-s"><span>${d.fmt(lo)}</span><span>median ${d.fmt(med)}</span><span>${d.fmt(hi)}</span></div>
       <div class="bmk-t">${better===null?'Right on the median':better?'Better than the median':'Worse than the median'} · <b>${_ord(rank)} of ${vals.length}</b> products${d.good>0?` · beats ${pct}% of them`:` · cheaper than ${100-pct}% of them`}. ${d.why}</div>
     </div>`;}).filter(Boolean).join('');
-  return cards?`<div class="pcard" style="margin-top:10px"><div class="pc-h">How it compares to your other products <span>${_esc(m.label)} · ${rows.length} products with sales</span></div><div class="bmks">${cards}</div></div>`:'';
+  return cards?`<div class="pcard" style="margin-top:10px"><div class="pc-h">Where it sits among your products <span>${_esc(m.label)} · ${rows.length} products with sales</span></div>
+    <table class="ptab bm-t"><thead><tr><th class="l">Measure</th><th>This product</th><th>Rank</th><th>Median</th><th>Best</th><th class="l">In plain words</th></tr></thead><tbody>${cards}</tbody></table></div>`:'';
 }
 
 /* ── move between products without closing the popup ── */
@@ -18888,7 +20338,8 @@ function openRepSettings(){
   const bytes=(()=>{try{return JSON.stringify(repData).length;}catch(e){return 0;}})();
   const T=ms.length?repTotals(ms[ms.length-1]):null;
   const COLS=[['rank','Rank'],['profit','Profit before ads'],['ads','Ad spend'],['tacos','TACOS'],['roas','ROAS'],
-    ['organic','Organic units'],['adUnits','Ad units'],['margin','Real margin'],['stock','Stock'],['cover','Cover'],['trend','Trend']];
+    ['organic','Organic units'],['adUnits','Ad units'],['margin','Real margin'],['stock','Stock'],['cover','Cover'],['trend','Trend'],
+    ['chg','▲▼ change vs last month on the row']];
 
   document.getElementById('rs-sub').innerHTML=
     `<span class="chip">${ms.length} month${ms.length===1?'':'s'}</span><span class="chip">${intf(total)} product rows</span>`
