@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BDL Hub — Ads &amp; Monthly Report v6.2</title>
+<title>BDL Hub — Ads &amp; Monthly Report v6.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&family=Chivo+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -3733,7 +3733,7 @@ table.rt tbody tr.rx-row td{padding:0!important;background:var(--bg);border-bott
 @media (max-width:1100px){.rx-b{grid-template-columns:1fr}}
 
 body.light .rx-act .btn-sm{color:#1a2233!important}
-body.light .rx-act .btn-sm.pri{color:#fff!important;background:#0f8a5f!important;border-color:#0f8a5f!important}
+body.light .rx-act .btn-sm.pri{color:#fff!important;background:#047a52!important;border-color:#047a52!important}
 
 /* ════════════════════════════════════════════════════════════════════════
    v6.1 — THE POPUP, RECODED FOR A2
@@ -3773,6 +3773,134 @@ body:not(.light) .ph-tag.mono,body:not(.light) .ph-tag.lk{background:transparent
 .hm-verd{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;padding:4px 11px;border-radius:7px;border:1px solid var(--border2);color:var(--text2);cursor:pointer;white-space:nowrap;margin-left:6px}
 .hm-verd.good{color:var(--green);border-color:var(--green)}.hm-verd.mid{color:var(--amber);border-color:var(--amber)}.hm-verd.bad{color:var(--red);border-color:var(--red)}
 .hm-dots{display:inline-flex;gap:4px}.hm-dots i{width:7px;height:7px;border-radius:50%;display:block}
+
+/* v6.3 — the projection as a table: so far → projected → last month → gap */
+.pj-t{width:100%;border-collapse:collapse;margin-top:10px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.pj-t th{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+.pj-t th.l{text-align:left}
+.pj-t td{padding:7px 12px;text-align:right;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.pj-t tr:last-child td{border-bottom:0}
+.pj-t td.l{text-align:left;font-family:var(--font);font-weight:600;color:var(--text)}
+.pj-t td.l small{display:block;font-size:10.5px;color:var(--text4);font-weight:500;line-height:13px}
+.pj-t td.sf{color:var(--text3)}
+.pj-t td.pr{font-weight:700;font-size:14px}
+.pj-t tr.rate td.pr{font-weight:600;font-size:13px}
+.pj-t td.pv{color:var(--text3)}
+.pj-t td.pj-d span{font-weight:700}.pj-t .up{color:var(--green)}.pj-t .dn{color:var(--red)}.pj-t .nt{color:var(--text2)}.pj-t .fl{color:var(--text4);font-weight:500}
+.pj-t td.pj-d small{font-size:10.5px;font-weight:600;opacity:.8;margin-left:2px}
+.pj-t th:nth-child(3),.pj-t td.pr{background:rgba(255,255,255,.025)}
+.pj-note{margin-top:8px}
+.pj-c{padding:9px 12px}.pj-c b{font-family:var(--mono);font-size:22px;line-height:26px;font-weight:700}
+.pj-m{padding:7px 12px}
+@media (max-width:900px){.pj-t th:nth-child(2),.pj-t td.sf{display:none}}
+
+.delta.pace i{font-style:normal;font-size:9px;font-weight:600;letter-spacing:.3px;opacity:.75;margin-left:3px;text-transform:uppercase}
+
+/* v6.4 — the projected totals line: tinted, tagged, one figure per column */
+table.rt tfoot tr.ft-proj td{text-align:right;padding:9px 12px;font-family:var(--mono);font-size:13px;
+  background:rgba(178,141,255,.06);border-top:1px dashed var(--border2);vertical-align:top;white-space:nowrap}
+table.rt tfoot tr.ft-proj td.ft-l{text-align:left;font-family:var(--font);white-space:normal}
+tr.ft-proj .ftp-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--purple);border:1px solid var(--purple);border-radius:5px;padding:2px 8px;background:transparent}
+tr.ft-proj .ft-note{display:block;font-family:var(--font);font-size:10.5px;color:var(--text4);font-weight:500;line-height:14px;margin-top:3px;white-space:normal}
+tr.ft-proj .proj-d{font-size:10.5px;font-weight:700;margin-top:2px;line-height:13px}
+
+/* ════════════════════════════════════════════════════════════════════════
+   v6.5 — audit fixes
+   ════════════════════════════════════════════════════════════════════════ */
+/* the fit: product takes the rest; the card — never the page — scrolls if it must */
+table.rt col.c-prod{width:auto}
+#rep-tablewrap.fit-scroll .rep-flow{overflow-x:auto}
+.rep-fitnote{font-size:11px;color:var(--amber);border:1px solid rgba(255,176,32,.45);border-radius:6px;padding:3px 9px;white-space:nowrap}
+.rep-fitnote u{cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-weight:700}
+body.light .rep-fitnote{color:#8a4708;border-color:#c98a3a}
+/* ROAS pills in Compare and the product popup were dark navy on dark grey (1.0:1) */
+body:not(.light) .roasp{background:transparent!important;color:var(--rc)!important;border:1px solid var(--rc)!important}
+/* "Pause it" — white on the brighter A2 red was 3.2:1 */
+body:not(.light) .rl-act.bad{background:transparent;color:var(--red);border:1px solid var(--red)}
+body:not(.light) .rl-act.warn{background:transparent;color:var(--amber);border:1px solid var(--amber)}
+/* light mode: a blanket "white text on filled buttons" rule hit two that are not filled */
+body.light .pmet button.on{color:var(--text)!important}
+body.light .pnow.pnow.pnow.cmp{color:#1d4ed8!important}   /* out-ranks an older body.light :is(…tr:hover .rl-go…) */
+body.light .po-tab .badge[style*="amber"]{color:#fff!important}
+/* tags in the product popup header, 4.3–4.5:1 → comfortably over. They are spans
+   inside .ph-nm, where an older `.ph-nm span{color:text4}` out-ranked a bare .ph-tag */
+.ph-nm .ph-tag{color:var(--text2)}
+.ph-nm .ph-tag.mono{color:var(--purple)}
+.ph-nm .ph-tag.lk{color:var(--blue)}.ph-nm .ph-tag.lk.t{color:var(--teal)}
+body.light .ph-nm .ph-tag{color:#334155}
+body.light .ph-nm .ph-tag.mono{color:#6d28d9}
+body.light .ph-nm .ph-tag.lk{color:#1d4ed8}body.light .ph-nm .ph-tag.lk.t{color:#115e59}
+/* the DAYS 1–14 tag: white on the brighter A2 purple was 2.6:1 */
+body:not(.light) .pj-tag{color:#160a2b}
+.rk-go{color:var(--text3)}
+
+/* v6.6 — the AMZ / SAS / → buttons took ~110px of every product name, so two
+   "Dove Summer Revi…" rows read the same. They now float over the end of the
+   name only while the row is hovered (or open). */
+table.rt tbody .rep-name{position:relative}
+table.rt tbody .rn-links{position:absolute;right:0;top:50%;transform:translateY(-50%);margin:0;
+  padding:3px 0 3px 30px;opacity:0;pointer-events:none;transition:opacity .12s;
+  background:linear-gradient(90deg,transparent,var(--rn-hov,var(--bg3)) 26px)}
+table.rt tbody tr:hover .rn-links,table.rt tbody tr.rx-open .rn-links,
+table.rt tbody tr:focus-within .rn-links{opacity:1;pointer-events:auto}
+.roas-halo{display:block;font-size:9.5px;line-height:12px;margin-top:2px;color:var(--text4);font-family:var(--mono);white-space:nowrap}
+
+/* ════════════════════════════════════════════════════════════════════════
+   v6.6 — LIGHT MODE, REDONE IN THE A2 STYLE ("redo it then")
+   Same grammar as dark A2: a plain white page, near-white cards on thin crisp
+   lines, near-black text, full-strength accents darkened only as far as white
+   needs for reading, OUTLINED status pills, flat (no drop shadows), Chivo figures.
+   ════════════════════════════════════════════════════════════════════════ */
+body.light{
+  --bg:#ffffff;--bg2:#fbfbfc;--bg3:#f4f4f6;--bg4:#ececf0;--bg5:#dddde3;--panel:#ffffff;--panel2:#f7f7f9;
+  --border:#e4e4e8;--border2:#d4d4da;--border3:#bfbfc7;
+  --text:#09090b;--text2:#27272a;--text3:#4b4b53;--text4:#5f5f68;
+  --green:#047a52;--red:#cc1f33;--amber:#a65200;--blue:#1d58d6;--purple:#6d28d9;--teal:#0d6f68;--coral:#c01043;
+  --green-bg:rgba(4,122,82,.08);--red-bg:rgba(204,31,51,.07);--amber-bg:rgba(166,82,0,.08);
+  --blue-bg:rgba(29,88,214,.07);--purple-bg:rgba(109,40,217,.07);--green-dim:rgba(4,122,82,.4);
+  --red-line:rgba(204,31,51,.3);--red-wash:rgba(204,31,51,.05);
+  --shadow-sm:none;--shadow:0 1px 2px rgba(9,9,11,.06);--shadow-lg:0 12px 32px rgba(9,9,11,.14);
+  --rn-hov:#f4f4f6;
+}
+body.light{background:var(--bg)}
+/* outlined status pills — the old light rule filled them and forced white text */
+body.light .rag.rag.rag.g,body.light .rag.rag.rag.a,body.light .rag.rag.rag.r,body.light .rag.rag.rag.flag,body.light .rag.rag.rag.n{background:transparent!important;border:1px solid currentColor!important}
+body.light .rag.rag.rag.g{color:var(--green)!important}body.light .rag.rag.rag.a,body.light .rag.rag.rag.flag{color:var(--amber)!important}
+body.light .rag.rag.rag.r{color:var(--red)!important}body.light .rag.rag.rag.n{color:var(--text3)!important}
+body.light .rag .d{background:currentColor!important}
+body.light .roasp.roasp.roasp{background:transparent!important;color:var(--rc)!important;border:1px solid var(--rc)!important}
+body.light .rp-pos{background:transparent;border:1px solid var(--green);color:var(--green);padding:2px 8px}
+body.light .rp-neg{background:transparent;border:1px solid var(--red);color:var(--red);padding:2px 8px}
+body.light .ph-d.up,body.light .ph-d.dn,body.light .ph-d.flat{background:transparent;border:1px solid currentColor}
+body.light .ph-d.flat{color:var(--text3)}
+body.light .scr-pill{background:transparent!important;border:1px solid var(--border2);color:var(--text3)}
+body.light .scr-g.st-hit .scr-pill{border-color:var(--green);color:var(--green)}
+body.light .scr-g.st-miss .scr-pill{border-color:var(--red);color:var(--red)}
+body.light .scr-g.st-watch .scr-pill{border-color:var(--amber);color:var(--amber)}
+body.light .scr-verd{background:transparent!important}
+body.light .wl-k{background:transparent!important;border:1px solid currentColor}
+body.light .bm-rank.top,body.light .bm-rank.bot{background:transparent}
+body.light .dirb.up,body.light .dirb.dn,body.light .dirb.nw{background:transparent}
+body.light .scr-chip.up,body.light .scr-chip.dn,body.light .scr-chip.nw,
+body.light .chip.up,body.light .chip.dn,body.light .chip.nw{background:transparent;border:1px solid currentColor}
+body.light .rl-act.rl-act.rl-act.bad{background:transparent!important;color:var(--red)!important;border:1px solid var(--red)}
+body.light .rl-act.rl-act.rl-act.warn{background:transparent!important;color:var(--amber)!important;border:1px solid var(--amber)}
+/* the v5.3 "dim the big figures" filter was only lifted for dark — lift it here too */
+body.light .rk-v,body.light .kpi .v,body.light .hero-v,body.light .tv,body.light .hm-bnv,body.light .pj-hero,body.light .pj-v b,body.light .a-hv,body.light .rep-kpis .rk-v{filter:none!important}
+body.light .pj-tag{color:#fff}
+/* flat: cards sit on lines, not shadows */
+body.light .card,body.light .pcard,body.light .tablecard,body.light .scr,body.light .rk,body.light .hm-band,body.light .hm-card{box-shadow:none!important}
+body.light table.rt tbody tr:hover td{background:var(--bg3)}
+/* the hero KPI card's tint gradient starts see-through, so the grid-line grey showed
+   behind the Real profit figure (4.2:1). An opaque base under the tint. */
+.rep-kpis .rk,.rep-kpis .rk.hero{background-color:var(--panel)}
+
+/* v6.7 — zero-rated VAT */
+.gp-vat{border-bottom:1px dotted var(--green);cursor:help}
+.rs-vat-note{padding:0 14px 8px;font-size:12px;color:var(--text2);line-height:17px}
+.rs-vat-note b{color:var(--text);font-weight:600}
+.rs-vat{max-height:220px;overflow-y:auto}
 </style>
 </head>
 <body>
@@ -3827,7 +3955,7 @@ body:not(.light) .ph-tag.mono,body:not(.light) .ph-tag.lk{background:transparent
 </div>
 
 <div class="topbar">
-  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v6.2</span></div>
+  <div class="logo"><div class="logo-mark">B</div>BDL&nbsp;Hub <span class="logo-ver">v6.8</span></div>
   <div class="nav" id="topnav">
     <button class="nav-btn active" data-p="home">Home</button>
     <button class="nav-btn" data-p="ads">Ads<span class="badge" id="nav-overdue-ads" style="display:none;background:var(--red);color:#fff;border:none"></span></button>
@@ -3957,7 +4085,7 @@ body:not(.light) .ph-tag.mono,body:not(.light) .ph-tag.lk{background:transparent
 <!-- ════════ MONTHLY REPORT ════════ -->
 <div class="page" id="page-report">
   <div class="ph">
-    <div><h1>Monthly Report</h1><div class="sub" id="rep-sub">Product P&amp;L by month · Real Profit = Profit before ads − Ads</div></div>
+    <div><h1>Monthly Report</h1><div class="sub" id="rep-sub">Product P&amp;L by month · Real Profit = Gross profit − Ads</div></div>
     <div class="ctrls">
       <div class="seg" id="rep-viewseg"><button id="rv-month" class="on" onclick="repSetView('month')">Month</button><button id="rv-year" onclick="repSetView('year')">All months</button></div>
       <select class="sel" id="rep-month-sel" onchange="repSelectMonth(this.value)" style="min-width:150px"></select>
@@ -3980,6 +4108,7 @@ body:not(.light) .ph-tag.mono,body:not(.light) .ph-tag.lk{background:transparent
     <input class="input" id="rep-search" placeholder="Search product / ASIN…" oninput="repSearchDebounced()" style="width:220px">
     <div class="fchips" id="rep-fchips"></div>
     <div class="sp"></div>
+    <span class="rep-fitnote" id="rep-fitnote" hidden></span>
     <div class="cmwrap">
       <button class="btn-sm" id="rep-colbtn" onclick="repColMenu()">Columns ▾</button>
       <div class="colmenu" id="rep-colmenu"></div>
@@ -9917,7 +10046,7 @@ function openProductPopup(asin,keepTab){
       <div class="pflow">
         <div class="pf"><span></span>Sales<b>${gbp(lastM.sales)}</b></div>
         <div class="pf"><span style="background:var(--bg5)"></span>Costs &amp; fees<b>−${gbp(Math.max(0,lastM.sales-lastM.profit))}</b></div>
-        <div class="pf sub"><span></span>Profit before ads<b>${gbp(lastM.profit)}</b></div>
+        <div class="pf sub"><span></span>Gross profit<b>${gbp(lastM.profit)}</b></div>
         <div class="pf"><span style="background:var(--amber)"></span>Ad spend<b>−${gbp(lastM.ads)}</b></div>
         <div class="pf tot"><span style="background:${lastM.real>=0?'var(--green)':'var(--red)'}"></span>Real profit<b style="color:${lastM.real>=0?'var(--green)':'var(--red)'}">${gbp(lastM.real)}</b></div>
       </div></div>`
@@ -9988,7 +10117,7 @@ function openProductPopup(asin,keepTab){
           :'<div class="pnone">One month only — import another to see the shape.</div>'}</div>
       <div class="pcard" style="margin-top:10px"><div class="pc-h">Month by month</div>
       <div class="tscroll" style="max-height:320px"><table class="simple-tbl">
-        <thead><tr><th style="text-align:left">Month</th><th>Sales</th><th>Profit</th><th>Ads</th><th>Real profit</th><th>Margin</th><th>TACOS</th><th>Units</th><th>Rank</th></tr></thead>
+        <thead><tr><th style="text-align:left">Month</th><th>Sales</th><th>Gross profit</th><th>Ads</th><th>Real profit</th><th>Margin</th><th>TACOS</th><th>Units</th><th>Rank</th></tr></thead>
         <tbody>${MS.slice().reverse().map(x=>`<tr style="cursor:pointer" onclick="closeProdPopup();goPage('report');repSelectMonth('${_esc(x.id)}')">
           <td style="text-align:left;font-weight:600">${_esc(x.lab)}</td>
           <td>${gbp(x.sales)}</td><td>${gbp(x.profit)}</td>
@@ -9998,7 +10127,7 @@ function openProductPopup(asin,keepTab){
           <td>${intf(x.units)}</td><td>${x.rank!=null?intf(x.rank):'—'}</td></tr>`).join('')}</tbody>
       </table></div></div>
       <div class="pnl b" style="margin-top:10px"><div class="pnl-h">Reading this</div>
-        <p><b>Real profit = profit before ads − ad spend.</b> It is the only figure that nets the two sides of the hub together, which is why it leads everywhere.</p>
+        <p><b>Real profit = gross profit − ad spend.</b> It is the only figure that nets the two sides of the hub together, which is why it leads everywhere.</p>
         <p>Rank is the sub-category BSR from your sales export — <b>lower is better</b>.</p></div>`
       :`<div class="pnl b"><div class="pnl-h">This product is not in any month</div>
         <p>It advertises but has never appeared in a sales export — either it has not sold, or it is not one of yours. Ads exports do contain other sellers' ASINs.</p></div>
@@ -10517,7 +10646,7 @@ function renderProducts(){
         ${hasPL?TH('totalSales','Total sales','All sales for the month, ads + organic'):''}
         ${hasPL?`<th title="Share of total sales that came from ads vs organic">Ad / organic</th>`:''}
         ${hasPL?TH('tacos','TACOS','Ad spend as a % of total sales — lower is better'):''}
-        ${hasPL?TH('profit','Profit','Product profit before ad spend'):''}
+        ${hasPL?TH('profit','Gross profit','Product gross profit, before ad spend'):''}
         ${hasPL?TH('real','Real profit','Profit minus ad spend'):''}
         ${hasPL?TH('margin','Margin','Real profit ÷ total sales'):''}
         ${TH('camps','Campaigns')}
@@ -13264,6 +13393,14 @@ function repAdSpendKnown(m){return !!m&&(m.rows||[]).some(r=>(+r.ads||0)>0);}
 /* ROAS's numerator: Amazon's raw attributed sales (advertised SKU + other products).
    Rows imported before v2.7 carry only adSales, which WAS the raw total then — the
    fallback keeps every historical ROAS identical. */
+/* v6.6 — Jack approved: a product's ROAS counts only the sales its ads made OF
+   ITSELF ("7 Day Advertised SKU Sales"). Amazon's total also counts other products
+   bought after clicking this one's ad — in Aug 2026 £474.60 of Wedding Cones 30's
+   "ad sales" were the 60-pack, which turned the 60-pack's own 2.34× (below its
+   2.86× break-even) into a green 3.38×. Account ROAS keeps Amazon's total: across
+   the account those sales really were ad-driven, and it matches the console. */
+function repAdOwn(r){return r&&r.adSales!=null?(+r.adSales||0):repAdRaw(r);}
+function repAdHalo(r){const raw=repAdRaw(r),own=r&&r.adSales!=null?(+r.adSales||0):null;return(raw!=null&&own!=null)?Math.max(0,raw-own):0;}
 function repAdRaw(r){return r&&r.adSalesTot!=null?(+r.adSalesTot||0):(r&&r.adSales!=null?(+r.adSales||0):null);}
 function repAdRev(r){
   const sales=+r.sales||0;
@@ -13283,9 +13420,13 @@ function repTotals(m){
     t.organic+=Math.max(0,(+r.units||0)-(+r.adUnits||0));
     const sp=repAdRev(r);                                 /* CAPPED — the split uses this */
     if(sp.ad!=null){t.adRev+=sp.ad;t.orgRev+=sp.organic;}
+    t.halo=(t.halo||0)+repAdHalo(r);
     if(sp.over){t.overN++;t.overAmt+=sp.excess;}
     t.real+=repRowReal(r);
   });
+  /* v6.6 — sales other products' ads drove sit inside these products' own sales as
+     "organic". Across the account they were ad-driven: move them (never below zero). */
+  if(t.halo>0){const mv=Math.min(t.halo,t.orgRev);t.adRev+=mv;t.orgRev-=mv;}
   return t;}
 function repLoadLocal(){
   /* nothing is kept locally any more — clear anything an earlier build left behind */
@@ -13296,6 +13437,41 @@ function repLoadLocal(){
    one forward; an OLD build meeting a NEWER payload refuses to overwrite it rather
    than silently downgrading Jack's data. */
 const REP_SCHEMA=2;
+/* ════ v6.7 — ZERO-RATED PRODUCTS ════
+   Jack: "it's a SellerToolKit error, I know about it — all hampers are 0%, so change it
+   to 0% VAT". SellerToolKit's VAT column is NET VAT (VAT on the sale less VAT reclaimed
+   on fees). On a zero-rated product there is no VAT on the sale, so any positive VAT it
+   charged is an error: that amount is added back to gross profit. Small negatives are
+   real reclaims and stay. SellerToolKit's own profit is kept as `profitStk`, so the
+   correction is reversible and nothing from the file is lost.
+   Which products: whatever he ticks in Report settings; until he touches it, every
+   product with "hamper" in its name. Only rows imported since 5 Sep 2026 carry VAT —
+   older months show as they were imported (re-import one to apply it). */
+function repVatZeroSet(d,extraRows){
+  if(d&&Array.isArray(d.vatZero))return new Set(d.vatZero.map(a=>String(a).toUpperCase()));
+  const zs=new Set();
+  const add=r=>{if(r&&r.asin&&/hamper/i.test(String(r.name||'')))zs.add(String(r.asin).toUpperCase());};
+  ((d&&d.months)||[]).forEach(m=>(m.rows||[]).forEach(add));(extraRows||[]).forEach(add);
+  return zs;
+}
+function repVatFixRow(r,zs){
+  if(!r||r.vat==null||r.vatManual)return;
+  if(r.profitStk==null)r.profitStk=+r.profit||0;
+  const fix=(zs.has(String(r.asin||'').toUpperCase())&&+r.vat>0)?+(+r.vat).toFixed(2):0;
+  r.vatFix=fix;
+  r.profit=+((+r.profitStk)+fix).toFixed(2);
+}
+function repApplyVatZero(d){
+  if(!d||!Array.isArray(d.months))return d;
+  const zs=repVatZeroSet(d);
+  d.months.forEach(m=>(m.rows||[]).forEach(r=>repVatFixRow(r,zs)));
+  return d;
+}
+function repVatToggle(asin,on){
+  const zs=repVatZeroSet(repData);const A=String(asin).toUpperCase();
+  if(on)zs.add(A);else zs.delete(A);
+  repData.vatZero=[...zs];repApplyVatZero(repData);repSave();renderReport();openRepSettings();
+}
 function repMigrate(d){
   if(!d||!Array.isArray(d.months))return null;
   const v=+d.schema||1;
@@ -13304,7 +13480,7 @@ function repMigrate(d){
     d.months.forEach(m=>(m.rows||[]).forEach(r=>{if(!Array.isArray(r.camps))r.camps=[];if(r.stock===undefined)r.stock=null;}));
     d.schema=2;
   }
-  return d;
+  return repApplyVatZero(d);   /* v6.7 */
 }
 /* Supabase is the ONLY store for the Monthly Report. Nothing is written to this
    browser — a local copy that could be newer than the cloud one is exactly how a bad
@@ -13773,7 +13949,73 @@ setTimeout(()=>{try{snapDupeNote();try{snapGuardNote();}catch(e){}}catch(e){}},4
    (An earlier version sized an inner scrollbox to the free space on screen; with the
    KPI band and toolbar above it that free space is small, so the table collapsed to
    three rows. Constraining the table was the wrong instinct.) */
-function repFitTable(){}
+/* ════ v6.5 — THE TABLE FITS THE SCREEN ════
+   It was sized from a fixed budget (product 360px + 118px per money column…) that
+   reached 1,434px with today's columns — wider than a 1440 laptop has room for — and
+   the card does not scroll, so the WHOLE PAGE slid sideways. Jack's own screenshot
+   was cut off at "ORGA…": Units, Trend, Last month and Real profit off-screen.
+   Now: measure what every number column actually needs (an off-screen copy laid out
+   at max-content), give it exactly that, and let the product name — which already
+   shortens with "…" — take whatever is left. If even that does not fit, the least
+   needed columns step aside in a fixed order and a note says which, with a one-click
+   way to show everything. A column he switches on himself is never the one hidden. */
+window._repFitHide=window._repFitHide||new Set();
+window._repFitKeep=window._repFitKeep||new Set();
+const REP_FIT_ORDER=[['organic','adUnits'],['trend'],['lastm2'],['lastm'],['rank'],['tacos'],['roas'],['margin'],['stock','cover']];
+const REP_FIT_NAMES={organic:'Organic',adUnits:'Ad units',trend:'Trend',lastm:'Last month',lastm2:'2 months back',rank:'Rank',tacos:'TACOS',roas:'ROAS',margin:'Margin',stock:'Stock',cover:'Cover'};
+const REP_PROD_MIN=250;
+function repFitTable(){
+  const tbl=document.getElementById('rep-table'),box=document.getElementById('rep-tscroll'),wrap=document.getElementById('rep-tablewrap');
+  if(!tbl||!box||!box.clientWidth)return;
+  if(!document.getElementById('page-report')?.classList.contains('active'))return;
+  _repFitWatch();
+  const avail=box.clientWidth;_repFitW=avail;
+  /* measure: a hidden copy at max-content, so every column reports what it needs */
+  const clone=tbl.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.querySelectorAll('tr.rx-row').forEach(r=>r.remove());
+  clone.querySelector('colgroup')?.remove();
+  clone.style.cssText='position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;table-layout:auto;width:max-content;min-width:0';
+  clone.querySelectorAll('th,td').forEach(c=>{c.style.whiteSpace='nowrap';});
+  box.appendChild(clone);
+  const nat=[...clone.querySelectorAll('thead th')].map(th=>Math.ceil(th.getBoundingClientRect().width)+2);
+  box.removeChild(clone);
+  const need=REP_PROD_MIN+nat.slice(1).reduce((a,b)=>a+b,0);
+  const shownKeys=window._repShownKeys||[];
+  if(!window._repFitOff&&need>avail){
+    const next=REP_FIT_ORDER.find(g=>g.some(k=>shownKeys.includes(k))&&!g.some(k=>window._repFitKeep.has(k)));
+    if(next){next.forEach(k=>window._repFitHide.add(k));renderReport();return;}
+  }
+  const cols=tbl.querySelectorAll('colgroup col');
+  cols.forEach((c,i)=>{c.style.width=i===0?'auto':(nat[i]||80)+'px';});
+  const over=need>avail;
+  tbl.style.minWidth=over?need+'px':'';
+  /* still too wide (or he asked for everything): the CARD scrolls, never the page */
+  if(wrap)wrap.classList.toggle('fit-scroll',over);
+  const note=document.getElementById('rep-fitnote');
+  if(note){
+    const hid=[...window._repFitHide].filter(k=>repColOn(k)&&!window._repFitOff);
+    const names=[...new Set(hid.map(k=>REP_FIT_NAMES[k]||k))];
+    if(window._repFitOff&&over){note.hidden=false;note.innerHTML=`Every column shown — the table scrolls sideways · <u onclick="repFitShowAll(false)">fit to screen</u>`;}
+    else if(names.length){note.hidden=false;note.innerHTML=`${_esc(names.join(', '))} hidden to fit this screen · <u onclick="repFitShowAll(true)">show all</u>`;}
+    else note.hidden=true;
+  }
+}
+function repFitShowAll(on){window._repFitOff=!!on;if(!on)window._repFitHide=new Set();renderReport();}
+/* re-fit when the table's own box changes width — window resize, a sidebar, a
+   scrollbar appearing — not just on window resize, which misses most of those */
+let _repFitT=null,_repFitW=0;
+function _repFitWatch(){
+  const box=document.getElementById('rep-tscroll');if(!box||box._fitWatched||typeof ResizeObserver==='undefined')return;
+  box._fitWatched=true;
+  new ResizeObserver(()=>{const w=box.clientWidth;if(!w||Math.abs(w-_repFitW)<2)return;_repFitW=w;
+    clearTimeout(_repFitT);_repFitT=setTimeout(()=>{
+      if(!document.getElementById('page-report')?.classList.contains('active'))return;
+      window._repFitHide=new Set();renderReport();},150);}).observe(box);
+}
+window.addEventListener('resize',()=>{clearTimeout(_repFitT);_repFitT=setTimeout(()=>{
+  if(!document.getElementById('page-report')?.classList.contains('active'))return;
+  window._repFitHide=new Set();renderReport();},180);});
 
 function repSelectMonth(id){repCur=id;renderReport();}
 function repSortBy(k){if(_repSort.k===k)_repSort.dir*=-1;else _repSort={k,dir:k==='name'?1:-1};renderReport();}
@@ -13807,7 +14049,7 @@ function renderReport(){
         <div style="font-family:var(--display);font-size:20px;font-weight:800;margin-bottom:6px;text-align:center">Import your first month</div>
         <div style="font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:18px;text-align:center">Two files, one screen. Only Lavarion products are kept — everything else in the sales file is ignored.</div>
         <div class="mi-flow">
-          <div class="mi-flow-row"><span class="mi-n">1</span><div><b>Sales &amp; profit report</b><div class="mi-flow-s">From your profit software · gives sales, units and profit before ads</div></div></div>
+          <div class="mi-flow-row"><span class="mi-n">1</span><div><b>Sales &amp; profit report</b><div class="mi-flow-s">From your profit software · gives sales, units and gross profit</div></div></div>
           <div class="mi-flow-row"><span class="mi-n">2</span><div><b>Amazon Ads report</b><div class="mi-flow-s">Sponsored Products → Advertised product · gives ad spend and ad units, summed per ASIN across every campaign</div></div></div>
           <div class="mi-flow-row"><span class="mi-n" style="background:var(--green);color:#04120b">✓</span><div><b>Real Profit and the organic split build themselves</b><div class="mi-flow-s">Excel, CSV or paste — both work</div></div></div>
         </div>
@@ -13816,7 +14058,7 @@ function renderReport(){
           <button class="btn ghost" onclick="openRepMonthNew()">+ Start empty month</button>
         </div>
       </div></div>`;
-    document.getElementById('rep-sub').textContent='Product P&L by month · Real Profit = Profit before ads − Ads';
+    document.getElementById('rep-sub').textContent='Product P&L by month · Real Profit = Gross profit − Ads';
     return;
   }
   if(!repMonth())repCur=ms[ms.length-1].id;
@@ -13975,14 +14217,43 @@ function renderReport(){
               <b class="pj-hero" style="color:${t.real>=0?'var(--green)':'var(--red)'}">${gbp(t.real*f)}</b> real profit${
               pt?` <span class="pj-vs">${(t.real*f-pt.real)>=0?'up':'down'} ${gbp(Math.abs(t.real*f-pt.real))} on ${_esc(pv.label)}</span>`:''}</span>
           </div>
-          <div class="pj-row">
-            ${cell('Sales',gbp(t.sales*f),'var(--blue)',t.sales*f,pt?pt.sales:null,gbp,true)}
-            ${cell('Units',intf(Math.round(t.units*f)),'var(--purple)',t.units*f,pt?pt.units:null,v=>intf(Math.round(v)),true)}
-            ${cell('Ad spend',gbp(t.ads*f),'var(--amber)',t.ads*f,pt?pt.ads:null,gbp,null)}
-            ${cell('Real profit',gbp(t.real*f),t.real>=0?'var(--green)':'var(--red)',t.real*f,pt?pt.real:null,gbp,true)}
-            ${cell('Products',intf(cn),'var(--text)',cn,pn,v=>intf(Math.round(v)),true)}
-          </div>
-          <div class="pj-note">Straight-line: ${_pp.days} days scaled to ${_pp.of}. Ignores weekends, promos, stock-outs and seasonality — the first days of a month are the least representative there are.</div>
+          ${(()=>{
+            /* v6.3 — Jack: "I wanna know the actual amount projected of gross, net, ad
+               spend, units etc". One table, four columns that answer it in order: what
+               is in so far, what that scales to, what last month did, the gap. Rates do
+               not scale, so they show once and say so. */
+            const adsK=repAdsKnown(m);
+            const pl=pv?_esc(pv.label.replace(/\s*20\d\d/,'')):'last month';
+            const mrg=v=>fmt(v,1)+'%',x=v=>fmt(v,2)+'×',pt_=v=>fmt(v,1)+' pt';
+            const dcell=(proj,prevVal,fmtf,goodUp,isRate)=>{
+              if(prevVal==null||!isFinite(prevVal)||proj==null)return '<td class="pj-d"><span class="muted">—</span></td>';
+              const diff=proj-prevVal,band=Math.max(isRate?0.2:0.5,Math.abs(prevVal)*0.02);
+              if(Math.abs(diff)<=band)return '<td class="pj-d"><span class="fl">level</span></td>';
+              const cls=goodUp==null?'nt':(((diff>0?1:-1)===(goodUp?1:-1))?'up':'dn');
+              const pct=(!isRate&&prevVal)?` <small>${diff>0?'+':'−'}${fmt(Math.abs(diff)/Math.abs(prevVal)*100,0)}%</small>`:'';
+              const df=(isRate&&fmtf===mrg)?pt_:fmtf;
+              return `<td class="pj-d"><span class="${cls}">${diff>0?'▲':'▼'} ${df(Math.abs(diff))}${pct}</span></td>`;};
+            const row=(lab,sofar,proj,prevVal,fmtf,goodUp,col,isRate,note)=>`<tr class="${isRate?'rate':''}">
+              <td class="l">${lab}${note?`<small>${note}</small>`:''}</td>
+              <td class="sf">${sofar==null?'<span class="muted">—</span>':fmtf(sofar)}</td>
+              <td class="pr" style="color:${col||'var(--text)'}">${proj==null?'<span class="muted">—</span>':fmtf(proj)}</td>
+              <td class="pv">${prevVal==null||!isFinite(prevVal)?'<span class="muted">—</span>':fmtf(prevVal)}</td>
+              ${dcell(proj,prevVal,fmtf,goodUp,isRate)}</tr>`;
+            const P=pt||{};
+            const rate=(a,b)=>b?a/b:null;
+            return `<table class="pj-t"><thead><tr><th class="l">Measure</th><th>So far · ${_pp.days} days</th><th>Projected · ${_pp.of} days</th><th>${pl}</th><th>Projected vs ${pl}</th></tr></thead><tbody>
+              ${row('Sales',t.sales,t.sales*f,pt?P.sales:null,gbp,true,'var(--blue)')}
+              ${row('Units',t.units,Math.round(t.units*f),pt?P.units:null,v=>intf(Math.round(v)),true,'var(--purple)')}
+              ${row('Gross profit',t.profit,t.profit*f,pt?P.profit:null,gbp,true,'var(--text)',false,'before ads')}
+              ${row('Ad spend',t.ads,t.ads*f,pt?P.ads:null,gbp,null,'var(--amber)',false,'fine while it sells')}
+              ${row('Net profit',t.real,t.real*f,pt?P.real:null,gbp,true,t.real>=0?'var(--green)':'var(--red)',false,'real profit — gross minus ads')}
+              ${row('Margin',rate(t.real,t.sales)==null?null:rate(t.real,t.sales)*100,rate(t.real,t.sales)==null?null:rate(t.real,t.sales)*100,pt&&P.sales?P.real/P.sales*100:null,mrg,true,'var(--text)',true,'rate — does not scale')}
+              ${row('TACOS',rate(t.ads,t.sales)==null?null:rate(t.ads,t.sales)*100,rate(t.ads,t.sales)==null?null:rate(t.ads,t.sales)*100,pt&&P.sales?P.ads/P.sales*100:null,mrg,false,'var(--text)',true,'ads ÷ sales')}
+              ${row('ROAS',adsK&&t.ads?t.adSales/t.ads:null,adsK&&t.ads?t.adSales/t.ads:null,pt&&P.ads?P.adSales/P.ads:null,x,true,'var(--text)',true,adsK?'ad sales ÷ ad spend':'needs the ads report')}
+              ${row('Products',cn,cn,pn,v=>intf(Math.round(v)),true,'var(--text)',true,'with a row this month')}
+            </tbody></table>
+            <div class="pj-note">Straight-line: ${_pp.days} days scaled to ${_pp.of}. Ignores weekends, promos, stock-outs and seasonality — the first days of a month are the least representative there are.</div>`;
+          })()}
           ${(()=>{
             /* v4.8 — the counts and the movers, from Jack's reference layout.
                Everything here is derived from data already on screen; nothing new
@@ -14187,7 +14458,7 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
   const anyRank=rows.some(r=>+r.rank>0);
   /* the units columns are owned by the column picker — deriving showU from anything
      else let the "= Units" header claim an equation whose halves were switched off. */
-  const showU=repColOn('organic')&&repColOn('adUnits');
+  const showU=repColOn('organic')&&repColOn('adUnits')&&!(!window._repFitOff&&window._repFitHide&&window._repFitHide.has('organic'));
   window._repShowUnits=showU;
   const ut=document.getElementById('rep-utog');
   if(ut){ut.textContent=showU?'Hide organic / ad units':'Show organic / ad units';ut.classList.toggle('on',showU);}
@@ -14197,7 +14468,7 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
   /* ── columns are configurable; the product and Real Profit columns are fixed ── */
   const histBy={};
   repSortedMonths().forEach(mm=>(mm.rows||[]).forEach(rr=>{
-    if(!rr.asin)return;const k=rr.asin.toUpperCase();(histBy[k]=histBy[k]||[]).push(repRowReal(rr));}));
+    if(!rr.asin)return;const k=rr.asin.toUpperCase();const _pp=repPartial(mm);(histBy[k]=histBy[k]||[]).push(repRowReal(rr)*(_pp?_pp.factor:1));}));
   /* v5.7 — BARS, NOT A CURVE. The smoothed line invented shapes between eight
      monthly points and coloured the whole thing by first-vs-last, so a product that
      climbed for seven months and dipped once read as a red hump. Monthly data is
@@ -14222,7 +14493,7 @@ Amazon's attribution window can credit an ad unit to a month the sale did not fa
    must divide Amazon's RAW attributed total. This was still on adSales, so the report
    table showed 5.15x where the projected row correctly showed 5.77x — two ROAS figures
    one line apart. repAdRaw is the single source. */
-const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
+const roasOf=r=>(+r.ads||0)?((repAdOwn(r)||0)/(+r.ads)):0;   /* v6.6 — own ad sales */
   const marginOf=r=>(+r.sales||0)?repRowReal(r)/(+r.sales)*100:0;
   const coverOf=r=>(r.stock!=null&&(+r.units||0)>0)?(+r.stock)/(+r.units):null;
   const anyStock=rows.some(r=>r.stock!=null);
@@ -14247,22 +14518,23 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
         }
         return gbp(sv)+tick(r,'sales',gbp)+(sp.raw!=null?`<div class="rsplit"><span class="rs-o">org ${gbp(sp.organic)}</span> <span class="rs-a">ads ${gbp(sp.ad)}</span></div>`:'')+mini;},
       f:()=>gbp(t.sales)+(hasSplit?`<div class="rsplit"><span class="rs-o">org ${gbp(t.orgRev)}</span> <span class="rs-a">ads ${gbp(t.adRev)}</span></div>`:'')},
-    {k:'profit',h:'Profit',w:'c-money',t:'Profit before advertising',c:r=>gbp(+r.profit||0)+tick(r,'profit',gbp),f:()=>gbp(t.profit)},
+    {k:'profit',h:'Gross profit',w:'c-money',t:'Gross profit — sales minus cost, Amazon fees and VAT, before ad spend (from SellerToolKit). ▲▼ = % more or less than last month',c:r=>(+r.vatFix>0?`<span class="gp-vat" title="${_esc('Includes '+gbp(r.vatFix)+' of VAT that SellerToolKit charged in error — this product is zero-rated (Report settings). SellerToolKit said '+gbp(r.profitStk)+'.')}">`+gbp(+r.profit||0)+'</span>':gbp(+r.profit||0))+tick(r,'profit',gbp),f:()=>gbp(t.profit)},
     {k:'ads',h:'Ads',w:'c-money',c:r=>`<span style="color:${(+r.ads||0)>0?'var(--amber)':'var(--text4)'}">${gbp(+r.ads||0)}</span>`+tick(r,'ads',gbp),
       f:()=>`<span style="color:var(--amber)">${gbp(t.ads)}</span>`},
     {k:'tacos',h:'TACOS',w:'c-small',t:'Ad spend ÷ all sales — how much of this product is rented',
       c:r=>{const v=tacosOf(r);return (+r.sales||0)?`<span style="color:${v>30?'var(--red)':v>18?'var(--amber)':'var(--text2)'};font-weight:700">${fmt(v,1)}%</span>`:'<span class="muted">—</span>';},
       f:()=>t.sales?fmt(t.ads/t.sales*100,1)+'%':'—'},
-    {k:'roas',h:'ROAS',w:'c-small',t:'Advertised sales ÷ ad spend — coloured against THIS product’s break-even (sales ÷ profit before ads), not the account target',off:1,
+    {k:'roas',h:'ROAS',w:'c-small',t:'Advertised sales ÷ ad spend — coloured against THIS product’s break-even (sales ÷ gross profit), not the account target',off:1,
       /* v6.2 — one 5.0× target for every product called a 4.2× on a 30%-margin product
          red and a 5.1× on Polyfilla green. Each product has its own break-even. */
-      c:r=>{const v=roasOf(r),_ar=repAdRaw(r)||0,ads=+r.ads||0;
+      c:r=>{const v=roasOf(r),_ar=repAdOwn(r)||0,ads=+r.ads||0,_halo=repAdHalo(r);
         if(!ads)return '<span class="muted">—</span>';
         if(_ar<=0)return `<span class="rag flag" style="font-size:11px" title="Spend with no attributed sales">${fmt(v,2)}</span>`;
         const sales=+r.sales||0,pb=+r.profit||0,be=(sales>0&&pb>0)?sales/pb:null;
         const cls=be==null?'r':v>=be*1.15?'g':v>=be?'a':'r';
-        const tip=be==null?'Loses money before ads — no ROAS makes its advertising pay':`Break-even for this product is ${fmt(be,2)}× — green above it by 15%, amber just above, red below`;
-        return `<span class="rag ${cls}" style="font-size:11px" title="${tip}">${fmt(v,2)}</span>`;},
+        const tip=(be==null?'Loses money before ads — no ROAS makes its advertising pay':`Its own ad sales ÷ ad spend. Break-even for this product is ${fmt(be,2)}× — green above it by 15%, amber just above, red below`)
+          +(_halo>=0.5?` · its ads also sold ${gbp(_halo)} of other products (Amazon counts that in its ${fmt((_ar+_halo)/ads,2)}×; not counted here)`:'');
+        return `<span class="rag ${cls}" style="font-size:11px" title="${_esc(tip)}">${fmt(v,2)}</span>${_halo>=0.5?`<span class="roas-halo" title="${_esc(tip)}">+${gbp(_halo)} other</span>`:''}`;},
       f:()=>{if(!t.ads)return '—';const v=t.adSales/t.ads,tg=cfgTargetRoas();
         const c=v>=tg*1.05?'var(--green)':v>=tg*0.95?'var(--amber)':'var(--red)';
         return `<span style="color:${c};font-weight:800" title="Target ${fmt(tg,1)}× — green above, amber within 5% of it, red below">${fmt(v,2)}×</span>`;}},
@@ -14352,16 +14624,18 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
   /* `proj` is contextual, not a preference: it only exists on a part-month and it is
      the whole reason you imported one, so it shows itself and does not need finding
      in the Columns menu. `avail:false` keeps it out entirely on a full month. */
-  const shown=ALL.filter(c=>(c.avail!==false)&&(c.lock||c.k==='proj'||repColOn(c.k)));
+  const _fitHid=k=>!window._repFitOff&&window._repFitHide&&window._repFitHide.has(k);
+  const shown=ALL.filter(c=>(c.avail!==false)&&(c.lock||c.k==='proj'||repColOn(c.k))&&!_fitHid(c.k));
+  window._repShownKeys=shown.map(c=>c.k);
   const cg=document.getElementById('rep-cols');
   if(cg)cg.innerHTML='<col class="c-prod">'+shown.map(c=>`<col class="${c.w}">`).join('')+'<col class="c-real">';
   /* keep the columns readable as they are added — scroll rather than crush */
   const tbl=document.getElementById('rep-table');
-  if(tbl)tbl.style.minWidth=Math.max(1040,360+shown.reduce((a,c)=>a+(c.w==='c-money'?118:c.w==='c-small'?92:c.w==='c-units'?104:118),0)+130)+'px';
+  /* v6.5 — sized by repFitTable from what the columns actually hold */
   document.getElementById('rep-head').innerHTML=`<tr>
     <th onclick="repSortBy('name')" class="${_repSort.k==='name'?'sorted':''}">Product${arrow('name')}</th>
     ${shown.map(c=>`<th onclick="repSortBy('${c.k}')" class="${_repSort.k===c.k?'sorted':''}"${c.t?` title="${_esc(c.t)}"`:''}>${c.k==='units'&&showU?'<span class="eqop">=</span> ':''}${c.h}${arrow(c.k)}</th>`).join('')}
-    <th onclick="repSortBy('real')" class="${_repSort.k==='real'?'sorted':''}" title="Real Profit = Profit before ads − Ads">Real Profit${arrow('real')}</th>
+    <th onclick="repSortBy('real')" class="${_repSort.k==='real'?'sorted':''}" title="Real Profit = Gross profit − Ads">Real Profit${arrow('real')}</th>
   </tr>`;
   window._repHasPrev=!!prev;
   repPaintSort(shown);
@@ -14385,7 +14659,9 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
       const pr=r.asin?prevByAsin[String(r.asin).toUpperCase()]:null;
       let delta='';
       if(prev&&pr){const C=rowCmp(r)||repRowCmp(r,pr,m),d=C.real.d;
-        delta=C.real.dir===0?'':`<span class="delta ${d>0?'up':'dn'}" title="vs ${_esc(prev.label)}${C.proj?' — projected from '+C.days+' of '+C.of+' days':''}">${d>0?'▲':'▼'}${gbp(Math.abs(d))}</span>`;}
+        /* v6.3 — on a part month the Proj. month column already prints this exact
+           delta; printing it under the so-far pill too is the repetition again */
+        delta=(C.real.dir===0||C.proj)?'':`<span class="delta ${d>0?'up':'dn'}" title="vs ${_esc(prev.label)}${C.proj?' — projected from '+C.days+' of '+C.of+' days':''}">${d>0?'▲':'▼'}${gbp(Math.abs(d))}</span>`;}
       else if(prev&&r.asin)delta=`<span class="delta nw" title="Not in ${_esc(prev.label)}">✦ new</span>`;
       const rpCls=dead?'rp-neg':real>0?'rp-pos':real<0?'rp-neg':'rp-zero';
       const url=repUrl(r);
@@ -14419,7 +14695,7 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
      column's total); the pace row underneath owns the comparison. */
   window._repFootPace=!!repPartial(m);
   document.getElementById('rep-foot').innerHTML=rows.length?`<tr class="ft-now">
-    <td class="ft-l"><span class="ftl-1">Total · ${rows.length} products</span>${view.length!==rows.length?`<span class="ft-note">${view.length} shown by this filter</span>`:''}</td>
+    <td class="ft-l"><span class="ftl-1">${repPartial(m)?`So far · ${repPartial(m).days} day${repPartial(m).days===1?'':'s'}`:'Total'} · ${rows.length} products</span>${view.length!==rows.length?`<span class="ft-note">${view.length} shown by this filter</span>`:''}</td>
     ${shown.map(c=>`<td>${c.f?c.f():''}</td>`).join('')}
     <td><span class="${t.real>0?'rp-pos':t.real<0?'rp-neg':'rp-zero'}">${gbp(t.real)}</span></td>
   </tr>`+(()=>{
@@ -14464,24 +14740,24 @@ const roasOf=r=>(+r.ads||0)?((repAdRaw(r)||0)/(+r.ads)):0;
        It is now one sentence and one figure — the projected real profit, which
        is the only number anyone acts on. Every per-column projection is still
        available in the row itself; it just is not printed twice. */
+    /* v6.4 — Jack: "I want things pro-rated AND an actual prediction — a current total
+       line and then under it with the projection". v4.7 collapsed this to one sentence
+       because two identical-looking rows were hard to tell apart. Both are here again,
+       but they can no longer be confused: the top row says "So far · N days", this one
+       is tinted, tagged, and every projected figure is the full-month estimate with its
+       own comparison against last month underneath. Rates repeat unchanged (a ratio does
+       not scale); anything unprojectable shows a dash rather than a fabricated number. */
     const _pReal = t.real*f;
     const _pPrev = pt && pt.real;
     const _pDiff = (_pPrev!=null && isFinite(_pPrev)) ? _pReal-_pPrev : null;
-    const _pDirC = _pDiff==null ? '' : _pDiff>0 ? 'rp-pos' : _pDiff<0 ? 'rp-neg' : '';
-    const _pArrow= _pDiff==null ? '' : _pDiff>0 ? '\u25B2' : _pDiff<0 ? '\u25BC' : '';
-    const _span  = shown.length + 2;
     return `<tr class="ft-proj">
-      <td class="ft-l ft-oneline" colspan="${_span}"><div class="ft-row">
-        <span class="ftp-tag">If this pace holds</span>
-        <span class="ftl-1">${P.of}-day estimated finish based on ${P.days} imported day${P.days===1?'':'s'}</span>
-        <span class="ft-spacer"></span>
-        <span class="ft-proj-fig">Projected real profit
-          <b class="${t.real>0?'rp-pos':t.real<0?'rp-neg':'rp-zero'}">${money(_pReal)}</b>${
-          _pDiff==null?'':` · <b class="${_pDirC}">${_pArrow} ${gbp(Math.abs(_pDiff))} vs ${prev?_esc(prev.label):'last month'}</b>`}
-        </span>
-      </div></td>
+      <td class="ft-l"><span class="ftp-tag">Projected · ${P.of} days</span>
+        <span class="ft-note">${P.days} imported day${P.days===1?'':'s'} scaled to ${P.of} · every ▲▼ compares this line with ${prev?_esc(prev.label):'last month'}</span></td>
+      ${shown.map(c=>`<td>${cell(c.k)}</td>`).join('')}
+      <td><span class="${_pReal>0?'rp-pos':_pReal<0?'rp-neg':'rp-zero'}">${gbp(_pReal)}</span>${
+        _pDiff==null?'':`<div class="proj-d ${_pDiff>0?'up':_pDiff<0?'dn':'fl'}">${_pDiff>0?'▲':'▼'}${gbp(Math.abs(_pDiff))}</div>`}</td>
     </tr>`;})():'';
-  document.getElementById('rep-sub').textContent=m.label+' · Real Profit = Profit before ads − Ads · click any row for its full history';
+  document.getElementById('rep-sub').textContent=m.label+' · Real Profit = Gross profit − Ads · click any row for its full history';
 }
 
 /* ────────── MONTHLY REPORT — row modal ────────── */
@@ -14531,7 +14807,18 @@ function saveRepRow(){
     rank:Math.round(+(document.getElementById('rr-rank').value||0))||0,
     adSales:document.getElementById('rr-adsales').value===''?null:+(document.getElementById('rr-adsales').value||0),
   };
-  if(_repEditIdx>=0)m.rows[_repEditIdx]=row;else m.rows.push(row);
+  /* v6.7 — this REPLACED the row with only the form's fields, so Edit silently deleted
+     the product's campaign lines, ad units, stock, fees, cost, VAT and Amazon's total ad
+     sales. Merge instead: change what was edited, keep everything else. */
+  if(_repEditIdx>=0){
+    const prevRow=m.rows[_repEditIdx]||{};
+    const merged=Object.assign({},prevRow,row);
+    /* a profit he typed in is his figure — the VAT correction must not overwrite it */
+    if(Math.abs((+prevRow.profit||0)-row.profit)>0.004){merged.profitStk=row.profit;merged.vatFix=0;merged.vatManual=true;}
+    /* ad sales typed in: Amazon's total no longer matches it, so stop using the old one */
+    if((prevRow.adSales??null)!==(row.adSales??null))merged.adSalesTot=null;
+    m.rows[_repEditIdx]=merged;
+  }else m.rows.push(row);
   repSave();renderReport();closeRepRow();toast('✓ Saved','ok');
 }
 function deleteRepRow(){
@@ -14766,7 +15053,7 @@ function repExportCsv(){
          &&!!(repDirVsPrev(r,m,_csvPrevMap)||{})[_repFilter==='new'?'isNew':_repFilter]);
   };
   const rowsX=m.rows.filter(keep);
-  const lines=[['URL','Name','Asin','Sub-cat Rank','Sales','Organic Sales','Ad Sales','Profit','Ads','TACOS %','ROAS','Units','Organic Units','Ad Units','Real Margin %','Stock','Net Profit'].join(',')];
+  const lines=[['URL','Name','Asin','Sub-cat Rank','Sales','Organic Sales','Ad Sales','Gross Profit','Ads','TACOS %','ROAS','Units','Organic Units','Ad Units','Real Margin %','Stock','Net Profit'].join(',')];
   rowsX.forEach(r=>{
     const org=r.adSales!=null?Math.max(0,(+r.sales||0)-(+r.adSales||0)).toFixed(2):'';
     const u=+r.units||0,au=Math.min(+r.adUnits||0,u),sales=+r.sales||0,ads=+r.ads||0;
@@ -16052,7 +16339,7 @@ async function renderPrep(force){
       ${TH('cover','Cover','Months of stock left at the current run rate, counting anything already in transit — greyed when the stock figure is only a guess')}
       ${TH('send','Send','Units to send so this product lands on '+TARGET+' months of cover, after stock on hand and anything already in transit')}
       ${TH('lastShip','Sent','When the last shipment went to FBA')}
-      ${TH('real','Real profit',M?('Profit before ads − ad spend, '+M.label):'Import a month to fill this')}
+      ${TH('real','Real profit',M?('Gross profit − ad spend, '+M.label):'Import a month to fill this')}
     </tr></thead>
     <tbody>${lanes.map(([id,label,col])=>{
       let set=rows.filter(r=>r.lane===id);
@@ -16545,14 +16832,25 @@ function miRangeCheck(){
        offered — remembered here, shown as a suggestion under the checkbox, and applied
        only if he clicks it. The projection itself no longer depends on this at all
        (see miImport: the real date range is recorded from the file regardless). */
-    if(aF.getUTCMonth()===aT.getUTCMonth()){
-      const dim=new Date(Date.UTC(aT.getUTCFullYear(),aT.getUTCMonth()+1,0)).getUTCDate();
-      const covered=aT.getUTCDate()-aF.getUTCDate()+1;
-      window._miDetected=(covered<dim)?{from:aF.getUTCDate(),to:aT.getUTCDate(),of:dim}:null;
-    } else window._miDetected=null;
   } else if(sr){
     bits.push(`<div class="mi-warn ok">Sales export covers ${_fmD(sr.from)} → ${_fmD(sr.to)} (${sr.days} days).</div>`);
   }
+  /* v6.8 — work the covered days out from whichever file states them: the ads
+     report's own Start/End dates first (exact), else the sales file's name. SellerToolKit
+     can name a file a day early (UTC), so a name starting on the last day of the
+     previous month is read as starting on the 1st. */
+  window._miDetected=null;window._miDetectedSrc='';
+  (()=>{
+    let F=null,T=null,src='';
+    if(_miAds&&_miAds.from&&_miAds.to){F=_miAds.from;T=_miAds.to;src='your ads report';}
+    else if(sr){F=new Date(sr.from);T=sr.to;src='the sales file name';
+      if(F.getUTCMonth()!==T.getUTCMonth()&&F.getUTCDate()===new Date(Date.UTC(F.getUTCFullYear(),F.getUTCMonth()+1,0)).getUTCDate())
+        F=new Date(Date.UTC(T.getUTCFullYear(),T.getUTCMonth(),1));}
+    if(!F||!T||F.getUTCMonth()!==T.getUTCMonth()||F.getUTCFullYear()!==T.getUTCFullYear())return;
+    const dim=new Date(Date.UTC(T.getUTCFullYear(),T.getUTCMonth()+1,0)).getUTCDate();
+    const covered=T.getUTCDate()-F.getUTCDate()+1;
+    if(covered>=1&&covered<dim){window._miDetected={from:F.getUTCDate(),to:T.getUTCDate(),of:dim};window._miDetectedSrc=src;}
+  })();
   const adsYm=(()=>{
     if(!_miAds||!_miAds.to)return '';
     const d=_miAds.to;return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0');
@@ -16793,7 +17091,7 @@ function miMerge(){
   const keep=a=>!_miExclude.has(String(a||'').toUpperCase())&&!asinDropped(a);
   sales.filter(s=>keep(s.asin)).forEach(s=>{by[s.asin]={id:_uid(),asin:s.asin,url:s.url,name:s.name,units:s.units,sales:s.sales,
     profit:s.profit,stock:s.stock,ads:0,adUnits:0,adSales:null,
-    fees:s.fees??null,cog:s.cog??null,vat:s.vat??null,promo:s.promo??null,orders:s.orders??null};});
+    fees:s.fees??null,cog:s.cog??null,vat:s.vat??null,promo:s.promo??null,profitStk:s.profit,orders:s.orders??null};});
   Object.values(ads).filter(a=>keep(a.asin)).forEach(a=>{
     const e=by[a.asin]||(by[a.asin]={id:_uid(),asin:a.asin,url:'https://www.amazon.co.uk/dp/'+a.asin,
       name:(window._asinNames||{})[a.asin.toUpperCase()]||lavName(a.asin)||a.asin,units:0,sales:0,profit:0,stock:null,ads:0,adUnits:0,adSales:null});
@@ -16812,7 +17110,9 @@ function miMerge(){
      kept on the row so nothing is lost and the preview can flag it. */
   /* A bare spend-only paste tells us what was spent but nothing about units, so the
      organic / advertised split stays unknown for that month. */
+  const _zs=repVatZeroSet(repData,Object.values(by));   /* v6.7 — zero-rated VAT */
   const rows=Object.values(by).map(r=>{
+    repVatFixRow(r,_zs);
     r.adsKnown=adsSupplied;
     r.adUnitsRaw=r.adUnits||0;
     r.adUnits=Math.max(0,Math.min(r.adUnitsRaw,r.units||0));
@@ -16834,9 +17134,26 @@ function miPartToggle(){
   if(wrap)wrap.style.display=on?'':'none';
   if(!on){
     ['mi-day-from','mi-day-to'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-    window._miDaysTouched=false;window._miDaysAuto=false;
-  } else window._miDaysTouched=true;   /* ticked by hand = his numbers, stop auto-filling */
+    /* v6.8 — he unticked it: that is his answer, so it is not ticked again for him */
+    window._miDaysTouched=true;window._miDaysAuto=false;
+  } else {
+    /* v6.8 — ticked by hand with the boxes empty: fill them from the files rather
+       than make him type what the files already say */
+    const df=document.getElementById('mi-day-from'),dt=document.getElementById('mi-day-to'),d=window._miDetected;
+    if(d&&df&&dt&&!df.value&&!dt.value){df.value=d.from;dt.value=d.to;window._miDaysAuto=true;window._miDaysTouched=false;}
+    else window._miDaysTouched=true;
+  }
   miPreview();
+}
+/* v6.8 — the files say which days they cover, so the boxes are filled in from them.
+   His own numbers win: once he types in the boxes or unticks, it stops. */
+function miAutoDays(){
+  if(window._miDaysTouched)return;
+  const d=window._miDetected,cb=document.getElementById('mi-part'),wrap=document.getElementById('mi-days-wrap');
+  const df=document.getElementById('mi-day-from'),dt=document.getElementById('mi-day-to');
+  if(!cb||!df||!dt)return;
+  if(d){cb.checked=true;if(wrap)wrap.style.display='';df.value=d.from;dt.value=d.to;window._miDaysAuto=true;}
+  else if(window._miDaysAuto){cb.checked=false;if(wrap)wrap.style.display='none';df.value='';dt.value='';window._miDaysAuto=false;}
 }
 function miUseDetected(){
   const d=window._miDetected; if(!d)return;
@@ -16873,10 +17190,11 @@ function miDaysNote(){
   if(b>dim){el.innerHTML=`<span style="color:var(--red)">${_esc(lbl)} only has ${dim} days.</span>`;return;}
   const days=b-a+1;
   if(days>=dim){el.innerHTML=`That is the whole of ${_esc(lbl)} (${dim} days) — nothing to project. Untick the box.`;return;}
-  el.innerHTML=`<b>${days}</b> of <b>${dim}</b> days${window._miDaysAuto?' · <span style="color:var(--green)">✓ read from your ads report</span>':''} — the remaining <b>${dim-days}</b> will be projected.`;
+  el.innerHTML=`<b>${days}</b> of <b>${dim}</b> days${window._miDaysAuto?` · <span style="color:var(--green)">✓ worked out from ${_esc(window._miDetectedSrc||'your files')} — change them if they're wrong</span>`:''} — the remaining <b>${dim-days}</b> will be projected.`;
 }
 function miPreview(){
   try{miRangeCheck();}catch(e){}
+  try{miAutoDays();}catch(e){}
   try{miDaysNote();}catch(e){}
   const el=document.getElementById('mi-preview');if(!el)return;
   if(!_miSales&&!_miAds){el.innerHTML='<span style="color:var(--text4)">Add the sales report, the ads report, or both — upload the file or paste it.</span>';return;}
@@ -17436,12 +17754,12 @@ function repAnalysis(m,prev){
     if(Math.abs(dReal)<0.5){
       add('head','flat',`Real profit was effectively level with ${_esc(prev.label)}.`,`${_money(pt.real)} → ${_money(t.real)}`);
     }else{
-      /* Real = profit before ads − ads, so the change decomposes exactly */
+      /* Real = gross profit − ads, so the change decomposes exactly */
       const driver=Math.abs(dProfit)>=Math.abs(dAds)?'trading':'ads';
       const pcv=_pc(t.real,pt.real);
       add('head',dReal>0?'good':'bad',
         `Real profit ${dReal>0?'rose':'fell'} ${dReal>0?_up(gbp(Math.abs(dReal))):_dn(gbp(Math.abs(dReal)))} vs ${_esc(prev.label)}${pcv!=null&&isFinite(pcv)?` (${dReal>0?'+':'−'}${fmt(Math.abs(pcv),0)}%)`:''}.`,
-        `Profit before ads ${dProfit>=0?'+':'−'}${gbp(Math.abs(dProfit))} · ad spend ${dAds>=0?'+':'−'}${gbp(Math.abs(dAds))} → the ${driver==='trading'?'trading side':'advertising side'} moved it most`);
+        `Gross profit ${dProfit>=0?'+':'−'}${gbp(Math.abs(dProfit))} · ad spend ${dAds>=0?'+':'−'}${gbp(Math.abs(dAds))} → the ${driver==='trading'?'trading side':'advertising side'} moved it most`);
     }
     if(Math.abs(dSales)>=1){
       const ps=_pc(t.sales,pt.sales);
@@ -17565,7 +17883,7 @@ function repAnalysis(m,prev){
   if(spendNoSale.length)add('act','bad',`Pause ads on the ${spendNoSale.length} product${spendNoSale.length===1?'':'s'} that spent and sold nothing.`,
     `Recovers ${gbp(spendNoSaleSum)} a month at this rate — your rule: spend is fine while it sells, this isn't selling`);
   if(adsKilled.length)add('act','warn',`Cut back ads on ${adsKilled.slice(0,3).map(r=>_pl(r)).join(', ')}${adsKilled.length>3?` and ${adsKilled.length-3} more`:''} — ${adsKilled.length===1?'it trades':'they trade'} profitably, the ad spend is what sinks ${adsKilled.length===1?'it':'them'}.`,
-    `Not a pause — bring spend under the profit before ads (${adsKilled.map(r=>_pl(r)+': profit '+gbp(+r.profit||0)+' vs ads '+gbp(+r.ads||0)).slice(0,2).join(' · ')})`);
+    `Not a pause — bring spend under the gross profit (${adsKilled.map(r=>_pl(r)+': profit '+gbp(+r.profit||0)+' vs ads '+gbp(+r.ads||0)).slice(0,2).join(' · ')})`);
   const strong=rows.filter(r=>repRowReal(r)>0&&(+r.ads||0)>0&&(repAdRaw(r)||0)/(+r.ads||1)>=cfgTargetRoas()).sort((a,b)=>repRowReal(b)-repRowReal(a));
   if(strong.length)add('act','good',`Push more budget at ${strong.slice(0,3).map(r=>_pl(r)).join(', ')} — ${strong.length===1?'it is':'they are'} above your ${fmt(cfgTargetRoas(),1)}× target and profitable.`,
     strong.slice(0,3).map(r=>`${_pl(r)} ${fmt((repAdRaw(r)||0)/(+r.ads||1),2)}×`).join(' · '));
@@ -17659,7 +17977,7 @@ let _fxRemoved=[];
 
 const RPH_METRICS={
   real:{l:'Real profit',s:'Real',fmt:v=>gbp(v),good:1,c:'var(--green)',
-    means:'Profit before ads minus the ad spend — the number that actually lands in the bank.'},
+    means:'Gross profit minus the ad spend — the number that actually lands in the bank.'},
   sales:{l:'Sales',s:'Sales',fmt:v=>gbp(v),good:1,c:'var(--blue)',
     means:'All revenue for the month, organic and advertised together. Growth only counts if Real Profit follows it.'},
   units:{l:'Units',s:'Units',fmt:v=>intf(v),good:1,c:'var(--purple)',
@@ -17682,8 +18000,8 @@ function rphSeries(A){
     if(!r)return null;
     const u=+r.units||0,au=Math.min(+r.adUnits||0,u),sales=+r.sales||0,ads=+r.ads||0,real=repRowReal(r);
     return{m,r,lab:m.label,id:m.id,real,sales,units:u,ads,
-      organic:Math.max(0,u-au),adUnits:au,adSales:repAdRaw(r)||0,adOther:+r.adOther||0,
-      tacos:sales?ads/sales*100:0,roas:ads?(repAdRaw(r)||0)/ads:0,margin:sales?real/sales*100:0};
+      organic:Math.max(0,u-au),adUnits:au,adSales:repAdOwn(r)||0,adOther:+r.adOther||0,
+      tacos:sales?ads/sales*100:0,roas:ads?(repAdOwn(r)||0)/ads:0,margin:sales?real/sales*100:0};
   }).filter(Boolean);
 }
 function rphGo(tab){_rphTab=tab;openRepProduct(_rphAsin,true);}
@@ -17872,7 +18190,7 @@ function openRepProduct(asin,keep){
     <div class="pflow">
       <div class="pf"><span></span>Sales<b>${gbp(last.sales)}</b></div>
       <div class="pf"><span style="background:var(--bg5)"></span>Costs &amp; fees<b>−${gbp(_fc)}</b></div>
-      <div class="pf sub"><span></span>Profit before ads<b>${gbp(_fp)}</b></div>
+      <div class="pf sub"><span></span>Gross profit<b>${gbp(_fp)}</b></div>
       <div class="pf"><span style="background:var(--amber)"></span>Ad spend<b>−${gbp(last.ads)}</b></div>
       <div class="pf tot"><span style="background:${last.real>=0?'var(--green)':'var(--red)'}"></span>Real profit<b style="color:${last.real>=0?'var(--green)':'var(--red)'}">${gbp(last.real)}</b></div>
     </div></div>`;
@@ -18167,7 +18485,7 @@ function openRepLosers(){
       <div class="ptile"><div class="pt-l">Ad spend on them</div><div class="pt-v" style="color:var(--amber)">${gbp(adsOnLosers)}</div><div class="pt-s">${t.ads?fmt(adsOnLosers/t.ads*100,0)+'% of all spend':''}</div></div>
       <div class="ptile"><div class="pt-l">Recoverable</div><div class="pt-v" style="color:var(--green)">${gbp(recover)}</div><div class="pt-s">by pausing, net of lost sales</div></div>
     </div>
-    <div class="pcard"><table class="ptab"><thead><tr><th class="l">Product</th><th>Sales</th><th>Profit</th><th>Ad spend</th><th>Real</th><th class="l">Why</th><th class="l">Do this</th></tr></thead>
+    <div class="pcard"><table class="ptab"><thead><tr><th class="l">Product</th><th>Sales</th><th>Gross profit</th><th>Ad spend</th><th>Real</th><th class="l">Why</th><th class="l">Do this</th></tr></thead>
     <tbody>${losers.map(r=>{
       const real=repRowReal(r),u=+r.units||0,ads=+r.ads||0,prof=+r.profit||0;
       let why,act,tone;
@@ -18298,7 +18616,7 @@ const REP_KPIS={
     get:t=>t.sales, per:r=>+r.sales||0,
     means:'All revenue in the month — organic and advertised together. It is the top of the funnel: everything else is a slice out of it.',
     watch:'Sales growth only counts if Real Profit follows. Read it next to Ad spend — buying growth with advertising shows up here as a rise and in Real Profit as a fall.'},
-  profit:{l:'Profit before ads',c:'var(--teal)',fmt:v=>gbp(v),good:1,
+  profit:{l:'Gross profit',c:'var(--teal)',fmt:v=>gbp(v),good:1,
     get:t=>t.profit, per:r=>+r.profit||0,
     means:'What is left after cost of goods, Amazon fees, VAT and shipping — but before any advertising. The trading margin of the business.',
     watch:'If this falls while sales hold, something in the cost base moved: a fee change, a price cut, or a worse buy price.'},
@@ -18312,7 +18630,7 @@ const REP_KPIS={
     watch:'Units rising while Sales fall means your average selling price dropped. Worth knowing whether that was deliberate.'},
   real:{l:'Real profit',c:'var(--green)',fmt:v=>gbp(v),good:1,
     get:t=>t.real, per:r=>repRowReal(r),
-    means:'Profit before ads minus ad spend. The number that actually lands in the bank, and the only one worth optimising.',
+    means:'Gross profit minus ad spend. The number that actually lands in the bank, and the only one worth optimising.',
     watch:'This is the scoreboard. Everything else on this page is an explanation of why it moved.'},
   margin:{l:'Real margin',c:'var(--teal)',fmt:v=>fmt(v,1)+'%',good:1,
     get:t=>t.sales?t.real/t.sales*100:0, per:r=>(+r.sales||0)?repRowReal(r)/(+r.sales)*100:0,
@@ -19326,11 +19644,12 @@ async function repPrefsLoad(){
   }catch(e){console.warn('prefs load',e);}
 }
 function repColToggle(k){_repCols[k]=!_repCols[k];
+  if(_repCols[k])window._repFitKeep.add(k);else window._repFitKeep.delete(k);window._repFitHide=new Set();
   repPrefsSave();
   /* the units group travels together */
   window._repShowUnits=!!(_repCols.organic&&_repCols.adUnits);
   renderReport();repColMenu(true);}
-function repColReset(){_repCols=Object.assign({},REP_COL_DEFAULTS);
+function repColReset(){window._repFitKeep=new Set();window._repFitHide=new Set();_repCols=Object.assign({},REP_COL_DEFAULTS);
   repPrefsSave();
   window._repShowUnits=true;renderReport();repColMenu(true);}
 function repColMenu(keep){
@@ -19338,7 +19657,7 @@ function repColMenu(keep){
   const open=keep?el.classList.contains('open'):!el.classList.contains('open');
   el.classList.toggle('open',open);
   if(!open)return;
-  const L=[['rank','Rank'],['profit','Profit before ads'],['ads','Ad spend'],['tacos','TACOS'],['roas','ROAS'],
+  const L=[['rank','Rank'],['profit','Gross profit'],['ads','Ad spend'],['tacos','TACOS'],['roas','ROAS'],
     ['organic','Organic units'],['adUnits','Ad units'],['margin','Real margin'],['stock','Stock'],['cover','Cover'],['trend','Trend'],
     ['chg','▲▼ change vs last month on the row']];
   el.innerHTML=`<div class="cm-h">Columns</div>${L.map(([k,l])=>`<label class="cm-r"><input type="checkbox" ${repColOn(k)?'checked':''} onchange="repColToggle('${k}')"><span>${l}</span></label>`).join('')}
@@ -19486,8 +19805,8 @@ function repScorecard(m,prev){
   const c1=card(1,'Net profit up',g.s1,gbp(g.real.now),g.proj?'projected':'',bars(g.real,gbp)+dl(g.real,gbp)+chips,why1,"document.getElementById('rep-tablewrap')?.scrollIntoView({behavior:'smooth',block:'start'})",'Real profit against '+(was||'nothing yet')+' — click to go to the table');
   const why2=prev?(g.profit.dir>0&&g.real.dir<0?`Better than ${was} before ads — <b>the whole drop is on the ads line.</b>`
     :g.profit.dir<0?`Fewer pounds before ads were even counted — cost, price, fees or volume.`
-    :g.profit.dir>0?`More profit before ads than ${was}${g.units.d>0?` on ${intf(g.units.d)} more units`:g.units.d<0?` on ${intf(-g.units.d)} fewer units — each sale earned more`:''}.`:`Level with ${was} before ads.`):'';
-  const c2=card(2,'Gross profit high',g.s2,gbp(g.profit.now),'before ads',bars(g.profit,gbp)+dl(g.profit,gbp),why2,"openRepAnalysis()",'Profit before advertising — click for the analysis');
+    :g.profit.dir>0?`More gross profit than ${was}${g.units.d>0?` on ${intf(g.units.d)} more units`:g.units.d<0?` on ${intf(-g.units.d)} fewer units — each sale earned more`:''}.`:`Level with ${was} before ads.`):'';
+  const c2=card(2,'Gross profit high',g.s2,gbp(g.profit.now),'before ads',bars(g.profit,gbp)+dl(g.profit,gbp),why2,"openRepAnalysis()",'Gross profit — click for the analysis');
   let body3,why3,big3,sub3;
   if(g.s3==='unknown'){big3='—';sub3='';body3=`<div class="scr-note">No ads report in ${cur}, so ROAS and the split are unknown — not zero.</div>`;why3='';}
   else{big3=fmt(g.roas,2)+'×';sub3='target '+fmt(g.tgt,1)+'×';
@@ -19554,7 +19873,7 @@ function openWasteLedger(keep){
       ${tile('Earning',gbp(W.earning),'var(--green)',`${W.eN} line${W.eN===1?'':'s'} · above break-even`)}
     </div>
     <div class="pnl g" style="margin:10px 0"><div class="pnl-h">How a line is judged</div>
-      <p><b>Break-even ROAS</b> for a product is its sales ÷ profit before ads — the return an ad must make before it earns anything. A campaign line under that figure sold at a loss however good the ROAS looks. A line with spend and no sales bought nothing. A product that loses money before ads has no break-even — every advertised sale on it loses.</p></div>
+      <p><b>Break-even ROAS</b> for a product is its sales ÷ gross profit — the return an ad must make before it earns anything. A campaign line under that figure sold at a loss however good the ROAS looks. A line with spend and no sales bought nothing. A product that loses money before ads has no break-even — every advertised sale on it loses.</p></div>
     <div class="wl-bar">${chip('all','Waste',W.bN+W.nN)}${chip('below','Below break-even',W.bN)}${chip('nothing','Bought nothing',W.nN)}${chip('earning','Earning',W.eN)}</div>
     <div class="pcard" style="margin-top:8px"><table class="ptab wl-t"><thead><tr><th class="l">Campaign</th><th class="l">Product</th><th>Spend</th><th>Ad sales</th><th>ROAS</th><th>Break-even</th><th>Units</th><th class="l">Verdict</th></tr></thead>
       <tbody>${lines.length?lines.map(l=>`<tr onclick="closeWasteLedger();openRepProduct('${_esc(l.asin)}')">
@@ -19640,7 +19959,7 @@ function repPrevMap(){
 const REP_CMP_GOOD={units:1,organic:1,adUnits:1,sales:1,ads:-1,profit:1,real:1,tacos:-1,roas:1,margin:1,price:1,rank:-1,cogU:-1,feesU:-1};
 function repRowCmp(r,pr,m){
   const P=repPartial(m),f=P?P.factor:1,n=x=>+x||0;
-  const mk=(x,fac)=>{const u=n(x.units),au=Math.min(n(x.adUnits),u),s_=n(x.sales),a=n(x.ads),pb=n(x.profit),rr=pb-a,ar=repAdRaw(x)||0;
+  const mk=(x,fac)=>{const u=n(x.units),au=Math.min(n(x.adUnits),u),s_=n(x.sales),a=n(x.ads),pb=n(x.profit),rr=pb-a,ar=repAdOwn(x)||0;
     const R=v=>fac===1?v:Math.round(v);   /* a projected count is still a count */
     return{units:R(u*fac),organic:R((u-au)*fac),adUnits:R(au*fac),sales:s_*fac,ads:a*fac,profit:pb*fac,real:rr*fac,
       tacos:s_?a/s_*100:null,roas:a?ar/a:null,margin:s_?rr/s_*100:null,price:u?s_/u:null,rank:n(x.rank)||null,
@@ -19661,8 +19980,9 @@ function repRowCmp(r,pr,m){
 function repTick(C,k,fmtF,prevLab){
   if(!C||C.isNew)return '';
   const o=C[k];if(!o||o.d==null||o.dir===0)return '';
-  const t=`${prevLab||'Last month'}: ${fmtF(o.was)} → ${fmtF(o.now)}${C.proj?' projected ('+C.days+' of '+C.of+' days)':''}`;
-  return `<span class="delta ${o.ok?'up':'dn'}" title="${_esc(t)}">${o.d>0?'▲':'▼'}${o.pct!=null?fmt(Math.abs(o.pct),0)+'%':fmtF(Math.abs(o.d))}</span>`;
+  const _pl=prevLab||'last month';
+  const t=`${o.pct!=null?fmt(Math.abs(o.pct),0)+'% '+(o.d>0?'more':'less')+' than '+_pl:(o.d>0?'up':'down')+' on '+_pl}${C.proj?' (on pace — '+C.days+' of '+C.of+' days scaled to the month)':''} · ${_pl} ${fmtF(o.was)} → ${fmtF(o.now)}${C.proj?' projected':''}`;
+  return `<span class="delta ${o.ok?'up':'dn'}${C.proj?' pace':''}" title="${_esc(t)}">${o.d>0?'▲':'▼'}${o.pct!=null?fmt(Math.abs(o.pct),0)+'%':fmtF(Math.abs(o.d))}${C.proj?'<i>pace</i>':''}</span>`;
 }
 function repDirVsPrev(r,m,pmap){
   if(!r||!r.asin)return null;
@@ -19732,7 +20052,12 @@ function repPaintSort(shown){
 let _repSearchT=null;
 function repSearchDebounced(){clearTimeout(_repSearchT);_repSearchT=setTimeout(renderReport,140);}
 function repToggleUnits(){
+  /* hidden only by the fit? then the press means "show them" — keep them, hide something else */
+  if(repColOn('organic')&&repColOn('adUnits')&&window._repFitHide&&window._repFitHide.has('organic')&&!window._repFitOff){
+    window._repFitKeep.add('organic');window._repFitKeep.add('adUnits');window._repFitHide=new Set();renderReport();return;}
   const on=!(repColOn('organic')&&repColOn('adUnits'));
+  if(on){window._repFitKeep.add('organic');window._repFitKeep.add('adUnits');}
+  window._repFitHide=new Set();
   _repCols.organic=on;_repCols.adUnits=on;
   repPrefsSave();
   renderReport();repColMenu(true);
@@ -19913,7 +20238,7 @@ function rphChangeTable(C,last,prev){
     adsK?['Ad units','adUnits',intf,0]:null,
     ['Sales','sales',gbp,1],
     ['Ad spend','ads',gbp,1],
-    ['Profit before ads','profit',gbp,1],
+    ['Gross profit','profit',gbp,1],
     ['Real profit','real',gbp,1],
     ['Avg selling price','price',gbp,0],
     (C.cogU.now!=null||C.cogU.was!=null)?['Cost per unit','cogU',gbp,0]:null,
@@ -19953,8 +20278,8 @@ function rphBridge(C,last,prev){
   const parts=[];
   if(u0>0&&u1>0){const p0=pb0/u0,p1=pb1/u1;
     parts.push({l:'Volume',s:`${intf(u1)} units vs ${intf(u0)}, at ${sh(prev.lab)}'s ${gbp(p0)} a unit`,v:(u1-u0)*p0});
-    parts.push({l:'Profit per unit',s:`${gbp(p1)} a unit vs ${gbp(p0)} — price, fees or cost moved`,v:u1*(p1-p0)});}
-  else parts.push({l:'Profit before ads',s:`${gbp(pb1)} vs ${gbp(pb0)}`,v:pb1-pb0});
+    parts.push({l:'Gross profit per unit',s:`${gbp(p1)} a unit vs ${gbp(p0)} — price, fees or cost moved`,v:u1*(p1-p0)});}
+  else parts.push({l:'Gross profit',s:`${gbp(pb1)} vs ${gbp(pb0)}`,v:pb1-pb0});
   parts.push({l:'Ad spend',s:`${gbp(C.ads.now)} vs ${gbp(C.ads.was)}`,v:-C.ads.d});
   const tot=C.real.d,mx=Math.max(...parts.map(p=>Math.abs(p.v)),Math.abs(tot),0.01);
   const bar=v=>{const w=Math.abs(v)/mx*50;return `<span class="brg-bar"><i class="${v>=0?'p':'n'}" style="${v>=0?'left:50%':'right:50%'};width:${w.toFixed(1)}%"></i></span>`;};
@@ -20511,7 +20836,7 @@ function explainNoAds(){
       ${hasSpend?'You imported ad <b>spend</b> for this month, which is a different column — it tells us what you paid, not how many units the ads sold.':'No ads data was imported for this month at all.'}</div></div>
     <div class="an-grid" style="margin-top:12px">
       <div class="an-l good"><div class="an-t">Still exact for ${_esc(m.label)}</div>
-        <div class="an-s">Sales · Units · Profit before ads · Ad spend · <b>Real Profit</b> · Real margin · TACOS. Every figure that decides whether a product makes money is correct.</div></div>
+        <div class="an-s">Sales · Units · Gross profit · Ad spend · <b>Real Profit</b> · Real margin · TACOS. Every figure that decides whether a product makes money is correct.</div></div>
       <div class="an-l warn"><div class="an-t">Blank until the ads export is imported</div>
         <div class="an-s">Organic units · Ad units · ROAS · the organic-vs-advertised revenue bar. They are shown as <b>—</b> rather than a guess, because "we do not know" is not the same as "zero".</div></div>
       <div class="an-l info"><div class="an-t">How to fill it in later</div>
@@ -20526,7 +20851,7 @@ function openRepSettings(){
   const total=ms.reduce((a,m)=>a+(m.rows||[]).length,0);
   const bytes=(()=>{try{return JSON.stringify(repData).length;}catch(e){return 0;}})();
   const T=ms.length?repTotals(ms[ms.length-1]):null;
-  const COLS=[['rank','Rank'],['profit','Profit before ads'],['ads','Ad spend'],['tacos','TACOS'],['roas','ROAS'],
+  const COLS=[['rank','Rank'],['profit','Gross profit'],['ads','Ad spend'],['tacos','TACOS'],['roas','ROAS'],
     ['organic','Organic units'],['adUnits','Ad units'],['margin','Real margin'],['stock','Stock'],['cover','Cover'],['trend','Trend'],
     ['chg','▲▼ change vs last month on the row']];
 
@@ -20558,6 +20883,17 @@ function openRepSettings(){
         </div>
       </div>
 
+      ${(()=>{
+        /* v6.7 — zero-rated products */
+        const zs=repVatZeroSet(repData),latest={};
+        repSortedMonths().forEach(mm=>(mm.rows||[]).forEach(r=>{if(r.asin)latest[String(r.asin).toUpperCase()]={r,m:mm};}));
+        const items=Object.entries(latest).sort((a,b)=>(zs.has(b[0])-zs.has(a[0]))||repName(a[1].r).localeCompare(repName(b[1].r)));
+        const fixed=Object.values(latest).filter(x=>+x.r.vatFix>0);
+        return `<div class="pcard" style="grid-column:1/-1">
+          <div class="pc-h">Zero-rated for VAT <span>SellerToolKit charges VAT on some of these in error — ticked products have it added back to gross profit</span></div>
+          ${fixed.length?`<div class="rs-vat-note">${fixed.map(x=>`<b>${_esc(repName(x.r))}</b>: ${gbp(x.r.vatFix)} added back in ${_esc(x.m.label)}`).join(' · ')}</div>`:''}
+          <div class="rs-cols rs-vat">${items.map(([A,x])=>`<label class="rs-c" title="${_esc(repFullName?repFullName(x.r):repName(x.r))}"><input type="checkbox" ${zs.has(A)?'checked':''} onchange="repVatToggle('${_esc(A)}',this.checked)"><span>${_esc(repName(x.r))}</span></label>`).join('')}</div>
+        </div>`;})()}
       <div class="pcard" style="grid-column:1/-1">
         <div class="pc-h">Months <span>${ms.length?'newest last · rename or remove any month':'nothing imported yet'}</span></div>
         ${ms.length?`<table class="ptab"><thead><tr><th class="l">Month</th><th>Products</th><th>Sales</th><th>Ad spend</th><th>Real profit</th><th>Matched</th><th></th></tr></thead>
@@ -21123,7 +21459,7 @@ function openMergePreview(){
             <span style="margin-left:auto;display:flex;gap:6px">
               ${x.g.map(o=>`<button class="btn-sm" onclick="mgRename('${x.m.id}','${_esc(o.r.id)}')">Rename …${_esc(String(o.r.asin||'').slice(-4))}</button>`).join('')}
               <button class="btn-sm danger" onclick="mgApply(${gi})">Merge anyway</button></span></div>
-          <table class="ptab"><thead><tr><th class="l">Row</th><th>Sales</th><th>Units</th><th>Ad spend</th><th>Ad sales</th><th>Profit</th><th>Real profit</th></tr></thead>
+          <table class="ptab"><thead><tr><th class="l">Row</th><th>Sales</th><th>Units</th><th>Ad spend</th><th>Ad sales</th><th>Gross profit</th><th>Real profit</th></tr></thead>
             <tbody>${x.g.map(o=>cell(o.r)).join('')}${cell(M)}</tbody></table></div>`;}).join('')}
       <div class="mg-foot"><span class="psub">Renaming is almost always the right fix. Merge only if two ASINs really are one listing — and back up first from Settings.</span></div>`;
   }
